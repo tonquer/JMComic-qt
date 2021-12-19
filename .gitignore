@@ -4,9 +4,14 @@ __pycache__/
 *$py.class
 
 # C extensions
-*.so
+
 
 # Distribution / packaging
+test
+src/test
+src/data
+src/ssl-data
+.idea
 .Python
 build/
 develop-eggs/
@@ -14,7 +19,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
@@ -127,3 +131,13 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Cache Files for picacg
+cache/
+config.ini
+download.db
+history.db
+
+# Downloaded Commies for PicACG
+commies/
+test/__init__.py
