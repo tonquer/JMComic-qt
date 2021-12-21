@@ -72,13 +72,13 @@ jobs:
         wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
         chmod +x appimagetool-x86_64.AppImage
         ./appimagetool-x86_64.AppImage jmcomic.AppDir
-        mv JMComic-x86_64.AppImage ${{ env.PACKAGENAME }}.AppImage
-
+        mv JMComic-x86_64.AppImage ../../${{ env.PACKAGENAME }}.AppImage
+        cd ../../
     - name: Upload
       uses: actions/upload-artifact@v2
       with:
         name: ${{ env.PACKAGENAME }}
-        path: JMComic-x86_64.AppImage
+        path: ${{ env.PACKAGENAME }}.AppImage
         retention-days: 7
 
     - name: upload-ubuntu

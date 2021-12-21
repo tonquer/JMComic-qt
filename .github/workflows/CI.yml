@@ -41,7 +41,8 @@ jobs:
         wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
         chmod +x appimagetool-x86_64.AppImage
         ./appimagetool-x86_64.AppImage jmcomic.AppDir
-
+        mv JMComic-x86_64.AppImage ../../
+        cd ../../
     - name: Upload
       uses: actions/upload-artifact@v2
       with:
