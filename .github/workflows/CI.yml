@@ -31,11 +31,11 @@ jobs:
         cd src
         pyinstaller -w start.py
         cd dist
-        
+
         mkdir -p jmcomic.AppDir/usr/bin
         cp ../../res/appimage/* jmcomic.AppDir/ -r
         cp ../../res/icon/logo_round.png jmcomic.AppDir/JMComic.png
-        cp dist/* jmcomic.AppDir/usr/bin -r
+        cp start/* jmcomic.AppDir/usr/bin -r
         mv jmcomic.AppDir/usr/bin/start jmcomic.AppDir/usr/bin/JMComic
 
         wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
