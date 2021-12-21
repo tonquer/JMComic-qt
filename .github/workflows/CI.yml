@@ -11,7 +11,7 @@ on:
 
 jobs:
   ubuntu:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     env:
       PACKAGENAME: jmcomic_py37_ubuntu_x86_64
     steps:
@@ -29,16 +29,24 @@ jobs:
     - name: Build
       run: |
         cd src
-        pyinstaller -F -w start.py
-        mv dist jmcomic
-        tar -zcvf ${{ env.PACKAGENAME }}.tar.gz jmcomic/
-        mv ${{ env.PACKAGENAME }}.tar.gz ..
-        cd ..
+        pyinstaller -w start.py
+        cd dist
+        
+        mkdir -p jmcomic.AppDir/usr/bin
+        cp ../../res/appimage/* jmcomic.AppDir/ -r
+        cp ../../res/icon/logo_round.png jmcomic.AppDir/JMComic.png
+        cp dist/* jmcomic.AppDir/usr/bin -r
+        mv jmcomic.AppDir/usr/bin/start jmcomic.AppDir/usr/bin/JMComic
+
+        wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+        chmod +x appimagetool-x86_64.AppImage
+        ./appimagetool-x86_64.AppImage jmcomic.AppDir
+
     - name: Upload
       uses: actions/upload-artifact@v2
       with:
         name: ${{ env.PACKAGENAME }}
-        path: ${{ env.PACKAGENAME }}.tar.gz
+        path: JMComic-x86_64.AppImage
         retention-days: 7
 
   macos:
