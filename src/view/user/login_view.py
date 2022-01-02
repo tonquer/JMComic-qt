@@ -19,8 +19,9 @@ class LoginView(BaseMaskDialog, Ui_Login, QtTaskBase):
         QtTaskBase.__init__(self)
         self.widget.adjustSize()
         self.setupUi(self.widget)
-        self.tabWidget.currentChanged.connect(self._SwichWidget)
+        self.tabWidget.currentChanged.connect(self._SwitchWidget)
         self.loginButton.clicked.connect(self._ClickButton)
+        self.closeButton.clicked.connect(self.close)
         userId = Setting.UserId.value
         if userId and isinstance(userId, str):
             self.loginWidget.userEdit_2.setText(userId)
@@ -29,8 +30,8 @@ class LoginView(BaseMaskDialog, Ui_Login, QtTaskBase):
         passwd = base64.b64decode(passwd).decode("utf-8") if passwd else ""
         if passwd and isinstance(passwd, str):
             self.loginWidget.passwdEdit_2.setText(passwd)
-        self.tabWidget.removeTab(2)
-        self.tabWidget.removeTab(1)
+
+        self.tabWidget.setCurrentIndex(0)
 
     @property
     def loginWidget(self):
@@ -41,18 +42,27 @@ class LoginView(BaseMaskDialog, Ui_Login, QtTaskBase):
         return self.tabWidget.widget(1)
 
     @property
-    def loginProxyWidget(self):
+    def userWidget(self):
         return self.tabWidget.widget(2)
 
-    def _SwichWidget(self, index):
+    @property
+    def proxyWidget(self):
+        return self.tabWidget.widget(3)
+
+    def _SwitchWidget(self, index):
         # self.tabWidget.widget(index).adjustSize()
         # print(self.tabWidget.widget(index).size())
         # self.tabWidget.resize(self.tabWidget.widget(index).size())
         if self.tabWidget.widget(index) == self.loginWidget:
+            self.loginButton.setVisible(True)
             self.loginButton.setText(Str.GetStr(Str.Login))
         elif self.tabWidget.widget(index) == self.registerWidget:
+            self.loginButton.setVisible(True)
             self.loginButton.setText(Str.GetStr(Str.Register))
-        elif self.tabWidget.widget(index) == self.loginProxyWidget:
+        elif self.tabWidget.widget(index) == self.userWidget:
+            self.loginButton.setVisible(False)
+        elif self.tabWidget.widget(index) == self.proxyWidget:
+            self.loginButton.setVisible(True)
             self.loginButton.setText(Str.GetStr(Str.Save))
         self.tabWidget.widget(index).Init()
 

@@ -363,6 +363,66 @@ QScrollArea {background-color:transparent;}</string>
               </layout>
              </item>
              <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_6">
+               <item>
+                <widget class="QLabel" name="label_4">
+                 <property name="minimumSize">
+                  <size>
+                   <width>40</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>40</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>爱心数：</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="likeLabel">
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_12">
+               <item>
+                <widget class="QLabel" name="label_8">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>40</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>观看数:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="viewLabel">
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
               <layout class="QHBoxLayout" name="horizontalLayout_7">
                <item>
                 <widget class="QLabel" name="label_5">
@@ -450,7 +510,7 @@ QListWidget::item {
         </layout>
        </item>
        <item>
-        <widget class="BaseListWidget" name="epsListWidget">
+        <widget class="EpsListWidget" name="epsListWidget">
          <property name="styleSheet">
           <string notr="true">QListWidget {background-color:transparent;}
 QListWidget::item {
@@ -502,14 +562,14 @@ QListWidget::item {
    <header location="global">component.list.tag_list_widget.h</header>
   </customwidget>
   <customwidget>
-   <class>BaseListWidget</class>
-   <extends>QListWidget</extends>
-   <header location="global">component.list.base_list_widget.h</header>
-  </customwidget>
-  <customwidget>
    <class>IconToolButton</class>
    <extends>QToolButton</extends>
    <header location="global">component.button.icon_tool_button.h</header>
+  </customwidget>
+  <customwidget>
+   <class>EpsListWidget</class>
+   <extends>QListWidget</extends>
+   <header location="global">component.list.eps_list_widget.h</header>
   </customwidget>
  </customwidgets>
  <resources>

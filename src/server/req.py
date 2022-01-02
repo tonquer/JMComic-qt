@@ -1,4 +1,5 @@
 import json
+import time
 
 from config import config
 from config.setting import Setting
@@ -31,56 +32,6 @@ class ServerReq(object):
         return "{}, url:{}, proxy:{}, method:{}, headers:{}, params:{}".format(self.__class__.__name__, self.url, self.proxy, self.method, headers, params)
 
 
-# 下载图片
-class DownloadBookReq(ServerReq):
-    def __init__(self, url, isSaveCache=False, saveFile=""):
-        method = "Download"
-        self.url = url
-        self.isSaveCache = isSaveCache
-        self.saveFile = saveFile
-        super(self.__class__, self).__init__(url, ToolUtil.GetHeader(url, method),
-                                             {}, method)
-
-
-# 登陆前，需要获取cookie
-class LoginPreReq(ServerReq):
-    def __init__(self):
-        method = "Get"
-        url = config.Url + "/login"
-        header = ToolUtil.GetHeader(url, method)
-        super(self.__class__, self).__init__(url, header, {}, method)
-
-
-# 登陆
-class LoginReq(ServerReq):
-    def __init__(self, userId, passwd, cookies=None):
-        method = "POST"
-        url = config.Url + "/login"
-
-        header = ToolUtil.GetHeader(url, method)
-        data = dict()
-        data["username"] = userId
-        data["password"] = passwd
-        data["submit_login"] = ""
-        header["Content-Type"] = "application/x-www-form-urlencoded"
-        # header["origin"] = config.Url
-        # header["referer"] = url
-        super(self.__class__, self).__init__(url, header, ToolUtil.DictToUrl(data), method)
-        if cookies:
-            self.cookies = cookies
-
-
-# 获得UserInfo
-class GetUserInfoReq(ServerReq):
-    def __init__(self):
-        method = "GET"
-        url = config.Url + "/user"
-
-        header = ToolUtil.GetHeader(url, method)
-        data = dict()
-        super(self.__class__, self).__init__(url, header, data, method)
-
-
 # 检查更新
 class CheckUpdateReq(ServerReq):
     def __init__(self, url):
@@ -90,59 +41,269 @@ class CheckUpdateReq(ServerReq):
         self.isParseRes = False
 
 
+# 下载图片
+class DownloadBookReq(ServerReq):
+    def __init__(self, url, loadPath="", cachePath="", savePath="", saveParam=(0, 0, "")):
+        url = config.PicUrl2 + url
+        method = "Download"
+        self.url = url
+        self.loadPath = loadPath
+        self.cachePath = cachePath
+        self.savePath = savePath
+        self.saveParam = saveParam
+        super(self.__class__, self).__init__(url, ToolUtil.GetHeader(url, method),
+                                             {}, method)
+
+
+# 注册前，需要获取cookie
+class LoginPreReq(ServerReq):
+    def __init__(self):
+        method = "Get"
+        url = config.Url + "/login"
+        header = ToolUtil.GetHeader(url, method)
+        super(self.__class__, self).__init__(url, header, {}, method)
+
+
+# 登陆
+# class LoginReq(ServerReq):
+#     def __init__(self, userId, passwd):
+#         method = "POST"
+#         url = config.Url + "/login"
+#
+#         header = ToolUtil.GetHeader(url, method)
+#         data = dict()
+#         data["username"] = userId
+#         data["password"] = passwd
+#         data["submit_login"] = ""
+#         super(self.__class__, self).__init__(url, header, ToolUtil.DictToUrl(data), method)
+
+
+# 登陆
+class LoginReq2(ServerReq):
+    def __init__(self, userId, passwd):
+        method = "POST"
+        url = config.Url2 + "/login"
+        header = ToolUtil.GetHeader(url, method)
+        data = dict()
+        data["username"] = userId
+        data["password"] = passwd
+        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
+        data["view_mode_debug"] = "1"
+        data["view_mode"] = "null"
+        super(self.__class__, self).__init__(url, header, ToolUtil.DictToUrl(data), method)
+
+
+# 注册
+class RegisterReq(ServerReq):
+    def __init__(self, userId, email, passwd, passwd2, sex="Male"):
+        # [Male, Female]
+
+        method = "POST"
+        url = config.Url + "/signup"
+
+        header = ToolUtil.GetHeader(url, method)
+        data = dict()
+        data["username"] = userId
+        data["password"] = passwd
+        data["email"] = email
+        data["password_confirm"] = passwd2
+        data["gender"] = sex
+        data["age"] = "on"
+        data["terms"] = "on"
+        data["submit_signup"] = ""
+        super(self.__class__, self).__init__(url, header, ToolUtil.DictToUrl(data), method)
+
+
+# 重新获取注册验证
+class RegisterVerifyMailReq(ServerReq):
+    def __init__(self, email):
+        method = "POST"
+        url = config.Url + "/confirm"
+
+        header = ToolUtil.GetHeader(url, method)
+        data = dict()
+        data["email"] = email
+        data["submit_confirm"] = "發送EMAIL"
+        super(self.__class__, self).__init__(url, header, ToolUtil.DictToUrl(data), method)
+
+
+# 重置密码
+class ResetPasswordReq(ServerReq):
+    def __init__(self, email):
+        method = "POST"
+        url = config.Url + "/lost"
+
+        header = ToolUtil.GetHeader(url, method)
+        data = dict()
+        data["email"] = email
+        data["submit_lost"] = "恢復密碼"
+        super(self.__class__, self).__init__(url, header, ToolUtil.DictToUrl(data), method)
+
+
+# 账号验证
+class VerifyMailReq(ServerReq):
+    def __init__(self, url):
+        method = "GET"
+        host = ToolUtil.GetUrlHost(url)
+        url = url.replace(host, ToolUtil.GetUrlHost(config.Url))
+
+        header = ToolUtil.GetHeader(url, method)
+        super(self.__class__, self).__init__(url, header, {}, method)
+
+
+# 获得UserInfo
+# class GetUserInfoReq(ServerReq):
+#     def __init__(self):
+#         method = "GET"
+#         url = config.Url + "/user"
+#
+#         header = ToolUtil.GetHeader(url, method)
+#         data = dict()
+#         super(self.__class__, self).__init__(url, header, data, method)
+
+
 # 本子信息
-class GetBookInfoReq(ServerReq):
+# class GetBookInfoReq(ServerReq):
+#     def __init__(self, bookId):
+#         self.bookId = bookId
+#         url = config.Url + "/album/{}".format(bookId)
+#         method = "GET"
+#         super(self.__class__, self).__init__(url, ToolUtil.GetHeader(url, method), {}, method)
+
+
+# 本子信息
+class GetBookInfoReq2(ServerReq):
     def __init__(self, bookId):
         self.bookId = bookId
-        url = config.Url + "/album/{}".format(bookId)
+        url = config.Url2 + "/album"
         method = "GET"
-        super(self.__class__, self).__init__(url, ToolUtil.GetHeader(url, method), {}, method)
+        data = dict()
+        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
+        data["view_mode_debug"] = "1"
+        data["view_mode"] = "null"
+        data["comicName"] = ""
+        data["id"] = bookId
+
+        param = ToolUtil.DictToUrl(data)
+        self.now = int(time.time())
+        header = ToolUtil.GetHeader(url, method)
+        if param:
+            url += "/?" + param
+        super(self.__class__, self).__init__(url, header, {}, method)
+
+
+# 获得scramble_id
+class GetBookEpsScrambleReq2(ServerReq):
+    def __init__(self, bookId, epsIndex, epsId):
+        self.bookId = bookId
+        self.epsIndex = epsIndex
+        url = config.Url2 + "/chapter_view_template"
+        method = "GET"
+        data = dict()
+        data["id"] = epsId
+        data["mode"] = "vertical"
+        data["page"] = "0"
+        data["app_img_shunt"] = "NaN"
+
+        param = ToolUtil.DictToUrl(data)
+        header = ToolUtil.GetHeader2(url, method)
+        if param:
+            url += "/?" + param
+        super(self.__class__, self).__init__(url, header, {}, method)
+
+
+# 章节信息
+class GetBookEpsInfoReq2(ServerReq):
+    def __init__(self, bookId, epsId):
+        self.bookId = bookId
+        url = config.Url2 + "/chapter"
+        method = "GET"
+        data = dict()
+        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
+        data["view_mode_debug"] = "1"
+        data["view_mode"] = "null"
+        data["comicName"] = ""
+        data["skip"] = ""
+        data["id"] = epsId
+
+        param = ToolUtil.DictToUrl(data)
+        self.now = int(time.time())
+        header = ToolUtil.GetHeader(url, method)
+        if param:
+            url += "/?" + param
+        super(self.__class__, self).__init__(url, header, {}, method)
 
 
 # 获取一个章节的图片地址
-class GetBookImgUrl(ServerReq):
-    def __init__(self, bookId, epsId):
-        from tools.book import BookMgr
-        book = BookMgr().GetBook(bookId)
-        epsInfo = book.pageInfo.epsInfo.get(epsId)
-        url = config.Url + epsInfo.epsUrl
-        method = "Get"
-        self.bookId = bookId
-        self.epsId = epsId
-        super(self.__class__, self).__init__(url, ToolUtil.GetHeader(url, method), {}, method)
+# class GetBookImgUrl(ServerReq):
+#     def __init__(self, bookId, epsId):
+#         from tools.book import BookMgr
+#         book = BookMgr().GetBook(bookId)
+#         epsInfo = book.pageInfo.epsInfo.get(epsId)
+#         url = config.Url + epsInfo.epsUrl
+#         method = "Get"
+#         self.bookId = bookId
+#         self.epsId = epsId
+#         super(self.__class__, self).__init__(url, ToolUtil.GetHeader(url, method), {}, method)
 
 
 # 搜索请求
-class GetSearchReq(ServerReq):
-    def __init__(self, search, page=1, mainCategory="", subCategory="", sort="mr", sortDay="a"):
-        # sort []&t=t&o=tf
+# class GetSearchReq(ServerReq):
+#     def __init__(self, search, page=1, mainCategory="", subCategory="", sort="mr", sortDay="a"):
+#         # sort []&t=t&o=tf
+#
+#         # 所有，今日，本周，本月
+#         # t= [a, t, w, m]
+#
+#         # 最新，最多点击，最多图片, 最多爱心
+#         # o = [mr, mv, mp, tf]
+#
+#         # 其他漫画，another
+#         # 同人志, doujin, [汉化：chinese, 日语：japanese， CG:CG, cosplay:cosplay]
+#         # 韩漫  hanman
+#         # 美漫  meiman
+#         # 短片 short, [汉化：chinese, 日语：japanese]
+#         # 单本 single, [汉化：chinese, 日语：japanese]
+#
+#         data = {"search_query": search}
+#
+#         if page > 1:
+#             data['page'] = str(page)
+#         if sortDay:
+#             data['t'] = sortDay
+#         if sort:
+#             data["o"] = sort
+#         url = config.Url + "/search/photos"
+#         if mainCategory:
+#             url += "/" + mainCategory
+#             if subCategory:
+#                 url += "/sub/" + subCategory
+#
+#         param = ToolUtil.DictToUrl(data)
+#         if param:
+#             url += "/?" + param
+#         method = "GET"
+#         super(self.__class__, self).__init__(url, ToolUtil.GetHeader(url, method),
+#                                              {}, method)
 
-        # 所有，今日，本周，本月
-        # t= [a, t, w, m]
+
+# 搜索请求
+class GetSearchReq2(ServerReq):
+    def __init__(self, search, sort="mr", page=1):
 
         # 最新，最多点击，最多图片, 最多爱心
         # o = [mr, mv, mp, tf]
 
-        # 其他漫画，another
-        # 同人志, doujin, [汉化：chinese, 日语：japanese， CG:CG, cosplay:cosplay]
-        # 韩漫  hanman
-        # 美漫  meiman
-        # 短片 short, [汉化：chinese, 日语：japanese]
-        # 单本 single, [汉化：chinese, 日语：japanese]
-
-        data = {"search_query": search}
-
+        data = dict()
+        data["search_query"] = search
+        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
+        data["view_mode_debug"] = "1"
+        data["view_mode"] = "null"
         if page > 1:
             data['page'] = str(page)
-        if sortDay:
-            data['t'] = sortDay
         if sort:
             data["o"] = sort
-        url = config.Url + "/search/photos"
-        if mainCategory:
-            url += "/" + mainCategory
-            if subCategory:
-                url += "/sub/" + subCategory
+        url = config.Url2 + "/search"
 
         param = ToolUtil.DictToUrl(data)
         if param:
@@ -151,62 +312,276 @@ class GetSearchReq(ServerReq):
         super(self.__class__, self).__init__(url, ToolUtil.GetHeader(url, method),
                                              {}, method)
 
-# 获得首页
-class GetIndexInfoReq(ServerReq):
+
+# 分類请求
+class GetCategoryReq2(ServerReq):
     def __init__(self):
-        url = config.Url
+        url = config.Url2 + "/categories"
+        data = dict()
+        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
+        data["view_mode_debug"] = "1"
+        data["view_mode"] = "null"
+        param = ToolUtil.DictToUrl(data)
+        if param:
+            url += "/?" + param
         method = "GET"
         super(self.__class__, self).__init__(url, ToolUtil.GetHeader(url, method),
+                                             {}, method)
+
+
+# 分類搜索请求
+class GetSearchCategoryReq2(ServerReq):
+    def __init__(self, page=1, category="0", sort="mr"):
+        # sort []&t=t&o=tf
+
+        # 最新，总排行，月排行，周排行， 日排行，最多图片, 最多爱心
+        # o = [mr, mv, mv_m, mv_w, mv_t, mp, tf]
+
+        # 最新, 同人, 单本, 短篇， 其他，韩漫， 美漫， CosPlay， 3D
+        # category = ["0", "doujin", "single", "short", "another", "hanman", "meiman", "doujin_cosplay", "3D"]
+
+        url = config.Url2 + "/categories/filter"
+
+        data = dict()
+        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
+        data["view_mode_debug"] = "1"
+        data["view_mode"] = "null"
+
+        if page > 1:
+            data['page'] = str(page)
+        if sort:
+            data["o"] = sort
+
+        if category:
+            data["c"] = category
+
+        param = ToolUtil.DictToUrl(data)
+        if param:
+            url += "/?" + param
+        method = "GET"
+        super(self.__class__, self).__init__(url, ToolUtil.GetHeader(url, method),
+                                             {}, method)
+
+
+# 获得首页
+# class GetIndexInfoReq(ServerReq):
+#     def __init__(self):
+#         url = config.Url
+#         method = "GET"
+#         super(self.__class__, self).__init__(url, ToolUtil.GetHeader(url, method),
+#                                              {}, method)
+
+
+# 获得首页
+class GetIndexInfoReq2(ServerReq):
+    def __init__(self, page="0"):
+        url = config.Url2 + "/promote"
+        method = "GET"
+        data = dict()
+        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
+        data["view_mode_debug"] = "1"
+        data["view_mode"] = "null"
+        data["page"] = page
+
+        param = ToolUtil.DictToUrl(data)
+        header = ToolUtil.GetHeader(url, method)
+        if param:
+            url += "/?" + param
+
+        super(self.__class__, self).__init__(url, header,
+                                             {}, method)
+
+
+# 获得最近更新
+class GetLatestInfoReq2(ServerReq):
+    def __init__(self, page="0"):
+        url = config.Url2 + "/latest"
+        method = "GET"
+        data = dict()
+        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
+        data["view_mode_debug"] = "1"
+        data["view_mode"] = "null"
+        data["page"] = page
+
+        param = ToolUtil.DictToUrl(data)
+        header = ToolUtil.GetHeader(url, method)
+        if param:
+            url += "/?" + param
+
+        super(self.__class__, self).__init__(url, header,
                                              {}, method)
 
 
 # 获得收藏
-class GetFavoritesReq(ServerReq):
+class GetFavoritesReq2(ServerReq):
     def __init__(self, page=1, sort="mr"):
         # 收藏时间, 更新时间
         # o = [mr, mp]
-        data = dict()
-        data["o"] = sort
-        if page > 1:
-            data['page'] = str(page)
-        param = ToolUtil.DictToUrl(data)
-        url = config.Url + "/user/" + config.LoginUserName +"/favorite/albums/?" + param
+        url = config.Url2 + "/favorite"
         method = "GET"
+        data = dict()
+        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
+        data["view_mode_debug"] = "1"
+        data["view_mode"] = "null"
+        data["page"] = page
+        data["o"] = sort
 
-        super(self.__class__, self).__init__(url, ToolUtil.GetHeader(url, method),
+        param = ToolUtil.DictToUrl(data)
+        self.now = int(time.time())
+        header = ToolUtil.GetHeader(url, method)
+        if param:
+            url += "/?" + param
+
+        super(self.__class__, self).__init__(url, header,
                                              {}, method)
 
 
 # 添加收藏
-class AddFavoritesReq(ServerReq):
+class AddFavoritesReq2(ServerReq):
     def __init__(self, bookId=""):
-        url = config.Url + "/ajax/favorite_album"
+        url = config.Url2 + "/favorite"
         method = "POST"
         header = ToolUtil.GetHeader(url, method)
         data = dict()
-        data["album_id"] = bookId
-        data["fid"] = 0
-
-        header["Content-Type"] = "application/x-www-form-urlencoded"
-        header["origin"] = config.Url
-        header["referer"] = config.Url + "/album/{}/".format(bookId)
+        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
+        data["view_mode_debug"] = "1"
+        data["view_mode"] = "null"
+        data["aid"] = bookId
         super(self.__class__, self).__init__(url, header,
                                              ToolUtil.DictToUrl(data), method)
 
 
 # 删除收藏
-class DelFavoritesReq(ServerReq):
+class DelFavoritesReq2(ServerReq):
     def __init__(self, bookId=""):
-        url = config.Url + "/ajax/remove_album_playlist"
+        url = config.Url2 + "/favorite"
         method = "POST"
         header = ToolUtil.GetHeader(url, method)
         data = dict()
-        data["video_id"] = bookId
-        data["list"] = "favorites"
-        header["Content-Type"] = "application/x-www-form-urlencoded"
+        data["aid"] = bookId
+        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
+        data["view_mode_debug"] = "1"
+        data["view_mode"] = "null"
         super(self.__class__, self).__init__(url, header,
                                              ToolUtil.DictToUrl(data), method)
 
+
+# 获得收藏
+# class GetFavoritesReq(ServerReq):
+#     def __init__(self, page=1, sort="mr"):
+#         # 收藏时间, 更新时间
+#         # o = [mr, mp]
+#         data = dict()
+#         data["o"] = sort
+#         if page > 1:
+#             data['page'] = str(page)
+#         param = ToolUtil.DictToUrl(data)
+#         url = config.Url + "/user/" + config.LoginUserName + "/favorite/albums/?" + param
+#         method = "GET"
+#
+#         super(self.__class__, self).__init__(url, ToolUtil.GetHeader(url, method),
+#                                              {}, method)
+
+
+# 添加收藏
+# class AddFavoritesReq(ServerReq):
+#     def __init__(self, bookId=""):
+#         url = config.Url + "/ajax/favorite_album"
+#         method = "POST"
+#         header = ToolUtil.GetHeader(url, method)
+#         data = dict()
+#         data["album_id"] = bookId
+#         data["fid"] = 0
+#
+#         header["origin"] = config.Url
+#         header["referer"] = config.Url + "/album/{}/".format(bookId)
+#         super(self.__class__, self).__init__(url, header,
+#                                              ToolUtil.DictToUrl(data), method)
+
+
+# 删除收藏
+# class DelFavoritesReq(ServerReq):
+#     def __init__(self, bookId=""):
+#         url = config.Url + "/ajax/remove_album_playlist"
+#         method = "POST"
+#         header = ToolUtil.GetHeader(url, method)
+#         data = dict()
+#         data["video_id"] = bookId
+#         data["list"] = "favorites"
+#         super(self.__class__, self).__init__(url, header,
+#                                              ToolUtil.DictToUrl(data), method)
+
+
+# 获得评论
+class GetCommentReq2(ServerReq):
+    def __init__(self, bookId="", page="1"):
+        self.bookId = bookId
+        url = config.Url2 + "/forum"
+        method = "GET"
+        data = dict()
+        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
+        data["view_mode_debug"] = "1"
+        data["view_mode"] = "null"
+        data["mode"] = "manhua"
+        if bookId:
+            data["aid"] = bookId
+        data["page"] = page
+
+        param = ToolUtil.DictToUrl(data)
+        header = ToolUtil.GetHeader(url, method)
+        if param:
+            url += "/?" + param
+        super(self.__class__, self).__init__(url, header, {}, method)
+
+
+# 发送评论
+class SendCommentReq2(ServerReq):
+    def __init__(self, bookId="", comment="", cid=""):
+        url = config.Url2 + "/comment"
+        method = "POST"
+        header = ToolUtil.GetHeader(url, method)
+        data = dict()
+        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
+        data["view_mode_debug"] = "1"
+        data["view_mode"] = "null"
+        data["comment"] = comment
+        data["aid"] = bookId
+        if cid:
+            data["comment_id"] = cid
+        super(self.__class__, self).__init__(url, header, ToolUtil.DictToUrl(data), method)
+
+# 查看评论
+# class LookCommentReq(ServerReq):
+#     def __init__(self, bookId="", page=1):
+#         data = dict()
+#         if bookId:
+#             # 漫画评论
+#             url = config.Url + "/ajax/album_pagination"
+#             data["video_id"] = bookId
+#         else:
+#             # 全部评论
+#             url = config.Url + "/ajax/forum_more"
+#         method = "POST"
+#         header = ToolUtil.GetHeader(url, method)
+#
+#         data["page"] = page
+#         super(self.__class__, self).__init__(url, header, ToolUtil.DictToUrl(data), method)
+
+
+# 回复评论
+# class ReplySubCommentReq(ServerReq):
+#     def __init__(self, replyId="", comment=""):
+#         url = config.Url + "/ajax/forum_more"
+#         method = "POST"
+#         header = ToolUtil.GetHeader(url, method)
+#         data = dict()
+#         data["comment_id"] = replyId
+#         data["comment"] = comment
+#         data["forum_subject"] = 1
+#         data["originator"] = ""
+#         data["is_reply"] = 1
+#         data["video_id"] = 0
+#         super(self.__class__, self).__init__(url, header, ToolUtil.DictToUrl(data), method)
 
 # Doh域名解析
 class DnsOverHttpsReq(ServerReq):
@@ -219,40 +594,3 @@ class DnsOverHttpsReq(ServerReq):
         self.timeout = 5
         self.isParseRes = True
 
-
-# 测试Ping
-class SpeedTestPingReq(ServerReq):
-    def __init__(self, domain):
-        url = "https://{}".format(domain)
-        method = "GET"
-        header = ToolUtil.GetHeader(url, method)
-        header['cache-control'] = 'no-cache'
-        header['expires'] = '0'
-        header['pragma'] = 'no-cache'
-        super(self.__class__, self).__init__(url, header,
-                                             {}, method)
-
-# 测速
-class SpeedTestReq(ServerReq):
-    Index = 0
-    URLS = [
-        "https://storage1.picacomic.com/static/fc75975a-af8e-40c5-8679-725d6f64d6f5.jpg",
-        # "https://storage1.picacomic.com/static/5aa5c52b-8fb5-4c16-866c-d6d92fb4a761.jpg",
-        # "https://storage1.picacomic.com/static/7e7d1320-9717-4702-883d-2899975283b2.jpg",
-        # "https://storage1.picacomic.com/static/91c3f41a-e6de-4de1-a80f-10af17aee5a8.jpg",
-        # "https://storage1.picacomic.com/static/60c852b9-e47d-400c-af9d-bee86ce20b6d.jpg",
-        # "https://storage1.picacomic.com/static/66541fe6-caaa-4965-ac1a-1b1b793e5677.jpg",
-    ]
-
-    def __init__(self):
-        url = SpeedTestReq.URLS[SpeedTestReq.Index]
-        SpeedTestReq.Index += 1
-        if SpeedTestReq.Index >= len(SpeedTestReq.URLS):
-            SpeedTestReq.Index = 0
-        method = "Download"
-        header = ToolUtil.GetHeader(url, method)
-        header['cache-control'] = 'no-cache'
-        header['expires'] = '0'
-        header['pragma'] = 'no-cache'
-        super(self.__class__, self).__init__(url, header,
-                                             {}, method)

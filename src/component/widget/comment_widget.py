@@ -21,111 +21,45 @@ class CommentWidget(QtWidgets.QWidget, Ui_Comment, QtTaskBase):
         self.setupUi(self)
         self.spinBox.setMinimum(1)
         self.spinBox.setMaximum(1)
-        self.reqSendComment = None
-        self.reqGetComment = None
-        self.reqLikeComment = None
-        self.reqKillComment = None
         self.listWidget.LoadCallBack = self.LoadNextPage
 
         self.bookId = ""
-        self.default = "5822a6e3ad7ede654696e482"
-        self.eventId = ""
         self.pushButton.clicked.connect(self.SendComment)
         self.skipButton.clicked.connect(self.JumpPage)
+        self.commentNum = 0
+        self.cid = ""
 
     def SwitchCurrent(self, **kwargs):
-        bookId = kwargs.get("bookId")
+        bookId = kwargs.get("bookId", "")
         refresh = kwargs.get("refresh")
-        if not bookId and self.listWidget.count() > 0 and not refresh:
+        if not bookId and refresh:
+            self.pushButton.hide()
+            self.commentLine.hide()
+            self.commentNum = kwargs.get("commentNum", 10000)
+            self.bookId = ""
+            self.ClearCommentList()
+            self.listWidget.UpdatePage(1, 1)
+            self.LoadComment()
             return
 
+        if not bookId:
+            return
+        self.pushButton.setVisible(True)
+        self.commentLine.setVisible(True)
+        self.commentNum = kwargs.get("commentNum", 0)
         self.bookId = bookId
-        if not self.bookId:
-            self.bookId = self.default
-
+        self.ClearCommentList()
+        self.listWidget.UpdatePage(1, 1)
         self.LoadComment()
         pass
 
-    def InitReq(self, reqGetComment, reqSendComment, reqLikeComment, reqKillComment):
-        self.reqSendComment = reqSendComment
-        self.reqGetComment = reqGetComment
-        self.reqLikeComment = reqLikeComment
-        self.reqKillComment = reqKillComment
-
-    def AddLike(self, cfgId):
-        for index in range(self.listWidget.count()):
-            item = self.listWidget.item(index)
-            if not item:
-                continue
-            widget = self.listWidget.itemWidget(item)
-            if not widget:
-                continue
-            if widget.id != cfgId:
-                continue
-
-            QtOwner().ShowLoading()
-            self.AddHttpTask(self.reqLikeComment(widget.id), self.CommentsLikeBack, backParam=cfgId)
-
-    def CommentsLikeBack(self, raw, cfgId):
-        QtOwner().CloseLoading()
-        st = raw["st"]
-        if st != Status.Ok:
-            QtOwner().ShowMsg(Str.GetStr(st))
-            return
-        data = json.loads(raw["data"])
-        isLike = False
-        if data.get("data").get("action") == "like":
-            isLike = True
-        for index in range(self.listWidget.count()):
-            item = self.listWidget.item(index)
-            if not item:
-                continue
-            widget = self.listWidget.itemWidget(item)
-            if not widget:
-                continue
-            if widget.id != cfgId:
-                continue
-            widget.SetLike(isLike)
-
-    def KillComment(self, cfgId):
-        return
-        # for index in range(self.listWidget.count()):
-        #     item = self.listWidget.item(index)
-        #     if not item:
-        #         continue
-        #     widget = self.listWidget.itemWidget(item)
-        #     if not widget:
-        #         continue
-        #     if widget.id != cfgId:
-        #         continue
-        #     r = QtOwner().ShowMsgBox(QMessageBox.Question, self.tr('举报'),
-        #                              self.tr('是否举报') + widget.nameLabel.text() + ",\n" + self.tr(
-        #                                  "评论：") +"\n"+ widget.commentLabel.text() + "\n")
-        #     if r == 0:
-        #         QtOwner().ShowLoading()
-        #         self.AddHttpTask(self.reqKillComment(widget.id), self.KillCommentBack, backParam=cfgId)
-
-    def KillCommentBack(self, raw, backId):
-        QtOwner().CloseLoading()
-        try:
-            st = raw["st"]
-            if st != Status.Ok:
-                QtOwner().ShowMsg(Str.GetStr(st))
-                return
-            data = json.loads(raw["data"])
-            if data.get("code") != 200:
-                return
-            QtOwner().ShowMsg(data.get('data').get("message", ""))
-        except Exception as es:
-            Log.Error(es)
-
-    def ClearCommnetList(self):
+    def ClearCommentList(self):
         self.listWidget.SetWheelStatus(True)
         self.listWidget.clear()
         self.listWidget.UpdatePage(1, 1)
         self.listWidget.UpdateState()
-        # self.spinBox.setValue(1)
-        # self.nums.setText("分页：{}/{}".format(str(1), str(1)))
+        self.spinBox.setValue(1)
+        self.nums.setText(Str.GetStr(Str.Page) + ": " + str(self.listWidget.page) + "/" + str(self.listWidget.pages))
         self.ClearTask()
 
     def JumpPage(self):
@@ -136,57 +70,45 @@ class CommentWidget(QtWidgets.QWidget, Ui_Comment, QtTaskBase):
             self.listWidget.SetWheelStatus(True)
             self.listWidget.page = page
             self.listWidget.clear()
-            QtOwner().ShowLoading()
-            self.AddHttpTask(self.reqGetComment(self.bookId, self.listWidget.page), self.GetCommnetBack)
+            self.LoadComment()
         except Exception as es:
             Log.Error(es)
 
     def LoadComment(self):
         QtOwner().ShowLoading()
-        self.ClearCommnetList()
-        self.AddHttpTask(self.reqGetComment(self.bookId, self.listWidget.page), self.GetCommnetBack)
+        self.AddHttpTask(req.GetCommentReq2(self.bookId, self.listWidget.page), self.GetCommentBack, self.listWidget.page)
         return
 
     def LoadNextPage(self):
         QtOwner().ShowLoading()
-        self.AddHttpTask(self.reqGetComment(self.bookId, self.listWidget.page + 1), self.GetCommnetBack)
+        self.AddHttpTask(req.GetCommentReq2(self.bookId, self.listWidget.page + 1), self.GetCommentBack, self.listWidget.page+1)
         return
 
     # 加载评论
-    def GetCommnetBack(self, raw):
+    def GetCommentBack(self, raw, page):
+        QtOwner().CloseLoading()
+        st = raw["st"]
         try:
-            QtOwner().CloseLoading()
             self.listWidget.UpdateState()
-            st = raw["st"]
             if st == Status.Ok:
 
-                msg = json.loads(raw["data"])
-                comments = msg.get("data", {}).get("comments", {})
-                topComments = msg.get("data", {}).get("topComments", [])
-                page = int(comments.get("page", 1))
-                pages = int(comments.get("pages", 1))
-                limit = int(comments.get("limit", 1))
-                self.listWidget.UpdatePage(page, pages)
-                self.spinBox.setValue(page)
-                self.spinBox.setMaximum(pages)
-                self.nums.setText("分页：{}/{}".format(str(page), str(pages)))
-                total = comments.get("total", 0)
-                # self.tabWidget.setTabText(1, "评论({})".format(str(total)))
+                comments = raw["commentList"]
                 if page == 1:
-                    for index, info in enumerate(topComments):
-                        floor = Str.GetStr(Str.Top)
-                        self.listWidget.AddUserItem(info, floor, likeCallBack=self.AddLike)
+                    num = len(comments)
+                    maxPages = (self.commentNum - 1) // max(1, num) + 1
+                    self.listWidget.UpdatePage(page, maxPages)
+                    self.spinBox.setMaximum(maxPages)
+                self.spinBox.setValue(page)
+                self.listWidget.page = page
+                self.nums.setText(Str.GetStr(Str.Page) + ": " + str(self.listWidget.page) + "/" + str(self.listWidget.pages))
 
-                for index, info in enumerate(comments.get("docs")):
-                    if self.reqGetComment == req.GetUserCommentReq:
-                        info["_user"] = User().userInfo
-                    floor = total - ((page - 1) * limit + index)
-                    self.listWidget.AddUserItem(info, floor, likeCallBack=self.AddLike)
+                for index, info in enumerate(comments):
+                    self.listWidget.AddUserItem(info, "")
             else:
                 QtOwner().ShowError(Str.GetStr(st))
             return
         except Exception as es:
-            QtOwner().ShowError(Str.GetStr(Str.CommentLoadFail))
+            QtOwner().CheckShowMsg( raw)
             Log.Error(es)
 
     def SendComment(self):
@@ -195,22 +117,20 @@ class CommentWidget(QtWidgets.QWidget, Ui_Comment, QtTaskBase):
             return
         self.commentLine.setText("")
         QtOwner().ShowLoading()
-        self.AddHttpTask(self.reqSendComment(self.bookId, data), callBack=self.SendCommentBack)
+        self.AddHttpTask(req.SendCommentReq2(self.bookId, data, self.cid), callBack=self.SendCommentBack)
 
     def SendCommentBack(self, raw):
         try:
-            data = json.loads(raw["data"])
+            QtOwner().CloseLoading()
             st = raw["st"]
             if st == Status.Ok:
-                if data.get("code") == 200:
-                    self.ClearCommnetList()
-                    self.commentLine.setText("")
-                    self.AddHttpTask(self.reqGetComment(self.bookId), self.GetCommnetBack)
-                else:
-                    QtOwner().CloseLoading()
-                    QtOwner().ShowError(data.get("message", Str.GetStr(Str.Error)))
+                self.ClearCommentList()
+                self.commentLine.setText("")
+                self.listWidget.UpdatePage(1, 1)
+                self.LoadComment()
+                QtOwner().CheckShowMsg( raw)
             else:
-                QtOwner().ShowError(Str.GetStr(st))
+                QtOwner().CheckShowMsg( raw)
 
         except Exception as es:
             QtOwner().CloseLoading()

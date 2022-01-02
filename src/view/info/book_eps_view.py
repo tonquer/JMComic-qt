@@ -39,23 +39,7 @@ class BookEpsView(QtWidgets.QWidget, Ui_BookEps, QtTaskBase):
         QtOwner().ShowLoading()
         self.bookId = bookId
         self.listWidget.clear()
-        if bookId not in BookMgr().books:
-            self.OpenLocalBack()
-        else:
-            self.AddHttpTask(req.GetComicsBookEpsReq(self.bookId), self.OpenEpsInfoBack)
-
-    def OpenLocalBack(self):
-        self.AddSqlTask("book", self.bookId, SqlServer.TaskTypeCacheBook, callBack=self.SendLocalBack)
-
-    def SendLocalBack(self, books):
-        self.AddHttpTask(req.GetComicsBookReq(self.bookId), self.OpenBookInfoBack)
-
-    def OpenBookInfoBack(self, msg):
-        info = BookMgr().books.get(self.bookId)
-        if info:
-            self.AddHttpTask(req.GetComicsBookEpsReq(self.bookId), self.OpenEpsInfoBack)
-        else:
-            QtOwner().CloseLoading()
+        self.AddHttpTask(req.GetBookInfoReq2(self.bookId), self.OpenEpsInfoBack)
 
     def OpenEpsInfoBack(self, raw):
         QtOwner().CloseLoading()
@@ -71,7 +55,7 @@ class BookEpsView(QtWidgets.QWidget, Ui_BookEps, QtTaskBase):
         if not info:
             return
         downloadEpsId = QtOwner().downloadView.GetDownloadEpsId(self.bookId)
-        for index, epsInfo in enumerate(info.eps):
+        for index, epsInfo in info.pageInfo.epsInfo.items():
             label = QLabel(str(index + 1) + "-" + epsInfo.title)
             label.setAlignment(Qt.AlignCenter)
             # label.setStyleSheet("color: rgb(196, 95, 125);")

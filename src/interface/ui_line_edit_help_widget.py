@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_line_edit_help_widget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.2.1
+## Created by: Qt User Interface Compiler version 6.2.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -44,6 +44,6 @@ class Ui_LineEditHelp(object):
 
     def retranslateUi(self, LineEditHelp):
         LineEditHelp.setWindowTitle(QCoreApplication.translate("LineEditHelp", u"Form", None))
-        self.label.setText(QCoreApplication.translate("LineEditHelp", u"\u8054\u60f3\u8bcd", None))
+        self.label.setText(QCoreApplication.translate("LineEditHelp", u"\u641c\u7d22\u8bb0\u5f55", None))
     # retranslateUi
 

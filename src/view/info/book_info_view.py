@@ -41,6 +41,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.favoriteButton.setIconSize(QSize(50, 50))
         self.commentButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.commentButton.setIconSize(QSize(50, 50))
+        self.commentButton.clicked.connect(self.OpenComment)
         self.description.adjustSize()
         self.title.adjustSize()
 
@@ -61,6 +62,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
 
         # self.epsListWidget.verticalScrollBar().rangeChanged.connect(self.ChageMaxNum)
         self.epsListWidget.setMinimumHeight(300)
+        self.commentNum = 0
 
     def UpdateFavoriteIcon(self):
         p = QPixmap()
@@ -85,7 +87,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.Clear()
         self.show()
         QtOwner().ShowLoading()
-        self.AddHttpTask(req.GetBookInfoReq(self.bookId), self.OpenBookBack)
+        self.AddHttpTask(req.GetBookInfoReq2(self.bookId), self.OpenBookBack)
 
     def OpenBookBack(self, raw):
         QtOwner().CloseLoading()
@@ -106,9 +108,12 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             font = QFont()
             font.setPointSize(12)
             font.setBold(True)
+            self.likeLabel.setText("{}".format(info.baseInfo.likes))
+            self.viewLabel.setText("{}".format(info.baseInfo.views))
             self.title.setFont(font)
-            self.idLabel.setText(info.baseInfo.id)
-
+            self.idLabel.setText(str(info.baseInfo.id))
+            self.commentNum = info.pageInfo.commentNum
+            self.commentButton.setText("({})".format(info.pageInfo.commentNum))
             self.bookName = info.baseInfo.title
             self.description.setPlainText(info.pageInfo.des)
 
@@ -127,21 +132,21 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             # dayStr = ToolUtil.GetUpdateStr(info.pageInfo.createDate)
             # self.updateTick.setText(str(dayStr) + Str.GetStr(Str.Updated))
             if config.IsLoadingPicture:
-                self.AddDownloadTask(self.url, self.path, completeCallBack=self.UpdatePicture)
+                self.AddDownloadTask(self.url, completeCallBack=self.UpdatePicture)
             self.UpdateEpsData()
         else:
             # QtWidgets.QMessageBox.information(self, '加载失败', msg, QtWidgets.QMessageBox.Yes)
-            QtOwner().ShowError(Str.GetStr(st))
+            QtOwner().CheckShowMsg(raw)
 
         # if st == Status.UnderReviewBook:
         #     QtOwner().ShowError(Str.GetStr(st))
 
         return
 
-    def LoadingPictureComplete(self, data, status):
-        if status == Status.Ok:
-            self.userIconData = data
-            self.user_icon.SetPicture(data)
+    # def LoadingPictureComplete(self, data, status):
+    #     if status == Status.Ok:
+    #         self.userIconData = data
+    #         self.user_icon.SetPicture(data)
 
     def UpdatePicture(self, data, status):
         if status == Status.Ok:
@@ -154,9 +159,9 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             self.picture.setPixmap(newPic)
             # self.picture.setScaledContents(True)
             if Setting.CoverIsOpenWaifu.value:
-                w, h = ToolUtil.GetPictureSize(self.pictureData)
+                w, h, mat = ToolUtil.GetPictureSize(self.pictureData)
                 if max(w, h) <= Setting.CoverMaxNum.value:
-                    model = ToolUtil.GetModelByIndex(Setting.CoverLookNoise.value, Setting.CoverLookScale.value, Setting.CoverLookModel.value)
+                    model = ToolUtil.GetModelByIndex(Setting.CoverLookNoise.value, Setting.CoverLookScale.value, Setting.CoverLookModel.value, mat)
                     self.AddConvertTask(self.path, self.pictureData, model, self.Waifu2xPictureBack)
         else:
             self.picture.setText(Str.GetStr(Str.LoadingFail))
@@ -227,9 +232,9 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             QtOwner().ShowError(Str.GetStr(Str.NotLogin))
             return
         if self.isFavorite:
-            self.AddHttpTask(req.DelFavoritesReq(self.bookId), self.DelFavoriteBack)
+            self.AddHttpTask(req.DelFavoritesReq2(self.bookId), self.DelFavoriteBack)
         else:
-            self.AddHttpTask(req.AddFavoritesReq(self.bookId), self.AddFavoriteBack)
+            self.AddHttpTask(req.AddFavoritesReq2(self.bookId), self.AddFavoriteBack)
 
     def DelFavoriteBack(self, raw):
         if not config.LoginUserName:
@@ -239,18 +244,21 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         if st == Status.Ok:
             self.isFavorite = False
             self.UpdateFavoriteIcon()
-            QtOwner().ShowMsg(Str.GetStr(Str.DelFavoriteSuc))
+            QtOwner().CheckShowMsg(raw)
         else:
-            QtOwner().ShowError(Str.GetStr(st))
+            QtOwner().CheckShowMsg(raw)
 
     def AddFavoriteBack(self, raw):
         st = raw["st"]
         if st == Status.Ok:
             self.isFavorite = True
             self.UpdateFavoriteIcon()
-            QtOwner().ShowMsg(Str.GetStr(Str.AddFavoriteSuc))
+            QtOwner().CheckShowMsg(raw)
         else:
-            QtOwner().ShowError(Str.GetStr(st))
+            QtOwner().CheckShowMsg(raw)
+
+    def OpenComment(self):
+        QtOwner().OpenComment(self.bookId, self.commentNum)
 
     def OpenReadImg(self, modelIndex):
         index = modelIndex.row()

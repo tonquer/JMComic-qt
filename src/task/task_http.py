@@ -35,11 +35,11 @@ class TaskHttp(TaskBase):
             if info.cleanFlag:
                 taskIds = self.flagToIds.get(info.cleanFlag, set())
                 taskIds.discard(info.taskId)
-
-            if info.backParam is None:
-                info.callBack(data)
-            else:
-                info.callBack(data, info.backParam)
+            if info.callBack:
+                if info.backParam is None:
+                    info.callBack(data)
+                else:
+                    info.callBack(data, info.backParam)
             del info.callBack
             del self.tasks[taskId]
         except Exception as es:

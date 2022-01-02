@@ -22,8 +22,12 @@ class GifLabel(QLabel):
     #     self.setPixmap(pixmap)
     #     return
 
-    def Init(self, data):
-        self.resize(124, 124)
+    def Show(self):
+        self.move(self.parent().width()//2-self.width()//2, self.parent().height()//2-self.height()//2)
+        return self.show()
+
+    def Init(self, data, size=124):
+        self.resize(size, size)
         self.byteArray = QByteArray(data)
         self.bBuffer = QBuffer(self.byteArray)
 

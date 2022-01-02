@@ -61,7 +61,7 @@ class FavoriteView(QtWidgets.QWidget, Ui_Favorite, QtTaskBase):
 
     def DelCallBack(self, bookId):
         QtOwner().ShowLoading()
-        self.AddHttpTask(req.DelFavoritesReq(bookId), self.DelAndFavoritesBack, bookId)
+        self.AddHttpTask(req.DelFavoritesReq2(bookId), self.DelAndFavoritesBack, bookId)
         pass
 
     def DelAndFavoritesBack(self, raw, bookId):
@@ -88,20 +88,22 @@ class FavoriteView(QtWidgets.QWidget, Ui_Favorite, QtTaskBase):
     def RefreshData(self):
         QtOwner().ShowLoading()
         sort = self.sortList[self.sortCombox.currentIndex()]
-        self.AddHttpTask(req.GetFavoritesReq(self.bookList.page, sort), self.SearchBack, self.bookList.page)
+        self.AddHttpTask(req.GetFavoritesReq2(self.bookList.page, sort), self.SearchBack, self.bookList.page)
 
     def SearchBack(self, raw, page):
         QtOwner().CloseLoading()
         try:
             st = raw["st"]
             if st == Status.Ok:
-                curNum = raw["curNum"]
-                maxNum = raw["maxNum"]
+                total = raw["total"]
+                count = raw["count"]
                 bookList = raw["bookList"]
                 self.bookList.UpdateState()
-                # self.bookList.UpdatePage(page, pages)
-                # self.spinBox.setMaximum(pages)
-                self.nums.setText(Str.GetStr(Str.FavoriteNum) + ":{}/{}".format(curNum, maxNum))
+                if page == 1:
+                    maxPage = (count - 1) // max(1, total) + 1
+                    self.bookList.UpdatePage(page, maxPage)
+                    self.spinBox.setMaximum(maxPage)
+                self.nums.setText(Str.GetStr(Str.FavoriteNum) + ":{}/{}".format(page, self.bookList.pages))
                 for book in bookList:
                     self.bookList.AddBookItemByBook(book)
             else:

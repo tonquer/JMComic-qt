@@ -1,3 +1,4 @@
+import os
 from functools import partial
 
 from PySide6 import QtWidgets
@@ -130,6 +131,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         return self.frame.qtTool
 
     def Close(self):
+        QtOwner().SetSubTitle("")
         self.ReturnPage()
         self.frame.scrollArea.ClearPixItem()
         self.Clear()
@@ -150,6 +152,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         self.frame.oldValue = 0
         self.pictureData.clear()
         self.ClearTask()
+        self.ClearDownload()
         self.ClearQImageTask()
 
     def OpenPage(self, bookId, index, name, pageIndex=-1):
@@ -177,7 +180,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         QtOwner().ShowLoading()
 
         # 开始加载
-        self.AddDownload(0)
+        self.InitDownload()
 
         if config.IsTips:
             config.IsTips = 0
@@ -193,6 +196,9 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         newDict = {}
         needUp = False
         removeTaskIds = []
+
+        if not self.maxPic:
+            return
 
         preLoadList = list(range(self.curIndex, self.curIndex + config.PreLoading))
 
@@ -289,9 +295,11 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
             self.AddDownload(index)
         else:
             bookInfo = BookMgr().GetBook(self.bookId)
+            if not bookInfo:
+                return
             epsInfo = bookInfo.pageInfo.epsInfo.get(self.epsId)
             pitureName = epsInfo.pictureName.get(index)
-            data = ToolUtil.SegmentationPicture(data, epsInfo.aid, epsInfo.minAid, pitureName)
+            data = ToolUtil.SegmentationPicture(data, epsInfo.epsId, epsInfo.scrambleId, pitureName)
 
             p.SetData(data, self.category)
             self.AddQImageTask(data, self.ConvertQImageBack, index)
@@ -461,16 +469,17 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
             self.qtTool.SetData(waifuState=info.waifuState)
             self.frame.waifu2xProcess.show()
 
+    def InitDownload(self):
+        self.AddDownloadBook(self.bookId, self.epsId, 0, statusBack=self.StartLoadPicUrlBack, backParam=0)
+
     def AddDownload(self, i):
-        # path = QtOwner().downloadView.GetDonwloadFilePath(self.bookId, self.epsId, i)
-        # self.AddDownloadTask(picInfo.fileServer, picInfo.path,
-        #                      downloadCallBack=self.UpdateProcessBar,
-        #                      completeCallBack=self.CompleteDownloadPic, backParam=i,
-        #                      isSaveCache=True, filePath=path)
-        self.AddDownloadBook(self.bookId, self.epsId, i, downloadCallBack=self.UpdateProcessBar,
-                             statusBack=self.StartLoadPicUrlBack,
+        path = "{}/{}/{}.jpg".format(self.bookId, self.epsId+1, i+1)
+        cachePath = os.path.join(os.path.join(Setting.SavePath.value, config.CachePathDir), os.path.dirname(path))
+        # loadPath = QtOwner().downloadView.GetDownloadFilePath(self.bookId, self.epsId, i)
+        self.AddDownloadBook(self.bookId, self.epsId, i,
+                             downloadCallBack=self.UpdateProcessBar,
                              completeCallBack=self.CompleteDownloadPic,
-                             backParam=i, isSaveCache=True)
+                             backParam=i, cachePath=cachePath)
         if i not in self.pictureData:
             data = QtFileData()
             self.pictureData[i] = data

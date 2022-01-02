@@ -47,7 +47,7 @@ class SearchLineEdit(QLineEdit):
         self.cacheWords = []
         self.model = QStringListModel(self)
         self.listView.setModel(self.model)
-        self.textChanged.connect(self.setCompleter)
+        # self.textChanged.connect(self.setCompleter)
         self.listView.clicked.connect(self.SetText)
 
         self.isNotReload = False
@@ -74,6 +74,7 @@ class SearchLineEdit(QLineEdit):
             self.cacheWords.remove(word)
         self.cacheWords.insert(0, word)
         del self.cacheWords[200:]
+        self.model.setStringList(self.cacheWords)
 
     def SetText(self, index):
         item = self.model.itemData(index)

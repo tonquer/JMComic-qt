@@ -84,7 +84,7 @@ class Setting:
 
     # Waifu2x设置
     SelectEncodeGpu = SettingValue("Waifu2xSetting", "", True)
-    Waifu2xThread = SettingValue("Waifu2xSetting", 2, True)
+    Waifu2xCpuCore = SettingValue("Waifu2xSetting", 0, True)
 
     # 封面 Waifu2x
     CoverIsOpenWaifu = SettingValue("Waifu2xSetting", 0, False)
@@ -100,7 +100,7 @@ class Setting:
     LookScale = SettingValue("Waifu2xSetting", 2.0, False)
 
     DownloadAuto = SettingValue("Waifu2xSetting", 0, False)
-    DownloadModel = SettingValue("Waifu2xSetting", 0, False)
+    DownloadModel = SettingValue("Waifu2xSetting", 1, False)
     DownloadNoise = SettingValue("Waifu2xSetting", 3, False)
     DownloadScale = SettingValue("Waifu2xSetting", 2.0, False)
 

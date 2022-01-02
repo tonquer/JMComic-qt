@@ -17,7 +17,7 @@
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>联想词</string>
+      <string>搜索记录</string>
      </property>
     </widget>
    </item>

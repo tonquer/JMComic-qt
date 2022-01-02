@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_comment_item.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.2.1
+## Created by: Qt User Interface Compiler version 6.2.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -135,11 +135,6 @@ class Ui_CommentItem(object):
 
         self.horizontalLayout_4.addItem(self.horizontalSpacer_3)
 
-        self.killButton = QToolButton(CommentItem)
-        self.killButton.setObjectName(u"killButton")
-
-        self.horizontalLayout_4.addWidget(self.killButton)
-
 
         self.verticalLayout_3.addLayout(self.horizontalLayout_4)
 
@@ -150,6 +145,10 @@ class Ui_CommentItem(object):
         self.commentLabel.setFont(font1)
 
         self.verticalLayout_3.addWidget(self.commentLabel)
+
+        self.verticalSpacer = QSpacerItem(20, 10, QSizePolicy.Minimum, QSizePolicy.Minimum)
+
+        self.verticalLayout_3.addItem(self.verticalSpacer)
 
         self.horizontalLayout_3 = QHBoxLayout()
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
@@ -193,7 +192,6 @@ class Ui_CommentItem(object):
 
         self.retranslateUi(CommentItem)
         self.commentButton.clicked.connect(CommentItem.OpenComment)
-        self.killButton.clicked.connect(CommentItem.KillComment)
 
         QMetaObject.connectSlotsByName(CommentItem)
     # setupUi
@@ -206,7 +204,6 @@ class Ui_CommentItem(object):
         self.nameLabel.setText(QCoreApplication.translate("CommentItem", u"TextLabel", None))
         self.levelLabel.setText(QCoreApplication.translate("CommentItem", u"LV", None))
         self.titleLabel.setText(QCoreApplication.translate("CommentItem", u"TextLabel", None))
-        self.killButton.setText(QCoreApplication.translate("CommentItem", u"\u4e3e\u62a5", None))
         self.commentLabel.setText(QCoreApplication.translate("CommentItem", u"TextLabel", None))
         self.starButton.setText(QCoreApplication.translate("CommentItem", u"...", None))
         self.commentButton.setText(QCoreApplication.translate("CommentItem", u"...", None))

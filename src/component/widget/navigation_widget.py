@@ -36,31 +36,36 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
             return
 
         loginView = LoginView(QtOwner().owner)
-        loginView.exec()
-
-        if QtOwner().user.isLogin:
-            self.LoginSucBack()
-            QtOwner().owner.LoginSucBack()
+        loginView.show()
+        loginView.closed.connect(self.LoginSucBack)
         return
 
     def LoginSucBack(self):
+        QtOwner().owner.LoginSucBack()
+        if not QtOwner().user.isLogin:
+            return
         self.pushButton.hide()
-        # self.pushButton.setText(Str.GetStr(Str.Sign))
-        self.AddHttpTask(req.GetUserInfoReq(), self.UpdateUserBack)
+        user = QtOwner().user
+        self.levelLabel.setText("LV" + str(user.level))
+        self.titleLabel.setText(str(user.title))
+        self.nameLabel.setText(str(user.name))
+        config.LoginUserName = user.name.replace("@", "")
+    #     # self.pushButton.setText(Str.GetStr(Str.Sign))
+    #     self.AddHttpTask(req.GetUserInfoReq(), self.UpdateUserBack)
 
-    def UpdateUserBack(self, raw):
-        st = raw["st"]
-        if st == Status.Ok:
-            user = raw["user"]
-            QtOwner().SetUser(raw["user"])
-            self.levelLabel.setText("LV" + str(user.level))
-            self.titleLabel.setText(str(user.title))
-            self.nameLabel.setText(str(user.name))
-            config.LoginUserName = user.name.replace("@", "")
-            if user.imgUrl and config.IsLoadingPicture:
-                self.AddDownloadTask(user.imgUrl, "", completeCallBack=self.ShowUserImg)
-        else:
-            QtOwner().ShowError(st)
+    # def UpdateUserBack(self, raw):
+    #     st = raw["st"]
+    #     if st == Status.Ok:
+    #         user = raw["user"]
+    #         QtOwner().SetUser(raw["user"])
+    #         self.levelLabel.setText("LV" + str(user.level))
+    #         self.titleLabel.setText(str(user.title))
+    #         self.nameLabel.setText(str(user.name))
+    #         config.LoginUserName = user.name.replace("@", "")
+    #         if user.imgUrl and config.IsLoadingPicture:
+    #             self.AddDownloadTask(user.imgUrl, "", completeCallBack=self.ShowUserImg)
+    #     else:
+    #         QtOwner().ShowError(st)
 
     def ShowUserImg(self, data, st):
         if st == Status.Ok:
@@ -73,20 +78,20 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
         self.picLabel.SetPicture(data)
         return
 
-    def UpdatePictureData(self, data):
-        if not data:
-            return
-        self.picLabel.setPixmap(QPixmap())
-        self.picLabel.setText(Str.GetStr(Str.HeadUpload))
-        self.AddHttpTask(req.SetAvatarInfoReq(data), self.UpdatePictureDataBack)
-        return
-
-    def UpdatePictureDataBack(self, data):
-        st = data["st"]
-        if st == Status.Ok:
-            self.AddHttpTask(req.GetUserInfoReq(), self.UpdateUserBack)
-        else:
-            QtOwner().ShowError(Str.GetStr(st))
+    # def UpdatePictureData(self, data):
+    #     if not data:
+    #         return
+    #     self.picLabel.setPixmap(QPixmap())
+    #     self.picLabel.setText(Str.GetStr(Str.HeadUpload))
+    #     self.AddHttpTask(req.SetAvatarInfoReq(data), self.UpdatePictureDataBack)
+    #     return
+    #
+    # def UpdatePictureDataBack(self, data):
+    #     st = data["st"]
+    #     if st == Status.Ok:
+    #         self.AddHttpTask(req.GetUserInfoReq(), self.UpdateUserBack)
+    #     else:
+    #         QtOwner().ShowError(Str.GetStr(st))
 
     def aniShow(self):
         """ 动画显示 """

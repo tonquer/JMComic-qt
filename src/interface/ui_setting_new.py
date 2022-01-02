@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_setting_new.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.2.1
+## Created by: Qt User Interface Compiler version 6.2.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -83,7 +83,7 @@ class Ui_SettingNew(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, -701, 661, 2360))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, -1617, 661, 2362))
         self.scrollAreaWidgetContents.setStyleSheet(u"")
         self.verticalLayout_4 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
@@ -250,6 +250,26 @@ class Ui_SettingNew(object):
 
 
         self.verticalLayout_4.addWidget(self.frame_13)
+
+        self.frame_7 = QFrame(self.scrollAreaWidgetContents)
+        self.frame_7.setObjectName(u"frame_7")
+        self.frame_7.setFrameShape(QFrame.StyledPanel)
+        self.frame_7.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_19 = QVBoxLayout(self.frame_7)
+        self.verticalLayout_19.setObjectName(u"verticalLayout_19")
+        self.label_33 = QLabel(self.frame_7)
+        self.label_33.setObjectName(u"label_33")
+        self.label_33.setFont(font1)
+
+        self.verticalLayout_19.addWidget(self.label_33)
+
+        self.titleBox_2 = QCheckBox(self.frame_7)
+        self.titleBox_2.setObjectName(u"titleBox_2")
+
+        self.verticalLayout_19.addWidget(self.titleBox_2)
+
+
+        self.verticalLayout_4.addWidget(self.frame_7)
 
         self.frame_14 = QFrame(self.scrollAreaWidgetContents)
         self.frame_14.setObjectName(u"frame_14")
@@ -455,28 +475,6 @@ class Ui_SettingNew(object):
 
         self.verticalLayout_4.addWidget(self.frame)
 
-        self.frame_6 = QFrame(self.scrollAreaWidgetContents)
-        self.frame_6.setObjectName(u"frame_6")
-        self.frame_6.setFont(font1)
-        self.frame_6.setStyleSheet(u"")
-        self.verticalLayout_9 = QVBoxLayout(self.frame_6)
-        self.verticalLayout_9.setObjectName(u"verticalLayout_9")
-        self.label_9 = QLabel(self.frame_6)
-        self.label_9.setObjectName(u"label_9")
-        self.label_9.setMaximumSize(QSize(16777215, 19))
-        self.label_9.setFont(font1)
-
-        self.verticalLayout_9.addWidget(self.label_9)
-
-        self.chatProxy = QCheckBox(self.frame_6)
-        self.chatProxy.setObjectName(u"chatProxy")
-        self.chatProxy.setChecked(False)
-
-        self.verticalLayout_9.addWidget(self.chatProxy)
-
-
-        self.verticalLayout_4.addWidget(self.frame_6)
-
         self.line_2 = QFrame(self.scrollAreaWidgetContents)
         self.line_2.setObjectName(u"line_2")
         self.line_2.setFrameShape(QFrame.HLine)
@@ -507,6 +505,28 @@ class Ui_SettingNew(object):
         self.frame_10.setStyleSheet(u"")
         self.verticalLayout_12 = QVBoxLayout(self.frame_10)
         self.verticalLayout_12.setObjectName(u"verticalLayout_12")
+        self.label_20 = QLabel(self.frame_10)
+        self.label_20.setObjectName(u"label_20")
+        self.label_20.setMaximumSize(QSize(16777215, 21))
+        self.label_20.setFont(font1)
+
+        self.verticalLayout_12.addWidget(self.label_20)
+
+        self.horizontalLayout_17 = QHBoxLayout()
+        self.horizontalLayout_17.setObjectName(u"horizontalLayout_17")
+        self.encodeSelect = WheelComboBox(self.frame_10)
+        self.encodeSelect.setObjectName(u"encodeSelect")
+        self.encodeSelect.setMinimumSize(QSize(150, 0))
+
+        self.horizontalLayout_17.addWidget(self.encodeSelect)
+
+        self.horizontalSpacer_14 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_17.addItem(self.horizontalSpacer_14)
+
+
+        self.verticalLayout_12.addLayout(self.horizontalLayout_17)
+
         self.label_11 = QLabel(self.frame_10)
         self.label_11.setObjectName(u"label_11")
         self.label_11.setMaximumSize(QSize(16777215, 21))
@@ -530,28 +550,6 @@ class Ui_SettingNew(object):
 
 
         self.verticalLayout_12.addLayout(self.horizontalLayout_16)
-
-        self.label_20 = QLabel(self.frame_10)
-        self.label_20.setObjectName(u"label_20")
-        self.label_20.setMaximumSize(QSize(16777215, 21))
-        self.label_20.setFont(font1)
-
-        self.verticalLayout_12.addWidget(self.label_20)
-
-        self.horizontalLayout_17 = QHBoxLayout()
-        self.horizontalLayout_17.setObjectName(u"horizontalLayout_17")
-        self.encodeSelect = WheelComboBox(self.frame_10)
-        self.encodeSelect.setObjectName(u"encodeSelect")
-        self.encodeSelect.setMinimumSize(QSize(150, 0))
-
-        self.horizontalLayout_17.addWidget(self.encodeSelect)
-
-        self.horizontalSpacer_14 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_17.addItem(self.horizontalSpacer_14)
-
-
-        self.verticalLayout_12.addLayout(self.horizontalLayout_17)
 
 
         self.verticalLayout_4.addWidget(self.frame_10)
@@ -1069,6 +1067,8 @@ class Ui_SettingNew(object):
         self.mainScaleButton3.setText(QCoreApplication.translate("SettingNew", u"150%", None))
         self.mainScaleButton4.setText(QCoreApplication.translate("SettingNew", u"175%", None))
         self.mainScaleButton5.setText(QCoreApplication.translate("SettingNew", u"200%", None))
+        self.label_33.setText(QCoreApplication.translate("SettingNew", u"\u6807\u9898\u680f\u8bbe\u7f6e\uff08\u9700\u91cd\u542f\uff09", None))
+        self.titleBox_2.setText(QCoreApplication.translate("SettingNew", u"\u4f7f\u7528\u9ed8\u8ba4\u6807\u9898\u680f\uff08\u5982\u679c\u6807\u9898\u680f\u51fa\u73b0\u663e\u793a\u5f02\u5e38\uff0c\u8bf7\u52fe\u9009\uff09", None))
         self.label_2.setText(QCoreApplication.translate("SettingNew", u"\u5c01\u9762\u663e\u793a\u5927\u5c0f\uff08\u9ed8\u8ba4\u4e3a100%\uff09\uff1a", None))
         self.label_29.setText(QCoreApplication.translate("SettingNew", u"\u5206\u7c7b\u5c01\u9762\u5927\u5c0f\uff1a", None))
         self.label_10.setText(QCoreApplication.translate("SettingNew", u"\u65e5\u5fd7\u7b49\u7ea7\uff1a", None))
@@ -1091,13 +1091,11 @@ class Ui_SettingNew(object):
         self.dohPictureRadio.setText(QCoreApplication.translate("SettingNew", u"\u56fe\u7247\u542f\u7528Doh\uff08\u5f00\u542f\u4f1a\u52a0\u957f\u56fe\u7247\u52a0\u8f7d\u901f\u5ea6\uff09", None))
         self.label_31.setText(QCoreApplication.translate("SettingNew", u"DoH\u5730\u5740\uff1a", None))
         self.dohButton.setText(QCoreApplication.translate("SettingNew", u"\u67e5\u770bDoH DNS\u89e3\u6790", None))
-        self.label_9.setText(QCoreApplication.translate("SettingNew", u"\u804a\u5929\u5ba4\uff1a", None))
-        self.chatProxy.setText(QCoreApplication.translate("SettingNew", u"\u542f\u7528\u4ee3\u7406", None))
         self.waifu2xLabel.setText(QCoreApplication.translate("SettingNew", u"Waifu2x\u8bbe\u7f6e", None))
-        self.label_11.setText(QCoreApplication.translate("SettingNew", u"waifu2x\u7ebf\u7a0b\u6570", None))
-        self.threadSelect.setItemText(0, QCoreApplication.translate("SettingNew", u"2", None))
-
         self.label_20.setText(QCoreApplication.translate("SettingNew", u"CPU/GPU\u9009\u62e9\uff08\u9700\u91cd\u542f\u751f\u6548\uff09", None))
+        self.label_11.setText(QCoreApplication.translate("SettingNew", u"\u4f7f\u7528CPU\u6570\u91cf\uff08CPU\u6a21\u5f0f\u751f\u6548\uff0c\u9700\u91cd\u542f\uff09", None))
+        self.threadSelect.setItemText(0, QCoreApplication.translate("SettingNew", u"Auto", None))
+
         self.label_12.setText(QCoreApplication.translate("SettingNew", u"Waifu2x\u770b\u56fe\u6a21\u5f0f", None))
         self.readCheckBox.setText(QCoreApplication.translate("SettingNew", u"\u662f\u5426\u542f\u7528", None))
         self.label_28.setText(QCoreApplication.translate("SettingNew", u"\u4e3a\u4e86\u4fdd\u8bc1\u901f\u5ea6\uff0c\u56fe\u7247\u5206\u8fa8\u7387\u5c0f\u4e8e\u7b49\u4e8e\u8be5\u503c\u65f6\u624d\u8fdb\u884c\u8f6c\u6362\uff08\u9ed8\u8ba44096P\uff09", None))

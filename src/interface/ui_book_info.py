@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_book_info.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.2.1
+## Created by: Qt User Interface Compiler version 6.2.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -21,7 +21,7 @@ from PySide6.QtWidgets import (QAbstractItemView, QApplication, QFrame, QGridLay
     QSpacerItem, QVBoxLayout, QWidget)
 
 from component.button.icon_tool_button import IconToolButton
-from component.list.base_list_widget import BaseListWidget
+from component.list.eps_list_widget import EpsListWidget
 from component.list.tag_list_widget import TagListWidget
 from component.scroll_area.smooth_scroll_area import SmoothScrollArea
 import images_rc
@@ -227,6 +227,40 @@ class Ui_BookInfo(object):
 
         self.verticalLayout_2.addLayout(self.horizontalLayout_5)
 
+        self.horizontalLayout_6 = QHBoxLayout()
+        self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
+        self.label_4 = QLabel(self.scrollAreaWidgetContents)
+        self.label_4.setObjectName(u"label_4")
+        self.label_4.setMinimumSize(QSize(40, 0))
+        self.label_4.setMaximumSize(QSize(40, 16777215))
+
+        self.horizontalLayout_6.addWidget(self.label_4)
+
+        self.likeLabel = QLabel(self.scrollAreaWidgetContents)
+        self.likeLabel.setObjectName(u"likeLabel")
+
+        self.horizontalLayout_6.addWidget(self.likeLabel)
+
+
+        self.verticalLayout_2.addLayout(self.horizontalLayout_6)
+
+        self.horizontalLayout_12 = QHBoxLayout()
+        self.horizontalLayout_12.setObjectName(u"horizontalLayout_12")
+        self.label_8 = QLabel(self.scrollAreaWidgetContents)
+        self.label_8.setObjectName(u"label_8")
+        self.label_8.setMinimumSize(QSize(0, 0))
+        self.label_8.setMaximumSize(QSize(40, 16777215))
+
+        self.horizontalLayout_12.addWidget(self.label_8)
+
+        self.viewLabel = QLabel(self.scrollAreaWidgetContents)
+        self.viewLabel.setObjectName(u"viewLabel")
+
+        self.horizontalLayout_12.addWidget(self.viewLabel)
+
+
+        self.verticalLayout_2.addLayout(self.horizontalLayout_12)
+
         self.horizontalLayout_7 = QHBoxLayout()
         self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
         self.label_5 = QLabel(self.scrollAreaWidgetContents)
@@ -288,7 +322,7 @@ class Ui_BookInfo(object):
 
         self.verticalLayout_3.addLayout(self.gridLayout_3)
 
-        self.epsListWidget = BaseListWidget(self.scrollAreaWidgetContents)
+        self.epsListWidget = EpsListWidget(self.scrollAreaWidgetContents)
         self.epsListWidget.setObjectName(u"epsListWidget")
         self.epsListWidget.setStyleSheet(u"QListWidget {background-color:transparent;}\n"
 "QListWidget::item {\n"
@@ -339,6 +373,10 @@ class Ui_BookInfo(object):
         self.idLabel.setText("")
         self.label_2.setText(QCoreApplication.translate("BookInfo", u"\u4f5c\u8005\uff1a", None))
         self.label_3.setText(QCoreApplication.translate("BookInfo", u"\u63cf\u8ff0\uff1a", None))
+        self.label_4.setText(QCoreApplication.translate("BookInfo", u"\u7231\u5fc3\u6570\uff1a", None))
+        self.likeLabel.setText("")
+        self.label_8.setText(QCoreApplication.translate("BookInfo", u"\u89c2\u770b\u6570:", None))
+        self.viewLabel.setText("")
         self.label_5.setText(QCoreApplication.translate("BookInfo", u"Tags\uff1a", None))
         self.label_7.setText(QCoreApplication.translate("BookInfo", u"\u89c2\u770b\u6570\uff1a", None))
         self.views.setText("")

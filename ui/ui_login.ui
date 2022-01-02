@@ -67,9 +67,14 @@
        <string>注册</string>
       </attribute>
      </widget>
-     <widget class="LoginProxyWidget" name="tab_3">
+     <widget class="UserManagerWidget" name="tab_3">
       <attribute name="title">
-       <string>分流</string>
+       <string>验证</string>
+      </attribute>
+     </widget>
+     <widget class="LoginProxyWidget" name="tab_4">
+      <attribute name="title">
+       <string>代理</string>
       </attribute>
      </widget>
     </widget>
@@ -95,21 +100,40 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="closeButton">
+       <property name="maximumSize">
+        <size>
+         <width>150</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>关闭</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>RegisterWidget</class>
+   <class>UserManagerWidget</class>
    <extends>QWidget</extends>
-   <header location="global">view.user.register_widget.h</header>
+   <header location="global">view.user.user_manager_widget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>LoginWidget</class>
    <extends>QWidget</extends>
    <header location="global">view.user.login_widget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>RegisterWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">view.user.register_widget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

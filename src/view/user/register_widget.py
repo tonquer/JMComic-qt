@@ -16,9 +16,9 @@ class RegisterWidget(QtWidgets.QWidget, Ui_RegisterWidget, QtTaskBase):
         Ui_RegisterWidget.__init__(self)
         QtTaskBase.__init__(self)
         self.setupUi(self)
-        reg = QRegularExpression("^[A-Z0-9a-z\\.\\_]{1,16}$")
-        validator = QRegularExpressionValidator(reg, self.userEdit)
-        self.userEdit.setValidator(validator)
+        # reg = QRegularExpression("^[A-Z0-9a-z\\.\\_]{1,16}$")
+        # validator = QRegularExpressionValidator(reg, self.userEdit)
+        # self.userEdit.setValidator(validator)
 
     def Init(self):
         return
@@ -27,45 +27,24 @@ class RegisterWidget(QtWidgets.QWidget, Ui_RegisterWidget, QtTaskBase):
         self.Register()
 
     def Register(self):
-        if not self.buttonGroup.checkedButton():
-            # QtWidgets.QMessageBox.information(self, '错误', "不能为空", QtWidgets.QMessageBox.Yes)
-            MsgLabel.ShowErrorEx(self, Str.GetStr(Str.NotSpace))
-            return
-        if len(self.passwdEdit.text()) < 8:
-            # QtWidgets.QMessageBox.information(self, '错误', "密码太短", QtWidgets.QMessageBox.Yes)
-            MsgLabel.ShowErrorEx(self, Str.GetStr(Str.PasswordShort))
-            return
-        data = {
-            "email": self.userEdit.text(),
-            "password": self.passwdEdit.text(),
-            "name": self.nameEdit.text(),
-            "birthday": self.birthdayEdit.text().replace("/", "-"),
-            "gender": self.buttonGroup.checkedButton().objectName().replace("gender_", ""),  # m, f, bot
-            "answer1": self.answer1Edit.text(),
-            "answer2": self.answer2Edit.text(),
-            "answer3": self.answer3Edit.text(),
-            "question1": self.question1Edit.text(),
-            "question2": self.question2Edit.text(),
-            "question3": self.question3Edit.text()
-        }
-        for v in data.values():
+        email = self.userEdit.text()
+        userName = self.nameEdit.text()
+        passwd = self.passwd.text()
+        sex = self.buttonGroup.checkedButton().objectName().replace("gender_", "")
+        for v in [email, userName, passwd]:
             if not v:
-                # QtWidgets.QMessageBox.information(self, '错误', "不能为空", QtWidgets.QMessageBox.Yes)
                 QtOwner().ShowError(Str.GetStr(Str.NotSpace))
                 return
 
         QtOwner().ShowLoading()
-        self.AddHttpTask(req.RegisterReq(data), self.RegisterBack)
+        self.AddHttpTask(req.RegisterReq(userName, email, passwd, passwd, sex), self.RegisterBack)
         return
 
     def RegisterBack(self, raw):
         QtOwner().CloseLoading()
         st = raw["st"]
+        msg = raw["msg"]
         if st == Status.Ok:
-            # self.close()
-            # QtWidgets.QMessageBox.information(self, '注册成功', "注册成功", QtWidgets.QMessageBox.Yes)
-            QtOwner().ShowMsg(Str.GetStr(Str.RegisterSuc))
+            QtOwner().ShowError(msg if msg else Str.GetStr(Str.RegisterSuc))
         else:
-            msg = raw["data"]
-            # QtWidgets.QMessageBox.information(self, '注册失败', msg, QtWidgets.QMessageBox.Yes)
-            QtOwner().ShowError(Str.GetStr(st) + "\n" + msg)
+            QtOwner().ShowError(msg if msg else Str.GetStr(st))

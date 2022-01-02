@@ -59,6 +59,10 @@ class Task(object):
         self.cacheAndLoadPath = cacheAndLoadPath
         self.loadPath = loadPath
 
+    @property
+    def bakParam(self):
+        return self.backParam
+
     def GetText(self):
         if not self.res:
             return ""
@@ -231,15 +235,14 @@ class Server(Singleton):
 
     def _Download(self, task):
         try:
-            if not isinstance(task.req, req.SpeedTestReq):
-                for cachePath in [task.cacheAndLoadPath+".jpg", task.loadPath]:
-                    if cachePath and task.backParam:
-                        data = ToolUtil.LoadCachePicture(cachePath)
-                        if data:
-                            TaskBase.taskObj.downloadBack.emit(task.backParam, len(data), data)
-                            TaskBase.taskObj.downloadBack.emit(task.backParam, 0, b"")
-                            Log.Info("request cache -> backId:{}, {}".format(task.backParam, task.req))
-                            return
+            for cachePath in [task.req.loadPath, task.req.cachePath]:
+                if cachePath and task.bakParam:
+                    data = ToolUtil.LoadCachePicture(cachePath)
+                    if data:
+                        TaskBase.taskObj.downloadBack.emit(task.bakParam, len(data), data)
+                        TaskBase.taskObj.downloadBack.emit(task.bakParam, 0, b"")
+                        Log.Info("request cache -> backId:{}, {}".format(task.bakParam, task.req))
+                        return
             request = task.req
             if request.params == None:
                 request.params = {}

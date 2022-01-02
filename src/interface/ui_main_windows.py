@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_main_windows.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.2.1
+## Created by: Qt User Interface Compiler version 6.2.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -22,26 +22,19 @@ from PySide6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QPushButton,
 from component.widget.animation_stack_widget import AnimationStackWidget
 from component.widget.navigation_widget import NavigationWidget
 from component.widget.title_bar_widget import TitleBarWidget
-from view.category.category_view import CategoryView
-from view.category.rank_view import RankView
-from view.chat.chat_view import ChatView
+from view.comment.all_comment_view import AllCommentView
 from view.comment.comment_view import CommentView
-from view.comment.game_comment_view import GameCommentView
-from view.comment.my_comment_view import MyCommentView
 from view.comment.sub_comment_view import SubCommentView
 from view.download.download_view import DownloadView
-from view.game.game_view import GameView
 from view.help.help_view import HelpView
 from view.index.index_view import IndexView
 from view.info.book_eps_view import BookEpsView
 from view.info.book_info_view import BookInfoView
-from view.info.game_info_view import GameInfoView
 from view.read.read_view import ReadView
 from view.search.search_view import SearchView
 from view.setting.setting_view import SettingView
 from view.tool.waifu2x_tool_view import Waifu2xToolView
 from view.user.favorite_view import FavoriteView
-from view.user.history_view import HistoryView
 
 class Ui_MainWindows(object):
     def setupUi(self, MainWindows):
@@ -106,57 +99,36 @@ class Ui_MainWindows(object):
         self.helpView = HelpView()
         self.helpView.setObjectName(u"helpView")
         self.subStackWidget.addWidget(self.helpView)
-        self.myCommentView = MyCommentView()
-        self.myCommentView.setObjectName(u"myCommentView")
-        self.subStackWidget.addWidget(self.myCommentView)
         self.settingView = SettingView()
         self.settingView.setObjectName(u"settingView")
         self.subStackWidget.addWidget(self.settingView)
         self.downloadView = DownloadView()
         self.downloadView.setObjectName(u"downloadView")
         self.subStackWidget.addWidget(self.downloadView)
-        self.categoryView = CategoryView()
-        self.categoryView.setObjectName(u"categoryView")
-        self.subStackWidget.addWidget(self.categoryView)
         self.searchView = SearchView()
         self.searchView.setObjectName(u"searchView")
         self.subStackWidget.addWidget(self.searchView)
-        self.rankView = RankView()
-        self.rankView.setObjectName(u"rankView")
-        self.subStackWidget.addWidget(self.rankView)
         self.commentView = CommentView()
         self.commentView.setObjectName(u"commentView")
         self.subStackWidget.addWidget(self.commentView)
         self.subCommentView = SubCommentView()
         self.subCommentView.setObjectName(u"subCommentView")
         self.subStackWidget.addWidget(self.subCommentView)
-        self.chatView = ChatView()
-        self.chatView.setObjectName(u"chatView")
-        self.subStackWidget.addWidget(self.chatView)
         self.favorityView = FavoriteView()
         self.favorityView.setObjectName(u"favorityView")
         self.subStackWidget.addWidget(self.favorityView)
-        self.historyView = HistoryView()
-        self.historyView.setObjectName(u"historyView")
-        self.subStackWidget.addWidget(self.historyView)
         self.bookInfoView = BookInfoView()
         self.bookInfoView.setObjectName(u"bookInfoView")
         self.subStackWidget.addWidget(self.bookInfoView)
-        self.gameCommentView = GameCommentView()
-        self.gameCommentView.setObjectName(u"gameCommentView")
-        self.subStackWidget.addWidget(self.gameCommentView)
-        self.gameInfoView = GameInfoView()
-        self.gameInfoView.setObjectName(u"gameInfoView")
-        self.subStackWidget.addWidget(self.gameInfoView)
-        self.gameView = GameView()
-        self.gameView.setObjectName(u"gameView")
-        self.subStackWidget.addWidget(self.gameView)
         self.waifu2xToolView = Waifu2xToolView()
         self.waifu2xToolView.setObjectName(u"waifu2xToolView")
         self.subStackWidget.addWidget(self.waifu2xToolView)
         self.bookEpsView = BookEpsView()
         self.bookEpsView.setObjectName(u"bookEpsView")
         self.subStackWidget.addWidget(self.bookEpsView)
+        self.allCommentView = AllCommentView()
+        self.allCommentView.setObjectName(u"allCommentView")
+        self.subStackWidget.addWidget(self.allCommentView)
 
         self.verticalLayout_2.addWidget(self.subStackWidget)
 

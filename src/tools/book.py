@@ -4,6 +4,35 @@ from server.server import Server
 from config import config
 from tools.singleton import Singleton
 
+
+# 分类
+class Category(object):
+    def __init__(self):
+        self.id = ""
+        self.name = ""
+        self.slug = ""
+        self.type = ""
+        self.total = 0
+
+
+# 评论
+class CommentInfo(object):
+    def __init__(self):
+        self.id = ""
+        self.uid = ""
+        self.name = ""
+        self.level = ""
+        self.title = ""
+        self.date = ""
+        self.content = ""
+        self.headUrl = ""
+        self.like = 0
+        self.linkBookId = ""   # 链接
+        self.linkBookName = ""   # 链接
+
+        self.subComments = []   # 子评论
+
+
 # 一章节
 class BookEps(object):
     def __init__(self):
@@ -11,17 +40,27 @@ class BookEps(object):
         self.title = ""    # 章节名
         self.epsName = ""    # 章节名
         self.epsUrl = ""   # 链接
+        self.epsId = ""
         self.time = ""
 
         # self.pages = 0         # 总页数
         self.pictureUrl = {}     # 图片
         self.pictureName = {}     # 图片
-        self.aid = ""
-        self.minAid = ""
+        self.aid = 0
+        self.scrambleId = 0
 
     @property
     def pages(self):
         return len(self.pictureUrl)
+
+    def Copy(self, o):
+        assert isinstance(o, BookEps)
+        self.index = o.index
+        self.epsName = o.epsName
+        self.epsId = o.epsId
+        self.pictureUrl.update(o.pictureUrl)
+        self.pictureName.update(o.pictureName)
+        self.aid = o.aid
 
 
 class BookBaseInfo(object):
@@ -30,6 +69,8 @@ class BookBaseInfo(object):
         self.title = ""
         self.bookUrl = ""
         self.author = ""
+        self.likes = ""
+        self.views = ""
         self.authorList = []
         self.tagList = []
         self.updateDate = ""
@@ -39,6 +80,10 @@ class BookBaseInfo(object):
     @property
     def id(self):
         return self.bookId
+
+    @id.setter
+    def id(self, value):
+        self.bookId = value
 
     def Copy(self, o):
         self.bookId = o.bookId
@@ -57,6 +102,7 @@ class BookPageInfo(object):
         self.createDate = ""       # 上传日期
         self.pages = 0        # 分页
         self.des = ""         # 描述
+        self.commentNum = 0   #
         self.epsInfo = {}     # 章节信息
 
     def Copy(self, o):
@@ -116,3 +162,24 @@ class BookMgr(Singleton):
         epsInfo.pictureUrl.update(pictureUrl)
         epsInfo.pictureName.update(pictureName)
         return
+
+    def UpdateBookEps(self, bookId, newEps):
+        book = self.GetBook(bookId)
+        assert isinstance(book, BookInfo)
+        if not book:
+            return
+        epsInfo = book.pageInfo.epsInfo.get(newEps.index)
+        if epsInfo:
+            epsInfo.Copy(newEps)
+            return
+        book.pageInfo.epsInfo[newEps.index] = newEps
+
+    def UpdateBookEpsScrambleId(self, bookId, epsIndex, scrambleId):
+        book = self.GetBook(bookId)
+        assert isinstance(book, BookInfo)
+        if not book:
+            return
+        epsInfo = book.pageInfo.epsInfo.get(epsIndex)
+        if not epsInfo:
+            return
+        epsInfo.scrambleId = scrambleId

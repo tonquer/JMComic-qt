@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_main.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.2.1
+## Created by: Qt User Interface Compiler version 6.2.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -21,6 +21,10 @@ from PySide6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QMainWindow,
 
 from component.widget.animation_stack_widget import AnimationStackWidget
 from component.widget.navigation_widget import NavigationWidget
+from view.comment.all_comment_view import AllCommentView
+from view.comment.comment_view import CommentView
+from view.comment.sub_comment_view import SubCommentView
+from view.download.download_view import DownloadView
 from view.help.help_view import HelpView
 from view.index.index_view import IndexView
 from view.info.book_eps_view import BookEpsView
@@ -106,6 +110,18 @@ class Ui_Main(object):
         self.bookEpsView = BookEpsView()
         self.bookEpsView.setObjectName(u"bookEpsView")
         self.subStackWidget.addWidget(self.bookEpsView)
+        self.commentView = CommentView()
+        self.commentView.setObjectName(u"commentView")
+        self.subStackWidget.addWidget(self.commentView)
+        self.subCommentView = SubCommentView()
+        self.subCommentView.setObjectName(u"subCommentView")
+        self.subStackWidget.addWidget(self.subCommentView)
+        self.downloadView = DownloadView()
+        self.downloadView.setObjectName(u"downloadView")
+        self.subStackWidget.addWidget(self.downloadView)
+        self.allCommentView = AllCommentView()
+        self.allCommentView.setObjectName(u"allCommentView")
+        self.subStackWidget.addWidget(self.allCommentView)
 
         self.verticalLayout.addWidget(self.subStackWidget)
 

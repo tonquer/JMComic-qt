@@ -38,6 +38,7 @@ class HelpView(QWidget, Ui_Help, QtTaskBase):
 
     def retranslateUi(self, Help):
         Ui_Help.retranslateUi(self, Help)
+        self.timeLabel.setText(config.VersionTime)
         self.version.setText(config.RealVersion)
         self.waifu2x.setText(config.Waifu2xVersion)
 

@@ -4,6 +4,7 @@ from PySide6.QtCore import QFile
 
 from component.label.msg_label import MsgLabel
 from tools.singleton import Singleton
+from tools.str import Str
 
 
 class QtOwner(Singleton):
@@ -20,6 +21,19 @@ class QtOwner(Singleton):
 
     def SetUser(self, user):
         self.user = user
+
+    def CheckShowMsg(self, raw):
+        msg = raw.get("st")
+        errorMsg = raw.get("errorMsg")
+        if errorMsg:
+            return self.ShowError(errorMsg)
+        message = raw.get("message")
+        if message:
+            return self.ShowMsg(message)
+        elif isinstance(msg, int):
+            return self.ShowError(Str.GetStr(msg))
+        else:
+            return self.ShowError(msg)
 
     def ShowError(self, msg):
         return MsgLabel.ShowErrorEx(self.owner, msg)
@@ -38,7 +52,7 @@ class QtOwner(Singleton):
         return self.owner.msgLabel.ShowError(msg)
 
     def ShowLoading(self):
-        self.owner.loadingDialog.show()
+        self.owner.loadingDialog.Show()
         return
 
     def CloseLoading(self):
@@ -91,6 +105,9 @@ class QtOwner(Singleton):
     def searchView(self):
         return self.owner.searchView
 
+    def SetSubTitle(self, text):
+        return self.owner.setSubTitle(text)
+
     def GetFileData(self, fileName):
         f = QFile(fileName)
         f.open(QFile.ReadOnly)
@@ -98,8 +115,8 @@ class QtOwner(Singleton):
         f.close()
         return bytes(data)
 
-    def OpenComment(self, bookId):
-        arg = {"bookId": bookId}
+    def OpenComment(self, bookId, commentNum):
+        arg = {"bookId": bookId, "commentNum": commentNum}
         self.owner.SwitchWidget(self.owner.commentView, **arg)
 
     def OpenGameComment(self, commentId):
@@ -114,14 +131,16 @@ class QtOwner(Singleton):
         arg = {"refresh": True}
         self.owner.SwitchWidget(self.owner.indexView, **arg)
 
-    def OpenSubComment(self, commentId, widget):
+    def OpenSubComment(self, commentId, widget, commentList):
         # self.owner.subCommentView.SetOpenEvent(commentId, widget)
-        arg = {"bookId": commentId}
+        arg = {"bookId": commentId, "commentList": commentList}
         self.owner.subCommentView.SetWidget(widget)
         self.owner.SwitchWidget(self.owner.subCommentView, **arg)
 
     def OpenSearch(self, text):
         arg = {"text": text}
+        if text.isdigit() and len(text) == 6:
+            return self.OpenBookInfo(int(text))
         self.owner.SwitchWidget(self.owner.searchView, **arg)
 
     def OpenSearchByText(self, text):

@@ -1,5 +1,6 @@
 from PySide6 import QtWidgets, QtCore
 from PySide6.QtCore import QTimer
+from PySide6.QtGui import Qt
 from PySide6.QtWidgets import QGridLayout
 
 from component.label.gif_group_label import GifGroupLabel
@@ -14,6 +15,7 @@ class LoadingDialog(QtWidgets.QDialog):
         self.setWindowFlag(QtCore.Qt.Dialog)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         self.setWindowModality(QtCore.Qt.ApplicationModal)
+        self.setAttribute(Qt.WA_QuitOnClose, False)
         self.label = GifGroupLabel(self)
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.gridLayout.addWidget(self.label, 0, 0, 1, 1)

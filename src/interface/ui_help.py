@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_help.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.2.1
+## Created by: Qt User Interface Compiler version 6.2.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -94,11 +94,11 @@ class Ui_Help(object):
 
         self.gridLayout.addWidget(self.label_6, 2, 0, 1, 1)
 
-        self.label_10 = QLabel(self.widget_2)
-        self.label_10.setObjectName(u"label_10")
-        self.label_10.setFont(font)
+        self.timeLabel = QLabel(self.widget_2)
+        self.timeLabel.setObjectName(u"timeLabel")
+        self.timeLabel.setFont(font)
 
-        self.gridLayout.addWidget(self.label_10, 1, 1, 1, 1)
+        self.gridLayout.addWidget(self.timeLabel, 1, 1, 1, 1)
 
         self.label_4 = QLabel(self.widget_2)
         self.label_4.setObjectName(u"label_4")
@@ -172,7 +172,7 @@ class Ui_Help(object):
         self.pushButton.setText(QCoreApplication.translate("Help", u"Github Issue", None))
         self.logButton.setText(QCoreApplication.translate("Help", u"\u6253\u5f00\u65e5\u5fd7\u76ee\u5f55", None))
         self.label_6.setText(QCoreApplication.translate("Help", u"waifu2x\u7248\u672c:", None))
-        self.label_10.setText(QCoreApplication.translate("Help", u"2021-11-27", None))
+        self.timeLabel.setText(QCoreApplication.translate("Help", u"2021-11-27", None))
         self.label_4.setText(QCoreApplication.translate("Help", u"\u7248\u672c\u53f7:", None))
         self.verCheck.setText(QCoreApplication.translate("Help", u"\u68c0\u6d4b\u66f4\u65b0", None))
         self.version.setText(QCoreApplication.translate("Help", u"v1.2.8", None))

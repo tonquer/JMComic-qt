@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_index.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.2.1
+## Created by: Qt User Interface Compiler version 6.2.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -15,8 +15,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QHBoxLayout, QListWidgetItem, QSizePolicy,
-    QSpacerItem, QToolButton, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QListWidgetItem, QSizePolicy, QTabWidget,
+    QVBoxLayout, QWidget)
 
 from component.list.comic_list_widget import ComicListWidget
 
@@ -28,24 +28,20 @@ class Ui_Index(object):
         self.verticalLayout_2 = QVBoxLayout(Index)
         self.verticalLayout_2.setSpacing(0)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.horizontalLayout = QHBoxLayout()
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.toolButton = QToolButton(Index)
-        self.toolButton.setObjectName(u"toolButton")
+        self.tabWidget = QTabWidget(Index)
+        self.tabWidget.setObjectName(u"tabWidget")
+        self.tab = QWidget()
+        self.tab.setObjectName(u"tab")
+        self.verticalLayout = QVBoxLayout(self.tab)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.newListWidget = ComicListWidget(self.tab)
+        self.newListWidget.setObjectName(u"newListWidget")
 
-        self.horizontalLayout.addWidget(self.toolButton)
+        self.verticalLayout.addWidget(self.newListWidget)
 
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.tabWidget.addTab(self.tab, "")
 
-        self.horizontalLayout.addItem(self.horizontalSpacer)
-
-
-        self.verticalLayout_2.addLayout(self.horizontalLayout)
-
-        self.bookList = ComicListWidget(Index)
-        self.bookList.setObjectName(u"bookList")
-
-        self.verticalLayout_2.addWidget(self.bookList)
+        self.verticalLayout_2.addWidget(self.tabWidget)
 
 
         self.retranslateUi(Index)
@@ -55,9 +51,6 @@ class Ui_Index(object):
 
     def retranslateUi(self, Index):
         Index.setWindowTitle(QCoreApplication.translate("Index", u"\u9996\u9875", None))
-        self.toolButton.setText(QCoreApplication.translate("Index", u"\u5237\u65b0(F5)", None))
-#if QT_CONFIG(shortcut)
-        self.toolButton.setShortcut(QCoreApplication.translate("Index", u"F5", None))
-#endif // QT_CONFIG(shortcut)
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("Index", u"\u6700\u65b0\u4e0a\u4f20", None))
     # retranslateUi
 

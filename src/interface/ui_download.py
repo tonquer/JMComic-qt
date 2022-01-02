@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_download.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.2.1
+## Created by: Qt User Interface Compiler version 6.2.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -107,11 +107,11 @@ class Ui_Download(object):
 
     def retranslateUi(self, Download):
         Download.setWindowTitle(QCoreApplication.translate("Download", u"\u4e0b\u8f7d", None))
-        self.pushButton.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u5f00\u59cb", None))
-        self.pushButton_3.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u6682\u505c", None))
-        self.pushButton_2.setText(QCoreApplication.translate("Download", u"\u5f00\u59cb\u8f6c\u6362", None))
-        self.pushButton_4.setText(QCoreApplication.translate("Download", u"\u6682\u505c\u8f6c\u6362", None))
-        self.radioButton.setText(QCoreApplication.translate("Download", u"\u4e0b\u8f7d\u5b8c\u81ea\u52a8\u8f6c\u6362", None))
+        self.pushButton.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u5f00\u59cb\u4e0b\u8f7d", None))
+        self.pushButton_3.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u6682\u505c\u4e0b\u8f7d", None))
+        self.pushButton_2.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u5f00\u59cb\u8f6c\u6362", None))
+        self.pushButton_4.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u6682\u505c\u8f6c\u6362", None))
+        self.radioButton.setText(QCoreApplication.translate("Download", u"\u4e0b\u8f7d\u81ea\u52a8\u8fdb\u884cWaifu2x\u8f6c\u6362", None))
         ___qtablewidgetitem = self.tableWidget.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("Download", u"id", None));
         ___qtablewidgetitem1 = self.tableWidget.horizontalHeaderItem(1)

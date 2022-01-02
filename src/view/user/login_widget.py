@@ -33,12 +33,14 @@ class LoginWidget(QtWidgets.QWidget, Ui_LoginWidget, QtTaskBase):
 
     def Login(self):
         QtOwner().ShowLoading()
-        self.AddHttpTask(req.LoginPreReq(), self.LoginPreBack)
-
-    def LoginPreBack(self, raw):
         userId = self.userEdit_2.text()
         passwd = self.passwdEdit_2.text()
-        self.AddHttpTask(req.LoginReq(userId, passwd), self.LoginBack)
+        self.AddHttpTask(req.LoginReq2(userId, passwd), self.LoginBack)
+
+    # def LoginPreBack(self, raw):
+    #     userId = self.userEdit_2.text()
+    #     passwd = self.passwdEdit_2.text()
+    #     self.AddHttpTask(req.LoginReq(userId, passwd), self.LoginBack)
 
         # self.close()
         # self.owner().show()
@@ -46,17 +48,12 @@ class LoginWidget(QtWidgets.QWidget, Ui_LoginWidget, QtTaskBase):
     def LoginBack(self, raw):
         QtOwner().CloseLoading()
         st = raw["st"]
-        msg = raw.get("msg")
         if st == Status.Ok:
+            user = raw.get("user")
             Setting.UserId.SetValue(self.userEdit_2.text())
             Setting.Password.SetValue(base64.b64encode(self.passwdEdit_2.text().encode("utf-8")))
+            QtOwner().SetUser(user)
             QtOwner().SetLogin()
             self.parent().parent().parent().parent().close()
-            if msg:
-                QtOwner().ShowMsg(msg)
-        else:
-            if msg:
-                QtOwner().ShowError(msg)
-            else:
-                QtOwner().ShowError(Str.GetStr(Str.LoginFail) + ", " + Str.GetStr(st))
+        QtOwner().CheckShowMsg( raw)
 

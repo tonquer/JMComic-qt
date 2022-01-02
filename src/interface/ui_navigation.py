@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_navigation.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.2.1
+## Created by: Qt User Interface Compiler version 6.2.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -27,7 +27,7 @@ class Ui_Navigation(object):
     def setupUi(self, Navigation):
         if not Navigation.objectName():
             Navigation.setObjectName(u"Navigation")
-        Navigation.resize(248, 473)
+        Navigation.resize(290, 578)
         Navigation.setStyleSheet(u"")
         self.verticalLayout_2 = QVBoxLayout(Navigation)
         self.verticalLayout_2.setSpacing(6)
@@ -95,7 +95,7 @@ class Ui_Navigation(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, -76, 211, 218))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, -131, 253, 378))
         self.verticalLayout_3 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_3.setSpacing(6)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
@@ -171,12 +171,61 @@ class Ui_Navigation(object):
 
         self.verticalLayout_3.addWidget(self.searchButton)
 
+        self.commentButton = QToolButton(self.scrollAreaWidgetContents)
+        self.buttonGroup.addButton(self.commentButton)
+        self.commentButton.setObjectName(u"commentButton")
+        sizePolicy1.setHeightForWidth(self.commentButton.sizePolicy().hasHeightForWidth())
+        self.commentButton.setSizePolicy(sizePolicy1)
+        self.commentButton.setMinimumSize(QSize(150, 40))
+        self.commentButton.setFocusPolicy(Qt.NoFocus)
+        self.commentButton.setIcon(icon)
+        self.commentButton.setIconSize(QSize(32, 32))
+        self.commentButton.setCheckable(True)
+        self.commentButton.setPopupMode(QToolButton.DelayedPopup)
+        self.commentButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.commentButton.setArrowType(Qt.NoArrow)
+
+        self.verticalLayout_3.addWidget(self.commentButton)
+
         self.line_2 = QFrame(self.scrollAreaWidgetContents)
         self.line_2.setObjectName(u"line_2")
         self.line_2.setFrameShape(QFrame.HLine)
         self.line_2.setFrameShadow(QFrame.Sunken)
 
         self.verticalLayout_3.addWidget(self.line_2)
+
+        self.label_3 = QLabel(self.scrollAreaWidgetContents)
+        self.label_3.setObjectName(u"label_3")
+
+        self.verticalLayout_3.addWidget(self.label_3)
+
+        self.downloadButton = QToolButton(self.scrollAreaWidgetContents)
+        self.buttonGroup.addButton(self.downloadButton)
+        self.downloadButton.setObjectName(u"downloadButton")
+        sizePolicy1.setHeightForWidth(self.downloadButton.sizePolicy().hasHeightForWidth())
+        self.downloadButton.setSizePolicy(sizePolicy1)
+        self.downloadButton.setMinimumSize(QSize(150, 40))
+        self.downloadButton.setFocusPolicy(Qt.NoFocus)
+        self.downloadButton.setIcon(icon)
+        self.downloadButton.setIconSize(QSize(32, 32))
+        self.downloadButton.setCheckable(True)
+        self.downloadButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+
+        self.verticalLayout_3.addWidget(self.downloadButton)
+
+        self.waifu2xButton = QToolButton(self.scrollAreaWidgetContents)
+        self.buttonGroup.addButton(self.waifu2xButton)
+        self.waifu2xButton.setObjectName(u"waifu2xButton")
+        sizePolicy1.setHeightForWidth(self.waifu2xButton.sizePolicy().hasHeightForWidth())
+        self.waifu2xButton.setSizePolicy(sizePolicy1)
+        self.waifu2xButton.setMinimumSize(QSize(150, 40))
+        self.waifu2xButton.setFocusPolicy(Qt.NoFocus)
+        self.waifu2xButton.setIcon(icon)
+        self.waifu2xButton.setIconSize(QSize(32, 32))
+        self.waifu2xButton.setCheckable(True)
+        self.waifu2xButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+
+        self.verticalLayout_3.addWidget(self.waifu2xButton)
 
         self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
@@ -245,6 +294,10 @@ class Ui_Navigation(object):
         self.label_2.setText(QCoreApplication.translate("Navigation", u"\u5bfc\u822a", None))
         self.indexButton.setText(QCoreApplication.translate("Navigation", u"\u9996\u9875", None))
         self.searchButton.setText(QCoreApplication.translate("Navigation", u"\u641c\u7d22", None))
+        self.commentButton.setText(QCoreApplication.translate("Navigation", u"\u8bc4\u8bba", None))
+        self.label_3.setText(QCoreApplication.translate("Navigation", u"\u5176\u4ed6", None))
+        self.downloadButton.setText(QCoreApplication.translate("Navigation", u"\u4e0b\u8f7d", None))
+        self.waifu2xButton.setText(QCoreApplication.translate("Navigation", u"Waifu2x", None))
         self.helpButton.setText(QCoreApplication.translate("Navigation", u"\u5e2e\u52a9", None))
         self.settingButton.setText(QCoreApplication.translate("Navigation", u"\u8bbe\u7f6e", None))
     # retranslateUi

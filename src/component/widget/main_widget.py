@@ -1,6 +1,7 @@
 import os
 import sys
 
+from PySide6.QtCore import Qt
 
 from tools.log import Log
 
@@ -18,7 +19,23 @@ Main = None
 #                 FrameLessWidget.__init__(self)
 #                 Ui_MainWindows.__init__(self)
 #                 self.setupUi(self)
+#                 self.totalStackWidget.setAttribute(Qt.WA_TranslucentBackground)
+#                 self.widget.setAttribute(Qt.WA_TranslucentBackground)
+#
+#             def showFullScreen(self):
+#                 self.widget.setVisible(False)
+#                 return FrameLessWidget.showFullScreen(self)
+#
+#             def showNormal(self):
+#                 self.widget.setVisible(True)
+#                 return FrameLessWidget.showNormal(self)
+#
+#             def setSubTitle(self, text):
+#                 self.widget.subTitle.setText(text)
+#                 return
+#
 #         Main = MainWidget
+#         MainType = 2
 #     except Exception as es:
 #         Log.Error(es)
 
@@ -32,5 +49,7 @@ if not Main:
             Ui_Main.__init__(self)
             self.setupUi(self)
 
+        def setSubTitle(self, text):
+            return
 
     Main = MainWidget

@@ -18,34 +18,18 @@
     <number>0</number>
    </property>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QToolButton" name="toolButton">
-       <property name="text">
-        <string>刷新(F5)</string>
-       </property>
-       <property name="shortcut">
-        <string>F5</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="ComicListWidget" name="bookList"/>
+    <widget class="QTabWidget" name="tabWidget">
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>最新上传</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="ComicListWidget" name="newListWidget"/>
+       </item>
+      </layout>
+     </widget>
+    </widget>
    </item>
   </layout>
  </widget>

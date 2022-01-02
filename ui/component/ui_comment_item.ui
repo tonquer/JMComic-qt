@@ -234,13 +234,6 @@ background-color:transparent;
              </property>
             </spacer>
            </item>
-           <item>
-            <widget class="QToolButton" name="killButton">
-             <property name="text">
-              <string>举报</string>
-             </property>
-            </widget>
-           </item>
           </layout>
          </item>
          <item>
@@ -254,6 +247,22 @@ background-color:transparent;
             <string>TextLabel</string>
            </property>
           </widget>
+         </item>
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Minimum</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>10</height>
+            </size>
+           </property>
+          </spacer>
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -350,22 +359,6 @@ background-color:transparent;
     <hint type="destinationlabel">
      <x>257</x>
      <y>241</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>killButton</sender>
-   <signal>clicked()</signal>
-   <receiver>CommentItem</receiver>
-   <slot>KillComment()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>615</x>
-     <y>56</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>775</x>
-     <y>37</y>
     </hint>
    </hints>
   </connection>

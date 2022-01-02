@@ -35,6 +35,7 @@ class ComicListWidget(BaseListWidget):
         index = self.indexAt(pos)
         widget = self.indexWidget(index)
         if index.isValid() and widget:
+            assert isinstance(widget, ComicItemWidget)
             popMenu = QMenu(self)
             action = popMenu.addAction(Str.GetStr(Str.Open))
             action.triggered.connect(partial(self.OpenBookInfoHandler, index))
@@ -76,6 +77,7 @@ class ComicListWidget(BaseListWidget):
         widget.setFocusPolicy(Qt.NoFocus)
         widget.id = _id
         widget.url = url
+        widget.index = index
         widget.categoryLabel.setText(categoryStr)
         widget.nameLable.setText(title)
         widget.path = "{}_cover".format(_id)
@@ -103,8 +105,15 @@ class ComicListWidget(BaseListWidget):
         item.setSizeHint(widget.sizeHint())
         self.setItemWidget(item, widget)
         widget.picLabel.setText(Str.GetStr(Str.LoadingPicture))
-        if url and config.IsLoadingPicture:
-            self.AddDownloadTask(url, widget.path, completeCallBack=self.LoadingPictureComplete, backParam=index)
+        widget.PicLoad.connect(self.LoadingPicture)
+        # if url and config.IsLoadingPicture:
+        #     self.AddDownloadTask(url, widget.path, completeCallBack=self.LoadingPictureComplete, backParam=index)
+
+    def LoadingPicture(self, index):
+        item = self.item(index)
+        widget = self.itemWidget(item)
+        assert isinstance(widget, ComicItemWidget)
+        self.AddDownloadTask(widget.url, completeCallBack=self.LoadingPictureComplete, backParam=index)
 
     def LoadingPictureComplete(self, data, status, index):
         if status == Status.Ok:
@@ -112,6 +121,7 @@ class ComicListWidget(BaseListWidget):
             widget = self.itemWidget(item)
             if not widget:
                 return
+            assert isinstance(widget, ComicItemWidget)
             widget.SetPicture(data)
             if Setting.CoverIsOpenWaifu.value:
                 item = self.item(index)
@@ -123,12 +133,14 @@ class ComicListWidget(BaseListWidget):
             widget = self.itemWidget(item)
             if not widget:
                 return
+            assert isinstance(widget, ComicItemWidget)
             widget.SetPictureErr()
         return
 
     def SelectItem(self, item):
         assert isinstance(item, QListWidgetItem)
         widget = self.itemWidget(item)
+        assert isinstance(widget, ComicItemWidget)
         if self.isGame:
             QtOwner().OpenGameInfo(widget.id)
         else:
@@ -138,49 +150,56 @@ class ComicListWidget(BaseListWidget):
     def OpenBookInfoHandler(self, index):
         widget = self.indexWidget(index)
         if widget:
+            assert isinstance(widget, ComicItemWidget)
             QtOwner().OpenBookInfo(widget.id)
             return
 
     def OpenPicture(self, index):
         widget = self.indexWidget(index)
         if widget:
+            assert isinstance(widget, ComicItemWidget)
             QtOwner().OpenWaifu2xTool(widget.picData)
             return
 
     def ReDownloadPicture(self, index):
         widget = self.indexWidget(index)
         if widget:
+            assert isinstance(widget, ComicItemWidget)
             if widget.url and config.IsLoadingPicture:
                 widget.SetPicture("")
                 item = self.itemFromIndex(index)
                 count = self.row(item)
                 widget.picLabel.setText(Str.GetStr(Str.LoadingPicture))
-                self.AddDownloadTask(widget.url, widget.path, completeCallBack=self.LoadingPictureComplete, backParam=count)
+                self.AddDownloadTask(widget.url, completeCallBack=self.LoadingPictureComplete, backParam=count)
                 pass
 
     def Waifu2xPicture(self, index, isIfSize=False):
         widget = self.indexWidget(index)
         if widget and widget.picData:
-            w, h = ToolUtil.GetPictureSize(widget.picData)
+            assert isinstance(widget, ComicItemWidget)
+            w, h, mat = ToolUtil.GetPictureSize(widget.picData)
             if max(w, h) <= Setting.CoverMaxNum.value or not isIfSize:
-                model = ToolUtil.GetModelByIndex(Setting.CoverLookNoise.value, Setting.CoverLookScale.value, Setting.CoverLookModel.value)
+                model = ToolUtil.GetModelByIndex(Setting.CoverLookNoise.value, Setting.CoverLookScale.value, Setting.CoverLookModel.value, mat)
                 widget.isWaifu2xLoading = True
                 self.AddConvertTask(widget.path, widget.picData, model, self.Waifu2xPictureBack, index)
 
     def CancleWaifu2xPicture(self, index):
         widget = self.indexWidget(index)
+        assert isinstance(widget, ComicItemWidget)
         if widget.isWaifu2x and widget.picData:
             widget.SetPicture(widget.picData)
 
     def Waifu2xPictureBack(self, data, waifuId, index, tick):
         widget = self.indexWidget(index)
         if data and widget:
+            assert isinstance(widget, ComicItemWidget)
             widget.SetWaifu2xData(data)
         return
 
     def CopyHandler(self, index):
         widget = self.indexWidget(index)
         if widget:
+            assert isinstance(widget, ComicItemWidget)
             data = widget.GetTitle() + str("\r\n")
             clipboard = QApplication.clipboard()
             data = data.strip("\r\n")
@@ -190,6 +209,7 @@ class ComicListWidget(BaseListWidget):
     def DelHandler(self, index):
         widget = self.indexWidget(index)
         if widget:
+            assert isinstance(widget, ComicItemWidget)
             self.DelCallBack(widget.id)
 
     def DelCallBack(self, cfgId):
@@ -198,5 +218,6 @@ class ComicListWidget(BaseListWidget):
     def DownloadHandler(self, index):
         widget = self.indexWidget(index)
         if widget:
+            assert isinstance(widget, ComicItemWidget)
             QtOwner().OpenEpsInfo(widget.id)
         pass

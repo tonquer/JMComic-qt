@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_search.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.2.1
+## Created by: Qt User Interface Compiler version 6.2.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -72,33 +72,6 @@ class Ui_Search(object):
 
         self.horizontalLayout.addWidget(self.sortCombox)
 
-        self.dayCombox = QComboBox(Search)
-        self.dayCombox.addItem("")
-        self.dayCombox.addItem("")
-        self.dayCombox.addItem("")
-        self.dayCombox.addItem("")
-        self.dayCombox.setObjectName(u"dayCombox")
-        self.dayCombox.setEnabled(True)
-
-        self.horizontalLayout.addWidget(self.dayCombox)
-
-        self.categoryBox = QComboBox(Search)
-        self.categoryBox.addItem("")
-        self.categoryBox.addItem("")
-        self.categoryBox.addItem("")
-        self.categoryBox.addItem("")
-        self.categoryBox.addItem("")
-        self.categoryBox.addItem("")
-        self.categoryBox.addItem("")
-        self.categoryBox.setObjectName(u"categoryBox")
-
-        self.horizontalLayout.addWidget(self.categoryBox)
-
-        self.subCategoryBox = QComboBox(Search)
-        self.subCategoryBox.setObjectName(u"subCategoryBox")
-
-        self.horizontalLayout.addWidget(self.subCategoryBox)
-
         self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout.addItem(self.horizontalSpacer_2)
@@ -164,19 +137,6 @@ class Ui_Search(object):
         self.sortCombox.setItemText(1, QCoreApplication.translate("Search", u"\u6700\u591a\u70b9\u51fb", None))
         self.sortCombox.setItemText(2, QCoreApplication.translate("Search", u"\u6700\u591a\u56fe\u7247", None))
         self.sortCombox.setItemText(3, QCoreApplication.translate("Search", u"\u6700\u591a\u7231\u5fc3", None))
-
-        self.dayCombox.setItemText(0, QCoreApplication.translate("Search", u"\u6240\u6709", None))
-        self.dayCombox.setItemText(1, QCoreApplication.translate("Search", u"\u4eca\u65e5", None))
-        self.dayCombox.setItemText(2, QCoreApplication.translate("Search", u"\u672c\u5468", None))
-        self.dayCombox.setItemText(3, QCoreApplication.translate("Search", u"\u672c\u6708", None))
-
-        self.categoryBox.setItemText(0, QCoreApplication.translate("Search", u"\u5168\u90e8", None))
-        self.categoryBox.setItemText(1, QCoreApplication.translate("Search", u"\u5176\u4ed6\u6f2b\u753b", None))
-        self.categoryBox.setItemText(2, QCoreApplication.translate("Search", u"\u540c\u4eba\u5fd7", None))
-        self.categoryBox.setItemText(3, QCoreApplication.translate("Search", u"\u97e9\u6f2b", None))
-        self.categoryBox.setItemText(4, QCoreApplication.translate("Search", u"\u7f8e\u6f2b", None))
-        self.categoryBox.setItemText(5, QCoreApplication.translate("Search", u"\u77ed\u7247", None))
-        self.categoryBox.setItemText(6, QCoreApplication.translate("Search", u"\u5355\u672c", None))
 
         self.label.setText(QCoreApplication.translate("Search", u"\u9875\uff1a0/0", None))
         self.jumpPage.setText(QCoreApplication.translate("Search", u"\u8df3\u8f6c", None))

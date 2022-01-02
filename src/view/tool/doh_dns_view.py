@@ -13,9 +13,9 @@ class DohDnsView(BaseMaskDialog, Ui_DohDns):
         self.setupUi(self.widget)
         self.pushButton.clicked.connect(self.close)
 
-    def exec(self):
+    def show(self):
         self.LoadDns()
-        return super(self.__class__, self).exec()
+        return super(self.__class__, self).show()
 
     def LoadDns(self):
         for row in range(0, self.tableWidget.rowCount()):

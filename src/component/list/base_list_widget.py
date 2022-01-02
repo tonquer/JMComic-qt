@@ -75,6 +75,7 @@ class BaseListWidget(QListWidget, QtTaskBase):
 
         # 防止异步加载时，信息错乱
         self.ClearTask()
+        self.vScrollBar.setValue(0)
         self.vScrollBar.ResetValue(0)
 
     def mousePressEvent(self, event: QMouseEvent):
