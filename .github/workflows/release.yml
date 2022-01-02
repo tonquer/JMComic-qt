@@ -180,7 +180,6 @@ jobs:
         mv dist/start.exe "dist/start(debug).exe"
         pyinstaller -F -w -i icon.ico start.py
         mv dist jmcomic
-        Copy-Item -Verbose -Recurse -Path data -Destination jmcomic/
         cp ..\LICENSE jmcomic\
         cp ..\CHANGELOG jmcomic\
         cd ..
