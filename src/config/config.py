@@ -23,9 +23,9 @@ PreLook = 4                    # 预显示
 IsLoadingPicture = True
 
 UpdateUrl = "https://github.com/tonquer/JMComic-qt/releases/latest"
-UpdateUrlBack = "https://hub.fastgit.org/tonquer/JMComic-qt/releases/latest"
-UpdateUrl2 = "https://github.com/tonquer/JMComic-qt/releases"
-UpdateUrl2Back = "https://hub.fastgit.org/tonquer/JMComic-qt/releases"
+UpdateUrlBack = "https://github.com/tonquer/JMComic-qt/"
+UpdateUrl2 = "https://hub.fastgit.org/JMComic-qt/releases/latest"
+UpdateUrl2Back = "https://hub.fastgit.org/tonquer/JMComic-qt/"
 
 
 UpdateVersion = "v1.0.1"

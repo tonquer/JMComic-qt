@@ -235,7 +235,7 @@ class Server(Singleton):
 
     def _Download(self, task):
         try:
-            for cachePath in [task.req.loadPath, task.req.cachePath]:
+            for cachePath in [task.req.loadPath, task.req.cachePath] and not task.req.savePath:
                 if cachePath and task.bakParam:
                     data = ToolUtil.LoadCachePicture(cachePath)
                     if data:

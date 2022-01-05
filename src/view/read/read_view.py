@@ -430,7 +430,8 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
             Log.Error("Not found waifu2xId ：{}, index: {}".format(str(waifu2xId), str(index)))
             return
         p.SetWaifuData(data, round(tick, 2))
-        self.AddQImageTask(data, self.ConvertQImageWaifu2xBack, index)
+        if data:
+            self.AddQImageTask(data, self.ConvertQImageWaifu2xBack, index)
         if index == self.curIndex:
             self.qtTool.SetData(waifuState=p.waifuState)
             # self.ShowImg()

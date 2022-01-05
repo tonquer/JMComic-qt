@@ -66,7 +66,7 @@ class TaskWaifu2x(TaskBase):
                 isFind = False
 
                 if task.cachePath:
-                    data = ToolUtil.LoadCachePicture(task.loadPath)
+                    data = ToolUtil.LoadCachePicture(task.cachePath)
                     if data:
                         task.saveData = data
                         self.taskObj.convertBack.emit(taskId)
@@ -84,7 +84,7 @@ class TaskWaifu2x(TaskBase):
                         model = ToolUtil.GetDownloadScaleModel(w, h, mat)
                         task.model = model
                         task.imgData = data
-                elif not task.imgData:
+                if not task.imgData:
                     task.status = Status.FileError
                     self.taskObj.convertBack.emit(taskId)
                     continue

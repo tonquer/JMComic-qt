@@ -78,7 +78,7 @@ class QtTaskBase:
                                                cachePath, savePath, saveParam, cleanFlag)
         else:
             return QtDomainMgr.AddDownloadTask(url, downloadCallBack, completeCallBack, downloadStCallBack, backParam, loadPath,
-                                               cachePath, savePath, cleanFlag)
+                                               cachePath, savePath, saveParam, cleanFlag)
 
     # completeCallBack(saveData, taskId, backParam, tick)
     def AddConvertTask(self, path, imgData, model, completeCallBack, backParam=None, cleanFlag=""):
