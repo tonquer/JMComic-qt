@@ -182,6 +182,8 @@ class Str:
     SwitchSite = 122               # 表里切换
     DelFavoriteSuc = 123           # 删除收藏成功
     AllComment = 124               # 所有评论
+    Move = 125               # 移动
+    Add = 126                # 新增
 
     @classmethod
     def Reload(cls):
@@ -352,6 +354,8 @@ class Str:
         cls.strDict[cls.SwitchSite] = QCoreApplication.translate("cls.obj",  "表里切换", None)
         cls.strDict[cls.DelFavoriteSuc] = QCoreApplication.translate("cls.obj",  "删除收藏成功", None)
         cls.strDict[cls.AllComment] = QCoreApplication.translate("cls.obj",  "所有评论", None)
+        cls.strDict[cls.Move] = QCoreApplication.translate("cls.obj",  "移动", None)
+        cls.strDict[cls.Add] = QCoreApplication.translate("cls.obj",  "新增", None)
 
     @classmethod
     def GetStr(cls, enumType):

@@ -37,6 +37,9 @@
         </widget>
        </item>
        <item>
+        <widget class="QComboBox" name="folderBox"/>
+       </item>
+       <item>
         <widget class="QComboBox" name="sortCombox">
          <item>
           <property name="text">

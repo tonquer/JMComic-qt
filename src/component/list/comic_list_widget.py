@@ -29,6 +29,7 @@ class ComicListWidget(BaseListWidget):
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.itemClicked.connect(self.SelectItem)
         self.isDelMenu = False
+        self.isMoveMenu = False
         self.isGame = False
 
     def SelectMenuBook(self, pos):
@@ -56,6 +57,9 @@ class ComicListWidget(BaseListWidget):
             action.triggered.connect(partial(self.CopyHandler, index))
             action = popMenu.addAction(Str.GetStr(Str.Download))
             action.triggered.connect(partial(self.DownloadHandler, index))
+            if self.isMoveMenu:
+                action = popMenu.addAction(Str.GetStr(Str.Move))
+                action.triggered.connect(partial(self.MoveHandler, index))
             if self.isDelMenu:
                 action = popMenu.addAction(Str.GetStr(Str.Delete))
                 action.triggered.connect(partial(self.DelHandler, index))
@@ -206,6 +210,12 @@ class ComicListWidget(BaseListWidget):
             clipboard.setText(data)
         pass
 
+    def MoveHandler(self, index):
+        widget = self.indexWidget(index)
+        if widget:
+            assert isinstance(widget, ComicItemWidget)
+            self.MoveCallBack(widget.id)
+
     def DelHandler(self, index):
         widget = self.indexWidget(index)
         if widget:
@@ -213,6 +223,9 @@ class ComicListWidget(BaseListWidget):
             self.DelCallBack(widget.id)
 
     def DelCallBack(self, cfgId):
+        return
+
+    def MoveCallBack(self, cfgId):
         return
 
     def DownloadHandler(self, index):

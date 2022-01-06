@@ -115,6 +115,15 @@ class QtOwner(Singleton):
         f.close()
         return bytes(data)
 
+    def OpenFavoriteFold(self, bookId="", fid="", moveBack=None, foldChangeBack=None):
+        from view.user.favorite_fold_view import FavoriteFoldView
+        w = FavoriteFoldView(QtOwner().owner, bookId, fid)
+        w.show()
+        if moveBack:
+            w.MoveOkBack.connect(moveBack)
+        if foldChangeBack:
+            w.FoldChange.connect(foldChangeBack)
+
     def OpenComment(self, bookId, commentNum):
         arg = {"bookId": bookId, "commentNum": commentNum}
         self.owner.SwitchWidget(self.owner.commentView, **arg)

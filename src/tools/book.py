@@ -4,6 +4,15 @@ from server.server import Server
 from config import config
 from tools.singleton import Singleton
 
+# 收藏
+class FavoriteInfo(object):
+    def __init__(self):
+
+        self.bookList = []
+        self.total = 0
+        self.count = 0
+        self.fold = {}
+
 
 # 分类
 class Category(object):

@@ -231,10 +231,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         if not config.LoginUserName:
             QtOwner().ShowError(Str.GetStr(Str.NotLogin))
             return
-        if self.isFavorite:
-            self.AddHttpTask(req.DelFavoritesReq2(self.bookId), self.DelFavoriteBack)
-        else:
-            self.AddHttpTask(req.AddFavoritesReq2(self.bookId), self.AddFavoriteBack)
+        self.AddHttpTask(req.AddAndDelFavoritesReq2(self.bookId), self.AddFavoriteBack)
 
     def DelFavoriteBack(self, raw):
         if not config.LoginUserName:
@@ -251,11 +248,11 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
     def AddFavoriteBack(self, raw):
         st = raw["st"]
         if st == Status.Ok:
-            self.isFavorite = True
+            self.isFavorite = not self.isFavorite
             self.UpdateFavoriteIcon()
-            QtOwner().CheckShowMsg(raw)
-        else:
-            QtOwner().CheckShowMsg(raw)
+            if self.isFavorite:
+                QtOwner().OpenFavoriteFold(self.bookId)
+        QtOwner().CheckShowMsg(raw)
 
     def OpenComment(self):
         QtOwner().OpenComment(self.bookId, self.commentNum)

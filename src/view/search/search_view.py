@@ -56,7 +56,7 @@ class SearchView(QWidget, Ui_Search, QtTaskBase):
             if st == Status.Ok:
                 total = raw["total"]
                 bookList = raw["bookList"]
-                if page != 1:
+                if page == 1:
                     maxPages = (total - 1) // max(1, len(bookList)) + 1
                     self.bookList.UpdatePage(page, maxPages)
                     self.spinBox.setMaximum(maxPages)

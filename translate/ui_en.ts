@@ -93,6 +93,14 @@
     </message>
 </context>
 <context>
+    <name>Category</name>
+    <message>
+        <location filename="../ui/ui_category.ui" line="14"/>
+        <source>分类</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ComicItem</name>
     <message>
         <location filename="../ui/component/ui_comic_item.ui" line="26"/>
@@ -323,33 +331,61 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ui_favorite.ui" line="48"/>
+        <location filename="../ui/ui_favorite.ui" line="51"/>
         <source>更新时间</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ui_favorite.ui" line="43"/>
+        <location filename="../ui/ui_favorite.ui" line="46"/>
         <source>收藏时间</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ui_favorite.ui" line="82"/>
+        <location filename="../ui/ui_favorite.ui" line="85"/>
         <source>收藏数：</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ui_favorite.ui" line="89"/>
+        <location filename="../ui/ui_favorite.ui" line="92"/>
         <source>页</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ui_favorite.ui" line="139"/>
+        <location filename="../ui/ui_favorite.ui" line="142"/>
         <source>跳转</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ui_favorite.ui" line="142"/>
+        <location filename="../ui/ui_favorite.ui" line="145"/>
         <source>Return</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FavoriteFold</name>
+    <message>
+        <location filename="../ui/component/ui_favorite_fold.ui" line="14"/>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_favorite_fold.ui" line="22"/>
+        <source>分类</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_favorite_fold.ui" line="42"/>
+        <source>编辑</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_favorite_fold.ui" line="56"/>
+        <source>保存</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_favorite_fold.ui" line="63"/>
+        <source>取消</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

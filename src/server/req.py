@@ -331,7 +331,7 @@ class GetCategoryReq2(ServerReq):
 
 # 分類搜索请求
 class GetSearchCategoryReq2(ServerReq):
-    def __init__(self, page=1, category="0", sort="mr"):
+    def __init__(self, category="0", page=1, sort="mr"):
         # sort []&t=t&o=tf
 
         # 最新，总排行，月排行，周排行， 日排行，最多图片, 最多爱心
@@ -414,7 +414,7 @@ class GetLatestInfoReq2(ServerReq):
 
 # 获得收藏
 class GetFavoritesReq2(ServerReq):
-    def __init__(self, page=1, sort="mr"):
+    def __init__(self, page=1, sort="mr", fid=""):
         # 收藏时间, 更新时间
         # o = [mr, mp]
         url = config.Url2 + "/favorite"
@@ -424,6 +424,8 @@ class GetFavoritesReq2(ServerReq):
         data["view_mode_debug"] = "1"
         data["view_mode"] = "null"
         data["page"] = page
+        if fid:
+            data["folder_id"] = fid
         data["o"] = sort
 
         param = ToolUtil.DictToUrl(data)
@@ -436,32 +438,65 @@ class GetFavoritesReq2(ServerReq):
                                              {}, method)
 
 
-# 添加收藏
-class AddFavoritesReq2(ServerReq):
-    def __init__(self, bookId=""):
-        url = config.Url2 + "/favorite"
+# 添加收藏文件夹
+class AddFavoritesFoldReq2(ServerReq):
+    def __init__(self, name=""):
+        url = config.Url2 + "/favorite_folder"
         method = "POST"
         header = ToolUtil.GetHeader(url, method)
         data = dict()
         data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
         data["view_mode_debug"] = "1"
+        data["folder_name"] = name
         data["view_mode"] = "null"
+        data["type"] = "add"
+        super(self.__class__, self).__init__(url, header,
+                                             ToolUtil.DictToUrl(data), method)
+
+
+# 删除收藏文件夹
+class DelFavoritesFoldReq2(ServerReq):
+    def __init__(self, fid=""):
+        url = config.Url2 + "/favorite_folder"
+        method = "POST"
+        header = ToolUtil.GetHeader(url, method)
+        data = dict()
+        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
+        data["view_mode_debug"] = "1"
+        data["folder_id"] = fid
+        data["view_mode"] = "null"
+        data["type"] = "del"
+        super(self.__class__, self).__init__(url, header,
+                                             ToolUtil.DictToUrl(data), method)
+
+# 移动收藏文件夹
+class MoveFavoritesFoldReq2(ServerReq):
+    def __init__(self, bookId="", fid=""):
+        url = config.Url2 + "/favorite_folder"
+        method = "POST"
+        header = ToolUtil.GetHeader(url, method)
+        data = dict()
+        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
+        data["view_mode_debug"] = "1"
+        data["folder_id"] = fid
+        data["view_mode"] = "null"
+        data["type"] = "move"
         data["aid"] = bookId
         super(self.__class__, self).__init__(url, header,
                                              ToolUtil.DictToUrl(data), method)
 
 
-# 删除收藏
-class DelFavoritesReq2(ServerReq):
+# 添加收藏
+class AddAndDelFavoritesReq2(ServerReq):
     def __init__(self, bookId=""):
         url = config.Url2 + "/favorite"
         method = "POST"
         header = ToolUtil.GetHeader(url, method)
         data = dict()
-        data["aid"] = bookId
         data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
         data["view_mode_debug"] = "1"
         data["view_mode"] = "null"
+        data["aid"] = bookId
         super(self.__class__, self).__init__(url, header,
                                              ToolUtil.DictToUrl(data), method)
 

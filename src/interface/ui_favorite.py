@@ -48,6 +48,11 @@ class Ui_Favorite(object):
 
         self.horizontalLayout.addWidget(self.msgLabel)
 
+        self.folderBox = QComboBox(Favorite)
+        self.folderBox.setObjectName(u"folderBox")
+
+        self.horizontalLayout.addWidget(self.folderBox)
+
         self.sortCombox = QComboBox(Favorite)
         self.sortCombox.addItem("")
         self.sortCombox.addItem("")

@@ -225,11 +225,9 @@ class GetFavoritesReq2Handler(object):
             if code != 200:
                 data["st"] = Status.Error
                 return
-            bookInfo, total, count = ToolUtil.ParseFavoritesReq2(v.get("data"))
+            f = ToolUtil.ParseFavoritesReq2(v.get("data"))
             data["st"] = Status.Ok
-            data["bookList"] = bookInfo
-            data["total"] = total
-            data["count"] = count
+            data["favorite"] = f
         except Exception as es:
             data["st"] = Status.ParseError
             Log.Error(es)
@@ -238,9 +236,11 @@ class GetFavoritesReq2Handler(object):
                 TaskBase.taskObj.taskBack.emit(task.backParam, pickle.dumps(data))
 
 
-@handler(req.AddFavoritesReq2)
-@handler(req.DelFavoritesReq2)
-class AddFavoritesReq2Handler(object):
+@handler(req.AddFavoritesFoldReq2)
+@handler(req.DelFavoritesFoldReq2)
+@handler(req.MoveFavoritesFoldReq2)
+@handler(req.AddAndDelFavoritesReq2)
+class ParseMsgReq2Handler(object):
     def __call__(self, task: Task):
         data = {"st": task.status}
         try:
@@ -253,8 +253,8 @@ class AddFavoritesReq2Handler(object):
             if code != 200:
                 data["st"] = Status.Error
                 return
-            st, msg = ToolUtil.ParseAddDelFavoritesReq2(v.get("data"))
-            data["st"] = Status.Ok
+            st, msg = ToolUtil.ParseMsgReq2(v.get("data"))
+            data["st"] = st
             data["message"] = msg
         except Exception as es:
             data["st"] = Status.ParseError
@@ -364,9 +364,36 @@ class GetSearchReq2Handler(object):
                 data["st"] = Status.Error
                 return
 
-            categotryList = ToolUtil.ParseCategory2(v.get("data"))
+            categoryList = ToolUtil.ParseCategory2(v.get("data"))
             data["st"] = Status.Ok
-            data["categotryList"] = categotryList
+            data["categoryList"] = categoryList
+        except Exception as es:
+            data["st"] = Status.ParseError
+            Log.Error(es)
+        finally:
+            if task.backParam:
+                TaskBase.taskObj.taskBack.emit(task.backParam, pickle.dumps(data))
+
+
+@handler(req.GetSearchCategoryReq2)
+class GetSearchCategoryReq2Handler(object):
+    def __call__(self, task: Task):
+        data = {"st": task.status}
+        try:
+            if task.status != Status.Ok:
+                return
+            v = json.loads(task.res.raw.text)
+            code = v.get("code")
+            data["errorMsg"] = v.get("errorMsg", "")
+            data["message"] = v.get("message", "")
+            if code != 200:
+                data["st"] = Status.Error
+                return
+
+            total, bookList = ToolUtil.ParseSearchCategory2(v.get("data"))
+            data["st"] = Status.Ok
+            data["total"] = total
+            data["bookList"] = bookList
         except Exception as es:
             data["st"] = Status.ParseError
             Log.Error(es)

@@ -370,6 +370,23 @@ class ToolUtil(object):
     #
     #     return isFavorite, book
 
+    @staticmethod
+    def ParseBookInfo(v):
+        from tools.book import BookInfo
+        b = BookInfo()
+        b.baseInfo.id = v.get("id")
+        b.baseInfo.author = v.get("author")
+        b.baseInfo.title = v.get("name")
+        b.baseInfo.coverUrl = "/media/albums/{}_3x4.jpg".format(b.baseInfo.id)
+        return b
+
+    @staticmethod
+    def ParseBookList(rawList):
+        data = []
+        for v in rawList:
+            data.append(ToolUtil.ParseBookInfo(v))
+        return data
+
     # 解析首页结果
     @staticmethod
     def ParseIndex2(data):
@@ -377,56 +394,37 @@ class ToolUtil(object):
         result = ToolUtil.ParseData(data)
         raw = json.loads(result)
         for v in raw:
-            bookList = []
+            bookList = ToolUtil.ParseBookList(v.get("content", []))
             parseData[v.get("title")] = bookList
-            for bookDict in v.get("content", []):
-                from tools.book import BookInfo
-                b = BookInfo()
-                bookId = bookDict.get("id")
-                b.baseInfo.id = bookId
-                b.baseInfo.author = bookDict.get("author")
-                b.baseInfo.title = bookDict.get("name")
-                b.baseInfo.coverUrl = "/media/albums/{}_3x4.jpg".format(bookId)
-                bookList.append(b)
+
         return parseData
 
     # 解析最近更新
     @staticmethod
     def ParseLatest2(data):
-        bookList = []
         result = ToolUtil.ParseData(data)
         raw = json.loads(result)
-        for v in raw:
-            from tools.book import BookInfo
-            b = BookInfo()
-            bookId = v.get("id")
-            b.baseInfo.id = bookId
-            b.baseInfo.author = v.get("author")
-            b.baseInfo.title = v.get("name")
-            b.baseInfo.coverUrl = "/media/albums/{}_3x4.jpg".format(bookId)
-            bookList.append(b)
+        bookList = ToolUtil.ParseBookList(raw)
         return bookList
 
     @staticmethod
     def ParseFavoritesReq2(data):
         bookList = []
+        from tools.book import FavoriteInfo
+        f = FavoriteInfo()
         result = ToolUtil.ParseData(data)
         raw = json.loads(result)
-        total = int(raw.get("total"))
-        count = int(raw.get("count"))
-        for v in raw.get("list"):
-            from tools.book import BookInfo
-            b = BookInfo()
-            bookId = v.get("id")
-            b.baseInfo.id = bookId
-            b.baseInfo.author = v.get("author")
-            b.baseInfo.title = v.get("name")
-            b.baseInfo.coverUrl = "/media/albums/{}_3x4.jpg".format(bookId)
-            bookList.append(b)
-        return bookList, total, count
+        f.total = int(raw.get("total"))
+        f.count = int(raw.get("count"))
+        f.bookList = ToolUtil.ParseBookList(raw.get("list", []))
+        folderDict = {}
+        f.fold = folderDict
+        for v in raw.get("folder_list", []):
+            folderDict[v.get("name")] = v.get("FID")
+        return f
 
     @staticmethod
-    def ParseAddDelFavoritesReq2(data):
+    def ParseMsgReq2(data):
         result = ToolUtil.ParseData(data)
         raw = json.loads(result)
         status = raw.get("status")
@@ -456,17 +454,8 @@ class ToolUtil(object):
     def ParseSearch2(data):
         result = ToolUtil.ParseData(data)
         raw = json.loads(result)
-        bookList = []
         total = raw.get("total")
-        for v in raw.get("content", []):
-            from tools.book import BookInfo
-            b = BookInfo()
-            bookId = v.get("id")
-            b.baseInfo.id = bookId
-            b.baseInfo.author = v.get("author")
-            b.baseInfo.title = v.get("name")
-            b.baseInfo.coverUrl = "/media/albums/{}_3x4.jpg".format(bookId)
-            bookList.append(b)
+        bookList = ToolUtil.ParseBookList(raw.get("content", []))
         return total, bookList
 
     # 解析搜索结果
@@ -474,8 +463,7 @@ class ToolUtil(object):
     def ParseCategory2(data):
         result = ToolUtil.ParseData(data)
         raw = json.loads(result)
-        categotryList = []
-        total = raw.get("total")
+        categoryList = []
         for v in raw.get("categories", []):
             from tools.book import Category
             b = Category()
@@ -485,8 +473,18 @@ class ToolUtil(object):
             b.slug = v.get("slug")
             b.type = v.get("type")
             b.total = v.get("total_albums")
-            categotryList.append(b)
-        return categotryList
+            categoryList.append(b)
+
+        return categoryList
+
+    # 解析搜索结果
+    @staticmethod
+    def ParseSearchCategory2(data):
+        result = ToolUtil.ParseData(data)
+        raw = json.loads(result)
+        total = raw.get("total")
+        bookList = ToolUtil.ParseBookList(raw.get("content", []))
+        return total, bookList
 
     @staticmethod
     def ParseBookInfo2(data):
