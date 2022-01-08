@@ -74,7 +74,7 @@
      </widget>
      <widget class="LoginProxyWidget" name="tab_4">
       <attribute name="title">
-       <string>代理</string>
+       <string>分流</string>
       </attribute>
      </widget>
     </widget>
@@ -119,9 +119,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>UserManagerWidget</class>
+   <class>RegisterWidget</class>
    <extends>QWidget</extends>
-   <header location="global">view.user.user_manager_widget.h</header>
+   <header location="global">view.user.register_widget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -131,15 +131,15 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>RegisterWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">view.user.register_widget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>LoginProxyWidget</class>
    <extends>QWidget</extends>
    <header location="global">view.user.login_proxy_widget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>UserManagerWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">view.user.user_manager_widget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

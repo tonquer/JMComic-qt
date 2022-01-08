@@ -629,3 +629,51 @@ class DnsOverHttpsReq(ServerReq):
         self.timeout = 5
         self.isParseRes = True
 
+
+# 测试Ping
+class SpeedTestPingReq(ServerReq):
+    def __init__(self):
+        url = config.Url2 + "/latest"
+        data = dict()
+        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
+        data["view_mode_debug"] = "1"
+        data["view_mode"] = "null"
+        data["page"] = "0"
+
+        method = "GET"
+        header = ToolUtil.GetHeader(url, method)
+        header['cache-control'] = 'no-cache'
+        header['expires'] = '0'
+        header['pragma'] = 'no-cache'
+        header["authorization"] = ""
+
+        param = ToolUtil.DictToUrl(data)
+        if param:
+            url += "/?" + param
+        super(self.__class__, self).__init__(url, header,
+                                             {}, method)
+
+
+class SpeedTestReq(ServerReq):
+    Index = 0
+    URLS = [
+        "/media/photos/295840/00001.jpg",
+        "/media/photos/295840/00002.jpg",
+        "/media/photos/295840/00003.jpg",
+        "/media/photos/295840/00004.jpg",
+    ]
+
+    def __init__(self):
+        url = SpeedTestReq.URLS[SpeedTestReq.Index]
+        SpeedTestReq.Index += 1
+        if SpeedTestReq.Index >= len(SpeedTestReq.URLS):
+            SpeedTestReq.Index = 0
+
+        url = config.PicUrl2 + url
+        method = "Download"
+        header = ToolUtil.GetHeader(url, method)
+        header['cache-control'] = 'no-cache'
+        header['expires'] = '0'
+        header['pragma'] = 'no-cache'
+        super(self.__class__, self).__init__(url, header,
+                                             {}, method)

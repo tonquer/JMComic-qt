@@ -96,11 +96,11 @@ class CommentWidget(QtWidgets.QWidget, Ui_Comment, QtTaskBase):
                 if page == 1:
                     num = len(comments)
                     maxPages = (self.commentNum - 1) // max(1, num) + 1
-                    self.listWidget.UpdatePage(page, maxPages)
+                    self.listWidget.UpdateMaxPage(maxPages)
                     self.spinBox.setMaximum(maxPages)
                 self.spinBox.setValue(page)
-                self.listWidget.page = page
-                self.nums.setText(Str.GetStr(Str.Page) + ": " + str(self.listWidget.page) + "/" + str(self.listWidget.pages))
+                self.listWidget.UpdatePage(page)
+                self.nums.setText(self.listWidget.GetPageText())
 
                 for index, info in enumerate(comments):
                     self.listWidget.AddUserItem(info, "")
@@ -128,9 +128,9 @@ class CommentWidget(QtWidgets.QWidget, Ui_Comment, QtTaskBase):
                 self.commentLine.setText("")
                 self.listWidget.UpdatePage(1, 1)
                 self.LoadComment()
-                QtOwner().CheckShowMsg( raw)
+                QtOwner().CheckShowMsg(raw)
             else:
-                QtOwner().CheckShowMsg( raw)
+                QtOwner().CheckShowMsg(raw)
 
         except Exception as es:
             QtOwner().CloseLoading()

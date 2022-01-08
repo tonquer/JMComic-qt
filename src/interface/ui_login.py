@@ -86,7 +86,7 @@ class Ui_Login(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("Login", u"\u767b\u5f55", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("Login", u"\u6ce8\u518c", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), QCoreApplication.translate("Login", u"\u9a8c\u8bc1", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), QCoreApplication.translate("Login", u"\u4ee3\u7406", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), QCoreApplication.translate("Login", u"\u5206\u6d41", None))
         self.loginButton.setText(QCoreApplication.translate("Login", u"\u786e\u5b9a", None))
 #if QT_CONFIG(shortcut)
         self.loginButton.setShortcut(QCoreApplication.translate("Login", u"Return", None))

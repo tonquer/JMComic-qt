@@ -84,6 +84,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
 
         # TODO
         self.languageButton3.setVisible(False)
+        self.categorySize.setVisible(False)
 
         self.msgLabel.setVisible(False)
         self.dohButton.clicked.connect(self.OpenDohView)

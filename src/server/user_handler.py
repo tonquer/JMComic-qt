@@ -2,6 +2,7 @@ import json
 import os
 import pickle
 import re
+import time
 
 import requests
 
@@ -705,3 +706,51 @@ class DnsOverHttpsReqHandler(object):
         finally:
             if task.backParam:
                 TaskBase.taskObj.taskBack.emit(task.backParam, pickle.dumps(data))
+
+
+@handler(req.SpeedTestPingReq)
+class SpeedTestPingHandler(object):
+    def __call__(self, task):
+        data = {"st": task.status, "data": task.res.GetText()}
+        if hasattr(task.res.raw, "elapsed"):
+            data["data"] = str(task.res.raw.elapsed.total_seconds())
+            TaskBase.taskObj.taskBack.emit(task.bakParam, pickle.dumps(data))
+        else:
+            data["data"] = "0"
+            TaskBase.taskObj.taskBack.emit(task.bakParam, pickle.dumps(data))
+
+
+@handler(req.SpeedTestReq)
+class SpeedTestHandler(object):
+    def __call__(self, backData):
+        data = {"st": backData.status, "data": ""}
+        if backData.status != Status.Ok:
+            if backData.bakParam:
+                TaskBase.taskObj.taskBack.emit(backData.bakParam, pickle.dumps(data))
+        else:
+            r = backData.res
+            try:
+                if r.status_code != 200:
+                    if backData.bakParam:
+                        TaskBase.taskObj.taskBack.emit(backData.bakParam, pickle.dumps(data))
+                    return
+
+                fileSize = int(r.headers.get('Content-Length', 0))
+                getSize = 0
+                now = time.time()
+                for chunk in r.iter_content(chunk_size=1024):
+                    getSize += len(chunk)
+                    # consume = time.time() - now
+                    # if consume >= 5.0:
+                    #     break
+                consume = time.time() - now
+                downloadSize = getSize / consume
+                speed = ToolUtil.GetDownloadSize(downloadSize)
+                if backData.bakParam:
+                    data["data"] = speed
+                    TaskBase.taskObj.taskBack.emit(backData.bakParam, pickle.dumps(data))
+
+            except Exception as es:
+                Log.Error(es)
+                if backData.bakParam:
+                    TaskBase.taskObj.taskBack.emit(backData.bakParam, pickle.dumps(data))

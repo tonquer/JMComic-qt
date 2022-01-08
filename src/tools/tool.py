@@ -454,7 +454,7 @@ class ToolUtil(object):
     def ParseSearch2(data):
         result = ToolUtil.ParseData(data)
         raw = json.loads(result)
-        total = raw.get("total")
+        total = int(raw.get("total"))
         bookList = ToolUtil.ParseBookList(raw.get("content", []))
         return total, bookList
 
@@ -482,7 +482,7 @@ class ToolUtil(object):
     def ParseSearchCategory2(data):
         result = ToolUtil.ParseData(data)
         raw = json.loads(result)
-        total = raw.get("total")
+        total = int(raw.get("total"))
         bookList = ToolUtil.ParseBookList(raw.get("content", []))
         return total, bookList
 

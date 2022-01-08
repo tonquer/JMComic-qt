@@ -99,6 +99,51 @@
         <source>分类</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../ui/ui_category.ui" line="35"/>
+        <source>最新</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_category.ui" line="40"/>
+        <source>总排行</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_category.ui" line="45"/>
+        <source>月排行</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_category.ui" line="50"/>
+        <source>周排行</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_category.ui" line="55"/>
+        <source>日排行</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_category.ui" line="60"/>
+        <source>最多图片</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_category.ui" line="65"/>
+        <source>最多爱心</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_category.ui" line="105"/>
+        <source>页：0/0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_category.ui" line="157"/>
+        <source>跳转</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ComicItem</name>
@@ -506,11 +551,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ui_login.ui" line="77"/>
-        <source>代理</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../ui/ui_login.ui" line="112"/>
         <source>关闭</source>
         <translation type="unfinished"></translation>
@@ -518,6 +558,11 @@
     <message>
         <location filename="../ui/ui_login.ui" line="96"/>
         <source>确定</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_login.ui" line="77"/>
+        <source>分流</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -534,13 +579,48 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="31"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="44"/>
         <source>启用代理</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="45"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="58"/>
         <source>代理地址</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="75"/>
+        <source>分流3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="109"/>
+        <source>测速</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="116"/>
+        <source>直连</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="126"/>
+        <source>代理</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="153"/>
+        <source>分流4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="187"/>
+        <source>分流2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="221"/>
+        <source>分流1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -638,31 +718,36 @@
     </message>
     <message>
         <location filename="../ui/component/ui_navigation.ui" line="331"/>
+        <source>分类</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_navigation.ui" line="378"/>
         <source>评论</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="370"/>
+        <location filename="../ui/component/ui_navigation.ui" line="417"/>
         <source>其他</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="392"/>
+        <location filename="../ui/component/ui_navigation.ui" line="439"/>
         <source>下载</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="433"/>
+        <location filename="../ui/component/ui_navigation.ui" line="480"/>
         <source>Waifu2x</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="498"/>
+        <location filename="../ui/component/ui_navigation.ui" line="545"/>
         <source>帮助</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="542"/>
+        <location filename="../ui/component/ui_navigation.ui" line="589"/>
         <source>设置</source>
         <translation type="unfinished"></translation>
     </message>

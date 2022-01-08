@@ -22,6 +22,7 @@ from PySide6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QPushButton,
 from component.widget.animation_stack_widget import AnimationStackWidget
 from component.widget.navigation_widget import NavigationWidget
 from component.widget.title_bar_widget import TitleBarWidget
+from view.category.category_view import CategoryView
 from view.comment.all_comment_view import AllCommentView
 from view.comment.comment_view import CommentView
 from view.comment.sub_comment_view import SubCommentView
@@ -129,6 +130,9 @@ class Ui_MainWindows(object):
         self.allCommentView = AllCommentView()
         self.allCommentView.setObjectName(u"allCommentView")
         self.subStackWidget.addWidget(self.allCommentView)
+        self.categoryView = CategoryView()
+        self.categoryView.setObjectName(u"categoryView")
+        self.subStackWidget.addWidget(self.categoryView)
 
         self.verticalLayout_2.addWidget(self.subStackWidget)
 

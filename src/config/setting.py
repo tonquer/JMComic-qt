@@ -115,6 +115,8 @@ class Setting:
     Password = SettingValue("Other", "", False)
     ChatSendAction = SettingValue("Other", 0, False, ["CtrlEnter", "Enter"])
     ScreenIndex = SettingValue("Other", 0, False)
+    IsSavePassword = SettingValue("Other", 0, False)
+    IsAutoLogin = SettingValue("Other", 0, False)
 
     # IpbMemberId = SettingValue("Other", "", False)
     # IpbPassHash = SettingValue("Other", "", False)

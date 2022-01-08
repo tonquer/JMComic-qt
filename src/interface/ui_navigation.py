@@ -171,6 +171,22 @@ class Ui_Navigation(object):
 
         self.verticalLayout_3.addWidget(self.searchButton)
 
+        self.categoryButton = QToolButton(self.scrollAreaWidgetContents)
+        self.buttonGroup.addButton(self.categoryButton)
+        self.categoryButton.setObjectName(u"categoryButton")
+        sizePolicy1.setHeightForWidth(self.categoryButton.sizePolicy().hasHeightForWidth())
+        self.categoryButton.setSizePolicy(sizePolicy1)
+        self.categoryButton.setMinimumSize(QSize(150, 40))
+        self.categoryButton.setFocusPolicy(Qt.NoFocus)
+        self.categoryButton.setIcon(icon)
+        self.categoryButton.setIconSize(QSize(32, 32))
+        self.categoryButton.setCheckable(True)
+        self.categoryButton.setPopupMode(QToolButton.DelayedPopup)
+        self.categoryButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.categoryButton.setArrowType(Qt.NoArrow)
+
+        self.verticalLayout_3.addWidget(self.categoryButton)
+
         self.commentButton = QToolButton(self.scrollAreaWidgetContents)
         self.buttonGroup.addButton(self.commentButton)
         self.commentButton.setObjectName(u"commentButton")
@@ -294,6 +310,7 @@ class Ui_Navigation(object):
         self.label_2.setText(QCoreApplication.translate("Navigation", u"\u5bfc\u822a", None))
         self.indexButton.setText(QCoreApplication.translate("Navigation", u"\u9996\u9875", None))
         self.searchButton.setText(QCoreApplication.translate("Navigation", u"\u641c\u7d22", None))
+        self.categoryButton.setText(QCoreApplication.translate("Navigation", u"\u5206\u7c7b", None))
         self.commentButton.setText(QCoreApplication.translate("Navigation", u"\u8bc4\u8bba", None))
         self.label_3.setText(QCoreApplication.translate("Navigation", u"\u5176\u4ed6", None))
         self.downloadButton.setText(QCoreApplication.translate("Navigation", u"\u4e0b\u8f7d", None))

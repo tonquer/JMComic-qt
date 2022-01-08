@@ -98,6 +98,7 @@
             <widget class="SubCommentView" name="subCommentView"/>
             <widget class="DownloadView" name="downloadView"/>
             <widget class="AllCommentView" name="allCommentView"/>
+            <widget class="CategoryView" name="categoryView"/>
            </widget>
           </item>
          </layout>
@@ -199,6 +200,12 @@
    <class>AllCommentView</class>
    <extends>QWidget</extends>
    <header location="global">view.comment.all_comment_view.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CategoryView</class>
+   <extends>QWidget</extends>
+   <header location="global">view.category.category_view.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

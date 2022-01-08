@@ -6,7 +6,7 @@ import sys
 import time
 
 from PySide6.QtCore import Qt, QCoreApplication
-from PySide6.QtGui import QGuiApplication
+from PySide6.QtGui import QGuiApplication, QFontDatabase
 
 from config import config
 from config.setting import Setting

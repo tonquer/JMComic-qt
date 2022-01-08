@@ -5,6 +5,7 @@ from PySide6.QtWidgets import QListWidget, QAbstractItemView
 from component.scroll.smooth_scroll_bar import SmoothScrollBar
 from qt_owner import QtOwner
 from task.qt_task import QtTaskBase
+from tools.str import Str
 
 
 class BaseListWidget(QListWidget, QtTaskBase):
@@ -16,10 +17,6 @@ class BaseListWidget(QListWidget, QtTaskBase):
         # self.verticalScrollBar().valueChanged.connect(self.OnMove)
         self.isLoadingPage = False
         self.LoadCallBack = None
-        self.OpenBack = None
-        self.LikeBack = None
-        self.KillBack = None
-        self.parentId = -1
 
         self.vScrollBar = SmoothScrollBar()
         self.vScrollBar.setOrientation(Qt.Vertical)
@@ -30,15 +27,7 @@ class BaseListWidget(QListWidget, QtTaskBase):
         # QScroller.grabGesture(self.viewport(), QScroller.LeftMouseButtonGesture)
         self.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
         self.verticalScrollBar().setSingleStep(30)
-
-        # self.timer = QTimer()
-        # self.timer.setInterval(1000)
-        # self.timer.timeout.connect(self.TimeOut)
-
         self.wheelStatus = True
-        self.lastClick = 0
-        self.lastIndex = -1
-        self.doubleClickType = 0
 
     def ClearWheelEvent(self):
         pass
@@ -63,9 +52,17 @@ class BaseListWidget(QListWidget, QtTaskBase):
             if self.LoadCallBack:
                 self.LoadCallBack()
 
-    def UpdatePage(self, page, pages):
+    def UpdatePage(self, page, pages=None):
         self.page = page
-        self.pages = pages
+        if pages:
+            self.pages = pages
+        self.UpdateState()
+
+    def UpdateMaxPage(self, maxPages):
+        self.pages = maxPages
+
+    def GetPageText(self):
+        return Str.GetStr(Str.Page) + ": " + str(self.page) + "/" + str(self.pages)
 
     def UpdateState(self, isLoading=False):
         self.isLoadingPage = isLoading

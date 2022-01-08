@@ -138,10 +138,16 @@ class Server(Singleton):
 
     def Send(self, request, token="", backParam="", isASync=True):
         self.__DealHeaders(request, token)
-        if isASync:
-            return self._inQueue.put(Task(request, backParam))
+        if isinstance(request, req.SpeedTestReq):
+            if isASync:
+                return self._downloadQueue.put(Task(request, backParam))
+            else:
+                return self._Download(Task(request, backParam))
         else:
-            return self._Send(Task(request, backParam))
+            if isASync:
+                return self._inQueue.put(Task(request, backParam))
+            else:
+                return self._Send(Task(request, backParam))
 
     def _Send(self, task):
         try:
@@ -235,14 +241,16 @@ class Server(Singleton):
 
     def _Download(self, task):
         try:
-            for cachePath in [task.req.loadPath, task.req.cachePath] and not task.req.savePath:
-                if cachePath and task.bakParam:
-                    data = ToolUtil.LoadCachePicture(cachePath)
-                    if data:
-                        TaskBase.taskObj.downloadBack.emit(task.bakParam, len(data), data)
-                        TaskBase.taskObj.downloadBack.emit(task.bakParam, 0, b"")
-                        Log.Info("request cache -> backId:{}, {}".format(task.bakParam, task.req))
-                        return
+            if not isinstance(task.req, req.SpeedTestReq) and not task.req.savePath:
+                for cachePath in [task.req.loadPath, task.req.cachePath]:
+                    if cachePath and task.bakParam:
+                        data = ToolUtil.LoadCachePicture(cachePath)
+                        if data:
+                            TaskBase.taskObj.downloadBack.emit(task.bakParam, len(data), data)
+                            TaskBase.taskObj.downloadBack.emit(task.bakParam, 0, b"")
+                            Log.Info("request cache -> backId:{}, {}".format(task.bakParam, task.req))
+                            return
+
             request = task.req
             if request.params == None:
                 request.params = {}

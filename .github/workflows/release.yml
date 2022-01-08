@@ -129,8 +129,6 @@ jobs:
       run: |
         cd src
         cp ..\res\icon\icon.ico .\
-        pyinstaller -F -i icon.ico start.py
-        mv dist/start.exe "dist/start(debug).exe"
         pyinstaller -F -w -i icon.ico start.py
         mv dist jmcomic
         cp ..\LICENSE jmcomic\
@@ -184,8 +182,6 @@ jobs:
       run: |
         cd src
         cp ..\res\icon\icon.ico .\
-        pyinstaller -F -i icon.ico start.py
-        mv dist/start.exe "dist/start(debug).exe"
         pyinstaller -F -w -i icon.ico start.py
         mv dist jmcomic
         cp ..\LICENSE jmcomic\

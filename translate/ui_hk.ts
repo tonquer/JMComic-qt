@@ -99,6 +99,51 @@
         <source>分类</source>
         <translation>分類</translation>
     </message>
+    <message>
+        <location filename="../ui/ui_category.ui" line="35"/>
+        <source>最新</source>
+        <translation type="unfinished">最新</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_category.ui" line="40"/>
+        <source>总排行</source>
+        <translation>總排行</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_category.ui" line="45"/>
+        <source>月排行</source>
+        <translation>月排行</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_category.ui" line="50"/>
+        <source>周排行</source>
+        <translation>周排行</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_category.ui" line="55"/>
+        <source>日排行</source>
+        <translation>日排行</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_category.ui" line="60"/>
+        <source>最多图片</source>
+        <translation type="unfinished">最多圖片</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_category.ui" line="65"/>
+        <source>最多爱心</source>
+        <translation type="unfinished">最多愛心</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_category.ui" line="105"/>
+        <source>页：0/0</source>
+        <translation type="unfinished">頁：0/0</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_category.ui" line="157"/>
+        <source>跳转</source>
+        <translation type="unfinished">跳轉</translation>
+    </message>
 </context>
 <context>
     <name>ComicItem</name>
@@ -506,11 +551,6 @@
         <translation>驗證</translation>
     </message>
     <message>
-        <location filename="../ui/ui_login.ui" line="77"/>
-        <source>代理</source>
-        <translation type="unfinished">代理</translation>
-    </message>
-    <message>
         <location filename="../ui/ui_login.ui" line="112"/>
         <source>关闭</source>
         <translation type="unfinished">關閉</translation>
@@ -519,6 +559,11 @@
         <location filename="../ui/ui_login.ui" line="96"/>
         <source>确定</source>
         <translation>確定</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_login.ui" line="77"/>
+        <source>分流</source>
+        <translation>分流</translation>
     </message>
     <message>
         <location filename="../ui/ui_login.ui" line="99"/>
@@ -534,14 +579,49 @@
         <translation>代理設置</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="31"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="44"/>
         <source>启用代理</source>
         <translation>啟用代理</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="45"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="58"/>
         <source>代理地址</source>
         <translation>代理地址</translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="75"/>
+        <source>分流3</source>
+        <translation>分流3</translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="109"/>
+        <source>测速</source>
+        <translation>測速</translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="116"/>
+        <source>直连</source>
+        <translation>直連</translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="126"/>
+        <source>代理</source>
+        <translation type="unfinished">代理</translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="153"/>
+        <source>分流4</source>
+        <translation>分流4</translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="187"/>
+        <source>分流2</source>
+        <translation>分流2</translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="221"/>
+        <source>分流1</source>
+        <translation>分流1</translation>
     </message>
 </context>
 <context>
@@ -638,31 +718,36 @@
     </message>
     <message>
         <location filename="../ui/component/ui_navigation.ui" line="331"/>
+        <source>分类</source>
+        <translation type="unfinished">分類</translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_navigation.ui" line="378"/>
         <source>评论</source>
         <translation>評論</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="370"/>
+        <location filename="../ui/component/ui_navigation.ui" line="417"/>
         <source>其他</source>
         <translation>其他</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="392"/>
+        <location filename="../ui/component/ui_navigation.ui" line="439"/>
         <source>下载</source>
         <translation type="unfinished">下載</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="433"/>
+        <location filename="../ui/component/ui_navigation.ui" line="480"/>
         <source>Waifu2x</source>
         <translation type="unfinished">Waifu2x</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="498"/>
+        <location filename="../ui/component/ui_navigation.ui" line="545"/>
         <source>帮助</source>
         <translation>幫助</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="542"/>
+        <location filename="../ui/component/ui_navigation.ui" line="589"/>
         <source>设置</source>
         <translation>設置</translation>
     </message>

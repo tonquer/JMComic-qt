@@ -28,6 +28,7 @@ class SearchView(QWidget, Ui_Search, QtTaskBase):
         self.bookList.LoadCallBack = self.LoadNextPage
         self.sortCombox.currentIndexChanged.connect(self.ChangeSort)
         self.searchButton.clicked.connect(self.lineEdit.Search)
+        self.jumpPage.clicked.connect(self.JumpPage)
 
     def InitWord(self):
         self.lineEdit.LoadCacheWord()
@@ -58,11 +59,11 @@ class SearchView(QWidget, Ui_Search, QtTaskBase):
                 bookList = raw["bookList"]
                 if page == 1:
                     maxPages = (total - 1) // max(1, len(bookList)) + 1
-                    self.bookList.UpdatePage(page, maxPages)
+                    self.bookList.UpdateMaxPage(maxPages)
                     self.spinBox.setMaximum(maxPages)
                 self.spinBox.setValue(page)
-                pageText = Str.GetStr(Str.Page) + ": " + str(self.bookList.page) + "/" + str(self.bookList.pages)
-                self.label.setText(pageText)
+                self.bookList.UpdatePage(page)
+                self.label.setText(self.bookList.GetPageText())
                 for v in bookList:
                     self.bookList.AddBookItemByBook(v)
             else:

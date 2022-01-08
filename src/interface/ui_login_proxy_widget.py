@@ -17,7 +17,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QButtonGroup, QCheckBox, QFrame,
     QGridLayout, QHBoxLayout, QLabel, QLineEdit,
-    QSizePolicy, QSpacerItem, QWidget)
+    QPushButton, QRadioButton, QSizePolicy, QSpacerItem,
+    QWidget)
 
 class Ui_LoginProxyWidget(object):
     def setupUi(self, LoginProxyWidget):
@@ -28,6 +29,10 @@ class Ui_LoginProxyWidget(object):
         self.gridLayout = QGridLayout(LoginProxyWidget)
         self.gridLayout.setSpacing(12)
         self.gridLayout.setObjectName(u"gridLayout")
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.gridLayout.addItem(self.verticalSpacer, 0, 0, 1, 1)
+
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.proxyBox = QCheckBox(LoginProxyWidget)
@@ -56,13 +61,126 @@ class Ui_LoginProxyWidget(object):
 
         self.gridLayout.addLayout(self.horizontalLayout, 1, 0, 1, 1)
 
+        self.horizontalLayout_3 = QHBoxLayout()
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.radioButton_3 = QRadioButton(LoginProxyWidget)
+        self.buttonGroup = QButtonGroup(LoginProxyWidget)
+        self.buttonGroup.setObjectName(u"buttonGroup")
+        self.buttonGroup.addButton(self.radioButton_3)
+        self.radioButton_3.setObjectName(u"radioButton_3")
+
+        self.horizontalLayout_3.addWidget(self.radioButton_3)
+
+        self.label5 = QLabel(LoginProxyWidget)
+        self.label5.setObjectName(u"label5")
+        self.label5.setAlignment(Qt.AlignCenter)
+
+        self.horizontalLayout_3.addWidget(self.label5)
+
+        self.label6 = QLabel(LoginProxyWidget)
+        self.label6.setObjectName(u"label6")
+        self.label6.setAlignment(Qt.AlignCenter)
+
+        self.horizontalLayout_3.addWidget(self.label6)
+
+
+        self.gridLayout.addLayout(self.horizontalLayout_3, 5, 0, 1, 1)
+
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.testSpeedButton = QPushButton(LoginProxyWidget)
+        self.testSpeedButton.setObjectName(u"testSpeedButton")
+
+        self.horizontalLayout_2.addWidget(self.testSpeedButton)
+
+        self.label_2 = QLabel(LoginProxyWidget)
+        self.label_2.setObjectName(u"label_2")
+        self.label_2.setAlignment(Qt.AlignCenter)
+
+        self.horizontalLayout_2.addWidget(self.label_2)
+
+        self.label_4 = QLabel(LoginProxyWidget)
+        self.label_4.setObjectName(u"label_4")
+        self.label_4.setAlignment(Qt.AlignCenter)
+
+        self.horizontalLayout_2.addWidget(self.label_4)
+
+
+        self.gridLayout.addLayout(self.horizontalLayout_2, 2, 0, 1, 1)
+
         self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
-        self.gridLayout.addItem(self.verticalSpacer_2, 3, 0, 1, 1)
+        self.gridLayout.addItem(self.verticalSpacer_2, 7, 0, 1, 1)
 
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.horizontalLayout_7 = QHBoxLayout()
+        self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
+        self.radioButton_4 = QRadioButton(LoginProxyWidget)
+        self.buttonGroup.addButton(self.radioButton_4)
+        self.radioButton_4.setObjectName(u"radioButton_4")
 
-        self.gridLayout.addItem(self.verticalSpacer, 0, 0, 1, 1)
+        self.horizontalLayout_7.addWidget(self.radioButton_4)
+
+        self.label7 = QLabel(LoginProxyWidget)
+        self.label7.setObjectName(u"label7")
+        self.label7.setAlignment(Qt.AlignCenter)
+
+        self.horizontalLayout_7.addWidget(self.label7)
+
+        self.label8 = QLabel(LoginProxyWidget)
+        self.label8.setObjectName(u"label8")
+        self.label8.setAlignment(Qt.AlignCenter)
+
+        self.horizontalLayout_7.addWidget(self.label8)
+
+
+        self.gridLayout.addLayout(self.horizontalLayout_7, 6, 0, 1, 1)
+
+        self.horizontalLayout_4 = QHBoxLayout()
+        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
+        self.radioButton_2 = QRadioButton(LoginProxyWidget)
+        self.buttonGroup.addButton(self.radioButton_2)
+        self.radioButton_2.setObjectName(u"radioButton_2")
+
+        self.horizontalLayout_4.addWidget(self.radioButton_2)
+
+        self.label3 = QLabel(LoginProxyWidget)
+        self.label3.setObjectName(u"label3")
+        self.label3.setAlignment(Qt.AlignCenter)
+
+        self.horizontalLayout_4.addWidget(self.label3)
+
+        self.label4 = QLabel(LoginProxyWidget)
+        self.label4.setObjectName(u"label4")
+        self.label4.setAlignment(Qt.AlignCenter)
+
+        self.horizontalLayout_4.addWidget(self.label4)
+
+
+        self.gridLayout.addLayout(self.horizontalLayout_4, 4, 0, 1, 1)
+
+        self.horizontalLayout_5 = QHBoxLayout()
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.radioButton_1 = QRadioButton(LoginProxyWidget)
+        self.buttonGroup.addButton(self.radioButton_1)
+        self.radioButton_1.setObjectName(u"radioButton_1")
+        self.radioButton_1.setChecked(True)
+
+        self.horizontalLayout_5.addWidget(self.radioButton_1)
+
+        self.label1 = QLabel(LoginProxyWidget)
+        self.label1.setObjectName(u"label1")
+        self.label1.setAlignment(Qt.AlignCenter)
+
+        self.horizontalLayout_5.addWidget(self.label1)
+
+        self.label2 = QLabel(LoginProxyWidget)
+        self.label2.setObjectName(u"label2")
+        self.label2.setAlignment(Qt.AlignCenter)
+
+        self.horizontalLayout_5.addWidget(self.label2)
+
+
+        self.gridLayout.addLayout(self.horizontalLayout_5, 3, 0, 1, 1)
 
 
         self.retranslateUi(LoginProxyWidget)
@@ -74,5 +192,20 @@ class Ui_LoginProxyWidget(object):
         LoginProxyWidget.setWindowTitle(QCoreApplication.translate("LoginProxyWidget", u"\u4ee3\u7406\u8bbe\u7f6e", None))
         self.proxyBox.setText(QCoreApplication.translate("LoginProxyWidget", u"\u542f\u7528\u4ee3\u7406", None))
         self.label.setText(QCoreApplication.translate("LoginProxyWidget", u"\u4ee3\u7406\u5730\u5740", None))
+        self.radioButton_3.setText(QCoreApplication.translate("LoginProxyWidget", u"\u5206\u6d413", None))
+        self.label5.setText("")
+        self.label6.setText("")
+        self.testSpeedButton.setText(QCoreApplication.translate("LoginProxyWidget", u"\u6d4b\u901f", None))
+        self.label_2.setText(QCoreApplication.translate("LoginProxyWidget", u"\u76f4\u8fde", None))
+        self.label_4.setText(QCoreApplication.translate("LoginProxyWidget", u"\u4ee3\u7406", None))
+        self.radioButton_4.setText(QCoreApplication.translate("LoginProxyWidget", u"\u5206\u6d414", None))
+        self.label7.setText("")
+        self.label8.setText("")
+        self.radioButton_2.setText(QCoreApplication.translate("LoginProxyWidget", u"\u5206\u6d412", None))
+        self.label3.setText("")
+        self.label4.setText("")
+        self.radioButton_1.setText(QCoreApplication.translate("LoginProxyWidget", u"\u5206\u6d411", None))
+        self.label1.setText("")
+        self.label2.setText("")
     # retranslateUi
 

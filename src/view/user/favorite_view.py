@@ -91,28 +91,27 @@ class FavoriteView(QtWidgets.QWidget, Ui_Favorite, QtTaskBase):
         QtOwner().CheckShowMsg(raw)
 
     def LoadNextPage(self):
-        self.bookList.page += 1
-        self.RefreshData()
+        self.RefreshData(self.bookList.page + 1)
 
     def JumpPage(self):
         page = int(self.spinBox.text())
         if page > self.bookList.pages:
             return
-        self.bookList.page = page
         self.bookList.clear()
-        self.RefreshData()
+        self.RefreshData(self.bookList.page)
 
-    def RefreshData(self):
+    def RefreshData(self, page=1):
         QtOwner().ShowLoading()
         sort = self.sortList[self.sortCombox.currentIndex()]
         name = self.folderBox.currentText()
         index = max(0, self.folderBox.currentIndex())
         fid = self.folderDict.get(name, "")
-        self.AddHttpTask(req.GetFavoritesReq2(self.bookList.page, sort, fid), self.SearchBack, (self.bookList.page, index))
+        self.AddHttpTask(req.GetFavoritesReq2(page, sort, fid), self.SearchBack, (page, index))
 
     def SearchBack(self, raw, v):
         page, index = v
         QtOwner().CloseLoading()
+        self.bookList.UpdateState()
         try:
             st = raw["st"]
             if st == Status.Ok:
@@ -121,16 +120,15 @@ class FavoriteView(QtWidgets.QWidget, Ui_Favorite, QtTaskBase):
                 total = f.total
                 count = f.count
                 bookList = f.bookList
-                self.bookList.UpdateState()
                 if page == 1:
                     maxPage = (total - 1) // max(1, count) + 1
-                    self.bookList.UpdatePage(page, maxPage)
+                    self.bookList.UpdateMaxPage(maxPage)
                     self.spinBox.setMaximum(maxPage)
                     if not self.folderDict:
                         self.folderDict = f.fold.copy()
                         self.InitFolder(index)
-
-                self.nums.setText(Str.GetStr(Str.FavoriteNum) + ":{}/{}".format(page, self.bookList.pages))
+                self.bookList.UpdatePage(page)
+                self.nums.setText(self.bookList.GetPageText())
                 for book in bookList:
                     self.bookList.AddBookItemByBook(book)
             else:
