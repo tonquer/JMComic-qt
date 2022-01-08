@@ -72,7 +72,7 @@ class ComicListWidget(BaseListWidget):
         title = v.baseInfo.title
         url = v.baseInfo.coverUrl
         _id = v.baseInfo.id
-        categories = v.baseInfo.tagStr
+        categories = ",".join(v.baseInfo.tagList)
         self.AddBookItem(_id, title, categories, url)
 
     def AddBookItem(self, _id, title, categoryStr="", url=""):

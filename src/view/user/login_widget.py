@@ -1,6 +1,7 @@
 import base64
 
 from PySide6 import QtWidgets
+from PySide6.QtCore import Signal
 
 from config.setting import Setting
 from interface.ui_login_widget import Ui_LoginWidget
@@ -12,6 +13,9 @@ from tools.user import User
 
 
 class LoginWidget(QtWidgets.QWidget, Ui_LoginWidget, QtTaskBase):
+    ShowLoading = Signal()
+    CloseLoading = Signal()
+
     def __init__(self):
         super(self.__class__, self).__init__()
         Ui_LoginWidget.__init__(self)
@@ -32,7 +36,7 @@ class LoginWidget(QtWidgets.QWidget, Ui_LoginWidget, QtTaskBase):
         self.Login()
 
     def Login(self):
-        QtOwner().ShowLoading()
+        self.ShowLoading.emit()
         userId = self.userEdit_2.text()
         passwd = self.passwdEdit_2.text()
         self.AddHttpTask(req.LoginReq2(userId, passwd), self.LoginBack)
@@ -46,7 +50,7 @@ class LoginWidget(QtWidgets.QWidget, Ui_LoginWidget, QtTaskBase):
         # self.owner().show()
 
     def LoginBack(self, raw):
-        QtOwner().CloseLoading()
+        self.CloseLoading.emit()
         st = raw["st"]
         if st == Status.Ok:
             user = raw.get("user")

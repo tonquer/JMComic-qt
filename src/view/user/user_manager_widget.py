@@ -1,4 +1,5 @@
 from PySide6 import QtWidgets
+from PySide6.QtCore import Signal
 
 from interface.ui_user_manager_widget import Ui_UserManagerWidget
 from qt_owner import QtOwner
@@ -8,6 +9,9 @@ from tools.str import Str
 
 
 class UserManagerWidget(QtWidgets.QWidget, Ui_UserManagerWidget, QtTaskBase):
+    ShowLoading = Signal()
+    CloseLoading = Signal()
+
     def __init__(self):
         super(self.__class__, self).__init__()
         Ui_UserManagerWidget.__init__(self)
@@ -24,25 +28,25 @@ class UserManagerWidget(QtWidgets.QWidget, Ui_UserManagerWidget, QtTaskBase):
         email = self.verfyEdit.text()
         if not email:
             return
-        QtOwner().ShowLoading()
+        self.ShowLoading.emit()
         self.AddHttpTask(req.RegisterVerifyMailReq(email), self._Back)
 
     def ResetPassword(self):
         email = self.resetEdit.text()
         if not email:
             return
-        QtOwner().ShowLoading()
+        self.ShowLoading.emit()
         self.AddHttpTask(req.ResetPasswordReq(email), self._Back)
 
     def VerifyEmail(self):
         link = self.sendEdit.text()
         if not link:
             return
-        QtOwner().ShowLoading()
+        self.ShowLoading.emit()
         self.AddHttpTask(req.VerifyMailReq(link), self._Back)
 
     def _Back(self, raw):
-        QtOwner().CloseLoading()
+        self.CloseLoading.emit()
         st = raw["st"]
         msg = raw["msg"]
         if st == Status.Ok:

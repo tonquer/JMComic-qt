@@ -1,8 +1,9 @@
 import base64
 
-from PySide6.QtCore import Signal
+from PySide6.QtCore import Signal, Qt
 
 from component.dialog.base_mask_dialog import BaseMaskDialog
+from component.label.gif_label import GifLabel
 from config.setting import Setting
 from interface.ui_login import Ui_Login
 from qt_owner import QtOwner
@@ -19,6 +20,11 @@ class LoginView(BaseMaskDialog, Ui_Login, QtTaskBase):
         QtTaskBase.__init__(self)
         self.widget.adjustSize()
         self.setupUi(self.widget)
+        self.loadingDialog = GifLabel(self)
+        self.loadingDialog.Init(QtOwner().GetFileData(":/png/icon/loading_gif.gif"), 256)
+        self.loadingDialog.setAlignment(Qt.AlignCenter)
+        self.loadingDialog.close()
+
         self.tabWidget.currentChanged.connect(self._SwitchWidget)
         self.loginButton.clicked.connect(self._ClickButton)
         self.closeButton.clicked.connect(self.close)
@@ -32,6 +38,19 @@ class LoginView(BaseMaskDialog, Ui_Login, QtTaskBase):
             self.loginWidget.passwdEdit_2.setText(passwd)
 
         self.tabWidget.setCurrentIndex(0)
+        self.loginWidget.ShowLoading.connect(self.ShowLoading)
+        self.registerWidget.ShowLoading.connect(self.ShowLoading)
+        self.userWidget.ShowLoading.connect(self.ShowLoading)
+
+        self.loginWidget.CloseLoading.connect(self.CloseLoading)
+        self.registerWidget.CloseLoading.connect(self.CloseLoading)
+        self.userWidget.CloseLoading.connect(self.CloseLoading)
+
+    def ShowLoading(self):
+        self.loadingDialog.Show()
+
+    def CloseLoading(self):
+        self.loadingDialog.close()
 
     @property
     def loginWidget(self):
