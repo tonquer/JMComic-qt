@@ -62,7 +62,6 @@ jobs:
         pip install requests==2.26.0
         pip install urllib3==1.25.11
         pip install pillow==8.3.2
-        pip install waifu2x-vulkan==1.1.1
         pip install bs4==0.0.1
         pip install lxml==4.6.4
         pip install pycryptodomex==3.12.0
