@@ -26,7 +26,6 @@ class CommentWidget(QtWidgets.QWidget, Ui_Comment, QtTaskBase):
         self.bookId = ""
         self.pushButton.clicked.connect(self.SendComment)
         self.skipButton.clicked.connect(self.JumpPage)
-        self.commentNum = 0
         self.cid = ""
 
     def SwitchCurrent(self, **kwargs):
@@ -35,7 +34,6 @@ class CommentWidget(QtWidgets.QWidget, Ui_Comment, QtTaskBase):
         if not bookId and refresh:
             self.pushButton.hide()
             self.commentLine.hide()
-            self.commentNum = kwargs.get("commentNum", 10000)
             self.bookId = ""
             self.ClearCommentList()
             self.listWidget.UpdatePage(1, 1)
@@ -46,7 +44,6 @@ class CommentWidget(QtWidgets.QWidget, Ui_Comment, QtTaskBase):
             return
         self.pushButton.setVisible(True)
         self.commentLine.setVisible(True)
-        self.commentNum = kwargs.get("commentNum", 0)
         self.bookId = bookId
         self.ClearCommentList()
         self.listWidget.UpdatePage(1, 1)
@@ -59,7 +56,7 @@ class CommentWidget(QtWidgets.QWidget, Ui_Comment, QtTaskBase):
         self.listWidget.UpdatePage(1, 1)
         self.listWidget.UpdateState()
         self.spinBox.setValue(1)
-        self.nums.setText(Str.GetStr(Str.Page) + ": " + str(self.listWidget.page) + "/" + str(self.listWidget.pages))
+        self.nums.setText(self.listWidget.GetPageText())
         self.ClearTask()
 
     def JumpPage(self):
@@ -94,8 +91,9 @@ class CommentWidget(QtWidgets.QWidget, Ui_Comment, QtTaskBase):
 
                 comments = raw["commentList"]
                 if page == 1:
+                    total = raw["total"]
                     num = len(comments)
-                    maxPages = (self.commentNum - 1) // max(1, num) + 1
+                    maxPages = (total - 1) // max(1, num) + 1
                     self.listWidget.UpdateMaxPage(maxPages)
                     self.spinBox.setMaximum(maxPages)
                 self.spinBox.setValue(page)
@@ -108,7 +106,7 @@ class CommentWidget(QtWidgets.QWidget, Ui_Comment, QtTaskBase):
                 QtOwner().ShowError(Str.GetStr(st))
             return
         except Exception as es:
-            QtOwner().CheckShowMsg( raw)
+            QtOwner().CheckShowMsg(raw)
             Log.Error(es)
 
     def SendComment(self):

@@ -503,6 +503,34 @@
     </message>
 </context>
 <context>
+    <name>History</name>
+    <message>
+        <location filename="../ui/ui_history.ui" line="14"/>
+        <source>收藏</source>
+        <translation type="unfinished">收藏</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_history.ui" line="68"/>
+        <source>记录数：</source>
+        <translation>記錄數：</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_history.ui" line="75"/>
+        <source>页</source>
+        <translation type="unfinished">頁</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_history.ui" line="125"/>
+        <source>跳转</source>
+        <translation type="unfinished">跳轉</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_history.ui" line="128"/>
+        <source>Return</source>
+        <translation type="unfinished">Return</translation>
+    </message>
+</context>
+<context>
     <name>Index</name>
     <message>
         <location filename="../ui/ui_index.ui" line="14"/>
@@ -687,7 +715,7 @@
     <name>Navigation</name>
     <message>
         <location filename="../ui/component/ui_navigation.ui" line="14"/>
-        <location filename="../ui/component/ui_navigation.ui" line="212"/>
+        <location filename="../ui/component/ui_navigation.ui" line="294"/>
         <source>导航</source>
         <translation>導航</translation>
     </message>
@@ -707,47 +735,57 @@
         <translation>我的收藏</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="234"/>
+        <location filename="../ui/component/ui_navigation.ui" line="220"/>
+        <source>我的评论</source>
+        <translation>我的評論</translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_navigation.ui" line="261"/>
+        <source>观看记录</source>
+        <translation>觀看記錄</translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_navigation.ui" line="316"/>
         <source>首页</source>
         <translation>首頁</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="284"/>
+        <location filename="../ui/component/ui_navigation.ui" line="366"/>
         <source>搜索</source>
         <translation>搜索</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="331"/>
+        <location filename="../ui/component/ui_navigation.ui" line="413"/>
         <source>分类</source>
         <translation type="unfinished">分類</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="378"/>
+        <location filename="../ui/component/ui_navigation.ui" line="460"/>
         <source>评论</source>
         <translation>評論</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="417"/>
+        <location filename="../ui/component/ui_navigation.ui" line="499"/>
         <source>其他</source>
         <translation>其他</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="439"/>
+        <location filename="../ui/component/ui_navigation.ui" line="521"/>
         <source>下载</source>
         <translation type="unfinished">下載</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="480"/>
+        <location filename="../ui/component/ui_navigation.ui" line="562"/>
         <source>Waifu2x</source>
         <translation type="unfinished">Waifu2x</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="545"/>
+        <location filename="../ui/component/ui_navigation.ui" line="627"/>
         <source>帮助</source>
         <translation>幫助</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="589"/>
+        <location filename="../ui/component/ui_navigation.ui" line="671"/>
         <source>设置</source>
         <translation>設置</translation>
     </message>

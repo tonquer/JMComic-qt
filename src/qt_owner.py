@@ -124,8 +124,8 @@ class QtOwner(Singleton):
         if foldChangeBack:
             w.FoldChange.connect(foldChangeBack)
 
-    def OpenComment(self, bookId, commentNum):
-        arg = {"bookId": bookId, "commentNum": commentNum}
+    def OpenComment(self, bookId):
+        arg = {"bookId": bookId}
         self.owner.SwitchWidget(self.owner.commentView, **arg)
 
     def OpenGameComment(self, commentId):

@@ -41,9 +41,9 @@ class MainView(Main, QtTaskBase):
             desktop = screens[Setting.ScreenIndex.value].geometry()
 
         self.adjustSize()
-        self.resize(desktop.width() // 4 * 3, desktop.height() // 4 * 3)
-        self.move(self.width() // 8+desktop.x(), max(0, desktop.height()-self.height()) // 2+desktop.y())
-        print(desktop.size(), self.size())
+        # self.resize(desktop.width() // 4 * 3, desktop.height() // 4 * 3)
+        # self.move(self.width() // 8+desktop.x(), max(0, desktop.height()-self.height()) // 2+desktop.y())
+        # print(desktop.size(), self.size())
         self.setAttribute(Qt.WA_StyledBackground, True)
 
         # self.loadingDialog = LoadingDialog(self)
@@ -105,6 +105,8 @@ class MainView(Main, QtTaskBase):
         self.navigationWidget.waifu2xButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.waifu2xToolView)))
         self.navigationWidget.downloadButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.downloadView)))
         self.navigationWidget.categoryButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.categoryView)))
+        self.navigationWidget.myCommentButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.myCommentView)))
+        self.navigationWidget.historyButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.historyView)))
 
     def RetranslateUi(self):
         Main.retranslateUi(self, self)

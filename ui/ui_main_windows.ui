@@ -117,6 +117,8 @@
            <widget class="BookEpsView" name="bookEpsView"/>
            <widget class="AllCommentView" name="allCommentView"/>
            <widget class="CategoryView" name="categoryView"/>
+           <widget class="HistoryView" name="historyView"/>
+           <widget class="MyCommentView" name="myCommentView"/>
           </widget>
          </item>
         </layout>
@@ -214,12 +216,6 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>TitleBarWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">component.widget.title_bar_widget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>AllCommentView</class>
    <extends>QWidget</extends>
    <header location="global">view.comment.all_comment_view.h</header>
@@ -229,6 +225,24 @@
    <class>CategoryView</class>
    <extends>QWidget</extends>
    <header location="global">view.category.category_view.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TitleBarWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">component.widget.title_bar_widget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>HistoryView</class>
+   <extends>QWidget</extends>
+   <header location="global">view.history.history_view.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MyCommentView</class>
+   <extends>QWidget</extends>
+   <header location="global">view.comment.my_comment_view.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

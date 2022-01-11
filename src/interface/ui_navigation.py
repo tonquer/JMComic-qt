@@ -126,6 +126,34 @@ class Ui_Navigation(object):
 
         self.verticalLayout_3.addWidget(self.collectButton)
 
+        self.myCommentButton = QToolButton(self.scrollAreaWidgetContents)
+        self.buttonGroup.addButton(self.myCommentButton)
+        self.myCommentButton.setObjectName(u"myCommentButton")
+        sizePolicy1.setHeightForWidth(self.myCommentButton.sizePolicy().hasHeightForWidth())
+        self.myCommentButton.setSizePolicy(sizePolicy1)
+        self.myCommentButton.setMinimumSize(QSize(150, 40))
+        self.myCommentButton.setFocusPolicy(Qt.NoFocus)
+        self.myCommentButton.setIcon(icon)
+        self.myCommentButton.setIconSize(QSize(32, 32))
+        self.myCommentButton.setCheckable(True)
+        self.myCommentButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+
+        self.verticalLayout_3.addWidget(self.myCommentButton)
+
+        self.historyButton = QToolButton(self.scrollAreaWidgetContents)
+        self.buttonGroup.addButton(self.historyButton)
+        self.historyButton.setObjectName(u"historyButton")
+        sizePolicy1.setHeightForWidth(self.historyButton.sizePolicy().hasHeightForWidth())
+        self.historyButton.setSizePolicy(sizePolicy1)
+        self.historyButton.setMinimumSize(QSize(150, 40))
+        self.historyButton.setFocusPolicy(Qt.NoFocus)
+        self.historyButton.setIcon(icon)
+        self.historyButton.setIconSize(QSize(32, 32))
+        self.historyButton.setCheckable(True)
+        self.historyButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+
+        self.verticalLayout_3.addWidget(self.historyButton)
+
         self.line = QFrame(self.scrollAreaWidgetContents)
         self.line.setObjectName(u"line")
         self.line.setFrameShape(QFrame.HLine)
@@ -307,6 +335,8 @@ class Ui_Navigation(object):
         self.levelLabel.setText("")
         self.label.setText(QCoreApplication.translate("Navigation", u"\u7528\u6237", None))
         self.collectButton.setText(QCoreApplication.translate("Navigation", u"\u6211\u7684\u6536\u85cf", None))
+        self.myCommentButton.setText(QCoreApplication.translate("Navigation", u"\u6211\u7684\u8bc4\u8bba", None))
+        self.historyButton.setText(QCoreApplication.translate("Navigation", u"\u89c2\u770b\u8bb0\u5f55", None))
         self.label_2.setText(QCoreApplication.translate("Navigation", u"\u5bfc\u822a", None))
         self.indexButton.setText(QCoreApplication.translate("Navigation", u"\u9996\u9875", None))
         self.searchButton.setText(QCoreApplication.translate("Navigation", u"\u641c\u7d22", None))

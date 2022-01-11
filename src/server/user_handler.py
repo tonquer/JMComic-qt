@@ -26,19 +26,25 @@ class CheckUpdateHandler(object):
 
         updateInfo = re.findall(r"<meta property=\"og:description\" content=\"([^\"]*)\"", backData.res.raw.text)
         if updateInfo:
-            data = updateInfo[0]
+            msg = updateInfo[0]
+        else:
+            msg = ""
+        versionInfo = re.findall("<meta property=\"og:url\" content=\".*tag/([^\"]*)\"", backData.res.raw.text)
+
+        if versionInfo:
+            data = versionInfo[0]
         else:
             data = ""
 
-        info = re.findall(r"\d+\d*", os.path.basename(backData.res.raw.url))
+        info = data.replace("v", "").split(".")
         version = int(info[0]) * 100 + int(info[1]) * 10 + int(info[2]) * 1
         info2 = re.findall(r"\d+\d*", os.path.basename(config.UpdateVersion))
         curversion = int(info2[0]) * 100 + int(info2[1]) * 10 + int(info2[2]) * 1
 
-        data = "\n\nv" + ".".join(info) + "\n" + data
+        msg = "\n\nv" + ".".join(info) + "\n" + msg
         if version > curversion:
             if backData.backParam:
-                TaskBase.taskObj.taskBack.emit(backData.backParam, pickle.dumps(data))
+                TaskBase.taskObj.taskBack.emit(backData.backParam, pickle.dumps(msg))
 
 
 # @handler(req.GetUserInfoReq)
@@ -519,6 +525,7 @@ class GetBookEpsInfoReq2Handler(object):
 
 
 @handler(req.GetCommentReq2)
+@handler(req.GetMyCommentReq2)
 class GetCommentReq2Handler(object):
     def __call__(self, task):
         data = {"st": task.status}
@@ -532,11 +539,12 @@ class GetCommentReq2Handler(object):
             if code != 200:
                 data["st"] = Status.Error
                 return
-            commentList = ToolUtil.ParseBookComment(v.get("data"))
+            commentList, total = ToolUtil.ParseBookComment(v.get("data"))
             # from tools.book import BookMgr
             # BookMgr().UpdateBookInfo(task.req.bookId, info)
             data["st"] = Status.Ok
             data["commentList"] = commentList
+            data["total"] = total
         except Exception as es:
             data["st"] = Status.ParseError
             Log.Error(es)
@@ -562,6 +570,32 @@ class SendCommentReq2Handler(object):
             msg = ToolUtil.ParseSendBookComment(v.get("data"))
             data["st"] = Status.Ok
             data["message"] = msg
+        except Exception as es:
+            data["st"] = Status.ParseError
+            Log.Error(es)
+        finally:
+            if task.backParam:
+                TaskBase.taskObj.taskBack.emit(task.backParam, pickle.dumps(data))
+
+
+@handler(req.GetHistoryReq2)
+class GetHistoryReq2Handler(object):
+    def __call__(self, task):
+        data = {"st": task.status}
+        try:
+            if task.status != Status.Ok:
+                return
+            v = json.loads(task.res.raw.text)
+            code = v.get("code")
+            data["errorMsg"] = v.get("errorMsg", "")
+            data["message"] = v.get("message", "")
+            if code != 200:
+                data["st"] = Status.Error
+                return
+            bookList, total = ToolUtil.ParseHistoryReq2(v.get("data"))
+            data["st"] = Status.Ok
+            data["total"] = total
+            data["bookList"] = bookList
         except Exception as es:
             data["st"] = Status.ParseError
             Log.Error(es)

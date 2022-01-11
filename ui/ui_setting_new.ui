@@ -95,9 +95,9 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>-1617</y>
+          <y>0</y>
           <width>661</width>
-          <height>2362</height>
+          <height>2372</height>
          </rect>
         </property>
         <property name="styleSheet">
@@ -400,7 +400,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="titleBox_2">
+             <widget class="QCheckBox" name="titleBox">
               <property name="text">
                <string>使用默认标题栏（如果标题栏出现显示异常，请勾选）</string>
               </property>
@@ -2001,8 +2001,8 @@
  <connections/>
  <buttongroups>
   <buttongroup name="languageGroup"/>
-  <buttongroup name="logGroup"/>
   <buttongroup name="mainScaleGroup"/>
+  <buttongroup name="logGroup"/>
   <buttongroup name="themeGroup"/>
  </buttongroups>
 </ui>

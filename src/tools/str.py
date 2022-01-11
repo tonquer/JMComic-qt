@@ -184,6 +184,7 @@ class Str:
     AllComment = 124               # 所有评论
     Move = 125               # 移动
     Add = 126                # 新增
+    MyComment = 127          # 我的评论
 
     @classmethod
     def Reload(cls):
@@ -356,6 +357,7 @@ class Str:
         cls.strDict[cls.AllComment] = QCoreApplication.translate("cls.obj",  "所有评论", None)
         cls.strDict[cls.Move] = QCoreApplication.translate("cls.obj",  "移动", None)
         cls.strDict[cls.Add] = QCoreApplication.translate("cls.obj",  "新增", None)
+        cls.strDict[cls.MyComment] = QCoreApplication.translate("cls.obj",  "我的评论", None)
 
     @classmethod
     def GetStr(cls, enumType):

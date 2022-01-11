@@ -67,7 +67,7 @@ class Task(object):
         if not self.res:
             return ""
         if hasattr(self.res, "raw"):
-            getattr(self.res.raw, "text", "")
+            return getattr(self.res.raw, "text", "")
         return ""
 
 class Server(Singleton):

@@ -557,6 +557,7 @@ class ToolUtil(object):
         raw = json.loads(result)
         from tools.book import CommentInfo
         commentList = []
+        total = int(raw.get("total", 0))
         for v in raw.get("list", []):
             b = CommentInfo()
             b.id = v.get("CID")
@@ -589,7 +590,7 @@ class ToolUtil(object):
                 b.linkBookId = v2.get("AID")
                 b.subComments.append(b2)
             commentList.append(b)
-        return commentList
+        return commentList, total
 
     @staticmethod
     def ParseSendBookComment(data):
@@ -622,6 +623,14 @@ class ToolUtil(object):
             isSuc = True
             msg = mo.group().strip("\"")
         return isSuc, msg
+
+    @staticmethod
+    def ParseHistoryReq2(data):
+        result = ToolUtil.ParseData(data)
+        raw = json.loads(result)
+        bookList = ToolUtil.ParseBookList(raw.get("list", []))
+        total = int(raw.get("total", 0))
+        return bookList, total
 
     # 解析用户信息
     # @staticmethod

@@ -255,7 +255,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         QtOwner().CheckShowMsg(raw)
 
     def OpenComment(self):
-        QtOwner().OpenComment(self.bookId, self.commentNum)
+        QtOwner().OpenComment(self.bookId)
 
     def OpenReadImg(self, modelIndex):
         index = modelIndex.row()

@@ -24,9 +24,11 @@ from component.widget.navigation_widget import NavigationWidget
 from view.category.category_view import CategoryView
 from view.comment.all_comment_view import AllCommentView
 from view.comment.comment_view import CommentView
+from view.comment.my_comment_view import MyCommentView
 from view.comment.sub_comment_view import SubCommentView
 from view.download.download_view import DownloadView
 from view.help.help_view import HelpView
+from view.history.history_view import HistoryView
 from view.index.index_view import IndexView
 from view.info.book_eps_view import BookEpsView
 from view.info.book_info_view import BookInfoView
@@ -126,6 +128,12 @@ class Ui_Main(object):
         self.categoryView = CategoryView()
         self.categoryView.setObjectName(u"categoryView")
         self.subStackWidget.addWidget(self.categoryView)
+        self.historyView = HistoryView()
+        self.historyView.setObjectName(u"historyView")
+        self.subStackWidget.addWidget(self.historyView)
+        self.myCommentView = MyCommentView()
+        self.myCommentView.setObjectName(u"myCommentView")
+        self.subStackWidget.addWidget(self.myCommentView)
 
         self.verticalLayout.addWidget(self.subStackWidget)
 

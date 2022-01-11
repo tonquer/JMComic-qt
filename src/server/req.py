@@ -569,6 +569,27 @@ class GetCommentReq2(ServerReq):
         super(self.__class__, self).__init__(url, header, {}, method)
 
 
+# 获得评论
+class GetMyCommentReq2(ServerReq):
+    def __init__(self, uid, page="1"):
+        self.uid = uid
+        url = config.Url2 + "/forum"
+        method = "GET"
+        data = dict()
+        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
+        data["view_mode_debug"] = "1"
+        data["view_mode"] = "null"
+        data["mode"] = "undefined"
+        data["uid"] = uid
+        data["page"] = page
+
+        param = ToolUtil.DictToUrl(data)
+        header = ToolUtil.GetHeader(url, method)
+        if param:
+            url += "/?" + param
+        super(self.__class__, self).__init__(url, header, {}, method)
+
+
 # 发送评论
 class SendCommentReq2(ServerReq):
     def __init__(self, bookId="", comment="", cid=""):
@@ -584,6 +605,21 @@ class SendCommentReq2(ServerReq):
         if cid:
             data["comment_id"] = cid
         super(self.__class__, self).__init__(url, header, ToolUtil.DictToUrl(data), method)
+
+
+# 获取观看记录
+class GetHistoryReq2(ServerReq):
+    def __init__(self, page=1):
+        url = config.Url2 + "/watch_list"
+        method = "GET"
+        header = ToolUtil.GetHeader(url, method)
+        data = dict()
+        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
+        data["view_mode_debug"] = "1"
+        data["view_mode"] = "null"
+        data["page"] = page
+        super(self.__class__, self).__init__(url, header, ToolUtil.DictToUrl(data), method)
+
 
 # 查看评论
 # class LookCommentReq(ServerReq):

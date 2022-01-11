@@ -8,5 +8,5 @@ class AllCommentView(CommentWidget):
         self.setWindowTitle(Str.GetStr(Str.AllComment))
 
     def retranslateUi(self, Comment):
-        self.setWindowTitle(Str.GetStr(Str.AllComment))
         CommentWidget.retranslateUi(self, Comment)
+        self.setWindowTitle(Str.GetStr(Str.AllComment))
