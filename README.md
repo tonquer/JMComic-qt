@@ -16,14 +16,14 @@
 
 ## 如何使用
   ### Windows (测试使用win10)
-  1. 下载最新的版本 https://github.com/tonquer/JMComic-qt/releases
+  1. 下载 [最新的版本](https://github.com/tonquer/JMComic-qt/releases)
   2. 解压zip
   3. 打开start.exe
   4. 后续有更新，只需要下载最新版本覆盖原目录即可
   5. 如果无法初始化Waifu2x, DLL错误, 请安装 [Vs运行库](https://download.visualstudio.microsoft.com/download/pr/366c0fb9-fe05-4b58-949a-5bc36e50e370/015EDD4E5D36E053B23A01ADB77A2B12444D3FB6ECCEFE23E3A8CD6388616A16/VC_redist.x64.exe), [Vulkan运行库](https://sdk.lunarg.com/sdk/download/1.2.162.0/windows/VulkanRT-1.2.162.0-Installer.exe)
 
   ### macOS (测试使用 macOS 10.15.7)
-  1. 下载最新的版本 https://github.com/tonquer/JMComic-qt/releases
+  1. 下载 [最新的版本](https://github.com/tonquer/JMComic-qt/releases)
   2. 加载dmg文件
   3. 将 JMComic 拖入访达 (Finder) 左侧侧栏的应用程序 (Applications) 文件夹中
   4. 从启动台 (Launchpad) 中找到并打开 JMComic
@@ -33,11 +33,13 @@
   ```
   
   ### Linux (测试使用deepin 20.2)
-  1. 下载qt依赖， http://ftp.br.debian.org/debian/pool/main/x/xcb-util/libxcb-util1_0.4.0-1+b1_amd64.deb
-  2. 安装依赖，sudo dpkg -i ./libxcb-util1_0.4.0-1+b1_amd64.deb
-  3. 下载最新的版本 https://github.com/tonquer/picacg-windows/releases
-  4. 运行
-  7. 要想使用waifu2x请确定你的设备支持vulkan，然后安装vulkan驱动包，sudo apt install libvulkan1
+  1. Deepin或Uos系统请下载安装qt依赖， 
+  ```
+  wget http://ftp.br.debian.org/debian/pool/main/x/xcb-util/libxcb-util1_0.4.0-1+b1_amd64.deb
+  sudo dpkg -i ./libxcb-util1_0.4.0-1+b1_amd64.deb
+  ```
+  2. 下载 [最新的版本](https://github.com/tonquer/JMComic-qt/releases)
+  3. 运行
 
 ## 如何编译
   ### 使用Git Actions编译
