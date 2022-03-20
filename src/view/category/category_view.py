@@ -1,11 +1,16 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout
+from functools import partial
 
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton
+
+from component.layout.flow_layout import FlowLayout
 from component.list.comic_list_widget import ComicListWidget
+from component.scroll_area.smooth_scroll_area import SmoothScrollArea
 from interface.ui_category import Ui_Category
 from qt_owner import QtOwner
 from server import req, Status, Log
 from task.qt_task import QtTaskBase
 from tools.book import Category
+from tools.str import Str
 
 
 class CategoryView(QWidget, Ui_Category, QtTaskBase):
@@ -17,7 +22,7 @@ class CategoryView(QWidget, Ui_Category, QtTaskBase):
         self.isInit = False
         self.isInitNew = False
         self.bookWidgetList = []
-        self.newIndex = 0
+        self.newIndex = 1
         self.indexCategory = {}
         self.tabWidget.currentChanged.connect(self.SwitchTab)
         self.jumpPage.clicked.connect(self._JumpPage)
@@ -41,17 +46,41 @@ class CategoryView(QWidget, Ui_Category, QtTaskBase):
             if st == Status.Ok:
                 self.isInit = True
                 categoryList = raw["categoryList"]
+                categoryTitle = raw["categoryTitle"]
+                self.AddTitleTab(categoryTitle)
                 for category in categoryList:
                     assert isinstance(category, Category)
                     self.indexCategory[self.newIndex] = category
                     w = self.AddTab(category.name)
                     self.newIndex += 1
                 self.tabWidget.setCurrentIndex(0)
+
             else:
                 QtOwner().CheckShowMsg(raw)
         except Exception as es:
             Log.Error(es)
             self.isInit = False
+
+    def AddTitleTab(self, categoryTitle):
+        scroll = SmoothScrollArea()
+        scroll.setWidgetResizable(True)
+        tab = QWidget()
+        verticalLayout = QVBoxLayout(tab)
+        for title, contentList in categoryTitle.items():
+            verticalLayout.addWidget(QLabel(title))
+            layout = FlowLayout()
+            for text in contentList:
+                box = QPushButton(text)
+                box.clicked.connect(partial(self.SearchTitle, text))
+                box.setMinimumWidth(160)
+                layout.addWidget(box)
+            verticalLayout.addLayout(layout)
+        scroll.setWidget(tab)
+        self.tabWidget.addTab(scroll, Str.GetStr(Str.Classify))
+        return
+
+    def SearchTitle(self, text):
+        QtOwner().OpenSearch(text)
 
     def AddTab(self, name):
         tab = QWidget()
@@ -65,6 +94,17 @@ class CategoryView(QWidget, Ui_Category, QtTaskBase):
         return newListWidget
 
     def SwitchTab(self, index, page=1, isForce=False):
+        if index == 0:
+            self.spinBox.setVisible(False)
+            self.label.setVisible(False)
+            self.jumpPage.setVisible(False)
+            self.sortCombox.setVisible(False)
+            return
+        else:
+            self.spinBox.setVisible(True)
+            self.label.setVisible(True)
+            self.jumpPage.setVisible(True)
+            self.sortCombox.setVisible(True)
         w = self.tabWidget.widget(index)
         bookWidget = getattr(w, "bookWidget", "")
         if not isinstance(bookWidget, ComicListWidget):

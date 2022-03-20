@@ -331,6 +331,12 @@
            </item>
            <item row="4" column="1">
             <widget class="QLabel" name="gpuLabel">
+             <property name="maximumSize">
+              <size>
+               <width>250</width>
+               <height>16777215</height>
+              </size>
+             </property>
              <property name="text">
               <string>GPU</string>
              </property>
@@ -520,7 +526,7 @@
             <widget class="QLabel" name="label_10">
              <property name="maximumSize">
               <size>
-               <width>90</width>
+               <width>16777215</width>
                <height>16777215</height>
               </size>
              </property>
@@ -550,7 +556,7 @@
             <widget class="QLabel" name="label_11">
              <property name="maximumSize">
               <size>
-               <width>90</width>
+               <width>16777215</width>
                <height>16777215</height>
               </size>
              </property>

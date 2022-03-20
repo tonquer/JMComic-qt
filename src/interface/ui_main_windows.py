@@ -30,6 +30,7 @@ from view.comment.sub_comment_view import SubCommentView
 from view.download.download_view import DownloadView
 from view.help.help_view import HelpView
 from view.history.history_view import HistoryView
+from view.history.remote_history_view import RemoteHistoryView
 from view.index.index_view import IndexView
 from view.info.book_eps_view import BookEpsView
 from view.info.book_info_view import BookInfoView
@@ -111,6 +112,9 @@ class Ui_MainWindows(object):
         self.searchView = SearchView()
         self.searchView.setObjectName(u"searchView")
         self.subStackWidget.addWidget(self.searchView)
+        self.searchView2 = SearchView()
+        self.searchView2.setObjectName(u"searchView2")
+        self.subStackWidget.addWidget(self.searchView2)
         self.commentView = CommentView()
         self.commentView.setObjectName(u"commentView")
         self.subStackWidget.addWidget(self.commentView)
@@ -138,6 +142,9 @@ class Ui_MainWindows(object):
         self.historyView = HistoryView()
         self.historyView.setObjectName(u"historyView")
         self.subStackWidget.addWidget(self.historyView)
+        self.remoteHistoryView = RemoteHistoryView()
+        self.remoteHistoryView.setObjectName(u"remoteHistoryView")
+        self.subStackWidget.addWidget(self.remoteHistoryView)
         self.myCommentView = MyCommentView()
         self.myCommentView.setObjectName(u"myCommentView")
         self.subStackWidget.addWidget(self.myCommentView)

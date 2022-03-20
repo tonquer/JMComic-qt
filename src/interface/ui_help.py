@@ -137,6 +137,11 @@ class Ui_Help(object):
 
         self.gridLayout.addWidget(self.waifu2x, 2, 1, 1, 1)
 
+        self.openCmd = QPushButton(self.widget_2)
+        self.openCmd.setObjectName(u"openCmd")
+
+        self.gridLayout.addWidget(self.openCmd, 3, 1, 1, 1)
+
 
         self.verticalLayout_2.addWidget(self.widget_2)
 
@@ -179,5 +184,6 @@ class Ui_Help(object):
         self.label_7.setText(QCoreApplication.translate("Help", u"\u65e5\u5fd7:", None))
         self.label_9.setText(QCoreApplication.translate("Help", u"\u4e0a\u6b21\u66f4\u65b0\u65f6\u95f4\uff1a", None))
         self.waifu2x.setText(QCoreApplication.translate("Help", u"v1.0.8", None))
+        self.openCmd.setText(QCoreApplication.translate("Help", u"\u6253\u5f00\u63a7\u5236\u53f0", None))
     # retranslateUi
 

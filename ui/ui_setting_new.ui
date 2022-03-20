@@ -95,9 +95,9 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>0</y>
+          <y>-780</y>
           <width>661</width>
-          <height>2372</height>
+          <height>2526</height>
          </rect>
         </property>
         <property name="styleSheet">
@@ -285,6 +285,227 @@
                <string notr="true">languageGroup</string>
               </attribute>
              </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QFrame" name="frame_15">
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_18">
+            <item>
+             <widget class="QLabel" name="label_9">
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>字体（重启生效）：</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_24">
+              <item>
+               <widget class="QLabel" name="label_34">
+                <property name="text">
+                 <string>字体选择：</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="WheelComboBox" name="fontBox">
+                <property name="minimumSize">
+                 <size>
+                  <width>150</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>默认</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_23">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_25">
+              <item>
+               <widget class="QLabel" name="label_35">
+                <property name="text">
+                 <string>字体大小：</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="WheelComboBox" name="fontSize">
+                <property name="minimumSize">
+                 <size>
+                  <width>150</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>默认</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>9</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>12</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>14</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>16</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>18</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>20</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>22</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>24</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>26</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>28</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>30</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_24">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_26">
+              <item>
+               <widget class="QLabel" name="label_36">
+                <property name="text">
+                 <string>字体粗细：</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="WheelComboBox" name="fontStyle">
+                <property name="minimumSize">
+                 <size>
+                  <width>150</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>默认</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>高亮</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>正常</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>半粗体</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>粗体</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>黑体</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_25">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
             </item>
            </layout>
           </widget>
@@ -655,48 +876,105 @@
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="httpProxy">
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;请填写你的代理软件提供的代理地址&lt;/p&gt;&lt;p&gt;如:&lt;/p&gt;&lt;p&gt;v2ray可能是 http://127.0.0.1:10809&lt;/p&gt;&lt;p&gt;shadowsocks可能是 http://127.0.0.1:1080&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
+             <widget class="QRadioButton" name="proxy0">
               <property name="text">
-               <string>启用代理</string>
+               <string>无代理</string>
               </property>
+              <attribute name="buttonGroup">
+               <string notr="true">proxyGroup</string>
+              </attribute>
              </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <layout class="QHBoxLayout" name="horizontalLayout_27">
               <item>
-               <widget class="QLabel" name="label_8">
+               <widget class="QRadioButton" name="proxy1">
                 <property name="minimumSize">
                  <size>
-                  <width>60</width>
+                  <width>90</width>
                   <height>0</height>
                  </size>
                 </property>
                 <property name="text">
-                 <string>代理地址：</string>
+                 <string>HTTP代理</string>
+                </property>
+                <attribute name="buttonGroup">
+                 <string notr="true">proxyGroup</string>
+                </attribute>
+               </widget>
+              </item>
+              <item>
+               <widget class="Line" name="line_5">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="httpEdit">
-                <property name="minimumSize">
-                 <size>
-                  <width>150</width>
-                  <height>0</height>
-                 </size>
+               <widget class="QLabel" name="label_32">
+                <property name="text">
+                 <string>代理地址</string>
                 </property>
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;请填写你的代理软件提供的代理地址&lt;/p&gt;&lt;p&gt;如:&lt;/p&gt;&lt;p&gt;v2ray可能是 http://127.0.0.1:10809&lt;/p&gt;&lt;p&gt;shadowsocks可能是 http://127.0.0.1:1080&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="placeholderText">
-                 <string/>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
                 </property>
                </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="httpEdit"/>
               </item>
               <item>
                <spacer name="horizontalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_28">
+              <item>
+               <widget class="QRadioButton" name="proxy2">
+                <property name="minimumSize">
+                 <size>
+                  <width>90</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>Sock5代理</string>
+                </property>
+                <attribute name="buttonGroup">
+                 <string notr="true">proxyGroup</string>
+                </attribute>
+               </widget>
+              </item>
+              <item>
+               <widget class="Line" name="line_6">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_37">
+                <property name="text">
+                 <string>代理地址</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="sockEdit"/>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_26">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
@@ -2000,9 +2278,10 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="languageGroup"/>
-  <buttongroup name="mainScaleGroup"/>
   <buttongroup name="logGroup"/>
   <buttongroup name="themeGroup"/>
+  <buttongroup name="mainScaleGroup"/>
+  <buttongroup name="languageGroup"/>
+  <buttongroup name="proxyGroup"/>
  </buttongroups>
 </ui>

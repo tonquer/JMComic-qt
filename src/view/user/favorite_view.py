@@ -37,6 +37,7 @@ class FavoriteView(QtWidgets.QWidget, Ui_Favorite, QtTaskBase):
         self.bookList.MoveCallBack = self.MoveCallBack
         self.bookList.DelCallBack = self.DelCallBack
         self.resetCnt = 5
+        self.folderBox.addItem("全部")
         self.sortCombox.currentIndexChanged.connect(self.RefreshDataFocus)
         self.folderBox.currentIndexChanged.connect(self.RefreshDataFocus)
         self.folderDict = {}
@@ -111,7 +112,6 @@ class FavoriteView(QtWidgets.QWidget, Ui_Favorite, QtTaskBase):
     def SearchBack(self, raw, v):
         page, index = v
         QtOwner().CloseLoading()
-        self.bookList.UpdateState()
         try:
             st = raw["st"]
             if st == Status.Ok:
@@ -135,15 +135,20 @@ class FavoriteView(QtWidgets.QWidget, Ui_Favorite, QtTaskBase):
                 QtOwner().CheckShowMsg(raw)
         except Exception as es:
             Log.Error(es)
+        finally:
+            self.bookList.UpdateState()
 
     def InitFolder(self, index):
         self.ClearFolder()
         items = list(self.folderDict.keys())
-        items.insert(0, "全部")
         self.folderBox.addItems(items)
         self.folderBox.setCurrentIndex(index)
         return
 
     def ClearFolder(self):
+        self.folderBox.currentIndexChanged.disconnect()
         self.folderBox.clear()
+        self.folderBox.addItem("全部")
+        self.folderBox.setCurrentIndex(0)
+        self.folderBox.currentIndexChanged.connect(self.RefreshDataFocus)
         return

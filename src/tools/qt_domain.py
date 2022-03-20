@@ -1,5 +1,7 @@
 import random
 
+from urllib3.util.ssl_ import is_ipaddress
+
 from config import config
 from config.setting import Setting
 from server.server import Server
@@ -18,12 +20,14 @@ class QtDomainMgr(Singleton):
         self.http_dns_task = {}  # host: [tasks]
         self.download_dns_task = {}  # host: [tasks]
 
+        self.errorCnt = 0
+
     def AddHttpTask(self, *args, **kwargs):
         request = args[0]
         from tools.tool import ToolUtil
         host = ToolUtil.GetUrlHost(request.url)
         from task.task_http import TaskHttp
-        if host in self.cache_dns:
+        if host in self.cache_dns or self.errorCnt >= 10:
             TaskHttp().AddHttpTask(*args, **kwargs)
         else:
             tasks = self.http_dns_task.setdefault(host, [])
@@ -38,7 +42,8 @@ class QtDomainMgr(Singleton):
         if data["st"] == Status.Ok:
             addresss = []
             for info in data.get("Answer", []):
-                addresss.append(info.get("data"))
+                if is_ipaddress(info.get("data")):
+                    addresss.append(info.get("data"))
             if len(addresss) <= 0:
                 Log.Warn("Dns parse error, host:{}".format(host))
             else:
@@ -47,6 +52,7 @@ class QtDomainMgr(Singleton):
                 Server().UpdateDns(host, address)
                 Log.Info("Dns parse suc, host:{}:{}, {}".format(host, address, addresss))
         else:
+            self.errorCnt += 1
             self.fail_dns.add(host)
 
         for arg1, arg2 in self.http_dns_task.get(host, []):
@@ -61,7 +67,7 @@ class QtDomainMgr(Singleton):
             url = args[0]
         from tools.tool import ToolUtil
         host = ToolUtil.GetUrlHost(url)
-        if host in self.cache_dns:
+        if host in self.cache_dns or self.errorCnt >= 10:
             from task.task_download import TaskDownload
             TaskDownload().DownloadTask(*args, **kwargs)
         else:
@@ -80,7 +86,8 @@ class QtDomainMgr(Singleton):
             Answer = data.get("Answer")
             if Answer:
                 for info in data.get("Answer"):
-                    addresss.append(info.get("data"))
+                    if is_ipaddress(info.get("data")):
+                        addresss.append(info.get("data"))
                 if len(addresss) <= 0:
                     Log.Warn("Dns parse error, host:{}".format(host))
                 else:
@@ -92,6 +99,7 @@ class QtDomainMgr(Singleton):
                 self.fail_dns.add(host)
                 Log.Warn("Dns parse not found, host:{}".format(host))
         else:
+            self.errorCnt += 1
             self.fail_dns.add(host)
 
         for arg1, arg2 in self.download_dns_task.get(host, []):
@@ -100,17 +108,17 @@ class QtDomainMgr(Singleton):
         if host in self.download_dns_task:
             self.download_dns_task.pop(host)
 
-    def Init(self):
-        for host in config.DomainDns:
-            from task.task_http import TaskHttp
-            TaskHttp().AddHttpTask(req=req.DnsOverHttpsReq(host), callBack=self.AddHttpTaskBack, backParam=host)
-        return
-
-    def Update(self):
-        # self.cache_dns.clear()
-        # self.fail_dns.clear()
-        if Setting.IsOpenDoh.value:
-            self.Init()
-        else:
-            Server().ClearDns()
-        return
+    # def Init(self):
+    #     #     for host in config.DomainDns:
+    #     #         from task.task_http import TaskHttp
+    #     #         TaskHttp().AddHttpTask(req=req.DnsOverHttpsReq(host), callBack=self.AddHttpTaskBack, backParam=host)
+    #     #     return
+    #     #
+    #     # def Update(self):
+    #     #     # self.cache_dns.clear()
+    #     #     # self.fail_dns.clear()
+    #     #     if Setting.IsOpenDoh.value:
+    #     #         self.Init()
+    #     #     else:
+    #     #         Server().ClearDns()
+    #     #     return

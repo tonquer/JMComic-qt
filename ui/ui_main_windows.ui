@@ -109,6 +109,7 @@
            <widget class="SettingView" name="settingView"/>
            <widget class="DownloadView" name="downloadView"/>
            <widget class="SearchView" name="searchView"/>
+           <widget class="SearchView" name="searchView2"/>
            <widget class="CommentView" name="commentView"/>
            <widget class="SubCommentView" name="subCommentView"/>
            <widget class="FavoriteView" name="favorityView"/>
@@ -118,6 +119,7 @@
            <widget class="AllCommentView" name="allCommentView"/>
            <widget class="CategoryView" name="categoryView"/>
            <widget class="HistoryView" name="historyView"/>
+           <widget class="RemoteHistoryView" name="remoteHistoryView"/>
            <widget class="MyCommentView" name="myCommentView"/>
           </widget>
          </item>
@@ -228,12 +230,6 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>TitleBarWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">component.widget.title_bar_widget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>HistoryView</class>
    <extends>QWidget</extends>
    <header location="global">view.history.history_view.h</header>
@@ -243,6 +239,18 @@
    <class>MyCommentView</class>
    <extends>QWidget</extends>
    <header location="global">view.comment.my_comment_view.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TitleBarWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">component.widget.title_bar_widget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>RemoteHistoryView</class>
+   <extends>QWidget</extends>
+   <header location="global">view.history.remote_history_view.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

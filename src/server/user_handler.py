@@ -136,7 +136,7 @@ class LoginReq2Handler(object):
             if code != 200:
                 data["st"] = Status.Error
                 return
-            user = ToolUtil.ParseLogin2(v.get("data"))
+            user = ToolUtil.ParseLogin2(task.req.ParseData(v.get("data")))
             st = Status.Ok
             data["st"] = st
             data["user"] = user
@@ -182,7 +182,7 @@ class GetIndexInfoReq2Handler(object):
             if code != 200:
                 data["st"] = Status.Error
                 return
-            bookInfo = ToolUtil.ParseIndex2(v.get("data"))
+            bookInfo = ToolUtil.ParseIndex2(task.req.ParseData(v.get("data")))
             data["st"] = Status.Ok
             data["bookInfo"] = bookInfo
         except Exception as es:
@@ -207,7 +207,7 @@ class GetIndexInfoReq2Handler(object):
             if code != 200:
                 data["st"] = Status.Error
                 return
-            bookInfo = ToolUtil.ParseLatest2(v.get("data"))
+            bookInfo = ToolUtil.ParseLatest2(task.req.ParseData(v.get("data")))
             data["st"] = Status.Ok
             data["bookList"] = bookInfo
         except Exception as es:
@@ -232,7 +232,7 @@ class GetFavoritesReq2Handler(object):
             if code != 200:
                 data["st"] = Status.Error
                 return
-            f = ToolUtil.ParseFavoritesReq2(v.get("data"))
+            f = ToolUtil.ParseFavoritesReq2(task.req.ParseData(v.get("data")))
             data["st"] = Status.Ok
             data["favorite"] = f
         except Exception as es:
@@ -260,7 +260,7 @@ class ParseMsgReq2Handler(object):
             if code != 200:
                 data["st"] = Status.Error
                 return
-            st, msg = ToolUtil.ParseMsgReq2(v.get("data"))
+            st, msg = ToolUtil.ParseMsgReq2(task.req.ParseData(v.get("data")))
             data["st"] = st
             data["message"] = msg
         except Exception as es:
@@ -344,7 +344,7 @@ class GetSearchReq2Handler(object):
                 data["st"] = Status.Error
                 return
 
-            total, bookList = ToolUtil.ParseSearch2(v.get("data"))
+            total, bookList = ToolUtil.ParseSearch2(task.req.ParseData(v.get("data")))
             data["st"] = Status.Ok
             data["total"] = total
             data["bookList"] = bookList
@@ -371,9 +371,10 @@ class GetSearchReq2Handler(object):
                 data["st"] = Status.Error
                 return
 
-            categoryList = ToolUtil.ParseCategory2(v.get("data"))
+            categoryList, categoryTitle = ToolUtil.ParseCategory2(task.req.ParseData(v.get("data")))
             data["st"] = Status.Ok
             data["categoryList"] = categoryList
+            data["categoryTitle"] = categoryTitle
         except Exception as es:
             data["st"] = Status.ParseError
             Log.Error(es)
@@ -397,7 +398,7 @@ class GetSearchCategoryReq2Handler(object):
                 data["st"] = Status.Error
                 return
 
-            total, bookList = ToolUtil.ParseSearchCategory2(v.get("data"))
+            total, bookList = ToolUtil.ParseSearchCategory2(task.req.ParseData(v.get("data")))
             data["st"] = Status.Ok
             data["total"] = total
             data["bookList"] = bookList
@@ -463,7 +464,7 @@ class GetBookInfoReq2Handler(object):
             if code != 200:
                 data["st"] = Status.Error
                 return
-            info, isFavorite = ToolUtil.ParseBookInfo2(v.get("data"))
+            info, isFavorite = ToolUtil.ParseBookInfo2(task.req.ParseData(v.get("data")))
             from tools.book import BookMgr
             BookMgr().UpdateBookInfo(task.req.bookId, info)
             data["st"] = Status.Ok
@@ -511,7 +512,7 @@ class GetBookEpsInfoReq2Handler(object):
             if code != 200:
                 data["st"] = Status.Error
                 return
-            epsInfo = ToolUtil.ParseBookEpsInfo2(v.get("data"))
+            epsInfo = ToolUtil.ParseBookEpsInfo2(task.req.ParseData(v.get("data")))
             from tools.book import BookMgr
             BookMgr().UpdateBookEps(task.req.bookId, epsInfo)
             data["st"] = Status.Ok
@@ -539,7 +540,7 @@ class GetCommentReq2Handler(object):
             if code != 200:
                 data["st"] = Status.Error
                 return
-            commentList, total = ToolUtil.ParseBookComment(v.get("data"))
+            commentList, total = ToolUtil.ParseBookComment(task.req.ParseData(v.get("data")))
             # from tools.book import BookMgr
             # BookMgr().UpdateBookInfo(task.req.bookId, info)
             data["st"] = Status.Ok
@@ -567,7 +568,7 @@ class SendCommentReq2Handler(object):
             if code != 200:
                 data["st"] = Status.Error
                 return
-            msg = ToolUtil.ParseSendBookComment(v.get("data"))
+            msg = ToolUtil.ParseSendBookComment(task.req.ParseData(v.get("data")))
             data["st"] = Status.Ok
             data["message"] = msg
         except Exception as es:
@@ -592,7 +593,7 @@ class GetHistoryReq2Handler(object):
             if code != 200:
                 data["st"] = Status.Error
                 return
-            bookList, total = ToolUtil.ParseHistoryReq2(v.get("data"))
+            bookList, total = ToolUtil.ParseHistoryReq2(task.req.ParseData(v.get("data")))
             data["st"] = Status.Ok
             data["total"] = total
             data["bookList"] = bookList
@@ -679,11 +680,20 @@ class DownloadBookHandler(object):
                 fileSize = int(r.headers.get('Content-Length', 0))
                 getSize = 0
                 data = b""
-                for chunk in r.iter_content(chunk_size=1024):
-                    if backData.backParam:
-                        TaskBase.taskObj.downloadBack.emit(backData.backParam, fileSize-getSize, chunk)
+                now = time.time()
+
+                # 网速快，太卡了，优化成最多100ms一次
+                for chunk in r.iter_content(chunk_size=4096):
+                    cur = time.time()
+                    tick = cur - now
+                    if tick >= 0.1:
+                        if backData.bakParam and fileSize-getSize > 0:
+                            TaskBase.taskObj.downloadBack.emit(backData.bakParam, fileSize-getSize, b"")
+                        now = cur
+
                     getSize += len(chunk)
                     data += chunk
+
                 # Log.Info("size:{}, url:{}".format(ToolUtil.GetDownloadSize(fileSize), backData.req.url))
                 if config.IsUseCache and len(data) > 0:
                     try:
@@ -707,7 +717,7 @@ class DownloadBookHandler(object):
                             if not os.path.isdir(fileDir):
                                 os.makedirs(fileDir)
                             saveParam = backData.req.saveParam
-                            data2 = ToolUtil.SegmentationPicture(data, saveParam[0], saveParam[1], saveParam[2])
+                            data2 = ToolUtil. SegmentationPicture(data, saveParam[0], saveParam[1], saveParam[2])
                             with open(filePath, "wb+") as f:
                                 f.write(data2)
                             Log.Debug("add download cache, cachePath:{}".format(filePath))
@@ -717,8 +727,8 @@ class DownloadBookHandler(object):
                         if backData.backParam:
                             TaskBase.taskObj.downloadBack.emit(backData.backParam, -2, b"")
 
-                if backData.backParam:
-                    TaskBase.taskObj.downloadBack.emit(backData.backParam, 0, b"")
+                if backData.bakParam:
+                    TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, data)
             except Exception as es:
                 Log.Error(es)
                 if backData.backParam:

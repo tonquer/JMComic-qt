@@ -6,7 +6,6 @@ class User:
         self.uid = ""
         self.isLogin = False
         self.userName = ""
-        self.imgUrl = ""
         self.title = ""
         self.level = ""
         self.favorites = 0
@@ -14,6 +13,18 @@ class User:
         self.coin = 0
         self.gender = ""
         self.userAttr = {}
+
+    def Logout(self):
+        self.isLogin = False
+        self.uid = ""
+        self.userName = ""
+        return
+
+    @property
+    def imgUrl(self):
+        if self.uid:
+            return "/media/users/{}.jpg".format(self.uid)
+        return ""
 
     @property
     def name(self):

@@ -6,7 +6,7 @@ from functools import partial
 
 from PySide6 import QtWidgets
 from PySide6.QtCore import QSettings, Qt, QSize, QUrl, QFile, QTranslator, QLocale
-from PySide6.QtGui import QDesktopServices
+from PySide6.QtGui import QDesktopServices, QFontDatabase
 from PySide6.QtWidgets import QFileDialog
 
 from config import config
@@ -31,16 +31,18 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.passwd = ""
         self.gpuInfos = []
         self.translate = QTranslator()
+        for name in QFontDatabase.families():
+            self.fontBox.addItem(name)
 
         # RadioButton:
         self.themeGroup.buttonClicked.connect(partial(self.ButtonClickEvent, Setting.ThemeIndex))
         self.languageGroup.buttonClicked.connect(partial(self.ButtonClickEvent, Setting.Language))
         self.logGroup.buttonClicked.connect(partial(self.ButtonClickEvent, Setting.LogIndex))
         self.mainScaleGroup.buttonClicked.connect(partial(self.ButtonClickEvent, Setting.ScaleLevel))
+        self.proxyGroup.buttonClicked.connect(partial(self.ButtonClickEvent, Setting.IsHttpProxy))
 
         # CheckButton:
         self.checkBox_IsUpdate.clicked.connect(partial(self.CheckButtonEvent, Setting.IsUpdate, self.checkBox_IsUpdate))
-        self.httpProxy.clicked.connect(partial(self.CheckButtonEvent, Setting.IsHttpProxy, self.httpProxy))
         self.readCheckBox.clicked.connect(partial(self.CheckButtonEvent, Setting.IsOpenWaifu, self.readCheckBox))
         self.coverCheckBox.clicked.connect(partial(self.CheckButtonEvent, Setting.CoverIsOpenWaifu, self.coverCheckBox))
         self.downAuto.clicked.connect(partial(self.CheckButtonEvent, Setting.DownloadAuto, self.downAuto))
@@ -48,7 +50,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
 
         # LineEdit:
         self.httpEdit.editingFinished.connect(partial(self.LineEditEvent, Setting.HttpProxy, self.httpEdit))
-
+        self.dohLine.editingFinished.connect(partial(self.LineEditEvent, Setting.DohAddress, self.dohLine))
         # Button:
 
         # comboBox:
@@ -61,6 +63,9 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.downNoise.currentIndexChanged.connect(partial(self.CheckRadioEvent, Setting.DownloadNoise))
         self.encodeSelect.currentTextChanged.connect(partial(self.CheckRadioEvent, Setting.SelectEncodeGpu))
         self.threadSelect.currentIndexChanged.connect(partial(self.CheckRadioEvent, Setting.Waifu2xCpuCore))
+        self.fontBox.currentTextChanged.connect(partial(self.CheckRadioEvent, Setting.FontName))
+        self.fontSize.currentTextChanged.connect(partial(self.CheckRadioEvent, Setting.FontSize))
+        self.fontStyle.currentIndexChanged.connect(partial(self.CheckRadioEvent, Setting.FontStyle))
 
         # spinBox
         # self.preDownNum.valueChanged.connect(partial(self.SpinBoxEvent, "", self.preDownNum))
@@ -122,6 +127,8 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
                 Log.UpdateLoggingLevel()
             elif setItem == Setting.Language:
                 self.SetLanguage()
+            elif setItem == Setting.IsHttpProxy:
+                self.SetSock5Proxy()
             QtOwner().ShowMsgOne(Str.GetStr(Str.SaveSuc))
         self.CheckMsgLabel()
         return
@@ -137,6 +144,8 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         assert isinstance(setItem, SettingValue)
         setItem.SetValue(value)
         QtOwner().ShowMsgOne(Str.GetStr(Str.SaveSuc))
+        if setItem == Setting.IsHttpProxy:
+            self.SetSock5Proxy()
         self.CheckMsgLabel()
         return
 
@@ -182,16 +191,28 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.coverSize.setValue(Setting.CoverSize.value)
         self.categorySize.setValue(Setting.CategorySize.value)
         self.SetRadioGroup("logutton", Setting.LogIndex.value)
-        self.httpProxy.setChecked(Setting.IsHttpProxy.value)
+        self.SetRadioGroup("proxy", Setting.IsHttpProxy.value)
         self.httpEdit.setText(Setting.HttpProxy.value)
         self.titleBox.setChecked(Setting.IsNotUseTitleBar.value)
 
         self.dohLine.setText(Setting.DohAddress.value)
         self.dohRadio.setChecked(Setting.IsOpenDoh.value)
+        self.dohPictureRadio.setChecked(Setting.IsOpenDohPicture.value)
+        # self.dohPictureRadio.hide()
 
         for index in range(self.encodeSelect.count()):
             if Setting.SelectEncodeGpu.value == self.encodeSelect.itemText(index):
                 self.encodeSelect.setCurrentIndex(index)
+
+        for index in range(self.fontSize.count()):
+            if str(Setting.FontSize.value) == self.fontSize.itemText(index):
+                self.fontSize.setCurrentIndex(index)
+
+        self.fontStyle.setCurrentIndex(int(Setting.FontStyle.value))
+
+        for index in range(self.fontBox.count()):
+            if str(Setting.FontName.value) == self.fontBox.itemText(index):
+                self.fontBox.setCurrentIndex(index)
 
         self.readCheckBox.setChecked(Setting.IsOpenWaifu.value)
         self.readNoise.setCurrentIndex(Setting.LookNoise.value)
@@ -217,6 +238,29 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         radio = getattr(self, text+str(index))
         if radio:
             radio.setChecked(True)
+
+    def SetSock5Proxy(self):
+        try:
+            import socket
+            import socks
+            if not QtOwner().backSock:
+                QtOwner().backSock = socket.socket
+            if Setting.IsHttpProxy.value == 2 and Setting.Sock5Proxy.value:
+                data = Setting.Sock5Proxy.value.replace("http://", "").replace("https://", "").replace("sock5://", "").replace("socks5://", "")
+                data = data.split(":")
+                if len(data) == 2:
+                    host = data[0]
+                    port = data[1]
+                    socks.set_default_proxy(socks.SOCKS5, host, int(port))
+                    socket.socket = socks.socksocket
+                else:
+                    QtOwner().ShowMsg(Str.GetStr(Str.Sock5Error))
+            else:
+                socks.set_default_proxy()
+                socket.socket = QtOwner().backSock
+        except Exception as es:
+            Log.Error(es)
+            QtOwner().ShowMsg(Str.GetStr(Str.Sock5Error))
 
     def SetLanguage(self):
         language = Setting.Language.value
@@ -299,7 +343,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         if sys.platform == "win32":
             return self.GetWinSysColor() + 1
         elif sys.platform == "darwin":
-            return self.GetWinSysColor()
+            return self.GetMacOsSysColor()
         return 1
 
     def GetWinSysColor(self):
@@ -352,25 +396,26 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         config.EncodeGpu = Setting.SelectEncodeGpu.value
 
         if not self.gpuInfos:
-            SettingView.EncodeGpu = "CPU"
+            config.EncodeGpu = "CPU"
             config.Encode = -1
             self.encodeSelect.addItem(config.EncodeGpu)
             self.encodeSelect.setCurrentIndex(0)
-            return
 
-        if not config.EncodeGpu or (config.EncodeGpu != "CPU" and config.EncodeGpu not in self.gpuInfos):
+        if not config.EncodeGpu or (
+                self.gpuInfos and config.EncodeGpu != "CPU" and config.EncodeGpu not in self.gpuInfos):
             config.EncodeGpu = self.gpuInfos[0]
             config.Encode = 0
 
         index = 0
-        for info in self.gpuInfos:
-            self.encodeSelect.addItem(info)
-            if info == config.EncodeGpu:
-                self.encodeSelect.setCurrentIndex(index)
-                config.Encode = index
-            index += 1
+        if self.gpuInfos:
+            for info in self.gpuInfos:
+                self.encodeSelect.addItem(info)
+                if info == config.EncodeGpu:
+                    self.encodeSelect.setCurrentIndex(index)
+                    config.Encode = index
+                index += 1
 
-        self.encodeSelect.addItem("CPU")
+            self.encodeSelect.addItem("CPU")
 
         if config.EncodeGpu == "CPU":
             config.Encode = -1
@@ -380,10 +425,11 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         if config.UseCpuNum > cpuNum:
             config.UseCpuNum = cpuNum
         for i in range(cpuNum):
-            self.threadSelect.addItem(str(i+1))
+            self.threadSelect.addItem(str(i + 1))
         self.threadSelect.setCurrentIndex(config.UseCpuNum)
 
-        Log.Info("waifu2x GPU: " + str(self.gpuInfos) + ",select: " + str(config.EncodeGpu) + ",use cpu num: " + str(config.UseCpuNum))
+        Log.Warn("waifu2x GPU: " + str(self.gpuInfos) + ",select: " + str(config.EncodeGpu) + ",use cpu num: " + str(
+            config.UseCpuNum))
         return
 
     def GetGpuName(self):

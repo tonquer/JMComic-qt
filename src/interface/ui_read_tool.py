@@ -209,6 +209,7 @@ class Ui_ReadImg(object):
 
         self.gpuLabel = QLabel(self.scrollAreaWidgetContents)
         self.gpuLabel.setObjectName(u"gpuLabel")
+        self.gpuLabel.setMaximumSize(QSize(250, 16777215))
 
         self.gridLayout.addWidget(self.gpuLabel, 4, 1, 1, 1)
 
@@ -327,7 +328,7 @@ class Ui_ReadImg(object):
         self.horizontalLayout_12.setObjectName(u"horizontalLayout_12")
         self.label_10 = QLabel(self.scrollAreaWidgetContents)
         self.label_10.setObjectName(u"label_10")
-        self.label_10.setMaximumSize(QSize(90, 16777215))
+        self.label_10.setMaximumSize(QSize(16777215, 16777215))
 
         self.horizontalLayout_12.addWidget(self.label_10)
 
@@ -346,7 +347,7 @@ class Ui_ReadImg(object):
         self.horizontalLayout_13.setObjectName(u"horizontalLayout_13")
         self.label_11 = QLabel(self.scrollAreaWidgetContents)
         self.label_11.setObjectName(u"label_11")
-        self.label_11.setMaximumSize(QSize(90, 16777215))
+        self.label_11.setMaximumSize(QSize(16777215, 16777215))
 
         self.horizontalLayout_13.addWidget(self.label_11)
 

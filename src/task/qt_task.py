@@ -1,9 +1,11 @@
+import os
 import threading
 from queue import Queue
 
 from PySide6.QtCore import Signal, QObject
 from PySide6.QtGui import QImage
 
+from config import config
 from config.setting import Setting
 from tools.singleton import Singleton
 from tools.str import Str
@@ -57,28 +59,36 @@ class QtTaskBase:
     # downloadCallBack(data, laveFileSize)
     # downloadCompleteBack(data, st)
     # downloadCompleteBack(data, st, backParam)
-    def AddDownloadBook(self, bookId, epsId, index, statusBack=None, downloadCallBack=None, completeCallBack=None, backParam=None, loadPath="", cachePath="", savePath="", cleanFlag=""):
+    def AddDownloadBook(self, bookId, epsId, index, statusBack=None, downloadCallBack=None, completeCallBack=None, backParam=None, loadPath="", cachePath="", savePath="", cleanFlag="", isInit=False):
         from task.task_download import TaskDownload
         if not cleanFlag:
             cleanFlag = self.__taskFlagId
-        return TaskDownload().DownloadBook(bookId, epsId, index, statusBack, downloadCallBack, completeCallBack, backParam, loadPath, cachePath, savePath, cleanFlag)
+        return TaskDownload().DownloadBook(bookId, epsId, index, statusBack, downloadCallBack, completeCallBack, backParam, loadPath, cachePath, savePath, cleanFlag, isInit)
 
     # downloadCallBack(data, laveFileSize, backParam)
     # downloadCallBack(data, laveFileSize)
     # downloadCompleteBack(data, st)
     # downloadCompleteBack(data, st, backParam)
-    def AddDownloadTask(self, url, downloadCallBack=None, completeCallBack=None, downloadStCallBack=None, backParam=None, loadPath="", cachePath="", savePath="",  saveParam="", cleanFlag=""):
+    def AddDownloadTask(self, url, path="", downloadCallBack=None, completeCallBack=None, downloadStCallBack=None, backParam=None, loadPath="", cachePath="", savePath="",  saveParam="", cleanFlag="", isReload=False):
         from tools.qt_domain import QtDomainMgr
         from task.task_download import TaskDownload
         if not cleanFlag:
             cleanFlag = self.__taskFlagId
 
+        if "https://" not in url:
+            url = config.PicUrl2 + url
+
+        if not cachePath and not savePath:
+            if Setting.SavePath.value and path:
+                filePath2 = os.path.join(os.path.join(Setting.SavePath.value, config.CachePathDir), path)
+                cachePath = filePath2
+
         if not Setting.IsOpenDohPicture.value:
             return TaskDownload().DownloadTask(url, downloadCallBack, completeCallBack, downloadStCallBack, backParam, loadPath,
-                                               cachePath, savePath, saveParam, cleanFlag)
+                                               cachePath, savePath, saveParam, cleanFlag, isReload)
         else:
-            return QtDomainMgr.AddDownloadTask(url, downloadCallBack, completeCallBack, downloadStCallBack, backParam, loadPath,
-                                               cachePath, savePath, saveParam, cleanFlag)
+            return QtDomainMgr().AddDownloadTask(url, downloadCallBack, completeCallBack, downloadStCallBack, backParam, loadPath,
+                                               cachePath, savePath, saveParam, cleanFlag, isReload)
 
     # completeCallBack(saveData, taskId, backParam, tick)
     def AddConvertTask(self, path, imgData, model, completeCallBack, backParam=None, cleanFlag=""):

@@ -189,7 +189,7 @@ class DownloadItem(QtTaskBase):
     def GetDownloadPath(self):
         # 如果没有初始化，先初始化
         if not self.curDownloadEpsInfo.epsTitle:
-            return self.curDownloadEpsInfo.epsId, 0, ""
+            return self.curDownloadEpsInfo.epsId, 0, "", True
 
         if not self.savePath and Setting.SavePath.value:
             path = os.path.join(Setting.SavePath.value, config.SavePathDir)
@@ -198,7 +198,7 @@ class DownloadItem(QtTaskBase):
 
         convertPath = os.path.join(self.savePath, ToolUtil.GetCanSaveName(self.curDownloadEpsInfo.epsTitle))
         savePath = os.path.join(convertPath, "{:04}.{}".format(self.curDownloadEpsInfo.curPreDownloadIndex + 1, "jpg"))
-        return self.curDownloadEpsInfo.epsId, self.curDownloadEpsInfo.curPreDownloadIndex, savePath
+        return self.curDownloadEpsInfo.epsId, self.curDownloadEpsInfo.curPreDownloadIndex, savePath, False
 
     def ConvertInit(self):
         if not self.epsIds:
@@ -263,7 +263,7 @@ class DownloadEpsItem(QtTaskBase):
     def __init__(self):
         QtTaskBase.__init__(self)
         self.bookId = 0
-        self.epsId = 0      # 章节Id
+        self.epsId = 0      # 章节索引
         self.epsTitle = ""  # 章节名
         self.picCnt = 0     # 图片数
         self.curPreDownloadIndex = 0    # 当前要下载的

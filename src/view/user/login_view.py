@@ -1,6 +1,6 @@
 import base64
 
-from PySide6.QtCore import Signal, Qt
+from PySide6.QtCore import Signal, Qt, QTimer
 
 from component.dialog.base_mask_dialog import BaseMaskDialog
 from component.label.gif_label import GifLabel
@@ -14,7 +14,7 @@ from tools.str import Str
 class LoginView(BaseMaskDialog, Ui_Login, QtTaskBase):
     CloseLogin = Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, isAutoLogin=0):
         BaseMaskDialog.__init__(self, parent)
         Ui_Login.__init__(self)
         QtTaskBase.__init__(self)
@@ -46,6 +46,12 @@ class LoginView(BaseMaskDialog, Ui_Login, QtTaskBase):
         self.registerWidget.CloseLoading.connect(self.CloseLoading)
         self.userWidget.CloseLoading.connect(self.CloseLoading)
 
+        self.timer = QTimer()
+        self.timer.setInterval(1000)
+        self.timer.timeout.connect(self._AutoLogin)
+        if isAutoLogin:
+            self.timer.start()
+
     def ShowLoading(self):
         self.loadingDialog.Show()
 
@@ -67,6 +73,11 @@ class LoginView(BaseMaskDialog, Ui_Login, QtTaskBase):
     @property
     def proxyWidget(self):
         return self.tabWidget.widget(3)
+
+    def _AutoLogin(self):
+        self.timer.stop()
+        self.loginWidget.ClickButton()
+        return
 
     def _SwitchWidget(self, index):
         # self.tabWidget.widget(index).adjustSize()

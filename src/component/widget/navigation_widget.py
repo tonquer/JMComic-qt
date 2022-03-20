@@ -3,6 +3,7 @@ from PySide6.QtGui import QPixmap, Qt
 from PySide6.QtWidgets import QWidget
 
 from config import config
+from config.setting import Setting
 from interface.ui_navigation import Ui_Navigation
 from qt_owner import QtOwner
 from server import req
@@ -31,26 +32,36 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
         self.picData = None
 
     def OpenLoginView(self):
+        isAutoLogin = Setting.AutoLogin.value
         if QtOwner().user.isLogin:
             # self.Sign()
-            return
+            self.Logout()
+            isAutoLogin = 0
 
-        loginView = LoginView(QtOwner().owner)
+        loginView = LoginView(QtOwner().owner, isAutoLogin)
         loginView.show()
         loginView.closed.connect(self.LoginSucBack)
+        return
+
+    def Logout(self):
+        User().Logout()
+        self.pushButton.setText(Str.GetStr(Str.Login))
         return
 
     def LoginSucBack(self):
         QtOwner().owner.LoginSucBack()
         if not QtOwner().user.isLogin:
             return
-        self.pushButton.hide()
+        # self.pushButton.hide()
         user = QtOwner().user
         self.levelLabel.setText("LV" + str(user.level))
         self.titleLabel.setText(str(user.title))
         self.nameLabel.setText(str(user.name))
         config.LoginUserName = user.name.replace("@", "")
-    #     # self.pushButton.setText(Str.GetStr(Str.Sign))
+        if user.imgUrl and config.IsLoadingPicture:
+            self.AddDownloadTask(user.imgUrl, "", completeCallBack=self.ShowUserImg)
+
+        self.pushButton.setText(Str.GetStr(Str.LoginOut))
     #     self.AddHttpTask(req.GetUserInfoReq(), self.UpdateUserBack)
 
     # def UpdateUserBack(self, raw):

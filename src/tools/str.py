@@ -184,7 +184,11 @@ class Str:
     AllComment = 124               # 所有评论
     Move = 125               # 移动
     Add = 126                # 新增
-    MyComment = 127          # 我的评论
+    SelectAll = 127                # 全选
+    NotSelectAll = 128             # 反选
+    MyComment = 129          # 我的评论
+    LoginOut = 130                # 登出
+    Sock5Error = 131              # Sock5设置出错
 
     @classmethod
     def Reload(cls):
@@ -357,7 +361,11 @@ class Str:
         cls.strDict[cls.AllComment] = QCoreApplication.translate("cls.obj",  "所有评论", None)
         cls.strDict[cls.Move] = QCoreApplication.translate("cls.obj",  "移动", None)
         cls.strDict[cls.Add] = QCoreApplication.translate("cls.obj",  "新增", None)
+        cls.strDict[cls.SelectAll] = QCoreApplication.translate("cls.obj",  "全选", None)
+        cls.strDict[cls.NotSelectAll] = QCoreApplication.translate("cls.obj",  "反选", None)
         cls.strDict[cls.MyComment] = QCoreApplication.translate("cls.obj",  "我的评论", None)
+        cls.strDict[cls.LoginOut] = QCoreApplication.translate("cls.obj",  "登出", None)
+        cls.strDict[cls.Sock5Error] = QCoreApplication.translate("cls.obj",  "Sock5设置出错", None)
 
     @classmethod
     def GetStr(cls, enumType):

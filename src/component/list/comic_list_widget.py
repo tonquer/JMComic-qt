@@ -75,6 +75,14 @@ class ComicListWidget(BaseListWidget):
         categories = ",".join(v.baseInfo.tagList)
         self.AddBookItem(_id, title, categories, url)
 
+    def AddBookItemByHistory(self, v):
+        _id = v.bookId
+        title = v.name
+        path = v.path
+        url = v.url
+        categories = "{} {}".format(ToolUtil.GetUpdateStrByTick(v.tick), Str.GetStr(Str.Looked))
+        self.AddBookItem(_id, title, categories, url)
+
     def AddBookItem(self, _id, title, categoryStr="", url=""):
         index = self.count()
         widget = ComicItemWidget()
@@ -84,7 +92,7 @@ class ComicListWidget(BaseListWidget):
         widget.index = index
         widget.categoryLabel.setText(categoryStr)
         widget.nameLable.setText(title)
-        widget.path = "{}_cover".format(_id)
+        widget.path = ToolUtil.GetRealPath(_id, "cover")
         # if updated_at:
         #     dayStr = ToolUtil.GetUpdateStr(updated_at)
         #     updateStr = dayStr + Str.GetStr(Str.Update)
@@ -117,7 +125,7 @@ class ComicListWidget(BaseListWidget):
         item = self.item(index)
         widget = self.itemWidget(item)
         assert isinstance(widget, ComicItemWidget)
-        self.AddDownloadTask(widget.url, completeCallBack=self.LoadingPictureComplete, backParam=index)
+        self.AddDownloadTask(widget.url, widget.path, completeCallBack=self.LoadingPictureComplete, backParam=index)
 
     def LoadingPictureComplete(self, data, status, index):
         if status == Status.Ok:
@@ -174,7 +182,7 @@ class ComicListWidget(BaseListWidget):
                 item = self.itemFromIndex(index)
                 count = self.row(item)
                 widget.picLabel.setText(Str.GetStr(Str.LoadingPicture))
-                self.AddDownloadTask(widget.url, completeCallBack=self.LoadingPictureComplete, backParam=count)
+                self.AddDownloadTask(widget.url, widget.path, completeCallBack=self.LoadingPictureComplete, backParam=count, isReload=True)
                 pass
 
     def Waifu2xPicture(self, index, isIfSize=False):

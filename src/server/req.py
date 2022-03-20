@@ -1,25 +1,29 @@
+import base64
+import hashlib
 import json
 import time
 
 from config import config
 from config.setting import Setting
 from tools.tool import ToolUtil
+from Cryptodome.Cipher import AES
 
 
 class ServerReq(object):
-    def __init__(self, url, header=None, params=None, method="POST") -> None:
+    def __init__(self, url, params=None, method="POST") -> None:
         self.url = url
-        self.headers = header
         self.params = params
         self.method = method
         self.isParseRes = False
         self.timeout = 5
         self.isUseHttps = True
         self.cookies = {}
-        if Setting.IsHttpProxy.value:
+        if Setting.IsHttpProxy.value == 1:
             self.proxy = {"http": Setting.HttpProxy.value, "https": Setting.HttpProxy.value}
         else:
             self.proxy = {}
+        self.now = int(time.time())
+        self.headers = self.GetHeader(url, method)
 
     def __str__(self):
         if Setting.LogIndex.value == 0:
@@ -31,28 +35,67 @@ class ServerReq(object):
         params = self.params
         return "{}, url:{}, proxy:{}, method:{}, headers:{}, params:{}".format(self.__class__.__name__, self.url, self.proxy, self.method, headers, params)
 
+    def GetHeader(self, _url: str, method: str) -> dict:
+        param = "{}{}".format(self.now, "18comicAPP")
+        token = hashlib.md5(param.encode("utf-8")).hexdigest()
+
+        header = {
+            "tokenparam": "{},1.4.4".format(self.now),
+            "token": token,
+            "user-agent": "okhttp/3.12.12",
+            "accept-encoding": "gzip",
+        }
+        if method == "POST":
+            header["Content-Type"] = "application/x-www-form-urlencoded"
+        return header
+
+    def GetHeader2(self, _url: str, method: str) -> dict:
+        param = "{}{}".format(self.now, "18comicAPPContent")
+        token = hashlib.md5(param.encode("utf-8")).hexdigest()
+
+        header = {
+            "tokenparam": "{},1.4.4".format(self.now),
+            "token": token,
+            "user-agent": "okhttp/3.12.12",
+            "accept-encoding": "gzip",
+        }
+        if method == "POST":
+            header["Content-Type"] = "application/x-www-form-urlencoded"
+        return header
+
+    def ParseData(self, data) -> str:
+        param = "{}{}".format(self.now, "18comicAPPContent")
+        key = hashlib.md5(param.encode("utf-8")).hexdigest()
+        aes = AES.new(key.encode("utf-8"), AES.MODE_ECB)
+        byteData = base64.b64decode(data.encode("utf-8"))
+        result = aes.decrypt(byteData)
+        unpad = lambda s: s[0:-s[-1]]
+        result2 = unpad(result)
+        newData = result2.decode()
+        return newData
+
 
 # 检查更新
 class CheckUpdateReq(ServerReq):
     def __init__(self, url):
         # url = config.UpdateUrl
         method = "GET"
-        super(self.__class__, self).__init__(url, {}, {}, method)
+        super(self.__class__, self).__init__(url, {}, method)
         self.isParseRes = False
+        self.headers = {}
 
 
 # 下载图片
 class DownloadBookReq(ServerReq):
-    def __init__(self, url, loadPath="", cachePath="", savePath="", saveParam=(0, 0, "")):
-        url = config.PicUrl2 + url
+    def __init__(self, url, loadPath="", cachePath="", savePath="", saveParam=(0, 0, ""), isReload=False):
         method = "Download"
         self.url = url
         self.loadPath = loadPath
         self.cachePath = cachePath
         self.savePath = savePath
         self.saveParam = saveParam
-        super(self.__class__, self).__init__(url, ToolUtil.GetHeader(url, method),
-                                             {}, method)
+        self.isReload = isReload
+        super(self.__class__, self).__init__(url, {}, method)
 
 
 # 注册前，需要获取cookie
@@ -60,8 +103,7 @@ class LoginPreReq(ServerReq):
     def __init__(self):
         method = "Get"
         url = config.Url + "/login"
-        header = ToolUtil.GetHeader(url, method)
-        super(self.__class__, self).__init__(url, header, {}, method)
+        super(self.__class__, self).__init__(url, {}, method)
 
 
 # 登陆
@@ -70,7 +112,7 @@ class LoginPreReq(ServerReq):
 #         method = "POST"
 #         url = config.Url + "/login"
 #
-#         header = ToolUtil.GetHeader(url, method)
+#         header = self.GetHeader(url, method)
 #         data = dict()
 #         data["username"] = userId
 #         data["password"] = passwd
@@ -83,14 +125,13 @@ class LoginReq2(ServerReq):
     def __init__(self, userId, passwd):
         method = "POST"
         url = config.Url2 + "/login"
-        header = ToolUtil.GetHeader(url, method)
         data = dict()
         data["username"] = userId
         data["password"] = passwd
         data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
         data["view_mode_debug"] = "1"
         data["view_mode"] = "null"
-        super(self.__class__, self).__init__(url, header, ToolUtil.DictToUrl(data), method)
+        super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
 
 
 # 注册
@@ -101,7 +142,6 @@ class RegisterReq(ServerReq):
         method = "POST"
         url = config.Url + "/signup"
 
-        header = ToolUtil.GetHeader(url, method)
         data = dict()
         data["username"] = userId
         data["password"] = passwd
@@ -111,7 +151,7 @@ class RegisterReq(ServerReq):
         data["age"] = "on"
         data["terms"] = "on"
         data["submit_signup"] = ""
-        super(self.__class__, self).__init__(url, header, ToolUtil.DictToUrl(data), method)
+        super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
 
 
 # 重新获取注册验证
@@ -120,11 +160,10 @@ class RegisterVerifyMailReq(ServerReq):
         method = "POST"
         url = config.Url + "/confirm"
 
-        header = ToolUtil.GetHeader(url, method)
         data = dict()
         data["email"] = email
         data["submit_confirm"] = "發送EMAIL"
-        super(self.__class__, self).__init__(url, header, ToolUtil.DictToUrl(data), method)
+        super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
 
 
 # 重置密码
@@ -133,11 +172,10 @@ class ResetPasswordReq(ServerReq):
         method = "POST"
         url = config.Url + "/lost"
 
-        header = ToolUtil.GetHeader(url, method)
         data = dict()
         data["email"] = email
         data["submit_lost"] = "恢復密碼"
-        super(self.__class__, self).__init__(url, header, ToolUtil.DictToUrl(data), method)
+        super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
 
 
 # 账号验证
@@ -147,8 +185,7 @@ class VerifyMailReq(ServerReq):
         host = ToolUtil.GetUrlHost(url)
         url = url.replace(host, ToolUtil.GetUrlHost(config.Url))
 
-        header = ToolUtil.GetHeader(url, method)
-        super(self.__class__, self).__init__(url, header, {}, method)
+        super(self.__class__, self).__init__(url, {}, method)
 
 
 # 获得UserInfo
@@ -157,7 +194,7 @@ class VerifyMailReq(ServerReq):
 #         method = "GET"
 #         url = config.Url + "/user"
 #
-#         header = ToolUtil.GetHeader(url, method)
+#         header = self.GetHeader(url, method)
 #         data = dict()
 #         super(self.__class__, self).__init__(url, header, data, method)
 
@@ -168,7 +205,7 @@ class VerifyMailReq(ServerReq):
 #         self.bookId = bookId
 #         url = config.Url + "/album/{}".format(bookId)
 #         method = "GET"
-#         super(self.__class__, self).__init__(url, ToolUtil.GetHeader(url, method), {}, method)
+#         super(self.__class__, self).__init__(url, self.GetHeader(url, method), {}, method)
 
 
 # 本子信息
@@ -185,11 +222,9 @@ class GetBookInfoReq2(ServerReq):
         data["id"] = bookId
 
         param = ToolUtil.DictToUrl(data)
-        self.now = int(time.time())
-        header = ToolUtil.GetHeader(url, method)
         if param:
             url += "/?" + param
-        super(self.__class__, self).__init__(url, header, {}, method)
+        super(self.__class__, self).__init__(url, {}, method)
 
 
 # 获得scramble_id
@@ -206,10 +241,10 @@ class GetBookEpsScrambleReq2(ServerReq):
         data["app_img_shunt"] = "NaN"
 
         param = ToolUtil.DictToUrl(data)
-        header = ToolUtil.GetHeader2(url, method)
         if param:
             url += "/?" + param
-        super(self.__class__, self).__init__(url, header, {}, method)
+        super(self.__class__, self).__init__(url, {}, method)
+        self.headers = self.GetHeader2(url, method)
 
 
 # 章节信息
@@ -227,11 +262,9 @@ class GetBookEpsInfoReq2(ServerReq):
         data["id"] = epsId
 
         param = ToolUtil.DictToUrl(data)
-        self.now = int(time.time())
-        header = ToolUtil.GetHeader(url, method)
         if param:
             url += "/?" + param
-        super(self.__class__, self).__init__(url, header, {}, method)
+        super(self.__class__, self).__init__(url, {}, method)
 
 
 # 获取一个章节的图片地址
@@ -244,7 +277,7 @@ class GetBookEpsInfoReq2(ServerReq):
 #         method = "Get"
 #         self.bookId = bookId
 #         self.epsId = epsId
-#         super(self.__class__, self).__init__(url, ToolUtil.GetHeader(url, method), {}, method)
+#         super(self.__class__, self).__init__(url, self.GetHeader(url, method), {}, method)
 
 
 # 搜索请求
@@ -283,7 +316,7 @@ class GetBookEpsInfoReq2(ServerReq):
 #         if param:
 #             url += "/?" + param
 #         method = "GET"
-#         super(self.__class__, self).__init__(url, ToolUtil.GetHeader(url, method),
+#         super(self.__class__, self).__init__(url, self.GetHeader(url, method),
 #                                              {}, method)
 
 
@@ -309,8 +342,7 @@ class GetSearchReq2(ServerReq):
         if param:
             url += "/?" + param
         method = "GET"
-        super(self.__class__, self).__init__(url, ToolUtil.GetHeader(url, method),
-                                             {}, method)
+        super(self.__class__, self).__init__(url, {}, method)
 
 
 # 分類请求
@@ -325,8 +357,7 @@ class GetCategoryReq2(ServerReq):
         if param:
             url += "/?" + param
         method = "GET"
-        super(self.__class__, self).__init__(url, ToolUtil.GetHeader(url, method),
-                                             {}, method)
+        super(self.__class__, self).__init__(url, {}, method)
 
 
 # 分類搜索请求
@@ -359,8 +390,7 @@ class GetSearchCategoryReq2(ServerReq):
         if param:
             url += "/?" + param
         method = "GET"
-        super(self.__class__, self).__init__(url, ToolUtil.GetHeader(url, method),
-                                             {}, method)
+        super(self.__class__, self).__init__(url, {}, method)
 
 
 # 获得首页
@@ -368,7 +398,7 @@ class GetSearchCategoryReq2(ServerReq):
 #     def __init__(self):
 #         url = config.Url
 #         method = "GET"
-#         super(self.__class__, self).__init__(url, ToolUtil.GetHeader(url, method),
+#         super(self.__class__, self).__init__(url, self.GetHeader(url, method),
 #                                              {}, method)
 
 
@@ -384,12 +414,10 @@ class GetIndexInfoReq2(ServerReq):
         data["page"] = page
 
         param = ToolUtil.DictToUrl(data)
-        header = ToolUtil.GetHeader(url, method)
         if param:
             url += "/?" + param
 
-        super(self.__class__, self).__init__(url, header,
-                                             {}, method)
+        super(self.__class__, self).__init__(url, {}, method)
 
 
 # 获得最近更新
@@ -404,12 +432,10 @@ class GetLatestInfoReq2(ServerReq):
         data["page"] = page
 
         param = ToolUtil.DictToUrl(data)
-        header = ToolUtil.GetHeader(url, method)
         if param:
             url += "/?" + param
 
-        super(self.__class__, self).__init__(url, header,
-                                             {}, method)
+        super(self.__class__, self).__init__(url, {}, method)
 
 
 # 获得收藏
@@ -430,12 +456,10 @@ class GetFavoritesReq2(ServerReq):
 
         param = ToolUtil.DictToUrl(data)
         self.now = int(time.time())
-        header = ToolUtil.GetHeader(url, method)
         if param:
             url += "/?" + param
 
-        super(self.__class__, self).__init__(url, header,
-                                             {}, method)
+        super(self.__class__, self).__init__(url, {}, method)
 
 
 # 添加收藏文件夹
@@ -443,15 +467,13 @@ class AddFavoritesFoldReq2(ServerReq):
     def __init__(self, name=""):
         url = config.Url2 + "/favorite_folder"
         method = "POST"
-        header = ToolUtil.GetHeader(url, method)
         data = dict()
         data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
         data["view_mode_debug"] = "1"
         data["folder_name"] = name
         data["view_mode"] = "null"
         data["type"] = "add"
-        super(self.__class__, self).__init__(url, header,
-                                             ToolUtil.DictToUrl(data), method)
+        super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
 
 
 # 删除收藏文件夹
@@ -459,22 +481,19 @@ class DelFavoritesFoldReq2(ServerReq):
     def __init__(self, fid=""):
         url = config.Url2 + "/favorite_folder"
         method = "POST"
-        header = ToolUtil.GetHeader(url, method)
         data = dict()
         data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
         data["view_mode_debug"] = "1"
         data["folder_id"] = fid
         data["view_mode"] = "null"
         data["type"] = "del"
-        super(self.__class__, self).__init__(url, header,
-                                             ToolUtil.DictToUrl(data), method)
+        super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
 
 # 移动收藏文件夹
 class MoveFavoritesFoldReq2(ServerReq):
     def __init__(self, bookId="", fid=""):
         url = config.Url2 + "/favorite_folder"
         method = "POST"
-        header = ToolUtil.GetHeader(url, method)
         data = dict()
         data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
         data["view_mode_debug"] = "1"
@@ -482,8 +501,7 @@ class MoveFavoritesFoldReq2(ServerReq):
         data["view_mode"] = "null"
         data["type"] = "move"
         data["aid"] = bookId
-        super(self.__class__, self).__init__(url, header,
-                                             ToolUtil.DictToUrl(data), method)
+        super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
 
 
 # 添加收藏
@@ -491,14 +509,12 @@ class AddAndDelFavoritesReq2(ServerReq):
     def __init__(self, bookId=""):
         url = config.Url2 + "/favorite"
         method = "POST"
-        header = ToolUtil.GetHeader(url, method)
         data = dict()
         data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
         data["view_mode_debug"] = "1"
         data["view_mode"] = "null"
         data["aid"] = bookId
-        super(self.__class__, self).__init__(url, header,
-                                             ToolUtil.DictToUrl(data), method)
+        super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
 
 
 # 获得收藏
@@ -514,7 +530,7 @@ class AddAndDelFavoritesReq2(ServerReq):
 #         url = config.Url + "/user/" + config.LoginUserName + "/favorite/albums/?" + param
 #         method = "GET"
 #
-#         super(self.__class__, self).__init__(url, ToolUtil.GetHeader(url, method),
+#         super(self.__class__, self).__init__(url, self.GetHeader(url, method),
 #                                              {}, method)
 
 
@@ -523,7 +539,7 @@ class AddAndDelFavoritesReq2(ServerReq):
 #     def __init__(self, bookId=""):
 #         url = config.Url + "/ajax/favorite_album"
 #         method = "POST"
-#         header = ToolUtil.GetHeader(url, method)
+#         header = self.GetHeader(url, method)
 #         data = dict()
 #         data["album_id"] = bookId
 #         data["fid"] = 0
@@ -539,7 +555,7 @@ class AddAndDelFavoritesReq2(ServerReq):
 #     def __init__(self, bookId=""):
 #         url = config.Url + "/ajax/remove_album_playlist"
 #         method = "POST"
-#         header = ToolUtil.GetHeader(url, method)
+#         header = self.GetHeader(url, method)
 #         data = dict()
 #         data["video_id"] = bookId
 #         data["list"] = "favorites"
@@ -563,10 +579,9 @@ class GetCommentReq2(ServerReq):
         data["page"] = page
 
         param = ToolUtil.DictToUrl(data)
-        header = ToolUtil.GetHeader(url, method)
         if param:
             url += "/?" + param
-        super(self.__class__, self).__init__(url, header, {}, method)
+        super(self.__class__, self).__init__(url, {}, method)
 
 
 # 获得评论
@@ -584,10 +599,9 @@ class GetMyCommentReq2(ServerReq):
         data["page"] = page
 
         param = ToolUtil.DictToUrl(data)
-        header = ToolUtil.GetHeader(url, method)
         if param:
             url += "/?" + param
-        super(self.__class__, self).__init__(url, header, {}, method)
+        super(self.__class__, self).__init__(url, {}, method)
 
 
 # 发送评论
@@ -595,7 +609,6 @@ class SendCommentReq2(ServerReq):
     def __init__(self, bookId="", comment="", cid=""):
         url = config.Url2 + "/comment"
         method = "POST"
-        header = ToolUtil.GetHeader(url, method)
         data = dict()
         data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
         data["view_mode_debug"] = "1"
@@ -604,7 +617,7 @@ class SendCommentReq2(ServerReq):
         data["aid"] = bookId
         if cid:
             data["comment_id"] = cid
-        super(self.__class__, self).__init__(url, header, ToolUtil.DictToUrl(data), method)
+        super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
 
 
 # 获取观看记录
@@ -612,13 +625,12 @@ class GetHistoryReq2(ServerReq):
     def __init__(self, page=1):
         url = config.Url2 + "/watch_list"
         method = "GET"
-        header = ToolUtil.GetHeader(url, method)
         data = dict()
         data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
         data["view_mode_debug"] = "1"
         data["view_mode"] = "null"
         data["page"] = page
-        super(self.__class__, self).__init__(url, header, ToolUtil.DictToUrl(data), method)
+        super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
 
 
 # 查看评论
@@ -633,7 +645,7 @@ class GetHistoryReq2(ServerReq):
 #             # 全部评论
 #             url = config.Url + "/ajax/forum_more"
 #         method = "POST"
-#         header = ToolUtil.GetHeader(url, method)
+#         header = self.GetHeader(url, method)
 #
 #         data["page"] = page
 #         super(self.__class__, self).__init__(url, header, ToolUtil.DictToUrl(data), method)
@@ -644,7 +656,7 @@ class GetHistoryReq2(ServerReq):
 #     def __init__(self, replyId="", comment=""):
 #         url = config.Url + "/ajax/forum_more"
 #         method = "POST"
-#         header = ToolUtil.GetHeader(url, method)
+#         header = self.GetHeader(url, method)
 #         data = dict()
 #         data["comment_id"] = replyId
 #         data["comment"] = comment
@@ -661,8 +673,9 @@ class DnsOverHttpsReq(ServerReq):
         method = "GET"
         header = dict()
         header["accept"] = "application/dns-json"
-        super(self.__class__, self).__init__(url, header, {}, method)
+        super(self.__class__, self).__init__(url, {}, method)
         self.timeout = 5
+        self.headers = header
         self.isParseRes = True
 
 
@@ -677,17 +690,14 @@ class SpeedTestPingReq(ServerReq):
         data["page"] = "0"
 
         method = "GET"
-        header = ToolUtil.GetHeader(url, method)
-        header['cache-control'] = 'no-cache'
-        header['expires'] = '0'
-        header['pragma'] = 'no-cache'
-        header["authorization"] = ""
-
         param = ToolUtil.DictToUrl(data)
         if param:
             url += "/?" + param
-        super(self.__class__, self).__init__(url, header,
-                                             {}, method)
+        super(self.__class__, self).__init__(url, {}, method)
+        self.headers['cache-control'] = 'no-cache'
+        self.headers['expires'] = '0'
+        self.headers['pragma'] = 'no-cache'
+        self.headers["authorization"] = ""
 
 
 class SpeedTestReq(ServerReq):
@@ -707,9 +717,7 @@ class SpeedTestReq(ServerReq):
 
         url = config.PicUrl2 + url
         method = "Download"
-        header = ToolUtil.GetHeader(url, method)
-        header['cache-control'] = 'no-cache'
-        header['expires'] = '0'
-        header['pragma'] = 'no-cache'
-        super(self.__class__, self).__init__(url, header,
-                                             {}, method)
+        super(self.__class__, self).__init__(url, {}, method)
+        self.headers['cache-control'] = 'no-cache'
+        self.headers['expires'] = '0'
+        self.headers['pragma'] = 'no-cache'

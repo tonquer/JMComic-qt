@@ -45,11 +45,11 @@ class CommentInfo(object):
 # 一章节
 class BookEps(object):
     def __init__(self):
-        self.index = 0     # 索引
-        self.title = ""    # 章节名
+        self.index = 0      # 索引
+        self.title = ""     # 章节名
         self.epsName = ""    # 章节名
-        self.epsUrl = ""   # 链接
-        self.epsId = ""
+        self.epsUrl = ""    # 链接
+        self.epsId = ""     # 章节Id，和bookId类似
         self.time = ""
 
         # self.pages = 0         # 总页数

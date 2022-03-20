@@ -5,6 +5,7 @@ import math
 import os
 import re
 import time
+from collections import OrderedDict
 from urllib.parse import quote
 
 from Cryptodome.Cipher import AES
@@ -47,48 +48,6 @@ def time_me(fn):
 
 
 class ToolUtil(object):
-
-    @classmethod
-    def GetHeader(cls, _url: str, method: str) -> dict:
-        param = "{}{}".format(config.Now, "18comicAPP")
-        token = hashlib.md5(param.encode("utf-8")).hexdigest()
-
-        header = {
-            "tokenparam": "{},1.4.2".format(config.Now),
-            "token": token,
-            "user-agent": "okhttp/3.12.12",
-            "accept-encoding": "gzip",
-        }
-        if method == "POST":
-            header["Content-Type"] = "application/x-www-form-urlencoded"
-        return header
-
-    @classmethod
-    def GetHeader2(cls, _url: str, method: str) -> dict:
-        param = "{}{}".format(config.Now, "18comicAPPContent")
-        token = hashlib.md5(param.encode("utf-8")).hexdigest()
-
-        header = {
-            "tokenparam": "{},1.4.2".format(config.Now),
-            "token": token,
-            "user-agent": "okhttp/3.12.12",
-            "accept-encoding": "gzip",
-        }
-        if method == "POST":
-            header["Content-Type"] = "application/x-www-form-urlencoded"
-        return header
-
-    @classmethod
-    def ParseData(cls, data) -> str:
-        param = "{}{}".format(config.Now, "18comicAPPContent")
-        key = hashlib.md5(param.encode("utf-8")).hexdigest()
-        aes = AES.new(key.encode("utf-8"), AES.MODE_ECB)
-        byteData = base64.b64decode(data.encode("utf-8"))
-        result = aes.decrypt(byteData)
-        unpad = lambda s: s[0:-s[-1]]
-        result2 = unpad(result)
-        newData = result2.decode()
-        return newData
 
     @staticmethod
     def DictToUrl(paramDict):
@@ -144,6 +103,24 @@ class ToolUtil(object):
             return "{}分钟前".format(minute)
         else:
             return "{}秒前".format(second)
+
+    @staticmethod
+    def GetUpdateStrByTick(tick):
+        now = int(time.time())
+        day = (now - tick) // (24*3600)
+        hour = (now - tick) // 3600
+        minute = (now - tick) // 60
+        second = (now - tick)
+
+        from tools.str import Str
+        if day > 0:
+            return "{}".format(day) + Str.GetStr(Str.DayAgo)
+        elif hour > 0:
+            return "{}".format(hour) + Str.GetStr(Str.HourAgo)
+        elif minute > 0:
+            return "{}".format(minute) + Str.GetStr(Str.MinuteAgo)
+        else:
+            return "{}".format(second) + Str.GetStr(Str.SecondAgo)
 
     @staticmethod
     def GetDownloadSize(downloadLen):
@@ -281,6 +258,18 @@ class ToolUtil(object):
         tick = int(time.mktime(timeArray))
         return tick
 
+    @staticmethod
+    def Escape(s):
+        s = s.replace("&", "&amp;")
+        s = s.replace("<", "&lt;")
+        s = s.replace(">", "&gt;")
+        s = s.replace('"', "&quot;")
+        s = s.replace('\'', "&#x27;")
+        s = s.replace('\n', '<br/>')
+        s = s.replace('  ', '&nbsp;')
+        s = s.replace(' ', '&emsp;')
+        return s
+
     # @staticmethod
     # def ParseBookInfo(data, bookId):
     #     soup = BeautifulSoup(data, features="lxml")
@@ -395,9 +384,8 @@ class ToolUtil(object):
 
     # 解析首页结果
     @staticmethod
-    def ParseIndex2(data):
+    def ParseIndex2(result):
         parseData = {}
-        result = ToolUtil.ParseData(data)
         raw = json.loads(result)
         for v in raw:
             bookList = ToolUtil.ParseBookList(v.get("content", []))
@@ -407,18 +395,16 @@ class ToolUtil(object):
 
     # 解析最近更新
     @staticmethod
-    def ParseLatest2(data):
-        result = ToolUtil.ParseData(data)
+    def ParseLatest2(result):
         raw = json.loads(result)
         bookList = ToolUtil.ParseBookList(raw)
         return bookList
 
     @staticmethod
-    def ParseFavoritesReq2(data):
+    def ParseFavoritesReq2(result):
         bookList = []
         from tools.book import FavoriteInfo
         f = FavoriteInfo()
-        result = ToolUtil.ParseData(data)
         raw = json.loads(result)
         f.total = int(raw.get("total"))
         f.count = int(raw.get("count"))
@@ -430,8 +416,7 @@ class ToolUtil(object):
         return f
 
     @staticmethod
-    def ParseMsgReq2(data):
-        result = ToolUtil.ParseData(data)
+    def ParseMsgReq2(result):
         raw = json.loads(result)
         status = raw.get("status")
         msg = raw.get("msg")
@@ -440,8 +425,7 @@ class ToolUtil(object):
         return Status.Error, msg
 
     @staticmethod
-    def ParseLogin2(data):
-        result = ToolUtil.ParseData(data)
+    def ParseLogin2(result):
         raw = json.loads(result)
         from tools.user import User
         u = User()
@@ -457,8 +441,7 @@ class ToolUtil(object):
 
     # 解析搜索结果
     @staticmethod
-    def ParseSearch2(data):
-        result = ToolUtil.ParseData(data)
+    def ParseSearch2(result):
         raw = json.loads(result)
         total = int(raw.get("total"))
         bookList = ToolUtil.ParseBookList(raw.get("content", []))
@@ -466,8 +449,7 @@ class ToolUtil(object):
 
     # 解析搜索结果
     @staticmethod
-    def ParseCategory2(data):
-        result = ToolUtil.ParseData(data)
+    def ParseCategory2(result):
         raw = json.loads(result)
         categoryList = []
         for v in raw.get("categories", []):
@@ -480,21 +462,21 @@ class ToolUtil(object):
             b.type = v.get("type")
             b.total = v.get("total_albums")
             categoryList.append(b)
-
-        return categoryList
+        categoryTitle = OrderedDict()
+        for v in raw.get("blocks", []):
+            categoryTitle[v.get("title")] = v.get("content")
+        return categoryList, categoryTitle
 
     # 解析搜索结果
     @staticmethod
-    def ParseSearchCategory2(data):
-        result = ToolUtil.ParseData(data)
+    def ParseSearchCategory2(result):
         raw = json.loads(result)
         total = int(raw.get("total"))
         bookList = ToolUtil.ParseBookList(raw.get("content", []))
         return total, bookList
 
     @staticmethod
-    def ParseBookInfo2(data):
-        result = ToolUtil.ParseData(data)
+    def ParseBookInfo2(result):
         raw = json.loads(result)
         from tools.book import BookInfo
         b = BookInfo()
@@ -516,13 +498,16 @@ class ToolUtil(object):
             for v in series:
                 epsInfo = BookEps()
                 epsInfo.index = int(v.get("sort")) - 1
-                epsInfo.title = "第{}章".format(epsInfo.index+1)
+                if v.get("name"):
+                    epsInfo.title = "第{}话_{}".format(epsInfo.index+1, v.get("name"))
+                else:
+                    epsInfo.title = "第{}话".format(epsInfo.index+1)
                 epsInfo.epsId = v.get('id')
                 epsInfo.epsName = v.get("name")
                 b.pageInfo.epsInfo[epsInfo.index] = epsInfo
         else:
             epsInfo = BookEps()
-            epsInfo.title = "第1章"
+            epsInfo.title = "第1话"
             epsInfo.epsUrl = "/photo/{}".format(bookId)
             epsInfo.epsId = bookId
             b.pageInfo.epsInfo[0] = epsInfo
@@ -530,12 +515,15 @@ class ToolUtil(object):
 
     @staticmethod
     def ParseBookEpsScramble(data):
-        mo = re.search(r"(?<=var scramble_id = )\w+", data)
-        return int(mo.group())
+        try:
+            mo = re.search(r"(?<=var scramble_id = )\w+", data)
+            return int(mo.group())
+        except Exception as es:
+            Log.Error(es)
+            return 220980
 
     @staticmethod
-    def ParseBookEpsInfo2(data):
-        result = ToolUtil.ParseData(data)
+    def ParseBookEpsInfo2(result):
         raw = json.loads(result)
         from tools.book import BookEps
         epsInfo = BookEps()
@@ -552,8 +540,7 @@ class ToolUtil(object):
         return epsInfo
 
     @staticmethod
-    def ParseBookComment(data):
-        result = ToolUtil.ParseData(data)
+    def ParseBookComment(result):
         raw = json.loads(result)
         from tools.book import CommentInfo
         commentList = []
@@ -593,8 +580,7 @@ class ToolUtil(object):
         return commentList, total
 
     @staticmethod
-    def ParseSendBookComment(data):
-        result = ToolUtil.ParseData(data)
+    def ParseSendBookComment(result):
         raw = json.loads(result)
         return raw.get("msg", "")
 
@@ -625,8 +611,7 @@ class ToolUtil(object):
         return isSuc, msg
 
     @staticmethod
-    def ParseHistoryReq2(data):
-        result = ToolUtil.ParseData(data)
+    def ParseHistoryReq2(result):
         raw = json.loads(result)
         bookList = ToolUtil.ParseBookList(raw.get("list", []))
         total = int(raw.get("total", 0))
@@ -876,6 +861,69 @@ class ToolUtil(object):
     @staticmethod
     def IsSameName(name1, name2):
         return Converter('zh-hans').convert(name1) == Converter('zh-hans').convert(name2)
+
+
+    @staticmethod
+    def GetPictureFormat(data):
+        import imghdr
+        mat = imghdr.what(None, data)
+        if mat:
+            return mat
+        return "jpg"
+
+    @staticmethod
+    def GetStrMaxLen(str, maxLen=6):
+        if len(str) > maxLen:
+            return str[:maxLen] + "..."
+        else:
+            return str
+
+    @staticmethod
+    def GetRealUrl(url, path):
+        if path:
+            return url + "/static/" + path
+        else:
+            return url
+
+    @staticmethod
+    def GetRealPath(path, direction):
+        if path:
+            data = "{}/{}".format(direction, path)
+            if ".jpg" not in data:
+                return data + ".jpg"
+            else:
+                return data
+        else:
+            return path
+
+    @staticmethod
+    def GetMd5RealPath(path, direction):
+        if path:
+            a = hashlib.md5(path.encode("utf-8")).hexdigest()
+            return "{}/{}.jpg".format(direction, a)
+        else:
+            return path
+
+    @staticmethod
+    def SaveFile(data, filePath):
+        if not data:
+            return
+        if not filePath:
+            return
+
+        try:
+            fileDir = os.path.dirname(filePath)
+
+            if not os.path.isdir(fileDir):
+                os.makedirs(fileDir)
+
+            with open(filePath, "wb+") as f:
+                f.write(data)
+
+            Log.Debug("add chat cache, cachePath:{}".format(filePath))
+
+        except Exception as es:
+            Log.Error(es)
 
 
 if __name__ == "__main__":

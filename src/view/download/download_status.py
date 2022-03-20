@@ -1,5 +1,6 @@
 from config import config
 from task.qt_task import QtTaskBase
+from tools.log import Log
 from tools.status import Status
 from tools.str import Str
 from tools.tool import ToolUtil
@@ -30,6 +31,7 @@ class DownloadStatus(QtTaskBase):
             self._SetTaskPause(task)
         elif status == task.Error:
             self._SetDownloadTaskNone(task)
+            Log.Warn("Download error, bookId:{}, epsId:{}, index:{}, stMsg:{}".format(task.bookId, task.curDownloadEpsId, task.curDownloadPic, task.statusMsg))
         elif status == task.Downloading:
             self._SetTaskDownloading(task)
         elif status == task.Success:
@@ -50,6 +52,7 @@ class DownloadStatus(QtTaskBase):
             self._SetTaskConvertPause(task)
         elif status == task.Error:
             self._SetTaskConvertNone(task)
+            Log.Warn("Convert error, bookId:{}, epsId:{}, index:{}, stMsg:{}".format(task.bookId, task.curConvertEpsId, task.curConvertCnt, task.convertMsg))
         elif status == task.Converting:
             self._SetTaskConverting(task)
         elif status == task.ConvertSuccess:
@@ -170,8 +173,8 @@ class DownloadStatus(QtTaskBase):
         self.SetNewStatus(task, newStatus)
         if newStatus != task.Downloading:
             return
-        epsId, index, savePath = task.GetDownloadPath()
-        self.AddDownloadBook(task.bookId, epsId, index, self.DownloadStCallBack, self.DownloadCallBack, self.DownloadCompleteCallBack, task.bookId, savePath=savePath, cleanFlag=task.cleanFlag)
+        epsIndex, index, savePath, isInit = task.GetDownloadPath()
+        self.AddDownloadBook(task.bookId, epsIndex, index, self.DownloadStCallBack, self.DownloadCallBack, self.DownloadCompleteCallBack, task.bookId, savePath=savePath, cleanFlag=task.cleanFlag, isInit=isInit)
         self.UpdateTaskDB(task)
         return
 
@@ -197,8 +200,8 @@ class DownloadStatus(QtTaskBase):
             newStatus = task.DownloadSucCallBack()
             self.SetNewStatus(task, newStatus)
             if newStatus == task.Downloading:
-                epsId, index, savePath = task.GetDownloadPath()
-                self.AddDownloadBook(task.bookId, epsId, index, self.DownloadStCallBack, self.DownloadCallBack, self.DownloadCompleteCallBack, task.bookId, savePath=savePath, cleanFlag=task.cleanFlag)
+                epsIndex, index, savePath, isInit = task.GetDownloadPath()
+                self.AddDownloadBook(task.bookId, epsIndex, index, self.DownloadStCallBack, self.DownloadCallBack, self.DownloadCompleteCallBack, task.bookId, savePath=savePath, cleanFlag=task.cleanFlag, isInit=isInit)
             return
         elif st in [Str.Reading, Str.ReadingEps, Str.ReadingPicture, Str.Downloading]:
             task.statusMsg = st
@@ -207,15 +210,15 @@ class DownloadStatus(QtTaskBase):
             self.SetNewStatus(task, task.Error)
         return
 
-    def DownloadCallBack(self, data, laveFileSize, taskId):
+    def DownloadCallBack(self, downloadSize, laveFileSize, taskId):
         task = self.downloadDict.get(taskId)
         if not task:
             return
         if task.status != task.Downloading:
             return
 
-        task.downloadLen += len(data)
-        task.speedDownloadLen += len(data)
+        task.downloadLen += downloadSize
+        task.speedDownloadLen += downloadSize
         return
 
     def DownloadCompleteCallBack(self, data, msg, taskId):
@@ -228,8 +231,8 @@ class DownloadStatus(QtTaskBase):
             newStatus = task.DownloadSucCallBack()
             self.SetNewStatus(task, newStatus)
             if newStatus == task.Downloading:
-                epsId, index, savePath = task.GetDownloadPath()
-                self.AddDownloadBook(task.bookId, epsId, index, self.DownloadStCallBack, self.DownloadCallBack, self.DownloadCompleteCallBack, task.bookId, savePath=savePath, cleanFlag=task.cleanFlag)
+                epsId, index, savePath, isInit = task.GetDownloadPath()
+                self.AddDownloadBook(task.bookId, epsId, index, self.DownloadStCallBack, self.DownloadCallBack, self.DownloadCompleteCallBack, task.bookId, savePath=savePath, cleanFlag=task.cleanFlag, isInit=isInit)
             self.UpdateTableItem(task)
             self.UpdateTaskDB(task)
         else:

@@ -30,16 +30,21 @@ class Ui_Search(object):
         Search.setMinimumSize(QSize(80, 0))
         self.verticalLayout = QVBoxLayout(Search)
         self.verticalLayout.setObjectName(u"verticalLayout")
+        self.searchWidget = QWidget(Search)
+        self.searchWidget.setObjectName(u"searchWidget")
+        self.verticalLayout_2 = QVBoxLayout(self.searchWidget)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.label_2 = QLabel(Search)
+        self.label_2 = QLabel(self.searchWidget)
         self.label_2.setObjectName(u"label_2")
         self.label_2.setMinimumSize(QSize(60, 0))
         self.label_2.setMaximumSize(QSize(60, 40))
 
         self.horizontalLayout_2.addWidget(self.label_2)
 
-        self.label_3 = QLabel(Search)
+        self.label_3 = QLabel(self.searchWidget)
         self.label_3.setObjectName(u"label_3")
         self.label_3.setMinimumSize(QSize(20, 0))
         self.label_3.setMaximumSize(QSize(20, 16777215))
@@ -48,20 +53,23 @@ class Ui_Search(object):
 
         self.horizontalLayout_2.addWidget(self.label_3)
 
-        self.lineEdit = SearchLineEdit(Search)
+        self.lineEdit = SearchLineEdit(self.searchWidget)
         self.lineEdit.setObjectName(u"lineEdit")
         self.lineEdit.setMinimumSize(QSize(40, 40))
         self.lineEdit.setClearButtonEnabled(True)
 
         self.horizontalLayout_2.addWidget(self.lineEdit)
 
-        self.searchButton = QPushButton(Search)
+        self.searchButton = QPushButton(self.searchWidget)
         self.searchButton.setObjectName(u"searchButton")
 
         self.horizontalLayout_2.addWidget(self.searchButton)
 
 
-        self.verticalLayout.addLayout(self.horizontalLayout_2)
+        self.verticalLayout_2.addLayout(self.horizontalLayout_2)
+
+
+        self.verticalLayout.addWidget(self.searchWidget)
 
         self.bookList = ComicListWidget(Search)
         self.bookList.setObjectName(u"bookList")

@@ -83,7 +83,7 @@ class Ui_SettingNew(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 661, 2372))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, -780, 661, 2526))
         self.scrollAreaWidgetContents.setStyleSheet(u"")
         self.verticalLayout_4 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
@@ -196,6 +196,100 @@ class Ui_SettingNew(object):
 
 
         self.verticalLayout_4.addWidget(self.frame_3)
+
+        self.frame_15 = QFrame(self.scrollAreaWidgetContents)
+        self.frame_15.setObjectName(u"frame_15")
+        self.frame_15.setFrameShape(QFrame.StyledPanel)
+        self.frame_15.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_18 = QVBoxLayout(self.frame_15)
+        self.verticalLayout_18.setObjectName(u"verticalLayout_18")
+        self.label_9 = QLabel(self.frame_15)
+        self.label_9.setObjectName(u"label_9")
+        self.label_9.setFont(font1)
+
+        self.verticalLayout_18.addWidget(self.label_9)
+
+        self.horizontalLayout_24 = QHBoxLayout()
+        self.horizontalLayout_24.setObjectName(u"horizontalLayout_24")
+        self.label_34 = QLabel(self.frame_15)
+        self.label_34.setObjectName(u"label_34")
+
+        self.horizontalLayout_24.addWidget(self.label_34)
+
+        self.fontBox = WheelComboBox(self.frame_15)
+        self.fontBox.addItem("")
+        self.fontBox.setObjectName(u"fontBox")
+        self.fontBox.setMinimumSize(QSize(150, 0))
+
+        self.horizontalLayout_24.addWidget(self.fontBox)
+
+        self.horizontalSpacer_23 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_24.addItem(self.horizontalSpacer_23)
+
+
+        self.verticalLayout_18.addLayout(self.horizontalLayout_24)
+
+        self.horizontalLayout_25 = QHBoxLayout()
+        self.horizontalLayout_25.setObjectName(u"horizontalLayout_25")
+        self.label_35 = QLabel(self.frame_15)
+        self.label_35.setObjectName(u"label_35")
+
+        self.horizontalLayout_25.addWidget(self.label_35)
+
+        self.fontSize = WheelComboBox(self.frame_15)
+        self.fontSize.addItem("")
+        self.fontSize.addItem("")
+        self.fontSize.addItem("")
+        self.fontSize.addItem("")
+        self.fontSize.addItem("")
+        self.fontSize.addItem("")
+        self.fontSize.addItem("")
+        self.fontSize.addItem("")
+        self.fontSize.addItem("")
+        self.fontSize.addItem("")
+        self.fontSize.addItem("")
+        self.fontSize.addItem("")
+        self.fontSize.setObjectName(u"fontSize")
+        self.fontSize.setMinimumSize(QSize(150, 0))
+
+        self.horizontalLayout_25.addWidget(self.fontSize)
+
+        self.horizontalSpacer_24 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_25.addItem(self.horizontalSpacer_24)
+
+
+        self.verticalLayout_18.addLayout(self.horizontalLayout_25)
+
+        self.horizontalLayout_26 = QHBoxLayout()
+        self.horizontalLayout_26.setObjectName(u"horizontalLayout_26")
+        self.label_36 = QLabel(self.frame_15)
+        self.label_36.setObjectName(u"label_36")
+
+        self.horizontalLayout_26.addWidget(self.label_36)
+
+        self.fontStyle = WheelComboBox(self.frame_15)
+        self.fontStyle.addItem("")
+        self.fontStyle.addItem("")
+        self.fontStyle.addItem("")
+        self.fontStyle.addItem("")
+        self.fontStyle.addItem("")
+        self.fontStyle.addItem("")
+        self.fontStyle.setObjectName(u"fontStyle")
+        self.fontStyle.setMinimumSize(QSize(150, 0))
+
+        self.horizontalLayout_26.addWidget(self.fontStyle)
+
+        self.horizontalSpacer_25 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_26.addItem(self.horizontalSpacer_25)
+
+
+        self.verticalLayout_18.addLayout(self.horizontalLayout_26)
+
+
+        self.verticalLayout_4.addWidget(self.frame_15)
 
         self.frame_13 = QFrame(self.scrollAreaWidgetContents)
         self.frame_13.setObjectName(u"frame_13")
@@ -397,31 +491,80 @@ class Ui_SettingNew(object):
 
         self.verticalLayout_8.addWidget(self.label_7)
 
-        self.httpProxy = QCheckBox(self.frame_5)
-        self.httpProxy.setObjectName(u"httpProxy")
+        self.proxy0 = QRadioButton(self.frame_5)
+        self.proxyGroup = QButtonGroup(SettingNew)
+        self.proxyGroup.setObjectName(u"proxyGroup")
+        self.proxyGroup.addButton(self.proxy0)
+        self.proxy0.setObjectName(u"proxy0")
 
-        self.verticalLayout_8.addWidget(self.httpProxy)
+        self.verticalLayout_8.addWidget(self.proxy0)
 
-        self.horizontalLayout_3 = QHBoxLayout()
-        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
-        self.label_8 = QLabel(self.frame_5)
-        self.label_8.setObjectName(u"label_8")
-        self.label_8.setMinimumSize(QSize(60, 0))
+        self.horizontalLayout_27 = QHBoxLayout()
+        self.horizontalLayout_27.setObjectName(u"horizontalLayout_27")
+        self.proxy1 = QRadioButton(self.frame_5)
+        self.proxyGroup.addButton(self.proxy1)
+        self.proxy1.setObjectName(u"proxy1")
+        self.proxy1.setMinimumSize(QSize(90, 0))
 
-        self.horizontalLayout_3.addWidget(self.label_8)
+        self.horizontalLayout_27.addWidget(self.proxy1)
+
+        self.line_5 = QFrame(self.frame_5)
+        self.line_5.setObjectName(u"line_5")
+        self.line_5.setFrameShape(QFrame.VLine)
+        self.line_5.setFrameShadow(QFrame.Sunken)
+
+        self.horizontalLayout_27.addWidget(self.line_5)
+
+        self.label_32 = QLabel(self.frame_5)
+        self.label_32.setObjectName(u"label_32")
+        self.label_32.setAlignment(Qt.AlignCenter)
+
+        self.horizontalLayout_27.addWidget(self.label_32)
 
         self.httpEdit = QLineEdit(self.frame_5)
         self.httpEdit.setObjectName(u"httpEdit")
-        self.httpEdit.setMinimumSize(QSize(150, 0))
 
-        self.horizontalLayout_3.addWidget(self.httpEdit)
+        self.horizontalLayout_27.addWidget(self.httpEdit)
 
         self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.horizontalLayout_3.addItem(self.horizontalSpacer)
+        self.horizontalLayout_27.addItem(self.horizontalSpacer)
 
 
-        self.verticalLayout_8.addLayout(self.horizontalLayout_3)
+        self.verticalLayout_8.addLayout(self.horizontalLayout_27)
+
+        self.horizontalLayout_28 = QHBoxLayout()
+        self.horizontalLayout_28.setObjectName(u"horizontalLayout_28")
+        self.proxy2 = QRadioButton(self.frame_5)
+        self.proxyGroup.addButton(self.proxy2)
+        self.proxy2.setObjectName(u"proxy2")
+        self.proxy2.setMinimumSize(QSize(90, 0))
+
+        self.horizontalLayout_28.addWidget(self.proxy2)
+
+        self.line_6 = QFrame(self.frame_5)
+        self.line_6.setObjectName(u"line_6")
+        self.line_6.setFrameShape(QFrame.VLine)
+        self.line_6.setFrameShadow(QFrame.Sunken)
+
+        self.horizontalLayout_28.addWidget(self.line_6)
+
+        self.label_37 = QLabel(self.frame_5)
+        self.label_37.setObjectName(u"label_37")
+
+        self.horizontalLayout_28.addWidget(self.label_37)
+
+        self.sockEdit = QLineEdit(self.frame_5)
+        self.sockEdit.setObjectName(u"sockEdit")
+
+        self.horizontalLayout_28.addWidget(self.sockEdit)
+
+        self.horizontalSpacer_26 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_28.addItem(self.horizontalSpacer_26)
+
+
+        self.verticalLayout_8.addLayout(self.horizontalLayout_28)
 
 
         self.verticalLayout_4.addWidget(self.frame_5)
@@ -1060,6 +1203,32 @@ class Ui_SettingNew(object):
         self.languageButton1.setText(QCoreApplication.translate("SettingNew", u"\u7b80\u4f53\u4e2d\u6587", None))
         self.languageButton2.setText(QCoreApplication.translate("SettingNew", u"\u7e41\u9ad4\u4e2d\u6587", None))
         self.languageButton3.setText(QCoreApplication.translate("SettingNew", u"English", None))
+        self.label_9.setText(QCoreApplication.translate("SettingNew", u"\u5b57\u4f53\uff08\u91cd\u542f\u751f\u6548\uff09\uff1a", None))
+        self.label_34.setText(QCoreApplication.translate("SettingNew", u"\u5b57\u4f53\u9009\u62e9\uff1a", None))
+        self.fontBox.setItemText(0, QCoreApplication.translate("SettingNew", u"\u9ed8\u8ba4", None))
+
+        self.label_35.setText(QCoreApplication.translate("SettingNew", u"\u5b57\u4f53\u5927\u5c0f\uff1a", None))
+        self.fontSize.setItemText(0, QCoreApplication.translate("SettingNew", u"\u9ed8\u8ba4", None))
+        self.fontSize.setItemText(1, QCoreApplication.translate("SettingNew", u"9", None))
+        self.fontSize.setItemText(2, QCoreApplication.translate("SettingNew", u"12", None))
+        self.fontSize.setItemText(3, QCoreApplication.translate("SettingNew", u"14", None))
+        self.fontSize.setItemText(4, QCoreApplication.translate("SettingNew", u"16", None))
+        self.fontSize.setItemText(5, QCoreApplication.translate("SettingNew", u"18", None))
+        self.fontSize.setItemText(6, QCoreApplication.translate("SettingNew", u"20", None))
+        self.fontSize.setItemText(7, QCoreApplication.translate("SettingNew", u"22", None))
+        self.fontSize.setItemText(8, QCoreApplication.translate("SettingNew", u"24", None))
+        self.fontSize.setItemText(9, QCoreApplication.translate("SettingNew", u"26", None))
+        self.fontSize.setItemText(10, QCoreApplication.translate("SettingNew", u"28", None))
+        self.fontSize.setItemText(11, QCoreApplication.translate("SettingNew", u"30", None))
+
+        self.label_36.setText(QCoreApplication.translate("SettingNew", u"\u5b57\u4f53\u7c97\u7ec6\uff1a", None))
+        self.fontStyle.setItemText(0, QCoreApplication.translate("SettingNew", u"\u9ed8\u8ba4", None))
+        self.fontStyle.setItemText(1, QCoreApplication.translate("SettingNew", u"\u9ad8\u4eae", None))
+        self.fontStyle.setItemText(2, QCoreApplication.translate("SettingNew", u"\u6b63\u5e38", None))
+        self.fontStyle.setItemText(3, QCoreApplication.translate("SettingNew", u"\u534a\u7c97\u4f53", None))
+        self.fontStyle.setItemText(4, QCoreApplication.translate("SettingNew", u"\u7c97\u4f53", None))
+        self.fontStyle.setItemText(5, QCoreApplication.translate("SettingNew", u"\u9ed1\u4f53", None))
+
         self.label.setText(QCoreApplication.translate("SettingNew", u"\u754c\u9762\u7f29\u653e\u663e\u793a\uff08\u9700\u91cd\u542f\u751f\u6548\uff09\uff1a", None))
         self.mainScaleButton0.setText(QCoreApplication.translate("SettingNew", u"\u6839\u636e\u7cfb\u7edf\u7f29\u653e", None))
         self.mainScaleButton1.setText(QCoreApplication.translate("SettingNew", u"100%\uff08\u4e0d\u7f29\u653e\uff09", None))
@@ -1077,15 +1246,11 @@ class Ui_SettingNew(object):
         self.logutton2.setText(QCoreApplication.translate("SettingNew", u"Debug", None))
         self.proxyLabel.setText(QCoreApplication.translate("SettingNew", u"\u4ee3\u7406", None))
         self.label_7.setText(QCoreApplication.translate("SettingNew", u"Http\u4ee3\u7406\uff1a", None))
-#if QT_CONFIG(tooltip)
-        self.httpProxy.setToolTip(QCoreApplication.translate("SettingNew", u"<html><head/><body><p>\u8bf7\u586b\u5199\u4f60\u7684\u4ee3\u7406\u8f6f\u4ef6\u63d0\u4f9b\u7684\u4ee3\u7406\u5730\u5740</p><p>\u5982:</p><p>v2ray\u53ef\u80fd\u662f http://127.0.0.1:10809</p><p>shadowsocks\u53ef\u80fd\u662f http://127.0.0.1:1080</p></body></html>", None))
-#endif // QT_CONFIG(tooltip)
-        self.httpProxy.setText(QCoreApplication.translate("SettingNew", u"\u542f\u7528\u4ee3\u7406", None))
-        self.label_8.setText(QCoreApplication.translate("SettingNew", u"\u4ee3\u7406\u5730\u5740\uff1a", None))
-#if QT_CONFIG(tooltip)
-        self.httpEdit.setToolTip(QCoreApplication.translate("SettingNew", u"<html><head/><body><p>\u8bf7\u586b\u5199\u4f60\u7684\u4ee3\u7406\u8f6f\u4ef6\u63d0\u4f9b\u7684\u4ee3\u7406\u5730\u5740</p><p>\u5982:</p><p>v2ray\u53ef\u80fd\u662f http://127.0.0.1:10809</p><p>shadowsocks\u53ef\u80fd\u662f http://127.0.0.1:1080</p></body></html>", None))
-#endif // QT_CONFIG(tooltip)
-        self.httpEdit.setPlaceholderText("")
+        self.proxy0.setText(QCoreApplication.translate("SettingNew", u"\u65e0\u4ee3\u7406", None))
+        self.proxy1.setText(QCoreApplication.translate("SettingNew", u"HTTP\u4ee3\u7406", None))
+        self.label_32.setText(QCoreApplication.translate("SettingNew", u"\u4ee3\u7406\u5730\u5740", None))
+        self.proxy2.setText(QCoreApplication.translate("SettingNew", u"Sock5\u4ee3\u7406", None))
+        self.label_37.setText(QCoreApplication.translate("SettingNew", u"\u4ee3\u7406\u5730\u5740", None))
         self.label_30.setText(QCoreApplication.translate("SettingNew", u"Doh DNS\u914d\u7f6e\uff08\u542f\u7528\u540e\u80fd\u907f\u514dSNI\u963b\u65ad\u548cDNS\u62e6\u622a\uff0c\u5982\u679c\u4f7f\u7528\u4e86\u4ee3\u7406\uff0c\u53ef\u4e0d\u542f\u7528\uff09\uff1a", None))
         self.dohRadio.setText(QCoreApplication.translate("SettingNew", u"Api\u542f\u7528Doh", None))
         self.dohPictureRadio.setText(QCoreApplication.translate("SettingNew", u"\u56fe\u7247\u542f\u7528Doh\uff08\u5f00\u542f\u4f1a\u52a0\u957f\u56fe\u7247\u52a0\u8f7d\u901f\u5ea6\uff09", None))

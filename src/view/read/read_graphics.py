@@ -100,6 +100,7 @@ class ReadGraphicsView(QGraphicsView, SmoothScroll):
         self.startPos = QPoint()
         self.labelWaifu2xState = {}
         # self.setSceneRect(-self.width()//2, -self.height()//2, self.width(), self.height())
+        QtOwner().owner.WindowsSizeChange.connect(self.ChangeScale)
 
     @property
     def readImg(self):
@@ -675,7 +676,7 @@ class ReadGraphicsView(QGraphicsView, SmoothScroll):
         self.ReloadImg()
         return
 
-    def ChangeScale(self, scale):
+    def ChangeScale(self, scale=1):
         # self.setSceneRect(-self.width()//2, -self.height()//2, self.width(), self.height())
         self.resetImg = True
         self.ReloadImg()

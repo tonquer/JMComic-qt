@@ -1,7 +1,7 @@
 from functools import partial
 
-from PySide6.QtCore import Qt, QPoint
-from PySide6.QtGui import QIcon, QMouseEvent, QGuiApplication
+from PySide6.QtCore import Qt, QEvent, QPoint, Signal
+from PySide6.QtGui import QIcon, QMouseEvent, QGuiApplication, QFont
 from PySide6.QtWidgets import QButtonGroup, QToolButton, QLabel
 
 from component.dialog.loading_dialog import LoadingDialog
@@ -22,6 +22,7 @@ from view.download.download_dir_view import DownloadDirView
 
 class MainView(Main, QtTaskBase):
     """ 主窗口 """
+    WindowsSizeChange = Signal()
 
     def __init__(self):
         QtOwner().SetOwner(self)
@@ -41,9 +42,9 @@ class MainView(Main, QtTaskBase):
             desktop = screens[Setting.ScreenIndex.value].geometry()
 
         self.adjustSize()
-        # self.resize(desktop.width() // 4 * 3, desktop.height() // 4 * 3)
-        # self.move(self.width() // 8+desktop.x(), max(0, desktop.height()-self.height()) // 2+desktop.y())
-        # print(desktop.size(), self.size())
+        self.resize(desktop.width() // 4 * 3, desktop.height() // 4 * 3)
+        self.move(self.width() // 8+desktop.x(), max(0, desktop.height()-self.height()) // 2+desktop.y())
+        print(desktop.size(), self.size())
         self.setAttribute(Qt.WA_StyledBackground, True)
 
         # self.loadingDialog = LoadingDialog(self)
@@ -63,9 +64,16 @@ class MainView(Main, QtTaskBase):
 
         self.subStackWidget.setCurrentIndex(0)
         self.settingView.LoadSetting()
+        self.searchView2.searchWidget.hide()
+
         # self.readView.LoadSetting()
         # QApplication.instance().installEventFilter(self)
         # QtOwner().app.paletteChanged.connect(self.CheckPaletteChanged)
+
+    def changeEvent(self, event):
+        if event.type() == QEvent.WindowStateChange:
+            self.WindowsSizeChange.emit()
+        return super(self.__class__, self).changeEvent(event)
 
     # def eventFilter(self, watched, event) -> bool:
     #     if watched == QtOwner().app:
@@ -107,6 +115,7 @@ class MainView(Main, QtTaskBase):
         self.navigationWidget.categoryButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.categoryView)))
         self.navigationWidget.myCommentButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.myCommentView)))
         self.navigationWidget.historyButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.historyView)))
+        self.navigationWidget.remoteHistoryButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.remoteHistoryView)))
 
     def RetranslateUi(self):
         Main.retranslateUi(self, self)
@@ -140,17 +149,14 @@ class MainView(Main, QtTaskBase):
             # if not gpuInfo or (gpuInfo and config.Encode < 0) or (gpuInfo and config.Encode >= len(gpuInfo)):
             #     config.Encode = 0
 
-            sts = waifu2x_vulkan.initSet(config.Encode)
+            sts = waifu2x_vulkan.initSet(config.Encode, config.UseCpuNum)
             TaskWaifu2x().Start()
             version = waifu2x_vulkan.getVersion()
             config.Waifu2xVersion = version
             self.helpView.waifu2x.setText(config.Waifu2xVersion)
-            
-            Log.Warn("Waifu2x init: " + str(stat) + " encode: " + str(
-                config.Encode) + " version:" + version + " code:" + str(sts) + " cpuNum:" + str(config.UseCpuNum))
+            Log.Warn("Waifu2x init: " + str(stat) + " version:{}/{}".format(version, config.RealVersion) + " code:" + str(sts) + " gpu:{}/{}".format(config.Encode, gpuInfo) + " cpuNum:{}/{}".format(str(cpuNum), str(config.UseCpuNum)))
         else:
-            pass
-            QtOwner().ShowError(self.tr("waifu2x无法启用, ") + config.ErrorMsg)
+            QtOwner().ShowError("Waifu2x Error, " + config.ErrorMsg)
 
         if not IsCanUse:
             self.settingView.readCheckBox.setEnabled(False)
@@ -214,11 +220,12 @@ class MainView(Main, QtTaskBase):
         return
 
     def OpenLoginView(self):
+        self.navigationWidget.OpenLoginView()
         # 如果以前登录过才弹出登录
-        if Setting.Password.value:
-            self.navigationWidget.OpenLoginView()
-        else:
-            self.LoginSucBack()
+        # if Setting.Password.value:
+        #     self.navigationWidget.OpenLoginView()
+        # else:
+        #     self.LoginSucBack()
 
     def LoginSucBack(self):
         self.SwitchWidgetAndClear(self.subStackWidget.indexOf(self.indexView))
@@ -260,6 +267,7 @@ class MainView(Main, QtTaskBase):
         for button in self.toolButtons:
             if self.toolButtonGroup.id(button) == index:
                 button.setChecked(True)
+                button.setText(self.subStackWidget.widget(index).windowTitle())
         return
 
     def SwitchWidgetAndClear(self, index):

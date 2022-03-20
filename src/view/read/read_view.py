@@ -2,7 +2,7 @@ import os
 from functools import partial
 
 from PySide6 import QtWidgets
-from PySide6.QtCore import Qt, QSize
+from PySide6.QtCore import Qt, QSize, QEvent
 from PySide6.QtGui import QPixmap, QImage, QCursor
 from PySide6.QtWidgets import QMenu
 
@@ -136,7 +136,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         self.frame.scrollArea.ClearPixItem()
         self.Clear()
         if QtOwner().owner.windowState() == Qt.WindowFullScreen:
-            QtOwner().owner.showNormal()
+            self.qtTool.FullScreen(True)
         QtOwner().CloseReadView()
 
     def Clear(self):
@@ -172,6 +172,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         self.epsId = index
         self.pageIndex = pageIndex
 
+        self.qtTool.isMaxFull = self.window().isMaximized()
         if Setting.LookReadFull.value:
             QtOwner().owner.showFullScreen()
             self.qtTool.fullButton.setText(Str.GetStr(Str.ExitFullScreen))
@@ -271,7 +272,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
 
         return
 
-    def UpdateProcessBar(self, data, laveFileSize, backParam):
+    def UpdateProcessBar(self, downloadSize, laveFileSize, backParam):
         info = self.pictureData.get(backParam)
         if not info:
             return
@@ -279,7 +280,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
             info.downloadSize = 0
         if info.size <= 0:
             info.size = laveFileSize
-        info.downloadSize += len(data)
+        info.downloadSize += downloadSize
         if self.curIndex != backParam:
             return
         self.frame.UpdateProcessBar(info)
@@ -411,11 +412,10 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         return True
 
     def AddHistory(self):
-        # TODO
-        # bookName = QtOwner().bookInfoView.bookName
-        # url = QtOwner().bookInfoView.url
-        # path = QtOwner().bookInfoView.path
-        # QtOwner().historyView.AddHistory(self.bookId, bookName, self.epsId, self.curIndex, url, path)
+        bookName = QtOwner().bookInfoView.bookName
+        url = QtOwner().bookInfoView.url
+        path = QtOwner().bookInfoView.path
+        QtOwner().historyView.AddHistory(self.bookId, bookName, self.epsId, self.curIndex, url, path)
         return
 
     def ShowAndCloseTool(self):
@@ -434,6 +434,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
             self.AddQImageTask(data, self.ConvertQImageWaifu2xBack, index)
         if index == self.curIndex:
             self.qtTool.SetData(waifuState=p.waifuState)
+            self.frame.waifu2xProcess.hide()
             # self.ShowImg()
         elif self.stripModel in [ReadMode.UpDown, ReadMode.RightLeftScroll,
                                  ReadMode.LeftRightScroll] and self.curIndex < index <= self.curIndex + config.PreLoading - 1:
@@ -464,18 +465,18 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         if not info and info.data:
             return
         assert isinstance(info, QtFileData)
-        path = "{}/{}/{}".format(self.bookId, self.epsId+1, i+1)
+        path = "book/{}/{}/{}".format(self.bookId, self.epsId+1, i+1)
         info.waifu2xTaskId = self.AddConvertTask(path, info.data, info.model, self.Waifu2xBack, i)
         if i == self.curIndex:
             self.qtTool.SetData(waifuState=info.waifuState)
             self.frame.waifu2xProcess.show()
 
     def InitDownload(self):
-        self.AddDownloadBook(self.bookId, self.epsId, 0, statusBack=self.StartLoadPicUrlBack, backParam=0)
+        self.AddDownloadBook(self.bookId, self.epsId, 0, statusBack=self.StartLoadPicUrlBack, backParam=0, isInit=True)
 
     def AddDownload(self, i):
-        path = "{}/{}/{}.jpg".format(self.bookId, self.epsId+1, i+1)
-        cachePath = os.path.join(os.path.join(Setting.SavePath.value, config.CachePathDir), os.path.dirname(path))
+        path = "book/{}/{}/{}.jpg".format(self.bookId, self.epsId+1, i+1)
+        cachePath = os.path.join(os.path.join(Setting.SavePath.value, config.CachePathDir), path)
         # loadPath = QtOwner().downloadView.GetDownloadFilePath(self.bookId, self.epsId, i)
         self.AddDownloadBook(self.bookId, self.epsId, i,
                              downloadCallBack=self.UpdateProcessBar,

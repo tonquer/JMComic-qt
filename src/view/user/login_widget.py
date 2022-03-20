@@ -1,9 +1,10 @@
 import base64
+from functools import partial
 
 from PySide6 import QtWidgets
 from PySide6.QtCore import Signal
 
-from config.setting import Setting
+from config.setting import Setting, SettingValue
 from interface.ui_login_widget import Ui_LoginWidget
 from qt_owner import QtOwner
 from server import req, Status, config
@@ -21,9 +22,18 @@ class LoginWidget(QtWidgets.QWidget, Ui_LoginWidget, QtTaskBase):
         Ui_LoginWidget.__init__(self)
         QtTaskBase.__init__(self)
         self.setupUi(self)
+        self.autoBox.setChecked(bool(Setting.AutoLogin.value))
+        self.saveBox.setChecked(bool(Setting.SavePassword.value))
+        self.autoBox.clicked.connect(partial(self.CheckButtonEvent, Setting.AutoLogin, self.autoBox))
+        self.saveBox.clicked.connect(partial(self.CheckButtonEvent, Setting.SavePassword, self.saveBox))
         # self.buttonGroup = QtWidgets.QButtonGroup(self)
         # self.buttonGroup.addButton(self.selectIp1)
         # self.selectIp1.setChecked(True)
+
+    def CheckButtonEvent(self, setItem, button):
+        assert isinstance(setItem, SettingValue)
+        setItem.SetValue(int(button.isChecked()))
+        return
 
     def Init(self):
         # self.userEdit_2.setText()
@@ -55,9 +65,12 @@ class LoginWidget(QtWidgets.QWidget, Ui_LoginWidget, QtTaskBase):
         if st == Status.Ok:
             user = raw.get("user")
             Setting.UserId.SetValue(self.userEdit_2.text())
-            Setting.Password.SetValue(base64.b64encode(self.passwdEdit_2.text().encode("utf-8")))
+            if Setting.SavePassword.value:
+                Setting.Password.SetValue(base64.b64encode(self.passwdEdit_2.text().encode("utf-8")))
+            else:
+                Setting.Password.SetValue("")
             QtOwner().SetUser(user)
             QtOwner().SetLogin()
             self.parent().parent().parent().parent().close()
-        QtOwner().CheckShowMsg( raw)
+        QtOwner().CheckShowMsg(raw)
 

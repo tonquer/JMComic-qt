@@ -1,3 +1,4 @@
+import sys
 import weakref
 
 from PySide6.QtCore import QFile
@@ -5,6 +6,7 @@ from PySide6.QtCore import QFile
 from component.label.msg_label import MsgLabel
 from tools.singleton import Singleton
 from tools.str import Str
+from tools.tool import ToolUtil
 
 
 class QtOwner(Singleton):
@@ -12,6 +14,7 @@ class QtOwner(Singleton):
         Singleton.__init__(self)
         self._owner = None
         self._app = None
+        self.backSock = None
         self.isUseDb = True
         from tools.user import User
         self.user = User()
@@ -152,6 +155,20 @@ class QtOwner(Singleton):
             return self.OpenBookInfo(int(text))
         self.owner.SwitchWidget(self.owner.searchView, **arg)
 
+    def OpenSearch2(self, text):
+        arg = {"text": text}
+        self.owner.SwitchWidget(self.owner.searchView2, **arg)
+
+    def OpenSearch2Author(self, text):
+        arg = {"text": text}
+        self.owner.searchView2.setWindowTitle("作者: {}".format(ToolUtil.GetStrMaxLen(text)))
+        self.owner.SwitchWidget(self.owner.searchView2, **arg)
+
+    def OpenSearch2Tag(self, text):
+        arg = {"text": text}
+        self.owner.searchView2.setWindowTitle("TAG: {}".format(ToolUtil.GetStrMaxLen(text)))
+        self.owner.SwitchWidget(self.owner.searchView2, **arg)
+
     def OpenSearchByText(self, text):
         self.owner.searchView.lineEdit.setText(text)
         self.owner.searchView.lineEdit.Search()
@@ -203,7 +220,45 @@ class QtOwner(Singleton):
 
     def SetDirty(self):
         pass
-    
+
+    @staticmethod
+    def SetFont():
+        try:
+            from tools.log import Log
+            from config.setting import Setting
+            from PySide6.QtGui import QFont
+            f = QFont()
+            from tools.langconv import Converter
+            if Converter('zh-hans').convert(Setting.FontName.value) == "默认":
+                Setting.FontName.InitValue("", "FontName")
+
+            if not Setting.FontName.value and sys.platform == "win32":
+                Setting.FontName.InitValue("微软雅黑", "FontName")
+
+            if Converter('zh-hans').convert(str(Setting.FontSize.value)) == "默认":
+                Setting.FontSize.InitValue("", "FontSize")
+
+            if Converter('zh-hans').convert(str(Setting.FontStyle.value)) == "默认":
+                Setting.FontStyle.InitValue(0, "FontStyle")
+
+            if not Setting.FontName.value and not Setting.FontSize.value and not Setting.FontStyle.value:
+                return
+
+            if Setting.FontName.value:
+                f = QFont(Setting.FontName.value)
+
+            if Setting.FontSize.value:
+                f.setPointSize(int(Setting.FontSize.value))
+
+            if Setting.FontStyle.value:
+                fontStyleList = [QFont.Light, QFont.Normal, QFont.DemiBold, QFont.Bold, QFont.Black]
+                f.setWeight(fontStyleList[Setting.FontStyle.value - 1])
+
+            QtOwner().app.setFont(f)
+
+        except Exception as es:
+            Log.Error(es)
+
     # def ShowMsg(self, data):
     #     return self.owner.msgForm.ShowMsg(data)
     #

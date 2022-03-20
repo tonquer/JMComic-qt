@@ -128,11 +128,11 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             self.UpdateFavoriteIcon()
             self.picture.setText(Str.GetStr(Str.LoadingPicture))
             self.url = info.baseInfo.coverUrl
-            self.path = "{}_cover".format(self.bookId)
+            self.path = ToolUtil.GetRealPath(self.bookId, "cover")
             # dayStr = ToolUtil.GetUpdateStr(info.pageInfo.createDate)
             # self.updateTick.setText(str(dayStr) + Str.GetStr(Str.Updated))
             if config.IsLoadingPicture:
-                self.AddDownloadTask(self.url, completeCallBack=self.UpdatePicture)
+                self.AddDownloadTask(self.url, self.path, completeCallBack=self.UpdatePicture, isReload=True)
             self.UpdateEpsData()
         else:
             # QtWidgets.QMessageBox.information(self, '加载失败', msg, QtWidgets.QMessageBox.Yes)
@@ -198,7 +198,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         # downloadIds = QtOwner().owner.downloadForm.GetDownloadCompleteEpsId(self.bookId)
         for index in sorted(info.pageInfo.epsInfo.keys()):
             epsInfo = info.pageInfo.epsInfo.get(index)
-            label = QLabel(str(index+1) + "-" + epsInfo.title)
+            label = QLabel(epsInfo.title)
             label.setAlignment(Qt.AlignCenter)
             label.setStyleSheet("color: rgb(196, 95, 125);")
             font = QFont()
@@ -280,7 +280,6 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         return
 
     def LoadHistory(self):
-        return
         info = QtOwner().historyView.GetHistory(self.bookId)
         if not info:
             self.startRead.setText(Str.GetStr(Str.LookFirst))
@@ -290,33 +289,16 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             self.startRead.setText(Str.GetStr(Str.LastLook) + str(self.lastEpsId + 1) + Str.GetStr(Str.Chapter) + str(info.picIndex + 1) + Str.GetStr(Str.Page))
             return
 
-        if self.lastEpsId >= 0:
-            item = self.epsListWidget.item(self.lastEpsId)
-            if item:
-                downloadIds = QtOwner().downloadView.GetDownloadCompleteEpsId(self.bookId)
-                if self.lastEpsId in downloadIds:
-                    item.setBackground(QColor(18, 161, 130))
-                else:
-                    item.setBackground(QColor(0, 0, 0, 0))
-
-        item = self.epsListWidget.item(info.epsId)
-        if not item:
-            return
-        item.setBackground(QColor(238, 162, 164))
-        self.lastEpsId = info.epsId
-        self.lastIndex = info.picIndex
-        self.startRead.setText(Str.GetStr(Str.LastLook) + str(self.lastEpsId + 1) + Str.GetStr(Str.Chapter) + str(info.picIndex + 1) + Str.GetStr(Str.Page))
-
     def ClickAutorItem(self, item):
         text = item.text()
         # QtOwner().owner.searchForm.SearchAutor(text)
-        QtOwner().OpenSearch(text)
+        QtOwner().OpenSearch2Author(text)
         return
 
     def ClickTagsItem(self, item):
         text = item.text()
         # QtOwner().owner.searchForm.SearchTags(text)
-        QtOwner().OpenSearch(text)
+        QtOwner().OpenSearch2Tag(text)
         return
 
     def eventFilter(self, obj, event):
