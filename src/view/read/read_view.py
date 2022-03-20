@@ -137,7 +137,9 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         self.Clear()
         if QtOwner().owner.windowState() == Qt.WindowFullScreen:
             self.qtTool.FullScreen(True)
+
         QtOwner().CloseReadView()
+        QtOwner().bookInfoView.ReloadHistory.emit()
 
     def Clear(self):
         Setting.TurnSpeed.SetValue(int(self.qtTool.turnSpeed.value() * 1000))

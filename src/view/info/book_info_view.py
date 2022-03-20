@@ -1,5 +1,5 @@
 from PySide6 import QtWidgets, QtCore, QtGui
-from PySide6.QtCore import Qt, QSize, QEvent
+from PySide6.QtCore import Qt, QSize, QEvent, Signal
 from PySide6.QtGui import QColor, QFont, QPixmap, QIcon
 from PySide6.QtWidgets import QListWidgetItem, QLabel
 
@@ -13,6 +13,8 @@ from tools.str import Str
 
 
 class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
+    ReloadHistory = Signal()
+
     def __init__(self):
         super(self.__class__, self).__init__()
         Ui_BookInfo.__init__(self)
@@ -63,6 +65,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         # self.epsListWidget.verticalScrollBar().rangeChanged.connect(self.ChageMaxNum)
         self.epsListWidget.setMinimumHeight(300)
         self.commentNum = 0
+        self.ReloadHistory.connect(self.LoadHistory)
 
     def UpdateFavoriteIcon(self):
         p = QPixmap()
@@ -134,6 +137,8 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             if config.IsLoadingPicture:
                 self.AddDownloadTask(self.url, self.path, completeCallBack=self.UpdatePicture, isReload=True)
             self.UpdateEpsData()
+            self.lastEpsId = -1
+            self.LoadHistory()
         else:
             # QtWidgets.QMessageBox.information(self, '加载失败', msg, QtWidgets.QMessageBox.Yes)
             QtOwner().CheckShowMsg(raw)
@@ -288,6 +293,13 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             self.lastIndex = info.picIndex
             self.startRead.setText(Str.GetStr(Str.LastLook) + str(self.lastEpsId + 1) + Str.GetStr(Str.Chapter) + str(info.picIndex + 1) + Str.GetStr(Str.Page))
             return
+        item = self.epsListWidget.item(info.epsId)
+        if not item:
+            return
+        item.setBackground(QColor(238, 162, 164))
+        self.lastEpsId = info.epsId
+        self.lastIndex = info.picIndex
+        self.startRead.setText(Str.GetStr(Str.LastLook) + str(self.lastEpsId + 1) + Str.GetStr(Str.Chapter) + str(info.picIndex + 1) + Str.GetStr(Str.Page))
 
     def ClickAutorItem(self, item):
         text = item.text()
