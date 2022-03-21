@@ -698,6 +698,7 @@ class SpeedTestPingReq(ServerReq):
         self.headers['expires'] = '0'
         self.headers['pragma'] = 'no-cache'
         self.headers["authorization"] = ""
+        self.isReload = False
 
 
 class SpeedTestReq(ServerReq):
@@ -721,3 +722,4 @@ class SpeedTestReq(ServerReq):
         self.headers['cache-control'] = 'no-cache'
         self.headers['expires'] = '0'
         self.headers['pragma'] = 'no-cache'
+        self.isReload = False

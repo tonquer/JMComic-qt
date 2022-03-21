@@ -65,6 +65,7 @@ jobs:
         pip install bs4==0.0.1
         pip install lxml==4.6.4
         pip install pycryptodomex==3.12.0
+        pip install Pysocks==1.7.1
         pip install https://github.com/tonquer/waifu2x-vulkan/releases/download/v1.1.1/waifu2x_vulkan-1.1.1-cp37-cp37m-macosx_10_14_x86_64.whl
         brew install create-dmg
     - name: Build
@@ -172,6 +173,7 @@ jobs:
         pip install bs4==0.0.1
         pip install lxml==4.6.4
         pip install pycryptodomex==3.12.0
+        pip install Pysocks==1.7.1
     - name: Build
       run: |
         cd src
@@ -192,47 +194,4 @@ jobs:
         upload_url: ${{ needs.release.outputs.Up_Url }}
         asset_path: ${{ env.PACKAGENAME }}.zip
         asset_name: ${{ env.PACKAGENAME }}.zip
-        asset_content_type: application/zip
-
-  ubuntu:
-    runs-on: ubuntu-18.04
-    env:
-      PACKAGENAME: ${{ needs.setup.outputs.PACKAGE_PREFIX }}_linux
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python 3.7
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.7
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install pyinstaller==4.8
-        pip install https://github.com/tonquer/waifu2x-vulkan/releases/download/v1.1.1/waifu2x_vulkan-1.1.1-cp37-cp37m-linux_x86_64.whl
-        pip install -r src/requirements.txt
-    - name: Build
-      run: |
-        cd src
-        pyinstaller -w start.py --strip
-        cd dist
-        mkdir -p jmcomic.AppRun/usr/bin
-        wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
-        chmod +x appimagetool-x86_64.AppImage
-        cp -r ../../res/appimage/* jmcomic.AppRun/
-        cp -r ../../res/icon/logo_round.png jmcomic.AppRun/JMComic.png
-        cp -r start/* jmcomic.AppRun/usr/bin/
-        mv jmcomic.AppRun/usr/bin/start jmcomic.AppRun/usr/bin/JMComic
-        chmod +x jmcomic.AppRun/AppRun
-        chmod +x jmcomic.AppRun/usr/bin/JMComic
-        ./appimagetool-x86_64.AppImage jmcomic.AppRun
-        mv JMComic-x86_64.AppImage ../../${{ env.PACKAGENAME }}-x86_64.AppImage
-        cd ../..
-    - name: upload-linux
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ needs.release.outputs.Up_Url }}
-        asset_path: ${{ env.PACKAGENAME }}-x86_64.AppImage
-        asset_name: ${{ env.PACKAGENAME }}-x86_64.AppImage
         asset_content_type: application/zip

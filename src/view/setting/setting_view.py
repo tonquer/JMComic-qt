@@ -178,6 +178,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.InitSetting()
         self.SetTheme()
         self.SetLanguage()
+        self.SetSock5Proxy()
         return
 
     def ExitSaveSetting(self, mainQsize):

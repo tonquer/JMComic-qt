@@ -112,6 +112,7 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
         self.timerOut.setInterval(1000)
         self.timerOut.timeout.connect(self.TimeOut)
         self.isMaxFull = False
+        self.gpuLabel.setMaximumWidth(250)
 
     @property
     def imgFrame(self):

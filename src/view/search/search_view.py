@@ -1,5 +1,7 @@
 import json
 
+from PySide6.QtCore import QEvent, Qt
+from PySide6.QtGui import QHelpEvent
 from PySide6.QtWidgets import QWidget
 
 from interface.ui_search import Ui_Search
@@ -29,6 +31,7 @@ class SearchView(QWidget, Ui_Search, QtTaskBase):
         self.sortCombox.currentIndexChanged.connect(self.ChangeSort)
         self.searchButton.clicked.connect(self.lineEdit.Search)
         self.jumpPage.clicked.connect(self.JumpPage)
+        # self.searchLabel.installEventFilter(self)
 
     def InitWord(self):
         self.lineEdit.LoadCacheWord()
@@ -96,3 +99,14 @@ class SearchView(QWidget, Ui_Search, QtTaskBase):
         self.bookList.page = 1
         self.bookList.clear()
         self.SendSearch(1)
+
+    # def eventFilter(self, obj, event):
+    #     if event.type() == QEvent.MouseButtonPress:
+    #         if event.button() == Qt.LeftButton:
+    #             help = QHelpEvent(QEvent.Type.ToolTip, event.pos(), event.globalPos())
+    #             QtOwner().app.postEvent(self.searchLabel, help)
+    #             return True
+    #         else:
+    #             return False
+    #     else:
+    #         return super(self.__class__, self).eventFilter(obj, event)
