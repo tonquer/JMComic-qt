@@ -32,7 +32,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QRadioButton" name="redownloadRadio">
+        <widget class="QCheckBox" name="redownloadRadio">
          <property name="text">
           <string>下载失败后1分钟自动重试</string>
          </property>

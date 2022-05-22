@@ -106,6 +106,7 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
     def Init(self):
         self.timer.start()
         self.failTimer.start()
+        self.redownloadRadio.setCheckable(True)
         self.redownloadRadio.setChecked(bool(Setting.IsReDownload.value))
 
     def GetDownloadEpsId(self, bookId):
@@ -504,8 +505,8 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
             self.order[col] = 1
         self.UpdateTableRow()
 
-    def SwitchReDownload(self, state):
-        Setting.IsReDownload.SetValue(int(state))
+    def SwitchReDownload(self):
+        Setting.IsReDownload.SetValue(int(self.redownloadRadio.isChecked()))
 
     def CheckFailReDownload(self):
         if not Setting.IsReDownload.value:
