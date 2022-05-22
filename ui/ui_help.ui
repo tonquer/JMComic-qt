@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>545</width>
+    <width>1206</width>
     <height>586</height>
    </rect>
   </property>
@@ -27,9 +27,9 @@ QScrollArea {background-color:transparent;}</string>
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
-        <width>525</width>
-        <height>566</height>
+        <y>-38</y>
+        <width>1169</width>
+        <height>604</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -50,6 +50,12 @@ QScrollArea {background-color:transparent;}</string>
          </item>
          <item>
           <widget class="QWidget" name="widget" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>600</width>
+             <height>0</height>
+            </size>
+           </property>
            <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
              <spacer name="verticalSpacer_2">
@@ -235,6 +241,68 @@ QScrollArea {background-color:transparent;}</string>
              </widget>
             </item>
             <item>
+             <widget class="QWidget" name="updateWidget" native="true">
+              <layout class="QVBoxLayout" name="verticalLayout_4">
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_2">
+                 <item>
+                  <widget class="QLabel" name="label_5">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>50</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">image: url(:/png/icon/new.svg);</string>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_8">
+                   <property name="font">
+                    <font>
+                     <pointsize>16</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>新版本：</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <widget class="QLabel" name="updateLabel">
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="updateButton">
+                 <property name="text">
+                  <string>前往更新</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../res/images.qrc">
+                   <normaloff>:/png/icon/new.svg</normaloff>:/png/icon/new.svg</iconset>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
              <spacer name="verticalSpacer">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -281,6 +349,7 @@ QScrollArea {background-color:transparent;}</string>
  </customwidgets>
  <resources>
   <include location="../res/images.qrc"/>
+  <include location="../../pybika-new/res/images.qrc"/>
  </resources>
  <connections/>
 </ui>

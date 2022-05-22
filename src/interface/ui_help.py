@@ -21,12 +21,13 @@ from PySide6.QtWidgets import (QApplication, QGridLayout, QHBoxLayout, QLabel,
 
 from component.scroll_area.smooth_scroll_area import SmoothScrollArea
 import images_rc
+import images_rc
 
 class Ui_Help(object):
     def setupUi(self, Help):
         if not Help.objectName():
             Help.setObjectName(u"Help")
-        Help.resize(545, 586)
+        Help.resize(1206, 586)
         Help.setStyleSheet(u"QListWidget {background-color:transparent;}\n"
 "QScrollArea {background-color:transparent;}")
         self.verticalLayout = QVBoxLayout(Help)
@@ -36,7 +37,7 @@ class Ui_Help(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 525, 566))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, -38, 1169, 604))
         self.verticalLayout_3 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.horizontalLayout = QHBoxLayout()
@@ -47,6 +48,7 @@ class Ui_Help(object):
 
         self.widget = QWidget(self.scrollAreaWidgetContents)
         self.widget.setObjectName(u"widget")
+        self.widget.setMinimumSize(QSize(600, 0))
         self.verticalLayout_2 = QVBoxLayout(self.widget)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
@@ -145,6 +147,51 @@ class Ui_Help(object):
 
         self.verticalLayout_2.addWidget(self.widget_2)
 
+        self.updateWidget = QWidget(self.widget)
+        self.updateWidget.setObjectName(u"updateWidget")
+        self.verticalLayout_4 = QVBoxLayout(self.updateWidget)
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.label_5 = QLabel(self.updateWidget)
+        self.label_5.setObjectName(u"label_5")
+        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label_5.sizePolicy().hasHeightForWidth())
+        self.label_5.setSizePolicy(sizePolicy)
+        self.label_5.setMaximumSize(QSize(50, 16777215))
+        self.label_5.setStyleSheet(u"image: url(:/png/icon/new.svg);")
+
+        self.horizontalLayout_2.addWidget(self.label_5)
+
+        self.label_8 = QLabel(self.updateWidget)
+        self.label_8.setObjectName(u"label_8")
+        font1 = QFont()
+        font1.setPointSize(16)
+        self.label_8.setFont(font1)
+
+        self.horizontalLayout_2.addWidget(self.label_8)
+
+
+        self.verticalLayout_4.addLayout(self.horizontalLayout_2)
+
+        self.updateLabel = QLabel(self.updateWidget)
+        self.updateLabel.setObjectName(u"updateLabel")
+
+        self.verticalLayout_4.addWidget(self.updateLabel)
+
+        self.updateButton = QPushButton(self.updateWidget)
+        self.updateButton.setObjectName(u"updateButton")
+        icon = QIcon()
+        icon.addFile(u":/png/icon/new.svg", QSize(), QIcon.Normal, QIcon.Off)
+        self.updateButton.setIcon(icon)
+
+        self.verticalLayout_4.addWidget(self.updateButton)
+
+
+        self.verticalLayout_2.addWidget(self.updateWidget)
+
         self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
         self.verticalLayout_2.addItem(self.verticalSpacer)
@@ -185,5 +232,9 @@ class Ui_Help(object):
         self.label_9.setText(QCoreApplication.translate("Help", u"\u4e0a\u6b21\u66f4\u65b0\u65f6\u95f4\uff1a", None))
         self.waifu2x.setText(QCoreApplication.translate("Help", u"v1.0.8", None))
         self.openCmd.setText(QCoreApplication.translate("Help", u"\u6253\u5f00\u63a7\u5236\u53f0", None))
+        self.label_5.setText("")
+        self.label_8.setText(QCoreApplication.translate("Help", u"\u65b0\u7248\u672c\uff1a", None))
+        self.updateLabel.setText("")
+        self.updateButton.setText(QCoreApplication.translate("Help", u"\u524d\u5f80\u66f4\u65b0", None))
     # retranslateUi
 

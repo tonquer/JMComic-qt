@@ -135,15 +135,32 @@ class LoginReq2Handler(object):
             data["message"] = v.get("message", "")
             if code != 200:
                 data["st"] = Status.Error
+                Log.Warn("登陆失败！！！, code:{}, text:{}".format(str(task.res.code), task.res.GetText()))
                 return
             user = ToolUtil.ParseLogin2(task.req.ParseData(v.get("data")))
+
+            from requests import Response
+            assert isinstance(task.res.raw, Response)
+            cookies = requests.utils.dict_from_cookiejar(task.res.raw.cookies)
+
+            ipcountry = cookies.get("ipcountry", "")
+            ipm5 = cookies.get("ipm5", "")
+            AVS = cookies.get("AVS", "")
+            shunt = cookies.get("shunt", "")
+            # config.ipcountry = ipcountry if ipcountry else config.ipcountry
+            # config.ipm5 = ipm5 if ipm5 else config.ipm5
+            # config.AVS = AVS if AVS else config.AVS
+            # config.shunt = shunt if shunt else config.shunt
+            Log.Info("Login suc, cookies:{}".format(cookies))
             st = Status.Ok
             data["st"] = st
             data["user"] = user
         except Exception as es:
             data["st"] = Status.ParseError
+            Log.Warn("登陆失败！！！, code:{}, text:{}".format(str(task.res.code), task.res.GetText()))
             Log.Error(es)
         finally:
+
             if task.backParam:
                 TaskBase.taskObj.taskBack.emit(task.backParam, pickle.dumps(data))
 
@@ -182,6 +199,10 @@ class GetIndexInfoReq2Handler(object):
             if code != 200:
                 data["st"] = Status.Error
                 return
+            from requests import Response
+            assert isinstance(task.res.raw, Response)
+            cookies = requests.utils.dict_from_cookiejar(task.res.raw.cookies)
+            Log.Info("latest suc, cookies:{}".format(cookies))
             bookInfo = ToolUtil.ParseIndex2(task.req.ParseData(v.get("data")))
             data["st"] = Status.Ok
             data["bookInfo"] = bookInfo
@@ -207,6 +228,7 @@ class GetIndexInfoReq2Handler(object):
             if code != 200:
                 data["st"] = Status.Error
                 return
+
             bookInfo = ToolUtil.ParseLatest2(task.req.ParseData(v.get("data")))
             data["st"] = Status.Ok
             data["bookList"] = bookInfo
@@ -757,7 +779,10 @@ class SpeedTestPingHandler(object):
     def __call__(self, task):
         data = {"st": task.status, "data": task.res.GetText()}
         if hasattr(task.res.raw, "elapsed"):
-            data["data"] = str(task.res.raw.elapsed.total_seconds())
+            if task.res.raw.status_code == 401 or task.res.raw.status_code == 200:
+                data["data"] = str(task.res.raw.elapsed.total_seconds())
+            else:
+                data["data"] = "0"
             TaskBase.taskObj.taskBack.emit(task.bakParam, pickle.dumps(data))
         else:
             data["data"] = "0"

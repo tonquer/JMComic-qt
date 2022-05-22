@@ -23,7 +23,7 @@ class Ui_Download(object):
     def setupUi(self, Download):
         if not Download.objectName():
             Download.setObjectName(u"Download")
-        Download.resize(608, 372)
+        Download.resize(1002, 510)
         self.gridLayout_2 = QGridLayout(Download)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.gridLayout = QGridLayout()
@@ -33,6 +33,11 @@ class Ui_Download(object):
         self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout.addItem(self.horizontalSpacer)
+
+        self.redownloadRadio = QRadioButton(Download)
+        self.redownloadRadio.setObjectName(u"redownloadRadio")
+
+        self.horizontalLayout.addWidget(self.redownloadRadio)
 
         self.pushButton = QPushButton(Download)
         self.pushButton.setObjectName(u"pushButton")
@@ -107,6 +112,7 @@ class Ui_Download(object):
 
     def retranslateUi(self, Download):
         Download.setWindowTitle(QCoreApplication.translate("Download", u"\u4e0b\u8f7d", None))
+        self.redownloadRadio.setText(QCoreApplication.translate("Download", u"\u4e0b\u8f7d\u5931\u8d25\u540e1\u5206\u949f\u81ea\u52a8\u91cd\u8bd5", None))
         self.pushButton.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u5f00\u59cb\u4e0b\u8f7d", None))
         self.pushButton_3.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u6682\u505c\u4e0b\u8f7d", None))
         self.pushButton_2.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u5f00\u59cb\u8f6c\u6362", None))

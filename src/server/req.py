@@ -24,6 +24,14 @@ class ServerReq(object):
             self.proxy = {}
         self.now = int(time.time())
         self.headers = self.GetHeader(url, method)
+        if config.ipcountry:
+            self.cookies["ipcountry"] = config.ipcountry
+        if config.ipm5:
+            self.cookies["ipm5"] = config.ipm5
+        if config.AVS:
+            self.cookies["AVS"] = config.AVS
+        if config.shunt:
+            self.cookies["shunt"] = config.shunt
 
     def __str__(self):
         if Setting.LogIndex.value == 0:
@@ -565,7 +573,7 @@ class AddAndDelFavoritesReq2(ServerReq):
 
 # 获得评论
 class GetCommentReq2(ServerReq):
-    def __init__(self, bookId="", page="1"):
+    def __init__(self, bookId="", page="1", readMode="manhua"):
         self.bookId = bookId
         url = config.Url2 + "/forum"
         method = "GET"
@@ -573,7 +581,7 @@ class GetCommentReq2(ServerReq):
         data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
         data["view_mode_debug"] = "1"
         data["view_mode"] = "null"
-        data["mode"] = "manhua"
+        data["mode"] = readMode
         if bookId:
             data["aid"] = bookId
         data["page"] = page

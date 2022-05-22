@@ -52,6 +52,7 @@
     <file>icon/loading.gif</file>
     <file>icon/logo_round.png</file>
     <file>icon/placeholder_avatar.png</file>
+    <file>icon/new.svg</file>
   </qresource>
   <qresource prefix="icon">
     <file>theme/dark_pink/disabled/base.svg</file>

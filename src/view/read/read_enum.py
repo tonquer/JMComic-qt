@@ -129,24 +129,24 @@ class QtFileData(object):
     @staticmethod
     def GetReadToPos(stripModel, maxWidth, maxHeight, toWidth, toHeight, index, curIndex, oldPos):
         if stripModel == ReadMode.LeftRight:
-            return QPointF(maxWidth // 2 - toWidth // 2, max(0, maxHeight // 2 - toHeight // 2))
+            return QPoint(maxWidth//2 - toWidth//2, max(0, maxHeight//2-toHeight//2))
         elif stripModel in [ReadMode.RightLeftDouble]:
             if index == curIndex:
-                return QPointF(maxWidth // 2, maxHeight // 2 - toHeight // 2)
+                return QPoint(maxWidth//2, max(0, maxHeight//2 - toHeight//2))
             else:
-                return QPointF(maxWidth // 2 - toWidth, maxHeight // 2 - toHeight // 2)
+                return QPoint(maxWidth//2-toWidth, max(0, maxHeight//2 - toHeight//2))
         elif stripModel in [ReadMode.LeftRightDouble]:
             if index != curIndex:
-                return QPointF(maxWidth // 2, maxHeight // 2 - toHeight // 2)
+                return QPoint(maxWidth//2, max(0, maxHeight//2 - toHeight//2))
             else:
-                return QPointF(maxWidth // 2 - toWidth, maxHeight // 2 - toHeight // 2)
+                return QPoint(maxWidth//2-toWidth, max(0, maxHeight//2 - toHeight//2))
         elif stripModel in [ReadMode.LeftRightScroll]:
-            return QPointF(oldPos.x(), max(0, maxHeight // 2 - toHeight // 2))
+            return QPoint(oldPos.x(), max(0, maxHeight // 2 - toHeight // 2))
 
         elif stripModel in [ReadMode.RightLeftScroll]:
-            return QPointF(oldPos.x(), max(0, maxHeight // 2 - toHeight // 2))
+            return QPoint(oldPos.x(), max(0, maxHeight // 2 - toHeight // 2))
 
         elif stripModel in [ReadMode.UpDown]:
-            return QPointF(maxWidth // 2 - toWidth // 2, oldPos.y())
+            return QPoint(maxWidth//2 - toWidth//2, oldPos.y())
         else:
-            return QPointF(0, 0)
+            return QPoint(0, 0)

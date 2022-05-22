@@ -227,7 +227,12 @@ class Server(Singleton):
             request.headers = {}
 
         task.res = res.BaseRes("", False)
-        r = self.session.get(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout, verify=False)
+        if task.req.cookies:
+            r = self.session.get(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout,
+                                 verify=False, cookies=task.req.cookies)
+        else:
+            r = self.session.get(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout,
+                                 verify=False)
         task.res = res.BaseRes(r, request.isParseRes)
         return task
 

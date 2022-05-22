@@ -315,10 +315,9 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
         if epsId >= len(bookInfo.pageInfo.epsInfo):
             return
 
-        epsInfo = bookInfo.pageInfo.epsInfo[epsId]
         self.readImg.AddHistory()
         QtOwner().bookInfoView.LoadHistory()
-        self.readImg.OpenPage(bookId, epsId, epsInfo.title, True)
+        self.readImg.OpenPage(bookId, epsId, True)
         return
 
     def OpenNextEps(self):
@@ -334,10 +333,9 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
         if epsId >= len(bookInfo.pageInfo.epsInfo):
             return
 
-        epsInfo = bookInfo.pageInfo.epsInfo[epsId]
         self.readImg.AddHistory()
         QtOwner().bookInfoView.LoadHistory()
-        self.readImg.OpenPage(bookId, epsId, epsInfo.title)
+        self.readImg.OpenPage(bookId, epsId)
         return
 
     def SkipPicture(self, index=0):

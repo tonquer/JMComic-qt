@@ -15,9 +15,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QLineEdit,
-    QListWidgetItem, QPushButton, QSizePolicy, QSpacerItem,
-    QSpinBox, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QComboBox, QHBoxLayout, QLabel,
+    QLineEdit, QListWidgetItem, QPushButton, QSizePolicy,
+    QSpacerItem, QSpinBox, QVBoxLayout, QWidget)
 
 from component.list.user_list_widget import UserListWidget
 
@@ -28,6 +28,25 @@ class Ui_Comment(object):
         Comment.resize(400, 300)
         self.verticalLayout = QVBoxLayout(Comment)
         self.verticalLayout.setObjectName(u"verticalLayout")
+        self.selectWidget = QWidget(Comment)
+        self.selectWidget.setObjectName(u"selectWidget")
+        self.horizontalLayout_3 = QHBoxLayout(self.selectWidget)
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.selectBox = QComboBox(self.selectWidget)
+        self.selectBox.addItem("")
+        self.selectBox.addItem("")
+        self.selectBox.addItem("")
+        self.selectBox.setObjectName(u"selectBox")
+
+        self.horizontalLayout_3.addWidget(self.selectBox)
+
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_3.addItem(self.horizontalSpacer_2)
+
+
+        self.verticalLayout.addWidget(self.selectWidget)
+
         self.listWidget = UserListWidget(Comment)
         self.listWidget.setObjectName(u"listWidget")
 
@@ -75,6 +94,10 @@ class Ui_Comment(object):
 
     def retranslateUi(self, Comment):
         Comment.setWindowTitle(QCoreApplication.translate("Comment", u"\u8bc4\u8bba", None))
+        self.selectBox.setItemText(0, QCoreApplication.translate("Comment", u"\u6240\u6709", None))
+        self.selectBox.setItemText(1, QCoreApplication.translate("Comment", u"\u6f2b\u753b", None))
+        self.selectBox.setItemText(2, QCoreApplication.translate("Comment", u"\u95f2\u804a", None))
+
         self.pushButton.setText(QCoreApplication.translate("Comment", u"\u56de\u590d", None))
 #if QT_CONFIG(shortcut)
         self.pushButton.setShortcut(QCoreApplication.translate("Comment", u"Return", None))

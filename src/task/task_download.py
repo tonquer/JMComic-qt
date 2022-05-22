@@ -222,6 +222,7 @@ class TaskDownload(TaskBase, QtTaskBase):
                 backData["bookName"] = info.baseInfo.title
                 backData["title"] = epsInfo.title
                 backData["maxEps"] = len(info.pageInfo.epsInfo)
+                backData["author"] = "&".join(info.baseInfo.authorList)
                 isReset or self.SetTaskStatus(taskId, backData, task.Downloading)
 
                 if task.isInit:
@@ -235,7 +236,15 @@ class TaskDownload(TaskBase, QtTaskBase):
                         self.SetTaskStatus(taskId, backData, task.Cache)
                         return
                 else:
-                    for cachePath in [task.cachePath, task.loadPath]:
+                    path = ToolUtil.GetRealPath(task.index+1, "book/{}/{}".format(task.bookId, task.epsIndex+1))
+                    cachePath2 = os.path.join(os.path.join(Setting.SavePath.value, config.CachePathDir), path)
+                    checkPaths = [task.loadPath]
+
+                    if Setting.SavePath.value:
+                        checkPaths.append(cachePath2)
+                        task.cachePath = cachePath2
+
+                    for cachePath in checkPaths:
                         if cachePath:
                             imgData = ToolUtil.LoadCachePicture(cachePath)
                             if imgData:

@@ -33,7 +33,10 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.picture.installEventFilter(self)
         self.title.setWordWrap(True)
         self.title.setTextInteractionFlags(Qt.TextBrowserInteraction)
-        self.autorList.itemClicked.connect(self.ClickAutorItem)
+        self.autorList.clicked.connect(self.ClickAutorItem)
+        self.autorList.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.autorList.customContextMenuRequested.connect(self.CopyClickAutorItem)
+
         self.idLabel.setTextInteractionFlags(Qt.TextBrowserInteraction)
         self.description.setTextInteractionFlags(Qt.TextBrowserInteraction)
 
@@ -47,7 +50,9 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.description.adjustSize()
         self.title.adjustSize()
 
-        self.tagsList.itemClicked.connect(self.ClickTagsItem)
+        self.tagsList.clicked.connect(self.ClickTagsItem)
+        self.tagsList.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.tagsList.customContextMenuRequested.connect(self.CopyClickTagsItem)
 
         self.epsListWidget.setFlow(self.epsListWidget.LeftToRight)
         self.epsListWidget.setWrapping(True)
@@ -190,7 +195,8 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             self.LoadHistory()
             return
         else:
-            QtOwner().ShowError(Str.GetStr(Str.ChapterLoadFail) + ", {}".format(Str.GetStr(st)))
+            QtOwner().CheckShowMsg(raw)
+            # QtOwner().ShowError(Str.GetStr(Str.ChapterLoadFail) + ", {}".format(Str.GetStr(st)))
         return
 
     def UpdateEpsData(self):
@@ -273,8 +279,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         widget = self.epsListWidget.itemWidget(item)
         if not widget:
             return
-        name = widget.text()
-        QtOwner().OpenReadView(self.bookId, index, name, pageIndex=pageIndex)
+        QtOwner().OpenReadView(self.bookId, index, pageIndex=pageIndex)
         # self.stackedWidget.setCurrentIndex(1)
 
     def StartRead(self):
@@ -301,14 +306,23 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.lastIndex = info.picIndex
         self.startRead.setText(Str.GetStr(Str.LastLook) + str(self.lastEpsId + 1) + Str.GetStr(Str.Chapter) + str(info.picIndex + 1) + Str.GetStr(Str.Page))
 
-    def ClickAutorItem(self, item):
-        text = item.text()
-        # QtOwner().owner.searchForm.SearchAutor(text)
+    def ClickAutorItem(self, modelIndex):
+        index = modelIndex.row()
+        item = self.autorList.item(index)
+        if not item:
+            return
+        widget = self.autorList.itemWidget(item)
+        text = widget.text()
         QtOwner().OpenSearch2Author(text)
         return
 
-    def ClickTagsItem(self, item):
-        text = item.text()
+    def ClickTagsItem(self, modelIndex):
+        index = modelIndex.row()
+        item = self.tagsList.item(index)
+        if not item:
+            return
+        widget = self.tagsList.itemWidget(item)
+        text = widget.text()
         # QtOwner().owner.searchForm.SearchTags(text)
         QtOwner().OpenSearch2Tag(text)
         return
@@ -332,3 +346,24 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         if Qt.Key_Escape == key:
             self.close()
         return super(self.__class__, self).keyPressEvent(ev)
+
+    def CopyClickTagsItem(self, pos):
+        index = self.tagsList.indexAt(pos)
+        item = self.tagsList.itemFromIndex(index)
+        if index.isValid() and item:
+            text = item.text()
+            QtOwner().CopyText(text)
+
+    def CopyClickCategoriesItem(self, pos):
+        index = self.categoriesList.indexAt(pos)
+        item = self.categoriesList.itemFromIndex(index)
+        if index.isValid() and item:
+            text = item.text()
+            QtOwner().CopyText(text)
+
+    def CopyClickAutorItem(self, pos):
+        index = self.autorList.indexAt(pos)
+        item = self.autorList.itemFromIndex(index)
+        if index.isValid() and item:
+            text = item.text()
+            QtOwner().CopyText(text)

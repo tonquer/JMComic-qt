@@ -40,6 +40,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.logGroup.buttonClicked.connect(partial(self.ButtonClickEvent, Setting.LogIndex))
         self.mainScaleGroup.buttonClicked.connect(partial(self.ButtonClickEvent, Setting.ScaleLevel))
         self.proxyGroup.buttonClicked.connect(partial(self.ButtonClickEvent, Setting.IsHttpProxy))
+        self.saveNameGroup.buttonClicked.connect(partial(self.ButtonClickEvent, Setting.SaveNameType))
 
         # CheckButton:
         self.checkBox_IsUpdate.clicked.connect(partial(self.CheckButtonEvent, Setting.IsUpdate, self.checkBox_IsUpdate))
@@ -189,18 +190,14 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.SetRadioGroup("themeButton", Setting.ThemeIndex.value)
         self.SetRadioGroup("languageButton", Setting.Language.value)
         self.SetRadioGroup("mainScaleButton", Setting.ScaleLevel.value)
+        self.SetRadioGroup("proxy", Setting.IsHttpProxy.value)
+        self.SetRadioGroup("saveNameButton", Setting.SaveNameType.value)
         self.coverSize.setValue(Setting.CoverSize.value)
         self.categorySize.setValue(Setting.CategorySize.value)
         self.SetRadioGroup("logutton", Setting.LogIndex.value)
-        self.SetRadioGroup("proxy", Setting.IsHttpProxy.value)
         self.httpEdit.setText(Setting.HttpProxy.value)
+        self.sockEdit.setText(Setting.Sock5Proxy.value)
         self.titleBox.setChecked(Setting.IsNotUseTitleBar.value)
-
-        self.dohLine.setText(Setting.DohAddress.value)
-        self.dohRadio.setChecked(Setting.IsOpenDoh.value)
-        self.dohPictureRadio.setChecked(Setting.IsOpenDohPicture.value)
-        # self.dohPictureRadio.hide()
-
         for index in range(self.encodeSelect.count()):
             if Setting.SelectEncodeGpu.value == self.encodeSelect.itemText(index):
                 self.encodeSelect.setCurrentIndex(index)

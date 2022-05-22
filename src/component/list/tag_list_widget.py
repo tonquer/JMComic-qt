@@ -1,5 +1,5 @@
 from PySide6.QtCore import Qt, QSize
-from PySide6.QtGui import QFont
+from PySide6.QtGui import QFont, QFontMetrics
 from PySide6.QtWidgets import QListWidgetItem, QLabel, QAbstractItemView
 
 from component.list.base_list_widget import BaseListWidget
@@ -35,16 +35,22 @@ class TagListWidget(BaseListWidget):
     def AddItem(self, name, isSelectable=False):
         label = QLabel(name)
         label.setAlignment(Qt.AlignCenter)
-        font = QFont()
-        font.setPointSize(12)
-        font.setBold(True)
-        label.setFont(font)
+        label.setStyleSheet("color:#d5577c")
+        # font = QFont()
+        # font.setPointSize(12)
+        # font.setBold(True)
+        # label.setFont(font)
 
-        item = QListWidgetItem(name)
+        item = QListWidgetItem(self)
         item.setTextAlignment(Qt.AlignCenter)
         # item.setBackground(QColor(87, 195, 194))
         # item.setBackground(QColor(0, 0, 0, 0))
-        item.setSizeHint(label.sizeHint()+ QSize(20, 10))
+        fm = QFontMetrics(item.font())
+
+        width = fm.boundingRect(name).width()
+        height = fm.height()
+        self.setItemWidget(item, label)
+        item.setSizeHint(QSize(width, height) + QSize(20, 0))
         if not isSelectable:
             item.setFlags(item.flags() & (~Qt.ItemIsSelectable))
 

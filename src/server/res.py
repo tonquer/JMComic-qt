@@ -8,12 +8,18 @@ class BaseRes(object):
         super().__init__()
         self.raw = data
         self.data = {}
-        self.code = 0
         self.message = ""
         self.reqBak = None
         self.isParseRes = isParseRes
         if isParseRes:
             ToolUtil.ParseFromData(self, self.raw.text)
+
+    @property
+    def code(self):
+        if hasattr(self.raw, "status_code"):
+            return self.raw.status_code
+        else:
+            return 0
 
     def __str__(self):
         if Setting.LogIndex.value == 0:

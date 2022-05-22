@@ -42,6 +42,10 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
         self.timer.setInterval(1000)
         self.timer.timeout.connect(self.TimeOutHandler)
 
+        self.failTimer = QTimer(self.tableWidget)
+        self.failTimer.setInterval(60*1000)
+        self.failTimer.timeout.connect(self.CheckFailReDownload)
+
         # self.settings = QSettings('download.ini', QSettings.IniFormat)
         # self.InitSetting()
 
@@ -53,6 +57,7 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
         self.order = {}
         self.radioButton.setChecked(Setting.DownloadAuto.value)
         datas = self.db.LoadDownload(self)
+        self.redownloadRadio.clicked.connect(self.SwitchReDownload)
         for task in datas.values():
             self.downloadDict[task.bookId] = task
             if not task.epsIds:
@@ -96,9 +101,12 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
 
     def Close(self):
         self.timer.stop()
+        self.failTimer.stop()
 
     def Init(self):
         self.timer.start()
+        self.failTimer.start()
+        self.redownloadRadio.setChecked(bool(Setting.IsReDownload.value))
 
     def GetDownloadEpsId(self, bookId):
         if bookId not in self.downloadDict:
@@ -495,3 +503,17 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
             self.tableWidget.sortItems(col, Qt.DescendingOrder)
             self.order[col] = 1
         self.UpdateTableRow()
+
+    def SwitchReDownload(self, state):
+        Setting.IsReDownload.SetValue(int(state))
+
+    def CheckFailReDownload(self):
+        if not Setting.IsReDownload.value:
+            return
+        reDownload = []
+        for download in self.downloadDict.values():
+            assert isinstance(download, DownloadItem)
+            if download.status == download.Error:
+                reDownload.append(download)
+        for download in reDownload:
+            self.SetNewStatus(download, DownloadItem.Waiting)

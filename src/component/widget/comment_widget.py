@@ -26,7 +26,10 @@ class CommentWidget(QtWidgets.QWidget, Ui_Comment, QtTaskBase):
         self.bookId = ""
         self.pushButton.clicked.connect(self.SendComment)
         self.skipButton.clicked.connect(self.JumpPage)
+        self.readMode = ["all", "manhua", "chat"]
+        self.readIndex = 1
         self.cid = ""
+        self.selectWidget.hide()
 
     def SwitchCurrent(self, **kwargs):
         bookId = kwargs.get("bookId", "")
@@ -73,12 +76,12 @@ class CommentWidget(QtWidgets.QWidget, Ui_Comment, QtTaskBase):
 
     def LoadComment(self):
         QtOwner().ShowLoading()
-        self.AddHttpTask(req.GetCommentReq2(self.bookId, self.listWidget.page), self.GetCommentBack, self.listWidget.page)
+        self.AddHttpTask(req.GetCommentReq2(self.bookId, self.listWidget.page, self.readMode[self.readIndex]), self.GetCommentBack, self.listWidget.page)
         return
 
     def LoadNextPage(self):
         QtOwner().ShowLoading()
-        self.AddHttpTask(req.GetCommentReq2(self.bookId, self.listWidget.page + 1), self.GetCommentBack, self.listWidget.page+1)
+        self.AddHttpTask(req.GetCommentReq2(self.bookId, self.listWidget.page + 1, self.readMode[self.readIndex]), self.GetCommentBack, self.listWidget.page+1)
         return
 
     # 加载评论
@@ -103,7 +106,7 @@ class CommentWidget(QtWidgets.QWidget, Ui_Comment, QtTaskBase):
                 for index, info in enumerate(comments):
                     self.listWidget.AddUserItem(info, "")
             else:
-                QtOwner().ShowError(Str.GetStr(st))
+                QtOwner().CheckShowMsg(raw)
             return
         except Exception as es:
             QtOwner().CheckShowMsg(raw)

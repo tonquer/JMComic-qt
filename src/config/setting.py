@@ -101,6 +101,7 @@ class Setting:
 
     # 下载与缓存
     SavePath = SettingValue("DownloadSetting", "", False)
+    SaveNameType = SettingValue("DownloadSetting", 0, False)
 
     # Waifu2x设置
     SelectEncodeGpu = SettingValue("Waifu2xSetting", "", True)
@@ -138,6 +139,7 @@ class Setting:
     AutoLogin = SettingValue("Other", 0, False)
     SavePassword = SettingValue("Other", 1, False)
     IsShowCmd = SettingValue("Other", 0, False)
+    IsReDownload = SettingValue("Other", 0, False)
 
     # IpbMemberId = SettingValue("Other", "", False)
     # IpbPassHash = SettingValue("Other", "", False)

@@ -15,6 +15,44 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
+    <widget class="QWidget" name="selectWidget" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QComboBox" name="selectBox">
+        <item>
+         <property name="text">
+          <string>所有</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>漫画</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>闲聊</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="UserListWidget" name="listWidget"/>
    </item>
    <item>

@@ -31,9 +31,9 @@ UpdateUrl2 = "https://hub.fastgit.xyz/tonquer/JMComic-qt/releases/latest"
 UpdateUrl2Back = "https://hub.fastgit.xyz/tonquer/JMComic-qt/"
 
 
-UpdateVersion = "v1.0.4"
-RealVersion = "v1.0.4"
-VersionTime = "2022-3-20"
+UpdateVersion = "v1.0.5"
+RealVersion = "v1.0.5"
+VersionTime = "2022-5-22"
 
 Waifu2xVersion = "1.1.1"
 LoginUserName = ""
@@ -54,3 +54,13 @@ IsTips = 1
 # ISSUES
 Issues = "https://github.com/tonquer/JMComic-qt/issues"
 
+# cookie
+ipcountry = ""
+ipm5 = ""
+AVS = ""
+shunt = ""
+
+# ipcountry = "CN"
+# ipm5 = "4f15409f804567cd4f4344fae94126e5"
+# AVS = "fgb9t6q1o3bct86srh4v5kthg2"
+# shunt = "1"

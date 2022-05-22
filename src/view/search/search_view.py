@@ -71,7 +71,8 @@ class SearchView(QWidget, Ui_Search, QtTaskBase):
                     self.bookList.AddBookItemByBook(v)
             else:
                 # QtWidgets.QMessageBox.information(self, '未搜索到结果', "未搜索到结果", QtWidgets.QMessageBox.Yes)
-                QtOwner().ShowError(Str.GetStr(st))
+                # QtOwner().ShowError(Str.GetStr(st))
+                QtOwner().CheckShowMsg(raw)
         except Exception as es:
             Log.Error(es)
         pass
