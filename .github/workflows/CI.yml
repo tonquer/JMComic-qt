@@ -33,7 +33,6 @@ jobs:
 
         pyinstaller -F -w -i icon.ico start.py
         mv dist jmcomic
-        Copy-Item -Verbose -Recurse -Path data -Destination jmcomic/
         cp ..\LICENSE jmcomic\
         cp ..\CHANGELOG jmcomic\
         cd ..
@@ -77,7 +76,6 @@ jobs:
         cp ..\res\icon\icon.ico .\
         pyinstaller -F -w -i icon.ico start.py
         mv dist jmcomic
-        Copy-Item -Verbose -Recurse -Path data -Destination jmcomic/
         cp ..\LICENSE jmcomic\
         cp ..\CHANGELOG jmcomic\
         cd ..
