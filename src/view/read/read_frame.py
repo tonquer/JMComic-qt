@@ -32,7 +32,7 @@ class ReadFrame(QFrame):
         self.waifu2xProcess = GifLabel(self)
         self.waifu2xProcess.setVisible(False)
         f = QFile(":/png/icon/loading_gif.gif")
-        f.open(QFile.OpenModeFlag.ReadOnly)
+        f.open(QFile.ReadOnly)
         self.waifu2xProcess.Init(f.readAll())
         f.close()
         self.downloadSize = 1
@@ -55,7 +55,7 @@ class ReadFrame(QFrame):
         label = self.helpLabel
         font = QFont()
         font.setPointSize(64)
-        fm = QFontMetrics(font)
+        # fm = QFontMetrics(font)
         label.resize(self.width(), self.height())
         p = QPixmap(self.width(), self.height())
         p.fill(Qt.transparent)
@@ -85,8 +85,8 @@ class ReadFrame(QFrame):
         painter.drawText(QRect(0, self.height() // 4 * 3, self.width() // 3, self.height() // 2), lastPage)
         painter.drawText(QRect(self.width() // 3 * 2, self.height() // 4 * 3, self.width() // 3, self.height() // 2),
                          nextPage)
-        painter.drawText(QRect(0, self.height() // 4 * 1, self.width(), self.height()) ,Str.GetStr(Str.Menu))
-        painter.drawText(QRect(self.width()*2 // 3, self.height() // 4 * 1, self.width(), self.height()) , Str.GetStr(Str.Menu))
+        painter.drawText(QRect(0, self.height() // 4 * 1, self.width(), self.height()),Str.GetStr(Str.Menu))
+        painter.drawText(QRect(self.width()*2 // 3, self.height() // 4 * 1, self.width(), self.height()), Str.GetStr(Str.Menu))
 
         if self.qtTool.stripModel in [ReadMode.UpDown, ReadMode.LeftRight]:
             painter.drawText(QRect(self.width() // 3, self.height() // 4 * 1, self.width(), self.height()), Str.GetStr(Str.LastScroll))
@@ -134,7 +134,7 @@ class ReadFrame(QFrame):
     def eventFilter(self, obj, ev) -> bool:
         # print(obj, ev.type())
         if obj == self.helpLabel:
-            if ev.type() == QEvent.Type.MouseButtonPress:
+            if ev.type() == QEvent.MouseButtonPress:
                 if not self.helpLabel.isHidden():
                     self.helpLabel.hide()
                     return True

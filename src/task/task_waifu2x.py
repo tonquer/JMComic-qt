@@ -26,6 +26,7 @@ class QConvertTask(object):
         self.savePath = ""  #
         self.imgData = b""
         self.saveData = b""
+        self.preDownPath = ""
 
         self.model = {
             "model": 1,
@@ -34,8 +35,9 @@ class QConvertTask(object):
             "toW": 100,
         }
 
+
 class TaskWaifu2x(TaskBase):
-    
+
     def __init__(self):
         TaskBase.__init__(self)
         self.taskObj.convertBack.connect(self.HandlerTask)
@@ -71,6 +73,13 @@ class TaskWaifu2x(TaskBase):
                         self.taskObj.convertBack.emit(taskId)
                         continue
 
+                if task.preDownPath:
+                    data = ToolUtil.LoadCachePicture(task.preDownPath)
+                    if data:
+                        task.saveData = data
+                        self.taskObj.convertBack.emit(taskId)
+                        continue
+
                 if task.savePath:
                     if ToolUtil.IsHaveFile(task.savePath):
                         self.taskObj.convertBack.emit(taskId)
@@ -83,7 +92,6 @@ class TaskWaifu2x(TaskBase):
                         model = ToolUtil.GetDownloadScaleModel(w, h, mat)
                         task.model = model
                         task.imgData = data
-
                 if not task.imgData:
                     task.status = Status.FileError
                     self.taskObj.convertBack.emit(taskId)
@@ -98,8 +106,9 @@ class TaskWaifu2x(TaskBase):
                     scale = task.model.get("scale", 0)
                     # mat = task.model.get("format", "jpg")
                     if scale <= 0:
-                        sts = waifu2x_vulkan.add(task.imgData, task.model.get('model', 0), task.taskId, task.model.get("width", 0),
-                                          task.model.get("high", 0))
+                        sts = waifu2x_vulkan.add(task.imgData, task.model.get('model', 0), task.taskId,
+                                                 task.model.get("width", 0),
+                                                 task.model.get("high", 0))
                     else:
                         sts = waifu2x_vulkan.add(task.imgData, task.model.get('model', 0), task.taskId, scale)
 
@@ -111,7 +120,8 @@ class TaskWaifu2x(TaskBase):
                 if sts <= 0:
                     task.status = Status.AddError
                     self.taskObj.convertBack.emit(taskId)
-                    Log.Warn("Waifu2x convert error, taskId: {}, model:{}, err:{}".format(str(task.taskId), task.model,
+                    Log.Warn(
+                        "Waifu2x convert error, taskId: {}, model:{}, err:{}".format(str(task.taskId), task.model,
                                                                                      str(err)))
                     continue
             except Exception as es:
@@ -165,7 +175,7 @@ class TaskWaifu2x(TaskBase):
             self.taskObj.convertBack.emit(taskId)
             t1.Refresh("RunLoad")
 
-    def AddConvertTaskByData(self, path, imgData, model, callBack, backParam=None, cleanFlag=None):
+    def AddConvertTaskByData(self, path, imgData, model, callBack, backParam=None, preDownPath=None, cleanFlag=None):
         info = QConvertTask()
         info.callBack = callBack
         info.backParam = backParam
@@ -174,6 +184,7 @@ class TaskWaifu2x(TaskBase):
         info.taskId = self.taskId
         info.imgData = imgData
         info.model = model
+        info.preDownPath = preDownPath
         if path:
             a = crc32(json.dumps(model).encode("utf-8"))
             if Setting.SavePath.value:

@@ -30,6 +30,12 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
         self.pushButton.clicked.connect(self.OpenLoginView)
         self.picLabel.installEventFilter(self)
         self.picData = None
+        self.offlineButton.SetState(False)
+        self.offlineButton.Switch.connect(self.SwitchOffline)
+
+    def SwitchOffline(self, state):
+        QtOwner().isOfflineModel = state
+        return
 
     def OpenLoginView(self):
         isAutoLogin = Setting.AutoLogin.value
@@ -49,6 +55,7 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
         return
 
     def LoginSucBack(self):
+        self.UpdateProxyName()
         QtOwner().owner.LoginSucBack()
         if not QtOwner().user.isLogin:
             return
@@ -63,6 +70,9 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
 
         self.pushButton.setText(Str.GetStr(Str.LoginOut))
     #     self.AddHttpTask(req.GetUserInfoReq(), self.UpdateUserBack)
+
+    def UpdateProxyName(self):
+        self.proxyName.setText("分流{}".format(str(Setting.ProxySelectIndex.value)))
 
     # def UpdateUserBack(self, raw):
     #     st = raw["st"]

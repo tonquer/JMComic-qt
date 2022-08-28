@@ -53,6 +53,9 @@ class CommentItemWidget(QtWidgets.QWidget, Ui_CommentItem):
         self.isLoadPicture = False
         self.commentList = []
 
+    def GetTitle(self):
+        return self.linkLabel.text()
+
     def SetLike(self, isLike=True):
         p = QPixmap()
         if isLike:
@@ -87,7 +90,7 @@ class CommentItemWidget(QtWidgets.QWidget, Ui_CommentItem):
                     if self.isGame:
                         QtOwner().OpenGameInfo(self.linkId)
                     else:
-                        QtOwner().OpenBookInfo(self.linkId)
+                        QtOwner().OpenBookInfo(self.linkId, self.GetTitle())
                 return True
             else:
                 return False

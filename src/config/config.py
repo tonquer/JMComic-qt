@@ -9,6 +9,8 @@ PicUrl2 = "https://cdn-msp.jmapiproxy2.cc"       # 域名
 Url2List = ["https://www.asjmapihost.cc", "https://www.jmapibranch1.cc", "https://www.jmapibranch2.cc", "https://www.jmapibranch3.cc"]
 PicUrlList = ["https://cdn-msp.jmapiproxy2.cc", "https://cdn-msp.jmapiproxy2.cc", "https://cdn-msp.jmapiproxy1.cc", "https://cdn-msp.jmapiproxy1.cc"]
 Now = int(time.time())
+ProxyApiDomain = "api.bika.life"
+ProxyImgDomain = "img.bika.life"
 
 ThreadNum = 10                 # 线程
 DownloadThreadNum = 5          # 下载线程
@@ -29,11 +31,12 @@ UpdateUrl = "https://github.com/tonquer/JMComic-qt/releases/latest"
 UpdateUrlBack = "https://github.com/tonquer/JMComic-qt/"
 UpdateUrl2 = "https://hub.fastgit.xyz/tonquer/JMComic-qt/releases/latest"
 UpdateUrl2Back = "https://hub.fastgit.xyz/tonquer/JMComic-qt/"
+UpdateUrl3 = "https://raw.bika.life/tonquer/JMComic-qt/releases/latest"
+UpdateUrl3Back = "https://raw.bika.life/tonquer/JMComic-qt/"
 
-
-UpdateVersion = "v1.0.5"
-RealVersion = "v1.0.5"
-VersionTime = "2022-5-22"
+UpdateVersion = "v1.0.6"
+RealVersion = "v1.0.6"
+VersionTime = "2022-8-28"
 
 Waifu2xVersion = "1.1.1"
 LoginUserName = ""

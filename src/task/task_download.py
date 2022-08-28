@@ -35,6 +35,7 @@ class QtDownloadTask(object):
         self.isInit = False
         self.isReload = False
         self.lastLaveSize = 0
+        self.isLoadTask = False
 
         self.loadPath = ""    # 只加载
         self.cachePath = ""   # 缓存路径
@@ -91,6 +92,21 @@ class TaskDownload(TaskBase, QtTaskBase):
         Server().Download(req.DownloadBookReq(url,  data.loadPath, data.cachePath, data.savePath, data.saveParam, data.isReload), backParams=self.taskId)
         return self.taskId
 
+    def DownloadCache(self, filePath, completeCallBack=None, backParam = 0, cleanFlag=""):
+        self.taskId += 1
+        data = QtDownloadTask(self.taskId)
+        data.downloadCompleteBack = completeCallBack
+        data.loadPath = filePath
+        data.backParam = backParam
+        data.isLoadTask = True
+        if cleanFlag:
+            data.cleanFlag = cleanFlag
+            taskIds = self.flagToIds.setdefault(cleanFlag, set())
+            taskIds.add(self.taskId)
+        self.tasks[self.taskId] = data
+        self._inQueue.put(self.taskId)
+        return self.taskId
+
     def HandlerTask(self, downloadId, laveFileSize, data, isCallBack=True):
         info = self.tasks.get(downloadId)
         if not info:
@@ -102,14 +118,17 @@ class TaskDownload(TaskBase, QtTaskBase):
             v = {"st": Status.SaveError}
             self.CallBookBack(v, info)
             return
+        st = Str.Error
+        if laveFileSize < -2:
+            st = - laveFileSize
 
         if laveFileSize < 0 and data == b"":
             try:
                 if info.downloadCompleteBack:
                     if info.backParam is not None:
-                        info.downloadCompleteBack(b"", Str.Error, info.backParam)
+                        info.downloadCompleteBack(b"", st, info.backParam)
                     else:
-                        info.downloadCompleteBack(b"", Str.Error)
+                        info.downloadCompleteBack(b"", st)
             except Exception as es:
                 Log.Error(es)
             self.ClearDownloadTask(downloadId)
@@ -175,6 +194,15 @@ class TaskDownload(TaskBase, QtTaskBase):
         from server import req, ToolUtil
         try:
             assert isinstance(task, QtDownloadTask)
+            if task.isLoadTask:
+                imgData = ToolUtil.LoadCachePicture(task.loadPath)
+                if imgData:
+                    TaskBase.taskObj.downloadBack.emit(taskId, len(imgData), b"")
+                    TaskBase.taskObj.downloadBack.emit(taskId, 0, imgData)
+                else:
+                    TaskBase.taskObj.downloadBack.emit(taskId, -Status.FileError, b"")
+                return
+
             isReset = False
             if data["st"] != Status.Ok:
                 task.resetCnt += 1

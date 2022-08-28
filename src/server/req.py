@@ -17,11 +17,24 @@ class ServerReq(object):
         self.isParseRes = False
         self.timeout = 5
         self.isUseHttps = True
+        self.isUseHttps = bool(Setting.IsUseHttps.value)
+        self.proxyUrl = ""
         self.cookies = {}
+        if Setting.ProxySelectIndex.value == 5:
+            host = ToolUtil.GetUrlHost(url)
+            if host in config.Url2List:
+                self.proxyUrl = config.ProxyApiDomain
+            elif host == config.Url:
+                self.proxyUrl = config.ProxyApiDomain
+            elif host in config.PicUrlList:
+                self.proxyUrl = config.ProxyImgDomain
+
         if Setting.IsHttpProxy.value == 1:
             self.proxy = {"http": Setting.HttpProxy.value, "https": Setting.HttpProxy.value}
-        else:
+        elif Setting.IsHttpProxy.value == 3:
             self.proxy = {}
+        else:
+            self.proxy = {"http": None, "https": None}
         self.now = int(time.time())
         self.headers = self.GetHeader(url, method)
         if config.ipcountry:
@@ -48,9 +61,9 @@ class ServerReq(object):
         token = hashlib.md5(param.encode("utf-8")).hexdigest()
 
         header = {
-            "tokenparam": "{},1.4.4".format(self.now),
+            "tokenparam": "{},1.4.5".format(self.now),
             "token": token,
-            "user-agent": "okhttp/3.12.12",
+            "user-agent": "okhttp/3.12.1",
             "accept-encoding": "gzip",
         }
         if method == "POST":
@@ -62,9 +75,9 @@ class ServerReq(object):
         token = hashlib.md5(param.encode("utf-8")).hexdigest()
 
         header = {
-            "tokenparam": "{},1.4.4".format(self.now),
+            "tokenparam": "{},1.4.5".format(self.now),
             "token": token,
-            "user-agent": "okhttp/3.12.12",
+            "user-agent": "okhttp/3.12.1",
             "accept-encoding": "gzip",
         }
         if method == "POST":
@@ -460,6 +473,8 @@ class GetFavoritesReq2(ServerReq):
         data["page"] = page
         if fid:
             data["folder_id"] = fid
+        else:
+            data["folder_id"] = "0"
         data["o"] = sort
 
         param = ToolUtil.DictToUrl(data)
@@ -712,10 +727,10 @@ class SpeedTestPingReq(ServerReq):
 class SpeedTestReq(ServerReq):
     Index = 0
     URLS = [
-        "/media/photos/295840/00001.jpg",
-        "/media/photos/295840/00002.jpg",
+        # "/media/photos/295840/00001.jpg"
+        # "/media/photos/295840/00002.jpg",
         "/media/photos/295840/00003.jpg",
-        "/media/photos/295840/00004.jpg",
+        # "/media/photos/295840/00004.jpg",
     ]
 
     def __init__(self):

@@ -25,11 +25,13 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         self.buttonGroup.setId(self.radioButton_2, 2)
         self.buttonGroup.setId(self.radioButton_3, 3)
         self.buttonGroup.setId(self.radioButton_4, 4)
+        # self.buttonGroup.setId(self.radioButton_5, 5)
         self.testSpeedButton.clicked.connect(self.SpeedTest)
 
         self.buttonGroup_2.setId(self.proxy_0, 0)
         self.buttonGroup_2.setId(self.proxy_1, 1)
         self.buttonGroup_2.setId(self.proxy_2, 2)
+        self.buttonGroup_2.setId(self.proxy_3, 2)
         self.LoadSetting()
         self.UpdateServer()
 
@@ -46,12 +48,14 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         self.proxy_0.setEnabled(enabled)
         self.proxy_1.setEnabled(enabled)
         self.proxy_2.setEnabled(enabled)
+        self.proxy_3.setEnabled(enabled)
         self.httpLine.setEnabled(enabled)
         self.sockEdit.setEnabled(enabled)
         self.radioButton_1.setEnabled(enabled)
         self.radioButton_2.setEnabled(enabled)
         self.radioButton_3.setEnabled(enabled)
         self.radioButton_4.setEnabled(enabled)
+        # self.radioButton_5.setEnabled(enabled)
 
     def LoadSetting(self):
         self.dohBox.setChecked(Setting.IsOpenDoh.value)
@@ -95,9 +99,9 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         i = 1
         for index, address in enumerate(config.Url2List):
             imageUrl = config.PicUrlList[index]
-            self.speedTest.append((address, imageUrl, False, i))
+            self.speedTest.append((address, imageUrl, False, False, i))
             i += 1
-            self.speedTest.append((address, imageUrl, True, i))
+            self.speedTest.append((address, imageUrl, True, False, i))
             i += 1
 
         self.SetEnabled(False)
@@ -107,7 +111,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         if len(self.speedTest) <= self.speedPingNum:
             self.StartSpeedTest()
             return
-        address, _, isHttpProxy, i = self.speedTest[self.speedPingNum]
+        address, imageProxy, isHttpProxy, isProxyUrl, i = self.speedTest[self.speedPingNum]
         httpProxy = self.httpLine.text()
         if isHttpProxy and (self.buttonGroup_2.checkedId() == 0 or
                             (self.buttonGroup_2.checkedId() == 1 and not self.httpLine.text()) or
@@ -121,8 +125,15 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         request = req.SpeedTestPingReq()
         if isHttpProxy and self.buttonGroup_2.checkedId() == 1:
             request.proxy = {"http": httpProxy, "https": httpProxy}
-        else:
+        elif isHttpProxy and self.buttonGroup_2.checkedId() == 3:
             request.proxy = ""
+        else:
+            request.proxy = {"http": None, "https": None}
+
+        if isProxyUrl:
+            request.proxyUrl = config.ProxyApiDomain
+        else:
+            request.proxyUrl = ""
 
         if isHttpProxy and self.buttonGroup_2.checkedId() == 2:
             self.SetSock5Proxy(True)
@@ -150,7 +161,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
             self.SetEnabled(True)
             return
 
-        _, imgUrl, isHttpProxy, i = self.speedTest[self.speedIndex]
+        address, imgUrl, isHttpProxy, isProxyUrl, i = self.speedTest[self.speedIndex]
         httpProxy = self.httpLine.text()
         if isHttpProxy and (self.buttonGroup_2.checkedId() == 0 or
                             (self.buttonGroup_2.checkedId() == 1 and not self.httpLine.text()) or
@@ -166,6 +177,11 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
             request.proxy = {"http": httpProxy, "https": httpProxy}
         else:
             request.proxy = ""
+
+        if isProxyUrl:
+            request.proxyUrl = config.ProxyImgDomain
+        else:
+            request.proxyUrl = ""
 
         if isHttpProxy and self.buttonGroup_2.checkedId() == 2:
             self.SetSock5Proxy(True)

@@ -65,6 +65,12 @@ class QtTaskBase:
             cleanFlag = self.__taskFlagId
         return TaskDownload().DownloadBook(bookId, epsId, index, statusBack, downloadCallBack, completeCallBack, backParam, loadPath, cachePath, savePath, cleanFlag, isInit)
 
+    def AddDownloadBookCache(self, loadPath, completeCallBack=None, backParam=0, cleanFlag=""):
+        from task.task_download import TaskDownload
+        if not cleanFlag:
+            cleanFlag = self.__taskFlagId
+        return TaskDownload().DownloadCache(loadPath, completeCallBack, backParam, cleanFlag)
+
     # downloadCallBack(data, laveFileSize, backParam)
     # downloadCallBack(data, laveFileSize)
     # downloadCompleteBack(data, st)
@@ -75,7 +81,7 @@ class QtTaskBase:
         if not cleanFlag:
             cleanFlag = self.__taskFlagId
 
-        if "https://" not in url:
+        if "https://" not in url and "http://" not in url:
             url = config.PicUrl2 + url
 
         if not cachePath and not savePath:
@@ -91,11 +97,11 @@ class QtTaskBase:
                                                cachePath, savePath, saveParam, cleanFlag, isReload)
 
     # completeCallBack(saveData, taskId, backParam, tick)
-    def AddConvertTask(self, path, imgData, model, completeCallBack, backParam=None, cleanFlag=""):
+    def AddConvertTask(self, path, imgData, model, completeCallBack, backParam=None, preDownPath=None, cleanFlag=""):
         from task.task_waifu2x import TaskWaifu2x
         if not cleanFlag:
             cleanFlag = self.__taskFlagId
-        return TaskWaifu2x().AddConvertTaskByData(path, imgData, model, completeCallBack, backParam, cleanFlag)
+        return TaskWaifu2x().AddConvertTaskByData(path, imgData, model, completeCallBack, backParam, preDownPath, cleanFlag)
 
     # completeCallBack(saveData, taskId, backParam, tick)
     def AddConvertTaskByPath(self, loadPath, savePath, completeCallBack, backParam=None, cleanFlag=""):

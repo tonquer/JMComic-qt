@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_search.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.2.2
+## Created by: Qt User Interface Compiler version 6.2.4
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -16,34 +16,31 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QHBoxLayout,
-    QLabel, QListWidgetItem, QPushButton, QSizePolicy,
-    QSpacerItem, QSpinBox, QVBoxLayout, QWidget)
+    QLabel, QLayout, QListWidgetItem, QPushButton,
+    QSizePolicy, QSpacerItem, QSpinBox, QVBoxLayout,
+    QWidget)
 
 from component.line_edit.search_line_edit import SearchLineEdit
 from component.list.comic_list_widget import ComicListWidget
+from component.list.tag_list_widget import TagListWidget
 
 class Ui_Search(object):
     def setupUi(self, Search):
         if not Search.objectName():
             Search.setObjectName(u"Search")
-        Search.resize(740, 369)
+        Search.resize(740, 570)
         Search.setMinimumSize(QSize(80, 0))
         self.verticalLayout = QVBoxLayout(Search)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.searchTab = QLabel(Search)
-        self.searchTab.setObjectName(u"searchTab")
-        self.searchTab.setEnabled(True)
-        self.searchTab.setTextInteractionFlags(Qt.TextBrowserInteraction)
-
-        self.verticalLayout.addWidget(self.searchTab)
-
         self.searchWidget = QWidget(Search)
         self.searchWidget.setObjectName(u"searchWidget")
+        self.searchWidget.setMinimumSize(QSize(0, 0))
         self.verticalLayout_2 = QVBoxLayout(self.searchWidget)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setSpacing(6)
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.horizontalLayout_2.setSizeConstraint(QLayout.SetMinimumSize)
         self.label_2 = QLabel(self.searchWidget)
         self.label_2.setObjectName(u"label_2")
         self.label_2.setMinimumSize(QSize(60, 0))
@@ -51,29 +48,53 @@ class Ui_Search(object):
 
         self.horizontalLayout_2.addWidget(self.label_2)
 
-        self.label_3 = QLabel(self.searchWidget)
-        self.label_3.setObjectName(u"label_3")
-        self.label_3.setMinimumSize(QSize(20, 0))
-        self.label_3.setMaximumSize(QSize(20, 16777215))
-        self.label_3.setToolTipDuration(-1)
-        self.label_3.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+        self.tagWidget = TagListWidget(self.searchWidget)
+        self.tagWidget.setObjectName(u"tagWidget")
+        self.tagWidget.setMinimumSize(QSize(0, 40))
+        self.tagWidget.setMaximumSize(QSize(16777215, 40))
+        self.tagWidget.setStyleSheet(u"QListWidget {background-color:transparent;}\n"
+"QListWidget::item {\n"
+"    background-color:rgb(251, 239, 243);\n"
+"    color: rgb(196, 95, 125);\n"
+"	border:2px solid red;\n"
+"    border-radius: 10px;\n"
+"	border-color:rgb(196, 95, 125);\n"
+"}\n"
+"/* \u9f20\u6807\u5728\u6309\u94ae\u4e0a\u65f6\uff0c\u6309\u94ae\u989c\u8272 */\n"
+" QListWidget::item:hover \n"
+"{\n"
+"    background-color:rgb(21, 85, 154);\n"
+"    border-radius: 10px;\n"
+"    color: rgb(0, 0, 0);\n"
+"}\n"
+"")
+        self.tagWidget.setFrameShape(QFrame.NoFrame)
 
-        self.horizontalLayout_2.addWidget(self.label_3)
+        self.horizontalLayout_2.addWidget(self.tagWidget)
 
         self.lineEdit = SearchLineEdit(self.searchWidget)
         self.lineEdit.setObjectName(u"lineEdit")
         self.lineEdit.setMinimumSize(QSize(40, 40))
+        self.lineEdit.setMaximumSize(QSize(16777215, 40))
         self.lineEdit.setClearButtonEnabled(True)
 
         self.horizontalLayout_2.addWidget(self.lineEdit)
 
         self.searchButton = QPushButton(self.searchWidget)
         self.searchButton.setObjectName(u"searchButton")
+        self.searchButton.setMaximumSize(QSize(16777215, 40))
 
         self.horizontalLayout_2.addWidget(self.searchButton)
 
 
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
+
+        self.searchTab = QLabel(self.searchWidget)
+        self.searchTab.setObjectName(u"searchTab")
+        self.searchTab.setEnabled(True)
+        self.searchTab.setTextInteractionFlags(Qt.TextBrowserInteraction)
+
+        self.verticalLayout_2.addWidget(self.searchTab)
 
 
         self.verticalLayout.addWidget(self.searchWidget)
@@ -155,16 +176,12 @@ class Ui_Search(object):
 
     def retranslateUi(self, Search):
         Search.setWindowTitle(QCoreApplication.translate("Search", u"\u641c\u7d22", None))
-        self.searchTab.setText("")
 #if QT_CONFIG(tooltip)
         self.label_2.setToolTip(QCoreApplication.translate("Search", u"<html><head/><body><p>\u641c\u5bfb\u7684\u6700\u4f73\u59ff\u52bf?</p><p>\u3010\u5305\u542b\u641c\u5bfb\u3011</p><p>\u641c\u5bfb\u5168\u5f69[\u7a7a\u683c][+]\u4eba\u59bb,\u4ec5\u663e\u793a\u5168\u5f69\u4e14\u662f\u4eba\u59bb\u7684\u672c\u672c</p><p>\u8303\u4f8b:\u5168\u5f69 +\u4eba\u59bb<br/></p><p>\u3010\u6392\u9664\u641c\u5bfb\u3011</p><p>\u641c\u5bfb\u5168\u5f69[\u7a7a\u683c][]\u4eba\u59bb,\u663e\u793a\u5168\u5f69\u5e76\u6392\u9664\u4eba\u59bb\u7684\u672c\u672c</p><p>\u8303\u4f8b:\u5168\u5f69 -\u4eba\u59bb<br/></p><p>\u3010\u6211\u90fd\u8981\u641c\u5bfb\u3011</p><p>\u641c\u5bfb\u5168\u5f69[\u7a7a\u683c]\u4eba\u59bb,\u4f1a\u663e\u793a\u6240\u6709\u5305\u542b\u5168\u5f69\u53ca\u4eba\u59bb\u7684\u672c\u672c</p><p>\u8303\u4f8b:\u5168\u5f69 \u4eba\u59bb</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.label_2.setText(QCoreApplication.translate("Search", u"\u641c\u7d22\uff1a", None))
-#if QT_CONFIG(tooltip)
-        self.label_3.setToolTip(QCoreApplication.translate("Search", u"<html><head/><body><p>\u641c\u5bfb\u7684\u6700\u4f73\u59ff\u52bf?</p><p>\u3010\u5305\u542b\u641c\u5bfb\u3011</p><p>\u641c\u5bfb\u5168\u5f69[\u7a7a\u683c][+]\u4eba\u59bb,\u4ec5\u663e\u793a\u5168\u5f69\u4e14\u662f\u4eba\u59bb\u7684\u672c\u672c</p><p>\u8303\u4f8b:\u5168\u5f69 +\u4eba\u59bb<br/></p><p>\u3010\u6392\u9664\u641c\u5bfb\u3011</p><p>\u641c\u5bfb\u5168\u5f69[\u7a7a\u683c][]\u4eba\u59bb,\u663e\u793a\u5168\u5f69\u5e76\u6392\u9664\u4eba\u59bb\u7684\u672c\u672c</p><p>\u8303\u4f8b:\u5168\u5f69 -\u4eba\u59bb<br/></p><p>\u3010\u6211\u90fd\u8981\u641c\u5bfb\u3011</p><p>\u641c\u5bfb\u5168\u5f69[\u7a7a\u683c]\u4eba\u59bb,\u4f1a\u663e\u793a\u6240\u6709\u5305\u542b\u5168\u5f69\u53ca\u4eba\u59bb\u7684\u672c\u672c</p><p>\u8303\u4f8b:\u5168\u5f69 \u4eba\u59bb</p></body></html>", None))
-#endif // QT_CONFIG(tooltip)
-        self.label_3.setText(QCoreApplication.translate("Search", u"?", None))
         self.searchButton.setText(QCoreApplication.translate("Search", u"\u641c\u7d22", None))
+        self.searchTab.setText("")
         self.sortCombox.setItemText(0, QCoreApplication.translate("Search", u"\u6700\u65b0", None))
         self.sortCombox.setItemText(1, QCoreApplication.translate("Search", u"\u6700\u591a\u70b9\u51fb", None))
         self.sortCombox.setItemText(2, QCoreApplication.translate("Search", u"\u6700\u591a\u56fe\u7247", None))

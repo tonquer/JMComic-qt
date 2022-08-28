@@ -95,9 +95,9 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>-1908</y>
+          <y>-1438</y>
           <width>661</width>
-          <height>2653</height>
+          <height>2739</height>
          </rect>
         </property>
         <property name="styleSheet">
@@ -988,6 +988,44 @@
               </item>
              </layout>
             </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_29">
+              <item>
+               <widget class="QRadioButton" name="proxy3">
+                <property name="text">
+                 <string>使用系统代理</string>
+                </property>
+                <attribute name="buttonGroup">
+                 <string notr="true">proxyGroup</string>
+                </attribute>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_31">
+              <item>
+               <widget class="QPushButton" name="openProxy_2">
+                <property name="text">
+                 <string>打开分流设置</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_28">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
            </layout>
           </widget>
          </item>
@@ -1257,6 +1295,13 @@
              <widget class="QCheckBox" name="readCheckBox">
               <property name="text">
                <string>是否启用</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="preDownWaifu2x">
+              <property name="text">
+               <string>优先使用下载转换好的缓存</string>
               </property>
              </widget>
             </item>
@@ -2341,11 +2386,11 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="logGroup"/>
   <buttongroup name="proxyGroup"/>
-  <buttongroup name="languageGroup"/>
-  <buttongroup name="themeGroup"/>
   <buttongroup name="mainScaleGroup"/>
   <buttongroup name="saveNameGroup"/>
+  <buttongroup name="languageGroup"/>
+  <buttongroup name="themeGroup"/>
+  <buttongroup name="logGroup"/>
  </buttongroups>
 </ui>

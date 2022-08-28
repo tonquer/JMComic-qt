@@ -45,6 +45,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         # CheckButton:
         self.checkBox_IsUpdate.clicked.connect(partial(self.CheckButtonEvent, Setting.IsUpdate, self.checkBox_IsUpdate))
         self.readCheckBox.clicked.connect(partial(self.CheckButtonEvent, Setting.IsOpenWaifu, self.readCheckBox))
+        self.preDownWaifu2x.clicked.connect(partial(self.CheckButtonEvent, Setting.PreDownWaifu2x, self.preDownWaifu2x))
         self.coverCheckBox.clicked.connect(partial(self.CheckButtonEvent, Setting.CoverIsOpenWaifu, self.coverCheckBox))
         self.downAuto.clicked.connect(partial(self.CheckButtonEvent, Setting.DownloadAuto, self.downAuto))
         self.titleBox.clicked.connect(partial(self.CheckButtonEvent, Setting.IsNotUseTitleBar, self.titleBox))
@@ -213,6 +214,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
                 self.fontBox.setCurrentIndex(index)
 
         self.readCheckBox.setChecked(Setting.IsOpenWaifu.value)
+        self.preDownWaifu2x.setChecked(Setting.PreDownWaifu2x.value)
         self.readNoise.setCurrentIndex(Setting.LookNoise.value)
         self.readScale.setValue(Setting.LookScale.value)
         self.readModel.setCurrentIndex(Setting.LookModel.value)

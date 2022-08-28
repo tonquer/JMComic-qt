@@ -89,7 +89,7 @@ class Setting:
     FontStyle = SettingValue("GeneraSetting", 0, True)
 
     # 代理设置
-    IsHttpProxy = SettingValue("ProxySetting", 0, False, ["", "Http", "Sock5"])
+    IsHttpProxy = SettingValue("ProxySetting", 0, False, ["", "Http", "Sock5", "system"])
     HttpProxy = SettingValue("ProxySetting", "", False)
     Sock5Proxy = SettingValue("ProxySetting", "", False)
     PreferCDNIP = SettingValue("ProxySetting", "104.16.109.107", False)
@@ -98,6 +98,7 @@ class Setting:
     IsOpenDoh = SettingValue("ProxySetting", 0, False)
     IsOpenDohPicture = SettingValue("ProxySetting", 0, False)
     DohAddress = SettingValue("ProxySetting", "https://101.6.6.6:8443/dns-query", True)
+    ApiVersion = SettingValue("ProxySetting", 0, False)
 
     # 下载与缓存
     SavePath = SettingValue("DownloadSetting", "", False)
@@ -130,6 +131,7 @@ class Setting:
     LookReadFull = SettingValue("ReadSetting", 0, False)
     TurnSpeed = SettingValue("ReadSetting", 5000, False)
     ScrollSpeed = SettingValue("ReadSetting", 400, False)
+    PreDownWaifu2x = SettingValue("ReadSetting", 1, False)
 
     # Other
     UserId = SettingValue("Other", "", False)

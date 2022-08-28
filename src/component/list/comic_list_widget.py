@@ -156,14 +156,14 @@ class ComicListWidget(BaseListWidget):
         if self.isGame:
             QtOwner().OpenGameInfo(widget.id)
         else:
-            QtOwner().OpenBookInfo(widget.id)
+            QtOwner().OpenBookInfo(widget.id, widget.GetTitle())
         return
 
     def OpenBookInfoHandler(self, index):
         widget = self.indexWidget(index)
         if widget:
             assert isinstance(widget, ComicItemWidget)
-            QtOwner().OpenBookInfo(widget.id)
+            QtOwner().OpenBookInfo(widget.id, widget.GetTitle())
             return
 
     def OpenPicture(self, index):

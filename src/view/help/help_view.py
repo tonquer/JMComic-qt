@@ -35,8 +35,8 @@ class HelpView(QWidget, Ui_Help, QtTaskBase):
 
         self.verCheck.clicked.connect(self.InitUpdate)
 
-        self.updateUrl = [config.UpdateUrl, config.UpdateUrl2]
-        self.updateBackUrl = [config.UpdateUrlBack, config.UpdateUrl2Back]
+        self.updateUrl = [config.UpdateUrl, config.UpdateUrl2, config.UpdateUrl3]
+        self.updateBackUrl = [config.UpdateUrlBack, config.UpdateUrl2Back, config.UpdateUrl3Back]
         self.checkUpdateIndex = 0
         self.helpLogWidget = HelpLogWidget()
         if Setting.IsShowCmd.value:
@@ -71,11 +71,13 @@ class HelpView(QWidget, Ui_Help, QtTaskBase):
 
     def InitUpdateBack(self, raw):
         try:
-            data = raw
+            data = raw.get("data")
             if not data:
                 self.checkUpdateIndex += 1
                 self.StartUpdate()
-
+                return
+            if data == "no":
+                self.UpdateText(self.verCheck, Str.AlreadyUpdate, "#ff4081", True)
                 return
             self.SetNewUpdate(self.updateBackUrl[self.checkUpdateIndex], Str.GetStr(Str.CurVersion) + config.UpdateVersion + ", "+ Str.GetStr(Str.CheckUpdateAndUp) + "\n" + data)
             self.UpdateText(self.verCheck, Str.HaveUpdate, "#d71345", True)

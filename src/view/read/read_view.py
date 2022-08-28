@@ -1,10 +1,11 @@
 import os
+import time
 from functools import partial
 
 from PySide6 import QtWidgets
-from PySide6.QtCore import Qt, QSize, QEvent
+from PySide6.QtCore import Qt, QSize, QEvent, QMimeData
 from PySide6.QtGui import QPixmap, QImage, QCursor
-from PySide6.QtWidgets import QMenu
+from PySide6.QtWidgets import QMenu, QApplication, QFileDialog
 
 from config import config
 from config.setting import Setting
@@ -14,6 +15,7 @@ from task.qt_task import QtTaskBase
 from tools.book import BookMgr
 from tools.str import Str
 from tools.tool import time_me, ToolUtil
+from view.download.download_item import DownloadItem, DownloadEpsItem
 from view.read.read_enum import ReadMode, QtFileData
 from view.read.read_frame import ReadFrame
 
@@ -55,6 +57,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         self.qtTool.turnSpeed.setValue(Setting.TurnSpeed.value / 1000)
         self.qtTool.scrollSpeed.setValue(Setting.ScrollSpeed.value)
         self.pageIndex = -1
+        self.isOffline = False
 
     @property
     def scrollArea(self):
@@ -71,6 +74,20 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         action = popMenu.addAction(Str.GetStr(Str.FullSwitch)+"(F11)")
         action.triggered.connect(self.qtTool.FullScreen)
 
+        if Setting.IsOpenWaifu.value:
+            action = popMenu.addAction(Str.GetStr(Str.CloseAutoWaifu2x))
+        else:
+            action = popMenu.addAction(Str.GetStr(Str.OpenAutoWaifu2x))
+        action.triggered.connect(self.qtTool.checkBox.click)
+
+        p = self.pictureData.get(self.curIndex)
+        if p:
+            if p.isWaifu2x:
+                action = popMenu.addAction(Str.GetStr(Str.CloseCurWaifu2x)+"(F2)")
+            else:
+                action = popMenu.addAction(Str.GetStr(Str.OpenCurWaifu2x)+"(F2)")
+            action.triggered.connect(self.qtTool.curWaifu2x.click)
+
         menu2 = popMenu.addMenu(Str.GetStr(Str.ReadMode))
         action = menu2.addAction("切换双页对齐(F10)")
         action.triggered.connect(self.ChangeDoublePage)
@@ -81,12 +98,14 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
             if self.stripModel.value == value:
                 action.setCheckable(True)
                 action.setChecked(True)
+
         AddReadMode(Str.GetStr(Str.UpDownScroll), 0)
         AddReadMode(Str.GetStr(Str.Default), 1)
         AddReadMode(Str.GetStr(Str.LeftRightDouble), 2)
         AddReadMode(Str.GetStr(Str.RightLeftDouble), 3)
         AddReadMode(Str.GetStr(Str.LeftRightScroll), 4)
         AddReadMode(Str.GetStr(Str.RightLeftScroll), 5)
+        AddReadMode(Str.GetStr(Str.RightLeftDouble2), 6)
 
         menu3 = popMenu.addMenu(Str.GetStr(Str.Scale)+ "(- +)")
 
@@ -115,6 +134,12 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         action = menu3.addAction(Str.GetStr(Str.NextChapter))
         action.triggered.connect(self.qtTool.OpenNextEps)
 
+        menu4 = popMenu.addMenu(Str.GetStr(Str.Copy))
+        action = menu4.addAction(Str.GetStr(Str.CopyPicture))
+        action.triggered.connect(self.CopyPicture)
+        action = menu4.addAction(Str.GetStr(Str.CopyFile))
+        action.triggered.connect(self.CopyFile)
+
         action = popMenu.addAction(Str.GetStr(Str.AutoScroll)+"(F5)")
         action.triggered.connect(self.qtTool.SwitchScrollAndTurn)
 
@@ -133,13 +158,11 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         return self.frame.qtTool
 
     def Close(self):
-        QtOwner().SetSubTitle("")
         self.ReturnPage()
         self.frame.scrollArea.ClearPixItem()
         self.Clear()
         if QtOwner().owner.windowState() == Qt.WindowFullScreen:
             self.qtTool.FullScreen(True)
-
         QtOwner().CloseReadView()
 
     def Clear(self):
@@ -154,25 +177,29 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         self.curIndex = 0
         self.frame.oldValue = 0
         self.pictureData.clear()
+        QtOwner().SetSubTitle("")
         self.ClearTask()
         self.ClearDownload()
         self.ClearQImageTask()
 
-    def OpenPage(self, bookId, index, pageIndex=-1):
+    def OpenPage(self, bookId, epsId, pageIndex=-1, isOffline=False):
         if not bookId:
             return
+        self.isOffline = isOffline
         self.Clear()
         info = BookMgr().books.get(bookId)
         if info:
             self.category = info.baseInfo.tagList[::]
 
         self.qtTool.checkBox.setChecked(Setting.IsOpenWaifu.value)
+        self.qtTool.preDownWaifu2x.setChecked(Setting.PreDownWaifu2x.value)
+        self.qtTool.curWaifu2x.setChecked(Setting.IsOpenWaifu.value)
         self.qtTool.SetData(isInit=True)
         self.qtTool.SetData()
 
         # self.qtTool.show()
         self.bookId = bookId
-        self.epsId = index
+        self.epsId = epsId
         self.pageIndex = pageIndex
 
         self.qtTool.isMaxFull = self.window().isMaximized()
@@ -193,6 +220,23 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         self.AddHistory()
         # QtOwner().owner.bookInfoForm.LoadHistory()
         return
+
+    def GetIsWaifu2x(self):
+        p = self.pictureData.get(self.curIndex)
+        if not p:
+            return Setting.IsOpenWaifu.value
+        return p.isWaifu2x
+
+    def SetIsWaifu2x(self, isWaifu2x):
+        p = self.pictureData.get(self.curIndex)
+        if not p:
+            return
+        p.isWaifu2x = isWaifu2x
+        if ReadMode.isDouble(self.stripModel):
+            p = self.pictureData.get(self.curIndex+1)
+            if not p:
+                return
+            p.isWaifu2x = isWaifu2x
 
     def CheckLoadPicture(self):
         # i = 0
@@ -239,16 +283,17 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         for i in preLoadList:
             if i >= self.maxPic or i < 0:
                 continue
-            if Setting.IsOpenWaifu.value:
-                p = self.pictureData.get(i)
-                if not p or not p.data:
-                    break
-                if p.waifuState == p.WaifuStateCancle or p.waifuState == p.WaifuWait:
-                    p.waifuState = p.WaifuStateStart
-                    self.AddCovertData(i)
-                    break
-                if p.waifuState == p.WaifuStateStart:
-                    break
+            p = self.pictureData.get(i)
+            if not p or not p.data:
+                break
+            if not p.isWaifu2x:
+                continue
+            if p.waifuState == p.WaifuStateCancle or p.waifuState == p.WaifuWait:
+                p.waifuState = p.WaifuStateStart
+                self.AddCovertData(i)
+                break
+            if p.waifuState == p.WaifuStateStart:
+                break
         pass
 
     def StartLoadPicUrlBack(self, raw, v):
@@ -262,7 +307,6 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         self.maxPic = maxPic
         title = raw.get("title", "")
         self.epsName = title
-
         # info = BookMgr().GetBook(self.bookId)
 
         if 0 < self.pageIndex < self.maxPic:
@@ -296,16 +340,19 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         if not p:
             p = QtFileData()
             self.pictureData[index] = p
-        if st != Status.Ok:
+        if st == Status.FileError:
+            QtOwner().ShowError(Str.GetStr(st))
+        elif st != Status.Ok:
             p.state = p.DownloadReset
             self.AddDownload(index)
         else:
-            bookInfo = BookMgr().GetBook(self.bookId)
-            if not bookInfo:
-                return
-            epsInfo = bookInfo.pageInfo.epsInfo.get(self.epsId)
-            pitureName = epsInfo.pictureName.get(index)
-            data = ToolUtil.SegmentationPicture(data, epsInfo.epsId, epsInfo.scrambleId, pitureName)
+            if not self.isOffline:
+                bookInfo = BookMgr().GetBook(self.bookId)
+                if not bookInfo:
+                    return
+                epsInfo = bookInfo.pageInfo.epsInfo.get(self.epsId)
+                pitureName = epsInfo.pictureName.get(index)
+                data = ToolUtil.SegmentationPicture(data, epsInfo.epsId, epsInfo.scrambleId, pitureName)
 
             p.SetData(data, self.category)
             self.AddQImageTask(data, self.ConvertQImageBack, index)
@@ -323,8 +370,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         elif self.stripModel in [ReadMode.UpDown, ReadMode.RightLeftScroll,
                                  ReadMode.LeftRightScroll] and self.curIndex < index <= self.curIndex + config.PreLoading - 1:
             self.ShowOtherPage()
-        elif self.stripModel in [ReadMode.RightLeftDouble,
-                                 ReadMode.LeftRightDouble] and self.curIndex < index <= self.curIndex + 1:
+        elif ReadMode.isDouble(self.stripModel) and self.curIndex < index <= self.curIndex + 1:
             self.ShowOtherPage()
         return
 
@@ -339,7 +385,8 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
 
         waifu2x = False
         assert isinstance(p, QtFileData)
-        if not Setting.IsOpenWaifu.value:
+
+        if not p.isWaifu2x:
             p2 = p.cacheImage
 
         elif p.cacheWaifu2xImage:
@@ -355,7 +402,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
     def ShowOtherPage(self):
         if self.stripModel in [ReadMode.UpDown, ReadMode.RightLeftScroll, ReadMode.LeftRightScroll]:
             size = config.PreLook
-        elif self.stripModel in [ReadMode.LeftRightDouble, ReadMode.RightLeftDouble]:
+        elif ReadMode.isDouble(self.stripModel):
             size = 2
         else:
             size = 0
@@ -387,7 +434,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
             self.qtTool.modelBox.setEnabled(True)
         assert isinstance(p, QtFileData)
         waifu2x = False
-        if not Setting.IsOpenWaifu.value:
+        if not p.isWaifu2x:
             self.frame.waifu2xProcess.hide()
             self.qtTool.SetData(waifuSize=QSize(0, 0), waifuDataLen=0)
             p2 = p.cacheImage
@@ -401,7 +448,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
 
         else:
             p2 = p.cacheImage
-            if Setting.IsOpenWaifu.value:
+            if p.isWaifu2x:
                 self.frame.waifu2xProcess.show()
             else:
                 self.frame.waifu2xProcess.hide()
@@ -460,8 +507,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         elif self.stripModel in [ReadMode.UpDown, ReadMode.RightLeftScroll,
                                  ReadMode.LeftRightScroll] and self.curIndex < index <= self.curIndex + config.PreLoading - 1:
             self.ShowOtherPage()
-        elif self.stripModel in [ReadMode.RightLeftDouble,
-                                 ReadMode.LeftRightDouble] and self.curIndex < index <= self.curIndex + 1:
+        elif ReadMode.isDouble(self.stripModel) and self.curIndex < index <= self.curIndex + 1:
             self.ShowOtherPage()
         return
 
@@ -471,22 +517,37 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
             return
         assert isinstance(info, QtFileData)
         path = "book/{}/{}/{}".format(self.bookId, self.epsId+1, i+1)
-        info.waifu2xTaskId = self.AddConvertTask(path, info.data, info.model, self.Waifu2xBack, i)
+        if Setting.PreDownWaifu2x.value:
+            filePath = QtOwner().downloadView.GetDownloadWaifu2xFilePath(self.bookId, self.epsId, i)
+        else:
+            filePath = ""
+        info.waifu2xTaskId = self.AddConvertTask(path, info.data, info.model, self.Waifu2xBack, i, preDownPath=filePath)
         if i == self.curIndex:
             self.qtTool.SetData(waifuState=info.waifuState)
             self.frame.waifu2xProcess.show()
 
     def InitDownload(self):
-        self.AddDownloadBook(self.bookId, self.epsId, 0, statusBack=self.StartLoadPicUrlBack, backParam=0, isInit=True)
+        if not self.isOffline:
+            self.AddDownloadBook(self.bookId, self.epsId, 0, statusBack=self.StartLoadPicUrlBack, backParam=0, isInit=True)
+        else:
+            # bookInfo = BookMgr().GetBook(self.bookId)
+            downInfo = QtOwner().downloadView.GetDownloadEpsInfo(self.bookId, self.epsId)
+            if not downInfo:
+                QtOwner().ShowError(Str.GetStr(Str.FileError))
+            else:
+                assert isinstance(downInfo, DownloadEpsItem)
+                raw = {"st": Status.Ok, "maxPic": downInfo.picCnt, "title": downInfo.epsTitle}
+                self.StartLoadPicUrlBack(raw, "")
 
     def AddDownload(self, i):
-        path = "book/{}/{}/{}.jpg".format(self.bookId, self.epsId+1, i+1)
-        cachePath = os.path.join(os.path.join(Setting.SavePath.value, config.CachePathDir), path)
-        # loadPath = QtOwner().downloadView.GetDownloadFilePath(self.bookId, self.epsId, i)
-        self.AddDownloadBook(self.bookId, self.epsId, i,
-                             downloadCallBack=self.UpdateProcessBar,
-                             completeCallBack=self.CompleteDownloadPic,
-                             backParam=i, cachePath=cachePath)
+        loadPath = QtOwner().downloadView.GetDownloadFilePath(self.bookId, self.epsId, i)
+        if not self.isOffline:
+            self.AddDownloadBook(self.bookId, self.epsId, i,
+                                 downloadCallBack=self.UpdateProcessBar,
+                                 completeCallBack=self.CompleteDownloadPic,
+                                 backParam=i)
+        else:
+            self.AddDownloadBookCache(loadPath, completeCallBack=self.CompleteDownloadPic, backParam=i)
         if i not in self.pictureData:
             data = QtFileData()
             self.pictureData[i] = data
@@ -496,7 +557,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         self.qtTool.comboBox.setCurrentIndex(index)
 
     def ChangeDoublePage(self):
-        if self.stripModel not in [ReadMode.RightLeftDouble, ReadMode.LeftRightDouble]:
+        if not ReadMode.isDouble(self.stripModel):
             return
         if self.curIndex < self.maxPic:
             self.curIndex += 1
@@ -504,3 +565,52 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         self.qtTool.SetData(isInit=True)
         self.scrollArea.ResetScrollValue(self.curIndex)
         self.scrollArea.changeNextPage.emit(self.curIndex)
+
+    def CopyFile(self):
+        info = self.pictureData.get(self.curIndex)
+        if not info:
+            return
+        assert isinstance(info, QtFileData)
+        if not info.data and not info.waifuData:
+            return
+
+        today = time.strftime("%Y%m%d%H%M%S", time.localtime(time.time()))
+        if info.waifuData:
+            path = "{}_waifu2x.jpg".format(today)
+            data = info.waifuData
+        else:
+            path = "{}.jpg".format(today)
+            data = info.data
+        if not data:
+            return
+        try:
+            filepath = QFileDialog.getSaveFileName(self, Str.GetStr(Str.Save), path, "Image Files(*.jpg *.png)")
+            if filepath and len(filepath) >= 1:
+                name = filepath[0]
+                if not name:
+                    return
+                f = open(name, "wb")
+                f.write(data)
+                f.close()
+                QtOwner().ShowMsg(Str.GetStr(Str.CopySuc))
+        except Exception as es:
+            Log.Error(es)
+
+    def CopyPicture(self):
+        info = self.pictureData.get(self.curIndex)
+        if not info:
+            return
+        assert isinstance(info, QtFileData)
+        if not info.data and not info.waifuData:
+            return
+        if info.waifuData:
+            data = info.waifuData
+        else:
+            data = info.data
+        p = QImage()
+        p.loadFromData(data)
+
+        clipboard = QApplication.clipboard()
+        clipboard.setImage(p)
+        QtOwner().ShowMsg(Str.GetStr(Str.CopySuc))
+        return

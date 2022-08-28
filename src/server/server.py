@@ -1,4 +1,5 @@
 import json
+import pickle
 import threading
 from queue import Queue
 
@@ -9,6 +10,7 @@ from urllib3.util.ssl_ import is_ipaddress
 import server.req as req
 import server.res as res
 from config import config
+from qt_owner import QtOwner
 from task.qt_task import TaskBase
 from tools.log import Log
 from tools.singleton import Singleton
@@ -136,6 +138,12 @@ class Server(Singleton):
     def __DealHeaders(self, request, token):
         host = ToolUtil.GetUrlHost(request.url)
 
+        if not request.isUseHttps:
+            request.url = request.url.replace("https://", "http://")
+
+        if request.proxyUrl:
+            request.url = request.url.replace(host, request.proxyUrl+"/"+host)
+
     def Send(self, request, token="", backParam="", isASync=True):
         self.__DealHeaders(request, token)
         if isinstance(request, req.SpeedTestReq):
@@ -151,7 +159,13 @@ class Server(Singleton):
 
     def _Send(self, task):
         try:
-            Log.Info("request-> backId:{}, {}".format(task.backParam, task.req))
+            Log.Info("request-> backId:{}, {}".format(task.bakParam, task.req))
+            if QtOwner().isOfflineModel:
+                task.status = Status.OfflineModel
+                data = {"st": Status.OfflineModel, "data": ""}
+                TaskBase.taskObj.taskBack.emit(task.bakParam, pickle.dumps(data))
+                return
+
             if task.req.method.lower() == "post":
                 self.Post(task)
             elif task.req.method.lower() == "get":
@@ -172,8 +186,24 @@ class Server(Singleton):
             if task.res.raw:
                 task.res.raw.close()
         except Exception as es:
-            Log.Warn("task: {}, error".format(task.req.__class__))
-            Log.Error(es)
+            if isinstance(es, requests.exceptions.ConnectTimeout):
+                task.status = Status.ConnectErr
+            elif isinstance(es, requests.exceptions.ReadTimeout):
+                task.status = Status.TimeOut
+            elif isinstance(es, requests.exceptions.SSLError):
+                if "WSAECONNRESET" in es.__repr__():
+                    task.status = Status.ResetErr
+                else:
+                    task.status = Status.SSLErr
+            elif isinstance(es, requests.exceptions.ProxyError):
+                task.status = Status.ProxyError
+            elif isinstance(es, ConnectionResetError):
+                task.status = Status.ResetErr
+            else:
+                task.status = Status.NetError
+            # Log.Error(es)
+            Log.Warn(task.req.url + " " + es.__repr__())
+            Log.Debug(es)
         finally:
             return task.res
 
@@ -257,6 +287,11 @@ class Server(Singleton):
                                 Log.Info("request cache -> backId:{}, {}".format(task.bakParam, task.req))
                                 return
 
+            if QtOwner().isOfflineModel:
+                task.status = Status.OfflineModel
+                self.handler.get(task.req.__class__.__name__)(task)
+                return
+
             request = task.req
             if request.params == None:
                 request.params = {}
@@ -269,8 +304,22 @@ class Server(Singleton):
             # print(r.elapsed.total_seconds())
             task.res = r
         except Exception as es:
+            if isinstance(es, requests.exceptions.ConnectTimeout):
+                task.status = Status.ConnectErr
+            elif isinstance(es, requests.exceptions.ReadTimeout):
+                task.status = Status.TimeOut
+            elif isinstance(es, requests.exceptions.SSLError):
+                if "WSAECONNRESET" in es.__repr__():
+                    task.status = Status.ResetErr
+                else:
+                    task.status = Status.SSLErr
+            elif isinstance(es, requests.exceptions.ProxyError):
+                task.status = Status.ProxyError
+            elif isinstance(es, ConnectionResetError):
+                task.status = Status.ResetErr
+            else:
+                task.status = Status.NetError
             Log.Warn(task.req.url + " " + es.__repr__())
-            task.status = Status.NetError
         self.handler.get(task.req.__class__.__name__)(task)
         if task.res:
             task.res.close()

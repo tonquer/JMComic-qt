@@ -61,6 +61,12 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
 
         self.epsListWidget.clicked.connect(self.OpenReadImg)
 
+        self.listWidget.setFlow(self.listWidget.LeftToRight)
+        self.listWidget.setWrapping(True)
+        self.listWidget.setFrameShape(self.listWidget.NoFrame)
+        self.listWidget.setResizeMode(self.listWidget.Adjust)
+        self.listWidget.clicked.connect(self.OpenReadImg2)
+
         # QScroller.grabGesture(self.epsListWidget, QScroller.LeftMouseButtonGesture)
         # self.epsListWidget.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
         # self.epsListWidget.verticalScrollBar().setStyleSheet(QssDataMgr().GetData('qt_list_scrollbar'))
@@ -71,6 +77,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.epsListWidget.setMinimumHeight(300)
         self.commentNum = 0
         self.ReloadHistory.connect(self.LoadHistory)
+        self.readOffline.clicked.connect(self.StartRead2)
 
     def UpdateFavoriteIcon(self):
         p = QPixmap()
@@ -86,11 +93,22 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
     def SwitchCurrent(self, **kwargs):
         bookId = kwargs.get("bookId")
         if bookId:
+            self.bookId = bookId
+            self.idLabel.setText(bookId)
             self.OpenBook(bookId)
+
+        bookName = kwargs.get("bookName")
+        if bookName:
+            self.bookName = bookName
+            self.title.setText(bookName)
         pass
 
     def OpenBook(self, bookId):
         self.bookId = bookId
+        if QtOwner().isOfflineModel:
+            self.tabWidget.setCurrentIndex(1)
+        else:
+            self.tabWidget.setCurrentIndex(0)
         self.setFocus()
         self.Clear()
         self.show()
@@ -103,6 +121,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.autorList.clear()
         info = BookMgr().books.get(self.bookId)
         st = raw["st"]
+        self.UpdateDownloadEps()
         if info:
             isFavorite = raw.get('isFavorite')
             self.isFavorite = bool(isFavorite)
@@ -140,11 +159,17 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             # dayStr = ToolUtil.GetUpdateStr(info.pageInfo.createDate)
             # self.updateTick.setText(str(dayStr) + Str.GetStr(Str.Updated))
             if config.IsLoadingPicture:
-                self.AddDownloadTask(self.url, self.path, completeCallBack=self.UpdatePicture, isReload=True)
+                if QtOwner().isOfflineModel:
+                    self.AddDownloadTask(self.url, self.path, completeCallBack=self.UpdatePicture)
+                else:
+                    self.AddDownloadTask(self.url, self.path, completeCallBack=self.UpdatePicture, isReload=True)
             self.UpdateEpsData()
             self.lastEpsId = -1
             self.LoadHistory()
         else:
+            if QtOwner().isOfflineModel:
+                self.path = ToolUtil.GetRealPath(self.bookId, "cover")
+                self.AddDownloadTask(self.url, self.path, completeCallBack=self.UpdatePicture)
             # QtWidgets.QMessageBox.information(self, '加载失败', msg, QtWidgets.QMessageBox.Yes)
             QtOwner().CheckShowMsg(raw)
 
@@ -153,6 +178,42 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
 
         return
 
+    def UpdateDownloadEps(self):
+        info = QtOwner().downloadView.GetDownloadInfo(self.bookId)
+        self.listWidget.clear()
+        if info:
+            from view.download.download_item import DownloadItem
+            from view.download.download_item import DownloadEpsItem
+            assert isinstance(info, DownloadItem)
+            # downloadIds = QtOwner().owner.downloadForm.GetDownloadCompleteEpsId(self.bookId)
+            maxEpsId = max(info.epsIds)
+            for i in range(0, maxEpsId+1):
+                epsInfo = info.epsInfo.get(i)
+
+                item = QListWidgetItem(self.listWidget)
+                if not epsInfo:
+                    label = QLabel(str(i + 1) + "-" + "未下载")
+                    item.setToolTip("未下载")
+                else:
+                    assert isinstance(epsInfo, DownloadEpsItem)
+                    label = QLabel(str(i + 1) + "-" + epsInfo.epsTitle)
+                    item.setToolTip(epsInfo.epsTitle)
+
+                label.setAlignment(Qt.AlignCenter)
+                label.setStyleSheet("color: rgb(196, 95, 125);")
+                font = QFont()
+                font.setPointSize(12)
+                font.setBold(True)
+                label.setFont(font)
+                # label.setWordWrap(True)
+                # label.setContentsMargins(20, 10, 20, 10)
+                # if index in downloadIds:
+                #     item.setBackground(QColor(18, 161, 130))
+                # else:
+                #     item.setBackground(QColor(0, 0, 0, 0))
+                item.setSizeHint(label.sizeHint() + QSize(20, 20))
+                self.listWidget.setItemWidget(item, label)
+        return
     # def LoadingPictureComplete(self, data, status):
     #     if status == Status.Ok:
     #         self.userIconData = data
@@ -174,6 +235,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
                     model = ToolUtil.GetModelByIndex(Setting.CoverLookNoise.value, Setting.CoverLookScale.value, Setting.CoverLookModel.value, mat)
                     self.AddConvertTask(self.path, self.pictureData, model, self.Waifu2xPictureBack)
         else:
+            self.picture.setPixmap(None)
             self.picture.setText(Str.GetStr(Str.LoadingFail))
         return
 
@@ -270,16 +332,26 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
 
     def OpenReadImg(self, modelIndex):
         index = modelIndex.row()
-        self.OpenReadIndex(index)
-
-    def OpenReadIndex(self, index, pageIndex=-1):
         item = self.epsListWidget.item(index)
         if not item:
             return
-        widget = self.epsListWidget.itemWidget(item)
-        if not widget:
+        book = BookMgr().GetBook(self.bookId)
+        if not book:
             return
-        QtOwner().OpenReadView(self.bookId, index, pageIndex=pageIndex)
+        self.OpenReadIndex(index)
+
+    def OpenReadImg2(self, modelIndex):
+        index = modelIndex.row()
+        item = self.listWidget.item(index)
+        if not item:
+            return
+        if not QtOwner().downloadView.IsDownloadEpsId(self.bookId, index):
+            QtOwner().ShowError(Str.GetStr(Str.NotDownload))
+            return
+        self.OpenReadIndex(index, isOffline=True)
+
+    def OpenReadIndex(self, epsId, pageIndex=-1, isOffline=False):
+        QtOwner().OpenReadView(self.bookId, epsId, pageIndex=pageIndex, isOffline=isOffline)
         # self.stackedWidget.setCurrentIndex(1)
 
     def StartRead(self):
@@ -289,6 +361,20 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             self.OpenReadIndex(0)
         return
 
+    def StartRead2(self):
+        if self.lastEpsId >= 0:
+            if not QtOwner().downloadView.IsDownloadEpsId(self.bookId, self.lastEpsId):
+                QtOwner().ShowError(Str.GetStr(Str.NotDownload))
+                return
+            self.OpenReadIndex(self.lastEpsId, self.lastIndex, isOffline=True)
+        else:
+            if not QtOwner().downloadView.IsDownloadEpsId(self.bookId, 0):
+                QtOwner().ShowError(Str.GetStr(Str.NotDownload))
+                return
+            self.OpenReadIndex(0, isOffline=True)
+        return
+
+
     def LoadHistory(self):
         info = QtOwner().historyView.GetHistory(self.bookId)
         if not info:
@@ -297,6 +383,8 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         if self.lastEpsId == info.epsId:
             self.lastIndex = info.picIndex
             self.startRead.setText(Str.GetStr(Str.LastLook) + str(self.lastEpsId + 1) + Str.GetStr(Str.Chapter) + str(info.picIndex + 1) + Str.GetStr(Str.Page))
+            self.readOffline.setText(Str.GetStr(Str.LastLook) + str(self.lastEpsId + 1) + Str.GetStr(Str.Chapter) + str(
+                info.picIndex + 1) + Str.GetStr(Str.Page))
             return
         item = self.epsListWidget.item(info.epsId)
         if not item:
@@ -305,6 +393,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.lastEpsId = info.epsId
         self.lastIndex = info.picIndex
         self.startRead.setText(Str.GetStr(Str.LastLook) + str(self.lastEpsId + 1) + Str.GetStr(Str.Chapter) + str(info.picIndex + 1) + Str.GetStr(Str.Page))
+        self.readOffline.setText(Str.GetStr(Str.LastLook) + str(self.lastEpsId + 1) + Str.GetStr(Str.Chapter) + str(info.picIndex + 1) + Str.GetStr(Str.Page))
 
     def ClickAutorItem(self, modelIndex):
         index = modelIndex.row()

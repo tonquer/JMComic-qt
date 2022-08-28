@@ -115,6 +115,38 @@
        </layout>
       </item>
       <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>分流：</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="proxyName">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>离线模式：</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="SwitchButton" name="offlineButton" native="true"/>
+        </item>
+       </layout>
+      </item>
+      <item>
        <widget class="Line" name="line_4">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -751,6 +783,12 @@
    <class>HeadLabel</class>
    <extends>QLabel</extends>
    <header location="global">component.label.head_label.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SwitchButton</class>
+   <extends>QWidget</extends>
+   <header>component.button.switch_button.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

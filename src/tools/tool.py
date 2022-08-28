@@ -152,16 +152,24 @@ class ToolUtil(object):
     def GetPictureSize(data):
         if not data:
             return 0, 0, "jpg"
-        from PIL import Image
-        from io import BytesIO
-        a = BytesIO(data)
-        img = Image.open(a)
-        a.close()
-        if img.format == "PNG":
-            mat = "png"
-        else:
-            mat = "jpg"
-        return img.width, img.height, mat
+        try:
+            from PIL import Image
+            from io import BytesIO
+            a = BytesIO(data)
+            img = Image.open(a)
+            a.close()
+            if img.format == "PNG":
+                mat = "png"
+            elif img.format == "GIF":
+                mat = "gif"
+            elif img.format == "WEBP":
+                mat = "webp"
+            else:
+                mat = "jpg"
+            return img.width, img.height, mat
+        except Exception as es:
+            Log.Error(es)
+        return 0, 0, "jpg"
 
     @staticmethod
     def GetLookModel(category):

@@ -109,6 +109,21 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
         self.redownloadRadio.setCheckable(True)
         self.redownloadRadio.setChecked(bool(Setting.IsReDownload.value))
 
+    def GetDownloadEpsInfo(self, bookId, epsId):
+        info = self.GetDownloadInfo(bookId)
+        if not info:
+            return False
+        return info.epsInfo.get(epsId)
+
+    def GetDownloadInfo(self, bookId):
+        return self.downloadDict.get(bookId)
+
+    def IsDownloadEpsId(self, bookId, epsId):
+        info = self.GetDownloadInfo(bookId)
+        if not info:
+            return False
+        return epsId in info.epsIds
+
     def GetDownloadEpsId(self, bookId):
         if bookId not in self.downloadDict:
             return []
@@ -118,6 +133,16 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
     #     if bookId not in self.downloadDict:
     #         return []
     #     return self.downloadDict[bookId].GetDownloadCompleteEpsId()
+
+    def GetDownloadWaifu2xFilePath(self, bookId, epsId, index):
+        if bookId not in self.downloadDict:
+            return ""
+        task = self.downloadDict[bookId]
+        if epsId not in task.epsInfo:
+            return ""
+        epsTitle = task.epsInfo[epsId].epsTitle
+        convertPath = os.path.join(task.convertPath, ToolUtil.GetCanSaveName(epsTitle))
+        return os.path.join(convertPath, "{:04}.{}".format(index + 1, "jpg"))
 
     def GetDownloadFilePath(self, bookId, epsId, index):
         if bookId not in self.downloadDict:
@@ -179,12 +204,12 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
         item.setToolTip(info.title)
         self.tableWidget.setItem(info.tableRow, 1, item)
 
-        self.tableWidget.setItem(info.tableRow, 2, QTableWidgetItem(info.GetStatusMsg()))
-        self.tableWidget.setItem(info.tableRow, 3,
+        self.tableWidget.setItem(info.tableRow, 5, QTableWidgetItem(info.GetStatusMsg()))
+        self.tableWidget.setItem(info.tableRow, 2,
                                  QTableWidgetItem("{}/{}".format(str(info.curDownloadPic), str(info.maxDownloadPic))))
-        self.tableWidget.setItem(info.tableRow, 4,
+        self.tableWidget.setItem(info.tableRow, 3,
                                  QTableWidgetItem("{}/{}".format(str(info.curDownloadEps), str(info.epsCount))))
-        self.tableWidget.setItem(info.tableRow, 5, QTableWidgetItem(info.speedStr))
+        self.tableWidget.setItem(info.tableRow, 4, QTableWidgetItem(info.speedStr))
         self.tableWidget.setItem(info.tableRow, 6, QTableWidgetItem("{}/{}".format(str(info.curConvertCnt), str(info.convertCnt))))
         self.tableWidget.setItem(info.tableRow, 7, QTableWidgetItem("{}/{}".format(str(info.curConvertEps), str(info.convertEpsCnt))))
         self.tableWidget.setItem(info.tableRow, 8, QTableWidgetItem("{}".format(str(info.convertTick))))
@@ -440,9 +465,10 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
         row = list(selectRows)[0]
         col = 0
         bookId = self.tableWidget.item(row, col).text()
+        bookName = self.tableWidget.item(row, 1).text()
         if not bookId:
             return
-        QtOwner().OpenBookInfo(bookId)
+        QtOwner().OpenBookInfo(bookId, bookName)
 
     def StartAll(self):
         for row in range(self.tableWidget.rowCount()):

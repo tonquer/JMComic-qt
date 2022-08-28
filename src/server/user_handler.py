@@ -17,34 +17,42 @@ from .server import handler, Task, Server
 
 @handler(req.CheckUpdateReq)
 class CheckUpdateHandler(object):
-    def __call__(self, backData):
-        if not backData.GetText() or backData.status == Status.NetError:
-            if backData.backParam:
-                data = b""
-                TaskBase.taskObj.taskBack.emit(backData.backParam, pickle.dumps(data))
-            return
+    def __call__(self, task):
+        data = {"st": task.status, "data": ""}
+        try:
+            if not task.res.GetText() or task.status == Status.NetError:
+                return
+            if task.res.raw.status_code != 200:
+                return
 
-        updateInfo = re.findall(r"<meta property=\"og:description\" content=\"([^\"]*)\"", backData.res.raw.text)
-        if updateInfo:
-            msg = updateInfo[0]
-        else:
-            msg = ""
-        versionInfo = re.findall("<meta property=\"og:url\" content=\".*tag/([^\"]*)\"", backData.res.raw.text)
+            updateInfo = re.findall(r"<meta property=\"og:description\" content=\"([^\"]*)\"", task.res.raw.text)
+            if updateInfo:
+                rawData = updateInfo[0]
+            else:
+                rawData = ""
 
-        if versionInfo:
-            data = versionInfo[0]
-        else:
-            data = ""
+            versionInfo = re.findall("<meta property=\"og:url\" content=\".*tag/([^\"]*)\"", task.res.raw.text)
+            if versionInfo:
+                verData = versionInfo[0]
+            else:
+                verData = ""
 
-        info = data.replace("v", "").split(".")
-        version = int(info[0]) * 100 + int(info[1]) * 10 + int(info[2]) * 1
-        info2 = re.findall(r"\d+\d*", os.path.basename(config.UpdateVersion))
-        curversion = int(info2[0]) * 100 + int(info2[1]) * 10 + int(info2[2]) * 1
+            info = verData.replace("v", "").split(".")
+            version = int(info[0]) * 100 + int(info[1]) * 10 + int(info[2]) * 1
+            info2 = re.findall(r"\d+\d*", os.path.basename(config.UpdateVersion))
+            curversion = int(info2[0]) * 100 + int(info2[1]) * 10 + int(info2[2]) * 1
 
-        msg = "\n\nv" + ".".join(info) + "\n" + msg
-        if version > curversion:
-            if backData.backParam:
-                TaskBase.taskObj.taskBack.emit(backData.backParam, pickle.dumps(msg))
+            rawData = "\n\nv" + ".".join(info) + "\n" + rawData
+
+            if version > curversion:
+                data["data"] = rawData
+            else:
+                data["data"] = "no"
+        except Exception as es:
+            pass
+        finally:
+            if task.bakParam:
+                TaskBase.taskObj.taskBack.emit(task.bakParam, pickle.dumps(data))
 
 
 # @handler(req.GetUserInfoReq)
@@ -690,14 +698,14 @@ class GetHistoryReq2Handler(object):
 class DownloadBookHandler(object):
     def __call__(self, backData):
         if backData.status != Status.Ok:
-            if backData.backParam:
-                TaskBase.taskObj.downloadBack.emit(backData.backParam, -1, b"")
+            if backData.bakParam:
+                TaskBase.taskObj.downloadBack.emit(backData.bakParam, -backData.status, b"")
         else:
             r = backData.res
             try:
                 if r.status_code != 200:
-                    if backData.backParam:
-                        TaskBase.taskObj.downloadBack.emit(backData.backParam, -1, b"")
+                    if backData.bakParam:
+                        TaskBase.taskObj.downloadBack.emit(backData.bakParam, -Status.Error, b"")
                     return
                 fileSize = int(r.headers.get('Content-Length', 0))
                 getSize = 0
@@ -780,7 +788,7 @@ class SpeedTestPingHandler(object):
         data = {"st": task.status, "data": task.res.GetText()}
         if hasattr(task.res.raw, "elapsed"):
             if task.res.raw.status_code == 401 or task.res.raw.status_code == 200:
-                data["data"] = str(task.res.raw.elapsed.total_seconds())
+                data["data"] = str(task.res.raw.elapsed.total_seconds() / 2)
             else:
                 data["data"] = "0"
             TaskBase.taskObj.taskBack.emit(task.bakParam, pickle.dumps(data))
@@ -809,9 +817,9 @@ class SpeedTestHandler(object):
                 now = time.time()
                 for chunk in r.iter_content(chunk_size=1024):
                     getSize += len(chunk)
-                    # consume = time.time() - now
-                    # if consume >= 5.0:
-                    #     break
+                    consume = time.time() - now
+                    if consume >= 3.0:
+                        break
                 consume = time.time() - now
                 downloadSize = getSize / consume
                 speed = ToolUtil.GetDownloadSize(downloadSize)

@@ -18,6 +18,7 @@ class QtOwner(Singleton):
         self.isUseDb = True
         from tools.user import User
         self.user = User()
+        self.isOfflineModel = False
 
     def SetLogin(self):
         self.user.isLogin = True
@@ -184,9 +185,9 @@ class QtOwner(Singleton):
         self.owner.searchView.lineEdit.setText(text)
         self.owner.searchView.lineEdit.Search()
 
-    def OpenReadView(self, bookId, index, pageIndex):
+    def OpenReadView(self, bookId, index, pageIndex, isOffline=False):
         self.owner.totalStackWidget.setCurrentIndex(1)
-        self.owner.readView.OpenPage(bookId, index, pageIndex=pageIndex)
+        self.owner.readView.OpenPage(bookId, index, pageIndex=pageIndex, isOffline=isOffline)
 
     def CloseReadView(self):
         self.owner.totalStackWidget.setCurrentIndex(0)
@@ -196,9 +197,9 @@ class QtOwner(Singleton):
         arg = {"categories": categories}
         self.owner.SwitchWidget(self.owner.searchView, **arg)
 
-    def OpenBookInfo(self, bookId):
+    def OpenBookInfo(self, bookId, bookName=""):
         # self.owner.subCommentView.SetOpenEvent(commentId, widget)
-        arg = {"bookId": bookId}
+        arg = {"bookId": bookId, "bookName": bookName}
         self.owner.SwitchWidget(self.owner.bookInfoView, **arg)
 
     def OpenEpsInfo(self, bookId):
