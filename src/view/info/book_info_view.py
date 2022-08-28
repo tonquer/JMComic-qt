@@ -440,7 +440,8 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         index = self.tagsList.indexAt(pos)
         item = self.tagsList.itemFromIndex(index)
         if index.isValid() and item:
-            text = item.text()
+            widget = self.tagsList.itemWidget(item)
+            text = widget.text()
             QtOwner().CopyText(text)
 
     def CopyClickCategoriesItem(self, pos):
@@ -454,5 +455,6 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         index = self.autorList.indexAt(pos)
         item = self.autorList.itemFromIndex(index)
         if index.isValid() and item:
-            text = item.text()
+            widget = self.autorList.itemWidget(item)
+            text = widget.text()
             QtOwner().CopyText(text)

@@ -149,6 +149,23 @@ class ToolUtil(object):
         return ToolUtil.GetModelByIndex(Setting.DownloadNoise.value, Setting.DownloadScale.value, Setting.DownloadModel.value, mat)
 
     @staticmethod
+    def GetAnimationFormat(data):
+        try:
+            from PIL import Image
+            from io import BytesIO
+            a = BytesIO(data)
+            img = Image.open(a)
+
+            format = ""
+            if getattr(img, "is_animated", ""):
+                format = img.format
+            a.close()
+            return format
+        except Exception as es:
+            Log.Error(es)
+        return ""
+    
+    @staticmethod
     def GetPictureSize(data):
         if not data:
             return 0, 0, "jpg"
