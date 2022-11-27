@@ -10,7 +10,7 @@ class MySystemTrayIcon(QSystemTrayIcon):
         super().__init__(parent)
         self.count = 0
         self.setIcon(QIcon(":/png/icon/logo_round.png"))
-        self.setToolTip("PicACG")
+        self.setToolTip("JMComic")
         self.menu = QMenu()
         mainUi = QAction(Str.GetStr(Str.MainUi), self)
         mainUi.triggered.connect(self.ShowMainUi)

@@ -412,3 +412,4 @@ class MainView(Main, QtTaskBase):
         data = conn.readAll()
         if data == b"restart":
             self.show()
+            self.showNormal()

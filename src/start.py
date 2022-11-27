@@ -57,7 +57,6 @@ if __name__ == "__main__":
     serverName = 'JMComic-qt'
     socket = QLocalSocket()
     socket.connectToServer(serverName)
-    socket.close()
     if socket.waitForConnected(500):
         socket.write(b"restart")
         socket.flush()
