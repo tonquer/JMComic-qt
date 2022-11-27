@@ -348,6 +348,8 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
             p.state = p.DownloadReset
             self.AddDownload(index)
         else:
+            isSegmentPic = False
+            saveParams = None
             if not self.isOffline:
                 bookInfo = BookMgr().GetBook(self.bookId)
                 if not bookInfo:
@@ -357,13 +359,20 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
 
                 _, _, _, isAni = ToolUtil.GetPictureSize(data)
                 if not isAni:
-                    data = ToolUtil.SegmentationPicture(data, epsInfo.epsId, epsInfo.scrambleId, pitureName)
+                    isSegmentPic = True
+                    saveParams = (epsInfo.epsId, epsInfo.scrambleId, pitureName)
 
             p.SetData(data, self.category)
-            self.AddQImageTask(data, self.ConvertQImageBack, index)
+            p.saveParams = saveParams
+            if isSegmentPic:
+                self.AddQImageTask(data, self.ConvertQImageBack, (index, epsInfo.epsId, epsInfo.scrambleId, pitureName))
+            else:
+                self.AddQImageTask(data, self.ConvertQImageBack, index)
             self.CheckLoadPicture()
 
     def ConvertQImageBack(self, data, index):
+        if isinstance(index, tuple):
+            index = index[0]
         assert isinstance(data, QImage)
         p = self.pictureData.get(index)
         if not p:
@@ -539,7 +548,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
             filePath = QtOwner().downloadView.GetDownloadWaifu2xFilePath(self.bookId, self.epsId, i)
         else:
             filePath = ""
-        info.waifu2xTaskId = self.AddConvertTask(path, info.data, info.model, self.Waifu2xBack, i, preDownPath=filePath)
+        info.waifu2xTaskId = self.AddConvertTask(path, info.data, info.model, self.Waifu2xBack, i, saveParams=info.saveParams, preDownPath=filePath)
         if i == self.curIndex:
             self.qtTool.SetData(waifuState=info.waifuState)
             self.frame.waifu2xProcess.show()

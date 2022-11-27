@@ -109,7 +109,7 @@ class Ui_ComicItem(object):
         self.picLabel.setText(QCoreApplication.translate("ComicItem", u"TextLabel", None))
         self.categoryLabel.setText(QCoreApplication.translate("ComicItem", u"TextLabel", None))
         self.starButton.setText("")
-        self.timeLabel.setText(QCoreApplication.translate("ComicItem", u"TextLabel", None))
+        self.timeLabel.setText("")
         self.nameLable.setText(QCoreApplication.translate("ComicItem", u"TextLabel", None))
     # retranslateUi
 

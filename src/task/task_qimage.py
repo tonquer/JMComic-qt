@@ -4,6 +4,7 @@ from PySide6.QtGui import QImage
 
 from task.qt_task import TaskBase, QtHttpTask
 from tools.log import Log
+from tools.tool import ToolUtil
 
 
 class TaskQImage(TaskBase):
@@ -31,6 +32,10 @@ class TaskQImage(TaskBase):
             try:
                 if not data:
                     return
+                info = self.tasks.get(taskId)
+                if info and isinstance(info.backParam, tuple) and len(info.backParam) > 1:
+                    _, epsId, scrambleId, pitureName = info.backParam
+                    data = ToolUtil.SegmentationPicture(data, epsId, scrambleId, pitureName)
                 q.loadFromData(data)
             except Exception as es:
                 Log.Error(es)

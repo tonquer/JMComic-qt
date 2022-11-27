@@ -97,11 +97,11 @@ class QtTaskBase:
                                                cachePath, savePath, saveParam, cleanFlag, isReload)
 
     # completeCallBack(saveData, taskId, backParam, tick)
-    def AddConvertTask(self, path, imgData, model, completeCallBack, backParam=None, preDownPath=None, cleanFlag=""):
+    def AddConvertTask(self, path, imgData, model, completeCallBack, backParam=None, preDownPath=None, saveParams=None, cleanFlag=""):
         from task.task_waifu2x import TaskWaifu2x
         if not cleanFlag:
             cleanFlag = self.__taskFlagId
-        return TaskWaifu2x().AddConvertTaskByData(path, imgData, model, completeCallBack, backParam, preDownPath, cleanFlag)
+        return TaskWaifu2x().AddConvertTaskByData(path, imgData, model, completeCallBack, backParam, preDownPath, saveParams, cleanFlag)
 
     # completeCallBack(saveData, taskId, backParam, tick)
     def AddConvertTaskByPath(self, loadPath, savePath, completeCallBack, backParam=None, cleanFlag=""):

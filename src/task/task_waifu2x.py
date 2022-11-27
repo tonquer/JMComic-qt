@@ -23,6 +23,7 @@ class QConvertTask(object):
         self.tick = 0
         self.loadPath = ""  #
         self.preDownPath = ""  #
+        self.saveParams = ""  #
         self.cachePath = ""  #
         self.savePath = ""  #
         self.imgData = b""
@@ -102,6 +103,8 @@ class TaskWaifu2x(TaskBase):
 
                 err = ""
                 if config.CanWaifu2x:
+                    if task.saveParams:
+                        task.imgData = ToolUtil.SegmentationPicture(task.imgData, task.saveParams[0], task.saveParams[1], task.saveParams[2])
                     from waifu2x_vulkan import waifu2x_vulkan
                     scale = task.model.get("scale", 0)
                     # mat = task.model.get("format", "jpg")
@@ -175,7 +178,7 @@ class TaskWaifu2x(TaskBase):
             self.taskObj.convertBack.emit(taskId)
             t1.Refresh("RunLoad")
 
-    def AddConvertTaskByData(self, path, imgData, model, callBack, backParam=None, preDownPath=None, cleanFlag=None):
+    def AddConvertTaskByData(self, path, imgData, model, callBack, backParam=None, preDownPath=None, saveParams=None, cleanFlag=None):
         info = QConvertTask()
         info.callBack = callBack
         info.backParam = backParam
@@ -185,6 +188,7 @@ class TaskWaifu2x(TaskBase):
         info.imgData = imgData
         info.model = model
         info.preDownPath = preDownPath
+        info.saveParams = saveParams
         if path and Setting.SavePath.value:
             a = crc32(json.dumps(model).encode("utf-8"))
             if Setting.SavePath.value:

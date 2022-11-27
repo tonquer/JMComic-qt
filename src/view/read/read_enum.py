@@ -63,6 +63,7 @@ class QtFileData(object):
 
         self.downloadSize = 0
         self.isGif = False
+        self.saveParams = None
 
     @property
     def isWaifu2x(self):
@@ -89,19 +90,20 @@ class QtFileData(object):
 
         self.w, self.h, mat, isAni = ToolUtil.GetPictureSize(data)
 
-        if Setting.IsOpenWaifu.value:
-            self.waifuState = self.WaifuWait
-        else:
-            self.waifuState = self.WaifuStateCancle
+        if self.cacheImage:
+            if Setting.IsOpenWaifu.value:
+                self.waifuState = self.WaifuWait
+            else:
+                self.waifuState = self.WaifuStateCancle
 
-        if max(self.w, self.h) <= Setting.LookMaxNum.value:
-            pass
-        else:
-            if self._isWaifu2x == -1:
-                self.waifuState = self.OverResolution
+            if max(self.w, self.h) <= Setting.LookMaxNum.value:
+                pass
+            else:
+                if self._isWaifu2x == -1:
+                    self.waifuState = self.OverResolution
 
-        if self._isWaifu2x == -1 and isAni:
-            self.waifuState = self.AnimationNotAuto
+            if self._isWaifu2x == -1 and isAni:
+                self.waifuState = self.AnimationNotAuto
 
         self.isGif = isAni
         self.data = data
