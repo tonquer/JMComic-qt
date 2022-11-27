@@ -107,7 +107,7 @@ class TaskDownload(TaskBase, QtTaskBase):
         self._inQueue.put(self.taskId)
         return self.taskId
 
-    def HandlerTask(self, downloadId, laveFileSize, data, isCallBack=True):
+    def HandlerTask(self, downloadId, addSize, laveFileSize, data, isCallBack=True):
         info = self.tasks.get(downloadId)
         if not info:
             return
@@ -140,9 +140,9 @@ class TaskDownload(TaskBase, QtTaskBase):
         if info.downloadCallBack:
             try:
                 if info.backParam is not None:
-                    info.downloadCallBack(info.lastLaveSize-laveFileSize, laveFileSize, info.backParam)
+                    info.downloadCallBack(addSize, laveFileSize, info.backParam)
                 else:
-                    info.downloadCallBack(info.lastLaveSize-laveFileSize, laveFileSize)
+                    info.downloadCallBack(addSize, laveFileSize)
             except Exception as es:
                 Log.Error(es)
             info.lastLaveSize = laveFileSize
@@ -197,10 +197,10 @@ class TaskDownload(TaskBase, QtTaskBase):
             if task.isLoadTask:
                 imgData = ToolUtil.LoadCachePicture(task.loadPath)
                 if imgData:
-                    TaskBase.taskObj.downloadBack.emit(taskId, len(imgData), b"")
-                    TaskBase.taskObj.downloadBack.emit(taskId, 0, imgData)
+                    TaskBase.taskObj.downloadBack.emit(taskId, 0, len(imgData), b"")
+                    TaskBase.taskObj.downloadBack.emit(taskId, 0, 0, imgData)
                 else:
-                    TaskBase.taskObj.downloadBack.emit(taskId, -Status.FileError, b"")
+                    TaskBase.taskObj.downloadBack.emit(taskId, 0, -Status.FileError, b"")
                 return
 
             isReset = False
@@ -276,8 +276,8 @@ class TaskDownload(TaskBase, QtTaskBase):
                         if cachePath:
                             imgData = ToolUtil.LoadCachePicture(cachePath)
                             if imgData:
-                                TaskBase.taskObj.downloadBack.emit(taskId, len(imgData), b"")
-                                TaskBase.taskObj.downloadBack.emit(taskId, 0, imgData)
+                                TaskBase.taskObj.downloadBack.emit(taskId, 0, len(imgData), b"")
+                                TaskBase.taskObj.downloadBack.emit(taskId, 0, 0, imgData)
                                 return
 
                 imgUrl = epsInfo.pictureUrl.get(task.index)

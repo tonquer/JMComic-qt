@@ -83,7 +83,7 @@ class Ui_SettingNew(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, -1438, 661, 2739))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, -377, 661, 2896))
         self.scrollAreaWidgetContents.setStyleSheet(u"")
         self.verticalLayout_4 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
@@ -364,6 +364,35 @@ class Ui_SettingNew(object):
 
 
         self.verticalLayout_4.addWidget(self.frame_7)
+
+        self.frame_17 = QFrame(self.scrollAreaWidgetContents)
+        self.frame_17.setObjectName(u"frame_17")
+        self.frame_17.setFrameShape(QFrame.StyledPanel)
+        self.frame_17.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_21 = QVBoxLayout(self.frame_17)
+        self.verticalLayout_21.setObjectName(u"verticalLayout_21")
+        self.label_40 = QLabel(self.frame_17)
+        self.label_40.setObjectName(u"label_40")
+        self.label_40.setFont(font1)
+
+        self.verticalLayout_21.addWidget(self.label_40)
+
+        self.showCloseButton0 = QRadioButton(self.frame_17)
+        self.showCloseButtonGroup = QButtonGroup(SettingNew)
+        self.showCloseButtonGroup.setObjectName(u"showCloseButtonGroup")
+        self.showCloseButtonGroup.addButton(self.showCloseButton0)
+        self.showCloseButton0.setObjectName(u"showCloseButton0")
+
+        self.verticalLayout_21.addWidget(self.showCloseButton0)
+
+        self.showCloseButton1 = QRadioButton(self.frame_17)
+        self.showCloseButtonGroup.addButton(self.showCloseButton1)
+        self.showCloseButton1.setObjectName(u"showCloseButton1")
+
+        self.verticalLayout_21.addWidget(self.showCloseButton1)
+
+
+        self.verticalLayout_4.addWidget(self.frame_17)
 
         self.frame_14 = QFrame(self.scrollAreaWidgetContents)
         self.frame_14.setObjectName(u"frame_14")
@@ -718,6 +747,30 @@ class Ui_SettingNew(object):
 
 
         self.verticalLayout_12.addLayout(self.horizontalLayout_16)
+
+        self.label_39 = QLabel(self.frame_10)
+        self.label_39.setObjectName(u"label_39")
+        self.label_39.setFont(font1)
+
+        self.verticalLayout_12.addWidget(self.label_39)
+
+        self.horizontalLayout_30 = QHBoxLayout()
+        self.horizontalLayout_30.setObjectName(u"horizontalLayout_30")
+        self.tileComboBox = WheelComboBox(self.frame_10)
+        self.tileComboBox.addItem("")
+        self.tileComboBox.addItem("")
+        self.tileComboBox.addItem("")
+        self.tileComboBox.addItem("")
+        self.tileComboBox.setObjectName(u"tileComboBox")
+
+        self.horizontalLayout_30.addWidget(self.tileComboBox)
+
+        self.horizontalSpacer_27 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_30.addItem(self.horizontalSpacer_27)
+
+
+        self.verticalLayout_12.addLayout(self.horizontalLayout_30)
 
 
         self.verticalLayout_4.addWidget(self.frame_10)
@@ -1305,6 +1358,9 @@ class Ui_SettingNew(object):
         self.mainScaleButton5.setText(QCoreApplication.translate("SettingNew", u"200%", None))
         self.label_33.setText(QCoreApplication.translate("SettingNew", u"\u6807\u9898\u680f\u8bbe\u7f6e\uff08\u9700\u91cd\u542f\uff09", None))
         self.titleBox.setText(QCoreApplication.translate("SettingNew", u"\u4f7f\u7528\u9ed8\u8ba4\u6807\u9898\u680f\uff08\u5982\u679c\u6807\u9898\u680f\u51fa\u73b0\u663e\u793a\u5f02\u5e38\uff0c\u8bf7\u52fe\u9009\uff09", None))
+        self.label_40.setText(QCoreApplication.translate("SettingNew", u"\u5173\u95ed\u8bbe\u7f6e", None))
+        self.showCloseButton0.setText(QCoreApplication.translate("SettingNew", u"\u5173\u95ed\u540e\u9000\u51fa", None))
+        self.showCloseButton1.setText(QCoreApplication.translate("SettingNew", u"\u5173\u95ed\u540e\u6700\u5c0f\u5316\u5230\u6258\u76d8", None))
         self.label_2.setText(QCoreApplication.translate("SettingNew", u"\u5c01\u9762\u663e\u793a\u5927\u5c0f\uff08\u9ed8\u8ba4\u4e3a100%\uff09\uff1a", None))
         self.label_29.setText(QCoreApplication.translate("SettingNew", u"\u5206\u7c7b\u5c01\u9762\u5927\u5c0f\uff1a", None))
         self.label_10.setText(QCoreApplication.translate("SettingNew", u"\u65e5\u5fd7\u7b49\u7ea7\uff1a", None))
@@ -1329,6 +1385,12 @@ class Ui_SettingNew(object):
         self.label_20.setText(QCoreApplication.translate("SettingNew", u"CPU/GPU\u9009\u62e9\uff08\u9700\u91cd\u542f\u751f\u6548\uff09", None))
         self.label_11.setText(QCoreApplication.translate("SettingNew", u"\u4f7f\u7528CPU\u6570\u91cf\uff08CPU\u6a21\u5f0f\u751f\u6548\uff0c\u9700\u91cd\u542f\uff09", None))
         self.threadSelect.setItemText(0, QCoreApplication.translate("SettingNew", u"Auto", None))
+
+        self.label_39.setText(QCoreApplication.translate("SettingNew", u"Tile\u5927\u5c0f\uff0c\u964d\u4f4e\u53ef\u51cf\u5c11\u663e\u5b58\u5360\u7528\uff08\u5982\u51fa\u73b0\u90e8\u5206\u56fe\u7247\u65e0\u6cd5\u8f6c\u6362\u53ef\u8c03\u4f4e\u8be5\u503c\uff09", None))
+        self.tileComboBox.setItemText(0, QCoreApplication.translate("SettingNew", u"Auto", None))
+        self.tileComboBox.setItemText(1, QCoreApplication.translate("SettingNew", u"200", None))
+        self.tileComboBox.setItemText(2, QCoreApplication.translate("SettingNew", u"100", None))
+        self.tileComboBox.setItemText(3, QCoreApplication.translate("SettingNew", u"32", None))
 
         self.label_12.setText(QCoreApplication.translate("SettingNew", u"Waifu2x\u770b\u56fe\u6a21\u5f0f", None))
         self.readCheckBox.setText(QCoreApplication.translate("SettingNew", u"\u662f\u5426\u542f\u7528", None))

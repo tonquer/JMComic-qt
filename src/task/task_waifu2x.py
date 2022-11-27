@@ -22,11 +22,11 @@ class QConvertTask(object):
         self.status = Status.Ok
         self.tick = 0
         self.loadPath = ""  #
+        self.preDownPath = ""  #
         self.cachePath = ""  #
         self.savePath = ""  #
         self.imgData = b""
         self.saveData = b""
-        self.preDownPath = ""
 
         self.model = {
             "model": 1,
@@ -34,7 +34,6 @@ class QConvertTask(object):
             "toH": 100,
             "toW": 100,
         }
-
 
 class TaskWaifu2x(TaskBase):
 
@@ -88,10 +87,11 @@ class TaskWaifu2x(TaskBase):
                 if task.loadPath:
                     data = ToolUtil.LoadCachePicture(task.loadPath)
                     if data:
-                        w, h, mat = ToolUtil.GetPictureSize(data)
+                        w, h, mat, _ = ToolUtil.GetPictureSize(data)
                         model = ToolUtil.GetDownloadScaleModel(w, h, mat)
                         task.model = model
                         task.imgData = data
+
                 if not task.imgData:
                     task.status = Status.FileError
                     self.taskObj.convertBack.emit(taskId)
@@ -105,12 +105,11 @@ class TaskWaifu2x(TaskBase):
                     from waifu2x_vulkan import waifu2x_vulkan
                     scale = task.model.get("scale", 0)
                     # mat = task.model.get("format", "jpg")
+                    tileSize = Setting.Waifu2xTileSize.GetIndexV()
                     if scale <= 0:
-                        sts = waifu2x_vulkan.add(task.imgData, task.model.get('model', 0), task.taskId,
-                                                 task.model.get("width", 0),
-                                                 task.model.get("high", 0))
+                        sts = waifu2x_vulkan.add(task.imgData, task.model.get('model', 0), task.taskId, task.model.get("width", 0), task.model.get("high", 0), tileSize=tileSize)
                     else:
-                        sts = waifu2x_vulkan.add(task.imgData, task.model.get('model', 0), task.taskId, scale)
+                        sts = waifu2x_vulkan.add(task.imgData, task.model.get('model', 0), task.taskId, scale, tileSize=tileSize)
 
                     if sts <= 0:
                         err = waifu2x_vulkan.getLastError()
@@ -120,8 +119,7 @@ class TaskWaifu2x(TaskBase):
                 if sts <= 0:
                     task.status = Status.AddError
                     self.taskObj.convertBack.emit(taskId)
-                    Log.Warn(
-                        "Waifu2x convert error, taskId: {}, model:{}, err:{}".format(str(task.taskId), task.model,
+                    Log.Warn("Waifu2x convert error, taskId: {}, model:{}, err:{}".format(str(task.taskId), task.model,
                                                                                      str(err)))
                     continue
             except Exception as es:
@@ -143,7 +141,7 @@ class TaskWaifu2x(TaskBase):
             if not info:
                 break
             t1 = CTime()
-            data, convertId, taskId, tick = info
+            data, format, taskId, tick = info
             info = self.tasks.get(taskId)
             tick = round(tick, 2)
             if not info:
@@ -155,17 +153,19 @@ class TaskWaifu2x(TaskBase):
             if lenData <= 0:
                 info.status = Status.FileFormatError
                 Log.Warn("convert error, taskId: {}, dataLen:{}, sts:{} tick:{}".format(str(taskId), lenData,
-                                                                                          str(convertId),
+                                                                                          str(format),
                                                                                           str(tick)))
             assert isinstance(info, QConvertTask)
             info.saveData = data
             info.tick = tick
             try:
+                # w, h, mat, _ = ToolUtil.GetPictureSize(data)
                 for path in [info.cachePath, info.savePath]:
                     if path and not os.path.isdir(os.path.dirname(path)):
                         os.makedirs(os.path.dirname(path))
 
                     if path and data:
+                        path = path + "." + format
                         with open(path, "wb+") as f:
                             f.write(data)
             except Exception as es:
@@ -185,12 +185,12 @@ class TaskWaifu2x(TaskBase):
         info.imgData = imgData
         info.model = model
         info.preDownPath = preDownPath
-        if path:
+        if path and Setting.SavePath.value:
             a = crc32(json.dumps(model).encode("utf-8"))
             if Setting.SavePath.value:
                 path2 = os.path.join(os.path.join(Setting.SavePath.value, config.CachePathDir), config.Waifu2xPath)
                 path = os.path.join(path2, path)
-                info.cachePath = path + "-{}.jpg".format(a)
+                info.cachePath = path + "-{}".format(a)
 
         if cleanFlag:
             info.cleanFlag = cleanFlag

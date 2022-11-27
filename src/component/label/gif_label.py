@@ -31,7 +31,7 @@ class GifLabel(QLabel):
         self.byteArray = QByteArray(data)
         self.bBuffer = QBuffer(self.byteArray)
 
-        self.movie.setFormat(QByteArray(b"GIF"))
+        # self.movie.setFormat(QByteArray(b"GIF"))
 
         self.movie.setCacheMode(QMovie.CacheNone)
         self.movie.setDevice(self.bBuffer)

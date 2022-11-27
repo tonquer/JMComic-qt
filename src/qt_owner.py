@@ -14,6 +14,7 @@ class QtOwner(Singleton):
         Singleton.__init__(self)
         self._owner = None
         self._app = None
+        self._localServer = None
         self.backSock = None
         self.isUseDb = True
         from tools.user import User
@@ -56,7 +57,7 @@ class QtOwner(Singleton):
         return self.owner.msgLabel.ShowError(msg)
 
     def ShowLoading(self):
-        self.owner.loadingDialog.Show()
+        self.owner.loadingDialog.show()
         return
 
     def CloseLoading(self):
@@ -79,6 +80,10 @@ class QtOwner(Singleton):
     @property
     def app(self):
         return self._app()
+
+    @property
+    def localServer(self):
+        return self._localServer()
 
     @property
     def downloadView(self):
@@ -230,6 +235,9 @@ class QtOwner(Singleton):
 
     def SetApp(self, app):
         self._app = weakref.ref(app)
+
+    def SetLocalServer(self, app):
+        self._localServer = weakref.ref(app)
 
     def SetDirty(self):
         pass

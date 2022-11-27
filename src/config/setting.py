@@ -73,6 +73,7 @@ class SettingValue:
             self.autoValue = 0
         Setting.SaveSettingV(self)
 
+
 class Setting:
     # 通用设置
     IsUpdate = SettingValue("GeneraSetting", 1, False)
@@ -87,6 +88,9 @@ class Setting:
     FontName = SettingValue("GeneraSetting", "", True)
     FontSize = SettingValue("GeneraSetting", "", True)
     FontStyle = SettingValue("GeneraSetting", 0, True)
+
+    IsNotShowCloseTip = SettingValue("GeneraSetting", 0, False)
+    ShowCloseType = SettingValue("GeneraSetting", 0, False)
 
     # 代理设置
     IsHttpProxy = SettingValue("ProxySetting", 0, False, ["", "Http", "Sock5", "system"])
@@ -107,6 +111,7 @@ class Setting:
     # Waifu2x设置
     SelectEncodeGpu = SettingValue("Waifu2xSetting", "", True)
     Waifu2xCpuCore = SettingValue("Waifu2xSetting", 0, True)
+    Waifu2xTileSize = SettingValue("Waifu2xSetting", 0, False, [0, 200, 100, 32])
 
     # 封面 Waifu2x
     CoverIsOpenWaifu = SettingValue("Waifu2xSetting", 0, False)

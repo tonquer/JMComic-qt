@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QWidget
 
 from interface.ui_search import Ui_Search
 from qt_owner import QtOwner
-from server import req, Log, Status
+from server import req, Log, Status, config
 from task.qt_task import QtTaskBase
 from tools.langconv import Converter
 from tools.str import Str
@@ -78,6 +78,9 @@ class SearchView(QWidget, Ui_Search, QtTaskBase):
         pass
 
     def SendSearch(self, page):
+        if not config.LoginUserName:
+            QtOwner().ShowError(Str.GetStr(Str.NotLogin))
+            return
         QtOwner().ShowLoading()
         sortList = ["mr", "mv", "mp", "tf"]
         sort = sortList[self.sortCombox.currentIndex()]

@@ -37,3 +37,8 @@ class BaseRes(object):
         if hasattr(self.raw, "text"):
             return self.raw.text
         return ""
+
+    def GetContent(self):
+        if hasattr(self.raw, "content"):
+            return self.raw.content
+        return b""

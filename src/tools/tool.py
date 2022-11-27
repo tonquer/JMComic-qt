@@ -164,17 +164,17 @@ class ToolUtil(object):
         except Exception as es:
             Log.Error(es)
         return ""
-    
+
     @staticmethod
     def GetPictureSize(data):
         if not data:
-            return 0, 0, "jpg"
+            return 0, 0, "jpg", False
         try:
             from PIL import Image
             from io import BytesIO
             a = BytesIO(data)
             img = Image.open(a)
-            a.close()
+            isAnima = getattr(img, "is_animated", False)
             if img.format == "PNG":
                 mat = "png"
             elif img.format == "GIF":
@@ -183,10 +183,11 @@ class ToolUtil(object):
                 mat = "webp"
             else:
                 mat = "jpg"
-            return img.width, img.height, mat
+            a.close()
+            return img.width, img.height, mat, isAnima
         except Exception as es:
             Log.Error(es)
-        return 0, 0, "jpg"
+        return 0, 0, "jpg", False
 
     @staticmethod
     def GetLookModel(category):
@@ -242,12 +243,16 @@ class ToolUtil(object):
     def LoadCachePicture(filePath):
         try:
             c = CTime()
-            if not os.path.isfile(filePath):
-                return None
-            with open(filePath, "rb") as f:
-                data = f.read()
-                c.Refresh("LoadCache", filePath)
-                return data
+            for mat in [".jpg", ".png", ".gif", ".webp", ".bmp", ".apng"]:
+                path = filePath + mat
+                if not os.path.isfile(path):
+                    continue
+
+                with open(path, "rb") as f:
+                    data = f.read()
+                    c.Refresh("LoadCache", path)
+                    return data
+
         except Exception as es:
             Log.Error(es)
         return None
@@ -914,10 +919,7 @@ class ToolUtil(object):
     def GetRealPath(path, direction):
         if path:
             data = "{}/{}".format(direction, path)
-            if ".jpg" not in data:
-                return data + ".jpg"
-            else:
-                return data
+            return data
         else:
             return path
 

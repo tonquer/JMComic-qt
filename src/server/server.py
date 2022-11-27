@@ -282,8 +282,8 @@ class Server(Singleton):
                         if cachePath and task.bakParam:
                             data = ToolUtil.LoadCachePicture(cachePath)
                             if data:
-                                TaskBase.taskObj.downloadBack.emit(task.bakParam, len(data), b"")
-                                TaskBase.taskObj.downloadBack.emit(task.bakParam, 0, data)
+                                TaskBase.taskObj.downloadBack.emit(task.bakParam, 0, len(data), b"")
+                                TaskBase.taskObj.downloadBack.emit(task.bakParam, 0, 0, data)
                                 Log.Info("request cache -> backId:{}, {}".format(task.bakParam, task.req))
                                 return
 

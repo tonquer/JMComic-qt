@@ -32,7 +32,7 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
         # else:
         #     HorizontalHeaderLabels = ["id", "标题", "下载状态", "下载进度", "下载章节", "下载速度", "转换进度", "转换章节", "转换耗时", "转换状态"]
 
-        self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+
         self.tableWidget.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.tableWidget.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -69,6 +69,12 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
             self.tableWidget.insertRow(rowCont)
             self.RepairData(task)
             self.UpdateTableItem(task)
+        self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        # self.tableWidget.horizontalHeader().setMinimumSectionSize(120)
+        self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Interactive)
+        # self.tableWidget.setColumnWidth(0, 40)
+        print(self.width())
+        self.tableWidget.setColumnWidth(1, 300)
 
     # 修复下数据
     def RepairData(self, task):
@@ -142,7 +148,7 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
             return ""
         epsTitle = task.epsInfo[epsId].epsTitle
         convertPath = os.path.join(task.convertPath, ToolUtil.GetCanSaveName(epsTitle))
-        return os.path.join(convertPath, "{:04}.{}".format(index + 1, "jpg"))
+        return os.path.join(convertPath, "{:04}".format(index + 1))
 
     def GetDownloadFilePath(self, bookId, epsId, index):
         if bookId not in self.downloadDict:
@@ -152,7 +158,7 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
             return ""
         epsTitle = task.epsInfo[epsId].epsTitle
         savePath = os.path.join(task.savePath, ToolUtil.GetCanSaveName(epsTitle))
-        return os.path.join(savePath, "{:04}.{}".format(index + 1, "jpg"))
+        return os.path.join(savePath, "{:04}".format(index + 1))
 
     def SwitchCurrent(self, **kwargs):
         pass
@@ -303,6 +309,10 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
                     menu.addAction(startConvertAction)
             else:
                 menu = QMenu(self.tableWidget)
+                menu.addAction(startAction)
+                menu.addAction(pauseAction)
+                menu.addAction(startConvertAction)
+                menu.addAction(pauseConvertAction)
 
             menu.addAction(removeAction)
             menu.addAction(removeFileAction)

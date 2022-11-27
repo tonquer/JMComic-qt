@@ -95,9 +95,9 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>-1438</y>
+          <y>-377</y>
           <width>661</width>
-          <height>2739</height>
+          <height>2896</height>
          </rect>
         </property>
         <property name="styleSheet">
@@ -625,6 +625,50 @@
               <property name="text">
                <string>使用默认标题栏（如果标题栏出现显示异常，请勾选）</string>
               </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QFrame" name="frame_17">
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_21">
+            <item>
+             <widget class="QLabel" name="label_40">
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>关闭设置</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="showCloseButton0">
+              <property name="text">
+               <string>关闭后退出</string>
+              </property>
+              <attribute name="buttonGroup">
+               <string notr="true">showCloseButtonGroup</string>
+              </attribute>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="showCloseButton1">
+              <property name="text">
+               <string>关闭后最小化到托盘</string>
+              </property>
+              <attribute name="buttonGroup">
+               <string notr="true">showCloseButtonGroup</string>
+              </attribute>
              </widget>
             </item>
            </layout>
@@ -1246,6 +1290,59 @@
               </item>
               <item>
                <spacer name="horizontalSpacer_15">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_39">
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>Tile大小，降低可减少显存占用（如出现部分图片无法转换可调低该值）</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_30">
+              <item>
+               <widget class="WheelComboBox" name="tileComboBox">
+                <item>
+                 <property name="text">
+                  <string>Auto</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>200</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>100</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>32</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_27">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
@@ -2386,11 +2483,12 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="proxyGroup"/>
   <buttongroup name="mainScaleGroup"/>
-  <buttongroup name="saveNameGroup"/>
   <buttongroup name="languageGroup"/>
-  <buttongroup name="themeGroup"/>
+  <buttongroup name="saveNameGroup"/>
   <buttongroup name="logGroup"/>
+  <buttongroup name="proxyGroup"/>
+  <buttongroup name="themeGroup"/>
+  <buttongroup name="showCloseButtonGroup"/>
  </buttongroups>
 </ui>

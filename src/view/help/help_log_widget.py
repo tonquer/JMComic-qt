@@ -3,7 +3,7 @@ import random
 import re
 import sys
 from io import TextIOWrapper
-
+from qt_owner import QtOwner
 from PySide6.QtCore import QUrl, Signal, QTimer
 from PySide6.QtGui import QDesktopServices, Qt, QTextCursor, QColor
 from PySide6.QtWidgets import QWidget, QMessageBox, QTextEdit, QStyle

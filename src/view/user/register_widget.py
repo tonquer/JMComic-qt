@@ -1,6 +1,6 @@
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt, QRegularExpression, Signal
-from PySide6.QtGui import QRegularExpressionValidator
+from PySide6.QtGui import QRegularExpressionValidator, QPixmap
 
 from component.label.msg_label import MsgLabel
 from interface.ui_register_widget import Ui_RegisterWidget
@@ -24,6 +24,7 @@ class RegisterWidget(QtWidgets.QWidget, Ui_RegisterWidget, QtTaskBase):
         # self.userEdit.setValidator(validator)
 
     def Init(self):
+        self.LoadVer()
         return
 
     def ClickButton(self):
@@ -33,15 +34,31 @@ class RegisterWidget(QtWidgets.QWidget, Ui_RegisterWidget, QtTaskBase):
         email = self.userEdit.text()
         userName = self.nameEdit.text()
         passwd = self.passwd.text()
+        ver = self.verEdit.text()
         sex = self.buttonGroup.checkedButton().objectName().replace("gender_", "")
-        for v in [email, userName, passwd]:
+        for v in [email, userName, passwd, ver]:
             if not v:
                 QtOwner().ShowError(Str.GetStr(Str.NotSpace))
                 return
 
         self.ShowLoading.emit()
-        self.AddHttpTask(req.RegisterReq(userName, email, passwd, passwd, sex), self.RegisterBack)
+        self.AddHttpTask(req.RegisterReq(userName, email, passwd, passwd, sex, ver), self.RegisterBack)
         return
+
+    def LoadVer(self):
+        self.verPicture.setPixmap(QPixmap())
+        self.ShowLoading.emit()
+        self.AddHttpTask(req.GetCaptchaReq(), self.LoadVerBack)
+
+    def LoadVerBack(self, raw):
+        self.CloseLoading.emit()
+        st = raw["st"]
+        if st == Status.Ok:
+            content = raw["content"]
+            p = QPixmap()
+            p.loadFromData(content)
+            p.setDevicePixelRatio(self.devicePixelRatio())
+            self.verPicture.setPixmap(p)
 
     def RegisterBack(self, raw):
         self.CloseLoading.emit()

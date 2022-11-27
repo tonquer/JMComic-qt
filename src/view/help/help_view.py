@@ -98,7 +98,9 @@ class HelpView(QWidget, Ui_Help, QtTaskBase):
         return
 
     def OpenUrl(self):
-        QDesktopServices.openUrl(QUrl(config.Issues))
+        UrlList = [config.Issues1, config.Issues2, config.Issues3]
+        url = UrlList[0] if self.checkUpdateIndex >= len(UrlList) else UrlList[self.checkUpdateIndex]
+        QDesktopServices.openUrl(QUrl(url))
 
     def OpenLogDir(self):
         path = Setting.GetLogPath()

@@ -40,6 +40,7 @@ class QtFileData(object):
     WaifuStateEnd = Str.WaifuStateEnd
     WaifuStateFail = Str.WaifuStateFail
     OverResolution = Str.OverResolution
+    AnimationNotAuto = Str.AnimationNotAuto
 
     def __init__(self):
         self.size = 0
@@ -61,6 +62,7 @@ class QtFileData(object):
         self.cacheWaifu2xImage = None
 
         self.downloadSize = 0
+        self.isGif = False
 
     @property
     def isWaifu2x(self):
@@ -85,7 +87,7 @@ class QtFileData(object):
             self.state = self.DownloadError
             return
 
-        self.w, self.h, mat = ToolUtil.GetPictureSize(data)
+        self.w, self.h, mat, isAni = ToolUtil.GetPictureSize(data)
 
         if Setting.IsOpenWaifu.value:
             self.waifuState = self.WaifuWait
@@ -98,6 +100,10 @@ class QtFileData(object):
             if self._isWaifu2x == -1:
                 self.waifuState = self.OverResolution
 
+        if self._isWaifu2x == -1 and isAni:
+            self.waifuState = self.AnimationNotAuto
+
+        self.isGif = isAni
         self.data = data
         self.model = ToolUtil.GetLookScaleModel(category, mat)
         self.state = self.DownloadSuc
@@ -110,7 +116,7 @@ class QtFileData(object):
         self.waifuData = data
         self.waifuState = self.WaifuStateEnd
         self.waifuDataSize = len(self.waifuData)
-        self.scaleW, self.scaleH, _ = ToolUtil.GetPictureSize(data)
+        self.scaleW, self.scaleH, _, _ = ToolUtil.GetPictureSize(data)
         self.waifuTick = tick
         return
 

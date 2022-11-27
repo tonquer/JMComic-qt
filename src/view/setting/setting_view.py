@@ -41,6 +41,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.mainScaleGroup.buttonClicked.connect(partial(self.ButtonClickEvent, Setting.ScaleLevel))
         self.proxyGroup.buttonClicked.connect(partial(self.ButtonClickEvent, Setting.IsHttpProxy))
         self.saveNameGroup.buttonClicked.connect(partial(self.ButtonClickEvent, Setting.SaveNameType))
+        self.showCloseButtonGroup.buttonClicked.connect(partial(self.ButtonClickEvent, Setting.ShowCloseType))
 
         # CheckButton:
         self.checkBox_IsUpdate.clicked.connect(partial(self.CheckButtonEvent, Setting.IsUpdate, self.checkBox_IsUpdate))
@@ -68,6 +69,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.fontBox.currentTextChanged.connect(partial(self.CheckRadioEvent, Setting.FontName))
         self.fontSize.currentTextChanged.connect(partial(self.CheckRadioEvent, Setting.FontSize))
         self.fontStyle.currentIndexChanged.connect(partial(self.CheckRadioEvent, Setting.FontStyle))
+        self.tileComboBox.currentIndexChanged.connect(partial(self.CheckRadioEvent, Setting.Waifu2xTileSize))
 
         # spinBox
         # self.preDownNum.valueChanged.connect(partial(self.SpinBoxEvent, "", self.preDownNum))
@@ -193,6 +195,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.SetRadioGroup("mainScaleButton", Setting.ScaleLevel.value)
         self.SetRadioGroup("proxy", Setting.IsHttpProxy.value)
         self.SetRadioGroup("saveNameButton", Setting.SaveNameType.value)
+        self.SetRadioGroup("showCloseButton", Setting.ShowCloseType.value)
         self.coverSize.setValue(Setting.CoverSize.value)
         self.categorySize.setValue(Setting.CategorySize.value)
         self.SetRadioGroup("logutton", Setting.LogIndex.value)
@@ -219,6 +222,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.readScale.setValue(Setting.LookScale.value)
         self.readModel.setCurrentIndex(Setting.LookModel.value)
 
+        self.tileComboBox.setCurrentIndex(Setting.Waifu2xTileSize.value)
         self.coverCheckBox.setChecked(Setting.CoverIsOpenWaifu.value)
         self.coverNoise.setCurrentIndex(Setting.CoverLookNoise.value)
         self.coverScale.setValue(Setting.CoverLookScale.value)

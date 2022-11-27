@@ -49,10 +49,21 @@
     <file>icon/icon_like.png</file>
     <file>icon/icon_like_off.png</file>
     <file>icon/loading_gif.gif</file>
+    <file>icon/loading_gif.webp</file>
     <file>icon/loading.gif</file>
     <file>icon/logo_round.png</file>
     <file>icon/placeholder_avatar.png</file>
     <file>icon/new.svg</file>
+    <file>icon/loading/loading_1.png</file>
+	<file>icon/loading/loading_2.png</file>
+	<file>icon/loading/loading_3.png</file>
+	<file>icon/loading/loading_4.png</file>
+	<file>icon/loading/loading_5.png</file>
+	<file>icon/loading/loading_6.png</file>
+	<file>icon/loading/loading_7.png</file>
+	<file>icon/loading/loading_8.png</file>
+	<file>icon/loading/loading_9.png</file>
+	<file>icon/loading/loading_10.png</file>
   </qresource>
   <qresource prefix="icon">
     <file>theme/dark_pink/disabled/base.svg</file>

@@ -7,6 +7,7 @@ from PySide6.QtWidgets import QButtonGroup, QToolButton, QLabel
 from component.dialog.loading_dialog import LoadingDialog
 from component.label.gif_label import GifLabel
 from component.label.msg_label import MsgLabel
+from component.system_tray_icon.my_system_tray_icon import MySystemTrayIcon
 from component.widget.main_widget import Main
 from config import config
 from config.setting import Setting
@@ -18,6 +19,7 @@ from task.task_qimage import TaskQImage
 from task.task_waifu2x import TaskWaifu2x
 from tools.log import Log
 from view.download.download_dir_view import DownloadDirView
+from view.read.read_pool import QtReadImgPoolManager
 
 
 class MainView(Main, QtTaskBase):
@@ -47,11 +49,7 @@ class MainView(Main, QtTaskBase):
         print(desktop.size(), self.size())
         self.setAttribute(Qt.WA_StyledBackground, True)
 
-        # self.loadingDialog = LoadingDialog(self)
-        self.loadingDialog = GifLabel(self)
-        self.loadingDialog.Init(QtOwner().GetFileData(":/png/icon/loading_gif.gif"), 256)
-        self.loadingDialog.setAlignment(Qt.AlignCenter)
-        self.loadingDialog.close()
+        self.loadingDialog = LoadingDialog(self)
         self.__initWidget()
 
         # 窗口切换相关
@@ -67,7 +65,8 @@ class MainView(Main, QtTaskBase):
 
         self.searchView.searchTab.hide()
         self.searchView2.searchWidget.hide()
-
+        self.myTrayIcon = MySystemTrayIcon()
+        self.myTrayIcon.show()
         # self.readView.LoadSetting()
         # QApplication.instance().installEventFilter(self)
         # QtOwner().app.paletteChanged.connect(self.CheckPaletteChanged)
@@ -147,6 +146,7 @@ class MainView(Main, QtTaskBase):
             IsCanUse = True
             gpuInfo = waifu2x_vulkan.getGpuInfo()
             cpuNum = waifu2x_vulkan.getCpuCoreNum()
+            gpuNum = waifu2x_vulkan.getGpuCoreNum()
             self.settingView.SetGpuInfos(gpuInfo, cpuNum)
             # if not gpuInfo or (gpuInfo and config.Encode < 0) or (gpuInfo and config.Encode >= len(gpuInfo)):
             #     config.Encode = 0
@@ -156,9 +156,12 @@ class MainView(Main, QtTaskBase):
             version = waifu2x_vulkan.getVersion()
             config.Waifu2xVersion = version
             self.helpView.waifu2x.setText(config.Waifu2xVersion)
-            Log.Warn("Waifu2x init: " + str(stat) + " version:{}/{}".format(version, config.RealVersion) + " code:" + str(sts) + " gpu:{}/{}".format(config.Encode, gpuInfo) + " cpuNum:{}/{}".format(str(cpuNum), str(config.UseCpuNum)))
+            Log.Warn("Waifu2x init:{}, encode:{}, version:{}, code:{}, cpuNum:{}/{}, gpuNum:{}, gpuList:{}".format(
+                stat, config.Encode, version, sts, config.UseCpuNum, cpuNum, gpuNum, gpuInfo
+            ))
         else:
             QtOwner().ShowError("Waifu2x Error, " + config.ErrorMsg)
+            Log.Warn("Waifu2x Error: " + str(config.ErrorMsg))
 
         if not IsCanUse:
             self.settingView.readCheckBox.setEnabled(False)
@@ -182,6 +185,8 @@ class MainView(Main, QtTaskBase):
         self.msgLabel = MsgLabel(self)
         self.msgLabel.hide()
         self.AddHttpTask(req.LoginPreReq())
+        QtReadImgPoolManager().Init()
+
         if not Setting.SavePath.value:
             view = DownloadDirView(self)
             view.show()
@@ -293,9 +298,33 @@ class MainView(Main, QtTaskBase):
             self.readView.Close()
             a0.ignore()
             return
+
+        if not self.isHidden():
+            if Setting.ShowCloseType.value == 1 and QtOwner().closeType == 1:
+                QtOwner().app.setQuitOnLastWindowClosed(False)
+                self.myTrayIcon.show()
+                self.hide()
+                a0.ignore()
+                return
+            # if not Setting.IsNotShowCloseTip.value and QtOwner().closeType == 1:
+                # log = ShowCloseDialog(QtOwner().owner)
+                # log.show()
+                # log.LoadSetting()
+                # a0.ignore()
+                # return
+
+            # if  Setting.ShowCloseType.value == 2:
+            #     self.myTrayIcon.show()
+            #     self.hide()
+            #     a0.ignore()
+            #     return
+        QtOwner().app.setQuitOnLastWindowClosed(True)
         super().closeEvent(a0)
         # reply = QtOwner().ShowMsgBox(QMessageBox.Question, self.tr('提示'), self.tr('确定要退出吗？'))
         self.GetExitScreen()
+
+        # 点击关闭按钮或者点击退出事件会出现图标无法消失的bug，需要手动将图标内存清除
+        # self.myTrayIcon = None
         a0.accept()
 
     def GetExitScreen(self):
@@ -362,10 +391,24 @@ class MainView(Main, QtTaskBase):
     def Close(self):
         # TODO 停止所有的定时器以及线程
         self.loadingDialog.close()
+        self.downloadView.Close()
         self.searchView.Stop()
         TaskWaifu2x().Stop()
         TaskQImage().Stop()
+        QtReadImgPoolManager().Stop()
         # TaskDownload().Stop()
         Server().Stop()
         # QtTask().Stop()
 
+    def OnNewConnection(self):
+        socket = QtOwner().localServer.nextPendingConnection()
+        socket.readyRead.connect(self.OnReadConnection)
+        return
+
+    def OnReadConnection(self):
+        conn = self.sender()
+        if not conn:
+            return
+        data = conn.readAll()
+        if data == b"restart":
+            self.show()

@@ -216,8 +216,23 @@ class DownloadItem(QtTaskBase):
                     path2 = os.path.join(path, os.path.join("default", ToolUtil.GetCanSaveName(self.title)))
                 self.savePath = os.path.join(path2, "original")
 
+        if not self.convertPath and Setting.SavePath.value:
+            path = os.path.join(Setting.SavePath.value, config.SavePathDir)
+            path2 = os.path.join(path, ToolUtil.GetCanSaveName(self.title))
+            self.convertPath = os.path.join(path2, "waifu2x")
+            if Setting.SaveNameType.value == SaveNameType.AuthorAndTitle:
+                if self.author:
+                    path2 = os.path.join(path, ToolUtil.GetCanSaveName("[{}]".format(self.author)+self.title))
+                    self.convertPath = os.path.join(path2, "waifu2x")
+            elif Setting.SaveNameType.value == SaveNameType.AuthorDir:
+                if self.author:
+                    path2 = os.path.join(path, os.path.join(ToolUtil.GetCanSaveName(self.author), ToolUtil.GetCanSaveName(self.title)))
+                else:
+                    path2 = os.path.join(path, os.path.join("default", ToolUtil.GetCanSaveName(self.title)))
+                self.convertPath = os.path.join(path2, "waifu2x")
+
         convertPath = os.path.join(self.savePath, ToolUtil.GetCanSaveName(self.curDownloadEpsInfo.epsTitle))
-        savePath = os.path.join(convertPath, "{:04}.{}".format(self.curDownloadEpsInfo.curPreDownloadIndex + 1, "jpg"))
+        savePath = os.path.join(convertPath, "{:04}".format(self.curDownloadEpsInfo.curPreDownloadIndex + 1))
         return self.curDownloadEpsInfo.epsId, self.curDownloadEpsInfo.curPreDownloadIndex, savePath, False
 
     def ConvertInit(self):
@@ -282,10 +297,10 @@ class DownloadItem(QtTaskBase):
                 self.convertPath = os.path.join(path2, "waifu2x")
 
         downloadPath = os.path.join(self.savePath, ToolUtil.GetCanSaveName(self.curConvertEpsInfo.epsTitle))
-        loadPath = os.path.join(downloadPath, "{:04}.{}".format(self.curConvertEpsInfo.curPreConvertId + 1, "jpg"))
+        loadPath = os.path.join(downloadPath, "{:04}".format(self.curConvertEpsInfo.curPreConvertId + 1))
 
         convertPath = os.path.join(self.convertPath, ToolUtil.GetCanSaveName(self.curConvertEpsInfo.epsTitle))
-        savePath = os.path.join(convertPath, "{:04}.{}".format(self.curConvertEpsInfo.curPreConvertId + 1, "jpg"))
+        savePath = os.path.join(convertPath, "{:04}".format(self.curConvertEpsInfo.curPreConvertId + 1))
         return loadPath, savePath
 
 

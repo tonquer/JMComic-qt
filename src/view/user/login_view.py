@@ -21,7 +21,7 @@ class LoginView(BaseMaskDialog, Ui_Login, QtTaskBase):
         self.widget.adjustSize()
         self.setupUi(self.widget)
         self.loadingDialog = GifLabel(self)
-        self.loadingDialog.Init(QtOwner().GetFileData(":/png/icon/loading_gif.gif"), 256)
+        self.loadingDialog.Init(QtOwner().GetFileData(":/png/icon/loading.gif"), 256)
         self.loadingDialog.setAlignment(Qt.AlignCenter)
         self.loadingDialog.close()
 

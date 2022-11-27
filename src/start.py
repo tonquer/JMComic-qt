@@ -30,7 +30,7 @@ except Exception as es:
 
 from PySide6.QtGui import QFont
 from PySide6 import QtWidgets  # 导入PySide6部件
-
+from PySide6.QtNetwork import QLocalSocket, QLocalServer
 # 此处不能删除
 import images_rc
 
@@ -54,16 +54,32 @@ if __name__ == "__main__":
         sys.exit(-111)
         
     app = QtWidgets.QApplication(sys.argv)  # 建立application对象
+    serverName = 'JMComic-qt'
+    socket = QLocalSocket()
+    socket.connectToServer(serverName)
+    socket.close()
+    if socket.waitForConnected(500):
+        socket.write(b"restart")
+        socket.flush()
+        socket.close()
+        app.quit()
+        Log.Warn("server already star")
+        exit(1)
+
+    localServer = QLocalServer()  # 没有实例运行，创建服务器
+    localServer.listen(serverName)
 
     Log.Warn("init scene ratio: {}".format(app.devicePixelRatio()))
     try:
         Str.Reload()
         QtOwner().SetApp(app)
+        QtOwner().SetLocalServer(localServer)
         QtOwner().SetFont()
         from view.main.main_view import MainView
         main = MainView()
-        main.Init()
         main.show()  # 显示窗体
+        main.Init()
+        localServer.newConnection.connect(main.OnNewConnection)
     except Exception as es:
         Log.Error(es)
         showError(traceback.format_exc(), app)
@@ -80,7 +96,7 @@ if __name__ == "__main__":
     sys.excepthook = excepthook
     sts = app.exec()
     sys.excepthook = oldHook
-
+    socket.close()
     main.Close()
     if config.CanWaifu2x:
         waifu2x_vulkan.stop()

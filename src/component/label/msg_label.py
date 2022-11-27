@@ -151,6 +151,8 @@ class MsgLabel(QWidget):
                     picFormat = "png"
                 elif baseName[-3:] == "jpg":
                     picFormat = "jpeg"
+                elif baseName[-4:] == "webp":
+                    picFormat = "webp"
                 elif baseName[-3:] == "gif":
                     picFormat = "gif"
                 else:

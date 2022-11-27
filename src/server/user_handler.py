@@ -87,9 +87,9 @@ class LoginPreHandler(object):
             url = "https://" + ToolUtil.GetUrlHost(task.res.raw.url)
 
             ## 如果发生了301跳转，必须设置为新的域名，否则无法注册
-            if url != config.Url:
-                Log.Warn("Login url change, url:{}->{}".format(config.Url, url))
-                config.Url = url
+            # if url != config.Url:
+            #     Log.Warn("Login url change, url:{}->{}".format(config.Url, url))
+            #     config.Url = url
 
             # for raw in task.res.raw.history:
             #     cookies = requests.utils.dict_from_cookiejar(raw.cookies)
@@ -102,6 +102,19 @@ class LoginPreHandler(object):
             if task.backParam:
                 TaskBase.taskObj.taskBack.emit(task.backParam, pickle.dumps(data))
 
+@handler(req.GetCaptchaReq)
+class ParseMsgHandler(object):
+    def __call__(self, task: Task):
+        data = {"st": task.status, "content": task.res.GetContent()}
+        try:
+            if task.status != Status.Ok:
+                return
+        except Exception as es:
+            data["st"] = Status.ParseError
+            Log.Error(es)
+        finally:
+            if task.backParam:
+                TaskBase.taskObj.taskBack.emit(task.backParam, pickle.dumps(data))
 
 # @handler(req.LoginReq)
 @handler(req.RegisterReq)
@@ -110,11 +123,17 @@ class LoginPreHandler(object):
 @handler(req.ResetPasswordReq)
 class ParseMsgHandler(object):
     def __call__(self, task: Task):
-        data = {"st": task.status}
+        data = {"st": task.status, "msg": ""}
         try:
             if task.status != Status.Ok:
                 return
             isSuc, msg = ToolUtil.ParseMsg(task.res.raw.text)
+            if isinstance(task.req, req.RegisterReq):
+                if msg == "" and not isSuc and task.res.raw.history:
+                    for v in task.res.raw.history:
+                        if v.status_code == 301:
+                            data["st"] = Status.Ok
+                            return
 
             data["msg"] = msg
             if isSuc:
@@ -699,32 +718,36 @@ class DownloadBookHandler(object):
     def __call__(self, backData):
         if backData.status != Status.Ok:
             if backData.bakParam:
-                TaskBase.taskObj.downloadBack.emit(backData.bakParam, -backData.status, b"")
+                TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, -backData.status, b"")
         else:
             r = backData.res
             try:
                 if r.status_code != 200:
                     if backData.bakParam:
-                        TaskBase.taskObj.downloadBack.emit(backData.bakParam, -Status.Error, b"")
+                        TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, -Status.Error, b"")
                     return
                 fileSize = int(r.headers.get('Content-Length', 0))
                 getSize = 0
                 data = b""
                 now = time.time()
 
+                addSize = 0
                 # 网速快，太卡了，优化成最多100ms一次
                 for chunk in r.iter_content(chunk_size=4096):
                     cur = time.time()
                     tick = cur - now
+                    addSize += len(chunk)
                     if tick >= 0.1:
-                        if backData.bakParam and fileSize-getSize > 0:
-                            TaskBase.taskObj.downloadBack.emit(backData.bakParam, fileSize-getSize, b"")
+                        if backData.bakParam and addSize > 0:
+                            TaskBase.taskObj.downloadBack.emit(backData.bakParam, addSize, max(1, fileSize-getSize), b"")
+                            addSize = 0
                         now = cur
 
                     getSize += len(chunk)
                     data += chunk
 
                 # Log.Info("size:{}, url:{}".format(ToolUtil.GetDownloadSize(fileSize), backData.req.url))
+                _, _, mat, isAni = ToolUtil.GetPictureSize(data)
                 if config.IsUseCache and len(data) > 0:
                     try:
                         for path in [backData.req.cachePath]:
@@ -735,7 +758,7 @@ class DownloadBookHandler(object):
                             if not os.path.isdir(fileDir):
                                 os.makedirs(fileDir)
 
-                            with open(filePath, "wb+") as f:
+                            with open(filePath+"."+mat, "wb+") as f:
                                 f.write(data)
                             Log.Debug("add download cache, cachePath:{}".format(filePath))
 
@@ -747,22 +770,25 @@ class DownloadBookHandler(object):
                             if not os.path.isdir(fileDir):
                                 os.makedirs(fileDir)
                             saveParam = backData.req.saveParam
-                            data2 = ToolUtil. SegmentationPicture(data, saveParam[0], saveParam[1], saveParam[2])
-                            with open(filePath, "wb+") as f:
+                            if not isAni:
+                                data2 = ToolUtil. SegmentationPicture(data, saveParam[0], saveParam[1], saveParam[2])
+                            else:
+                                data2 = data
+                            with open(filePath+"."+mat, "wb+") as f:
                                 f.write(data2)
                             Log.Debug("add download cache, cachePath:{}".format(filePath))
                     except Exception as es:
                         Log.Error(es)
                         # 保存失败了
                         if backData.backParam:
-                            TaskBase.taskObj.downloadBack.emit(backData.backParam, -2, b"")
+                            TaskBase.taskObj.downloadBack.emit(backData.backParam, 0, -2, b"")
 
                 if backData.bakParam:
-                    TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, data)
+                    TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, 0, data)
             except Exception as es:
                 Log.Error(es)
                 if backData.backParam:
-                    TaskBase.taskObj.downloadBack.emit(backData.backParam, -1, b"")
+                    TaskBase.taskObj.downloadBack.emit(backData.backParam, 0, -1, b"")
 
 
 @handler(req.DnsOverHttpsReq)

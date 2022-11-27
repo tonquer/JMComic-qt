@@ -61,7 +61,7 @@ class ServerReq(object):
         token = hashlib.md5(param.encode("utf-8")).hexdigest()
 
         header = {
-            "tokenparam": "{},1.4.5".format(self.now),
+            "tokenparam": "{},1.4.7".format(self.now),
             "token": token,
             "user-agent": "okhttp/3.12.1",
             "accept-encoding": "gzip",
@@ -75,7 +75,7 @@ class ServerReq(object):
         token = hashlib.md5(param.encode("utf-8")).hexdigest()
 
         header = {
-            "tokenparam": "{},1.4.5".format(self.now),
+            "tokenparam": "{},1.4.7".format(self.now),
             "token": token,
             "user-agent": "okhttp/3.12.1",
             "accept-encoding": "gzip",
@@ -84,6 +84,14 @@ class ServerReq(object):
             header["Content-Type"] = "application/x-www-form-urlencoded"
         return header
 
+    def GetWebHeader(self) -> dict:
+        return \
+        {
+            "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+            "Upgrade-Insecure-Requests": "1",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.56"
+        }
+    
     def ParseData(self, data) -> str:
         param = "{}{}".format(self.now, "18comicAPPContent")
         key = hashlib.md5(param.encode("utf-8")).hexdigest()
@@ -103,7 +111,7 @@ class CheckUpdateReq(ServerReq):
         method = "GET"
         super(self.__class__, self).__init__(url, {}, method)
         self.isParseRes = False
-        self.headers = {}
+        self.headers = self.GetWebHeader()
 
 
 # 下载图片
@@ -117,6 +125,8 @@ class DownloadBookReq(ServerReq):
         self.saveParam = saveParam
         self.isReload = isReload
         super(self.__class__, self).__init__(url, {}, method)
+        self.headers = dict()
+        self.headers["Accept-Encoding"] ="None"
 
 
 # 注册前，需要获取cookie
@@ -125,6 +135,7 @@ class LoginPreReq(ServerReq):
         method = "Get"
         url = config.Url + "/login"
         super(self.__class__, self).__init__(url, {}, method)
+        self.headers = self.GetWebHeader()
 
 
 # 登陆
@@ -157,7 +168,7 @@ class LoginReq2(ServerReq):
 
 # 注册
 class RegisterReq(ServerReq):
-    def __init__(self, userId, email, passwd, passwd2, sex="Male"):
+    def __init__(self, userId, email, passwd, passwd2, sex="Male",  ver=""):
         # [Male, Female]
 
         method = "POST"
@@ -167,12 +178,14 @@ class RegisterReq(ServerReq):
         data["username"] = userId
         data["password"] = passwd
         data["email"] = email
+        data["verification"] = ver
         data["password_confirm"] = passwd2
         data["gender"] = sex
         data["age"] = "on"
         data["terms"] = "on"
         data["submit_signup"] = ""
         super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
+        self.headers = self.GetWebHeader()
 
 
 # 重新获取注册验证
@@ -185,6 +198,7 @@ class RegisterVerifyMailReq(ServerReq):
         data["email"] = email
         data["submit_confirm"] = "發送EMAIL"
         super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
+        self.headers = self.GetWebHeader()
 
 
 # 重置密码
@@ -197,6 +211,18 @@ class ResetPasswordReq(ServerReq):
         data["email"] = email
         data["submit_lost"] = "恢復密碼"
         super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
+        self.headers = self.GetWebHeader()
+
+
+# 验证码图片
+class GetCaptchaReq(ServerReq):
+    def __init__(self):
+        method = "Get"
+        url = config.Url + "/captcha"
+
+        data = dict()
+        super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
+        self.headers = self.GetWebHeader()
 
 
 # 账号验证
@@ -207,7 +233,7 @@ class VerifyMailReq(ServerReq):
         url = url.replace(host, ToolUtil.GetUrlHost(config.Url))
 
         super(self.__class__, self).__init__(url, {}, method)
-
+        self.headers = self.GetWebHeader()
 
 # 获得UserInfo
 # class GetUserInfoReq(ServerReq):

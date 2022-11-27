@@ -13,7 +13,7 @@ from tools.str import Str
 
 class QtTaskQObject(QObject):
     taskBack = Signal(int, bytes)
-    downloadBack = Signal(int, int, bytes)
+    downloadBack = Signal(int, int, int, bytes)
     downloadStBack = Signal(int, dict)
     convertBack = Signal(int)
     imageBack = Signal(int, QImage)

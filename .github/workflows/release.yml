@@ -56,7 +56,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pyinstaller==4.5.1
+        pip install pyinstaller==4.6
         pip install PySide6==6.1.3
         pip install websocket-client==0.59.0
         pip install requests==2.26.0
@@ -66,7 +66,7 @@ jobs:
         pip install lxml==4.6.4
         pip install pycryptodomex==3.12.0
         pip install Pysocks==1.7.1
-        pip install https://github.com/tonquer/waifu2x-vulkan/releases/download/v1.1.4/waifu2x_vulkan-1.1.4-cp37-cp37m-macosx_10_15_x86_64.whl
+        pip install https://github.com/tonquer/waifu2x-vulkan/releases/download/v1.1.5/waifu2x_vulkan-1.1.5-cp37-cp37m-macosx_10_15_x86_64.whl
         brew install create-dmg
     - name: Build
       run: |
@@ -162,14 +162,14 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pyinstaller==4.5.1
+        pip install pyinstaller==4.6
         pip install pywin32==302
         pip install PySide6==6.1.3
         pip install websocket-client==0.59.0
         pip install requests==2.26.0
         pip install urllib3==1.25.11
         pip install pillow==8.3.2
-        pip install waifu2x-vulkan==1.1.4
+        pip install waifu2x-vulkan==1.1.5
         pip install bs4==0.0.1
         pip install lxml==4.6.4
         pip install pycryptodomex==3.12.0
