@@ -396,7 +396,7 @@ class MainView(Main, QtTaskBase):
         self.searchView.Stop()
         TaskWaifu2x().Stop()
         TaskQImage().Stop()
-        QtReadImgPoolManager().Stop()
+        # QtReadImgPoolManager().Stop()
         # TaskDownload().Stop()
         Server().Stop()
         # QtTask().Stop()
