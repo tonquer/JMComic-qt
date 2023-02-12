@@ -83,7 +83,7 @@ class Ui_SettingNew(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, -377, 661, 2896))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, -1004, 661, 2896))
         self.scrollAreaWidgetContents.setStyleSheet(u"")
         self.verticalLayout_4 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
@@ -608,10 +608,10 @@ class Ui_SettingNew(object):
 
         self.horizontalLayout_31 = QHBoxLayout()
         self.horizontalLayout_31.setObjectName(u"horizontalLayout_31")
-        self.openProxy_2 = QPushButton(self.frame_5)
-        self.openProxy_2.setObjectName(u"openProxy_2")
+        self.openProxy = QPushButton(self.frame_5)
+        self.openProxy.setObjectName(u"openProxy")
 
-        self.horizontalLayout_31.addWidget(self.openProxy_2)
+        self.horizontalLayout_31.addWidget(self.openProxy)
 
         self.horizontalSpacer_28 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
@@ -1375,7 +1375,7 @@ class Ui_SettingNew(object):
         self.proxy2.setText(QCoreApplication.translate("SettingNew", u"Sock5\u4ee3\u7406", None))
         self.label_37.setText(QCoreApplication.translate("SettingNew", u"\u4ee3\u7406\u5730\u5740", None))
         self.proxy3.setText(QCoreApplication.translate("SettingNew", u"\u4f7f\u7528\u7cfb\u7edf\u4ee3\u7406", None))
-        self.openProxy_2.setText(QCoreApplication.translate("SettingNew", u"\u6253\u5f00\u5206\u6d41\u8bbe\u7f6e", None))
+        self.openProxy.setText(QCoreApplication.translate("SettingNew", u"\u6253\u5f00\u5206\u6d41\u8bbe\u7f6e", None))
         self.label_30.setText(QCoreApplication.translate("SettingNew", u"Doh DNS\u914d\u7f6e\uff08\u542f\u7528\u540e\u80fd\u907f\u514dSNI\u963b\u65ad\u548cDNS\u62e6\u622a\uff0c\u5982\u679c\u4f7f\u7528\u4e86\u4ee3\u7406\uff0c\u53ef\u4e0d\u542f\u7528\uff09\uff1a", None))
         self.dohRadio.setText(QCoreApplication.translate("SettingNew", u"Api\u542f\u7528Doh", None))
         self.dohPictureRadio.setText(QCoreApplication.translate("SettingNew", u"\u56fe\u7247\u542f\u7528Doh\uff08\u5f00\u542f\u4f1a\u52a0\u957f\u56fe\u7247\u52a0\u8f7d\u901f\u5ea6\uff09", None))

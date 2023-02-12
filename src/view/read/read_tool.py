@@ -174,8 +174,13 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
     def _NextPage(self):
         epsId = self.readImg.epsId
         bookId = self.readImg.bookId
+        bookInfo = BookMgr().books.get(bookId)
+
         if self.curIndex >= self.maxPic - 1:
-            if self.readImg.isOffline:
+            if self.readImg.isLocal:
+                QtOwner().ShowMsg(Str.GetStr(Str.AlreadyNextPage))
+                return
+            elif self.readImg.isOffline:
                 if not QtOwner().downloadView.IsDownloadEpsId(self.readImg.bookId, self.readImg.epsId + 1):
                     QtOwner().ShowMsg(Str.GetStr(Str.NotDownload))
                     return
@@ -220,7 +225,10 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
         bookId = self.readImg.bookId
 
         if self.curIndex <= 0:
-            if self.readImg.isOffline:
+            if self.readImg.isLocal:
+                QtOwner().ShowMsg(Str.GetStr(Str.AlreadyLastPage))
+                return
+            elif self.readImg.isOffline:
                 if not QtOwner().downloadView.IsDownloadEpsId(self.readImg.bookId, self.readImg.epsId - 1):
                     QtOwner().ShowMsg(Str.GetStr(Str.NotDownload))
                     return
@@ -305,7 +313,9 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
             self.readImg.SetIsWaifu2x(1)
         else:
             self.readImg.SetIsWaifu2x(0)
-        self.scrollArea.changeScale.emit(self.scaleCnt)
+        # self.scrollArea.changeScale.emit(self.scaleCnt)
+        self.readImg.ShowImg()
+        self.readImg.CheckLoadPicture()
         return
 
     def OpenPreDownloadWaifu2x(self):
@@ -319,7 +329,11 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
                 QtOwner().ShowMsg(Str.GetStr(Str.NotRecommendWaifu2x))
         else:
             Setting.IsOpenWaifu.SetValue(0)
-        self.scrollArea.changeScale.emit(self.scaleCnt)
+
+        self.readImg.ShowImg()
+        self.readImg.ShowOtherPage()
+        self.readImg.CheckLoadPicture()
+        # self.scrollArea.changeScale.emit(self.scaleCnt)
         return
 
     def UpdateText(self, model):
@@ -335,11 +349,10 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
         bookInfo = BookMgr().GetBook(bookId)
 
         epsId -= 1
-        if self.readImg.isOffline:
-            QtOwner().ShowMsg(Str.GetStr(Str.OfflineModel))
+        if self.readImg.isLocal:
+            QtOwner().ShowMsg(Str.GetStr(Str.AlreadyLastChapter))
             return
-
-        if self.readImg.isOffline:
+        elif self.readImg.isOffline:
             if not QtOwner().downloadView.IsDownloadEpsId(self.readImg.bookId, self.readImg.epsId - 1):
                 QtOwner().ShowMsg(Str.GetStr(Str.NotDownload))
                 return
@@ -361,12 +374,10 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
         bookId = self.readImg.bookId
         bookInfo = BookMgr().GetBook(bookId)
         epsId += 1
-
-        if self.readImg.isOffline:
-            QtOwner().ShowMsg(Str.GetStr(Str.OfflineModel))
+        if self.readImg.isLocal:
+            QtOwner().ShowMsg(Str.GetStr(Str.AlreadyNextChapter))
             return
-
-        if self.readImg.isOffline:
+        elif self.readImg.isOffline:
             if not QtOwner().downloadView.IsDownloadEpsId(self.readImg.bookId, self.readImg.epsId + 1):
                 QtOwner().ShowMsg(Str.GetStr(Str.NotDownload))
                 return
@@ -475,13 +486,22 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
         self.scaleBox.setVisible(isVisibel)
         self.modelBox.setVisible(isVisibel)
 
+    def ScalePicture2(self, value):
+        self.zoomSlider.setValue(value)
+
     def ScalePicture(self, value):
         self.zoomLabel.setText(Str.GetStr(Str.Scale)+"（{}%）".format(str(value)))
         scaleV = value//10-10
+        oldV = self.imgFrame.scaleCnt
         if self.imgFrame.scaleCnt == scaleV:
             return
         self.imgFrame.scaleCnt = scaleV
-        self.readImg.scrollArea.changeScale.emit(scaleV)
+
+        changeV = scaleV - oldV
+        if scaleV == 0:
+            self.scrollArea.ScaleReset(oldV)
+        else:
+            self.readImg.scrollArea.changeScale.emit(changeV)
 
     def eventFilter(self, obj, ev):
         if ev.type() == QEvent.KeyRelease:
@@ -493,22 +513,22 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
     def ChangeReadMode(self, index):
         self.stripModel = ReadMode(index)
         if self.stripModel == ReadMode.LeftRight:
-            self.zoomSlider.setValue(100)
-            self.scaleCnt = 0
+            self.ScalePicture2(100)
+            # self.zoomSlider.setValue(100)
             # properties = QScroller.scroller(self.readImg.scrollArea).scrollerProperties()
             # properties.setScrollMetric(QScrollerProperties.HorizontalOvershootPolicy, 2)
             # properties.setScrollMetric(QScrollerProperties.VerticalOvershootPolicy, 2)
             # QScroller.scroller(self.readImg.scrollArea).setScrollerProperties(properties)
         elif ReadMode.isDouble(self.stripModel):
-            self.zoomSlider.setValue(100)
-            self.scaleCnt = 0
+            self.ScalePicture2(100)
+            # self.zoomSlider.setValue(100)
             # properties = QScroller.scroller(self.readImg.scrollArea).scrollerProperties()
             # properties.setScrollMetric(QScrollerProperties.HorizontalOvershootPolicy, 2)
             # properties.setScrollMetric(QScrollerProperties.VerticalOvershootPolicy, 2)
             # QScroller.scroller(self.readImg.scrollArea).setScrollerProperties(properties)
         elif self.stripModel in [ReadMode.RightLeftScroll, ReadMode.LeftRightScroll]:
-            self.zoomSlider.setValue(100)
-            self.scaleCnt = 0
+            self.ScalePicture2(100)
+            # self.zoomSlider.setValue(100)
             # properties = QScroller.scroller(self.readImg.scrollArea).scrollerProperties()
             # properties.setScrollMetric(QScrollerProperties.HorizontalOvershootPolicy, 2)
             # properties.setScrollMetric(QScrollerProperties.VerticalOvershootPolicy, 1)
@@ -517,15 +537,15 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
             # self.imgFrame.graphicsView.horizontalScrollBar().blockSignals(False)
 
         else:
-            self.zoomSlider.setValue(100)
-            self.scaleCnt = 0
+            self.ScalePicture2(100)
+            # self.zoomSlider.setValue(100)
             # properties = QScroller.scroller(self.readImg.scrollArea).scrollerProperties()
             # properties.setScrollMetric(QScrollerProperties.HorizontalOvershootPolicy, 1)
             # properties.setScrollMetric(QScrollerProperties.VerticalOvershootPolicy, 2)
             # QScroller.scroller(self.readImg.scrollArea).setScrollerProperties(properties)
             # self.imgFrame.graphicsView.verticalScrollBar().blockSignals(False)
             # self.imgFrame.graphicsView.horizontalScrollBar().blockSignals(True)
-
+        self.ClearQImage()
         self.readImg.scrollArea.InitAllQLabel(self.readImg.maxPic, self.readImg.curIndex)
         self.readImg.CheckLoadPicture()
         self.readImg.ShowImg()
@@ -534,6 +554,19 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
         Setting.LookReadMode.SetValue(index)
         # QtOwner().SetV("Read/LookReadMode", config.LookReadMode)
         self.imgFrame.InitHelp()
+
+    def ClearQImage(self):
+        for index, v in self.readImg.pictureData.items():
+            assert isinstance(v, QtFileData)
+            v.cacheWaifu2xImage = None
+            v.cacheImage = None
+            if v.cacheImageTaskId:
+                self.readImg.ClearQImageTaskById(v.cacheImageTaskId)
+            if v.cacheWaifu2xImageTaskId:
+                self.readImg.ClearQImageTaskById(v.cacheWaifu2xImageTaskId)
+
+            self.readImg.CheckToQImage(index, v, False)
+            self.readImg.CheckToQImage(index, v, True)
 
     def SwitchScrollAndTurn(self):
         if self.IsStartScrollAndTurn():

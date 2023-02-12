@@ -26,6 +26,10 @@ class ReadMode(Enum):
     def isRightLeft(model):
         return model in [ReadMode.RightLeftDouble, ReadMode.RightLeftDouble2, ReadMode.RightLeftScroll]
 
+    @staticmethod
+    def isScroll(model):
+        return model in [ReadMode.UpDown, ReadMode.LeftRightScroll, ReadMode.RightLeftScroll]
+
 
 class QtFileData(object):
     Downloading = Str.Downloading
@@ -59,7 +63,11 @@ class QtFileData(object):
         self.model = {}
 
         self.cacheImage = None
+        self.cacheImageScale = ""
+        self.cacheImageTaskId = 0
         self.cacheWaifu2xImage = None
+        self.cacheWaifu2xImageScale = ""
+        self.cacheWaifu2xImageTaskId = 0
 
         self.downloadSize = 0
         self.isGif = False

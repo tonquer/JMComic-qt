@@ -117,6 +117,7 @@ class MainView(Main, QtTaskBase):
         self.navigationWidget.myCommentButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.myCommentView)))
         self.navigationWidget.historyButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.historyView)))
         self.navigationWidget.remoteHistoryButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.remoteHistoryView)))
+        self.navigationWidget.localReadButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.localReadView)))
 
     def RetranslateUi(self):
         Main.retranslateUi(self, self)
@@ -185,7 +186,7 @@ class MainView(Main, QtTaskBase):
         self.msgLabel = MsgLabel(self)
         self.msgLabel.hide()
         self.AddHttpTask(req.LoginPreReq())
-        QtReadImgPoolManager().Init()
+        # QtReadImgPoolManager().Init()
 
         if not Setting.SavePath.value:
             view = DownloadDirView(self)

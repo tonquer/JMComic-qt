@@ -26,6 +26,7 @@ from view.comment.all_comment_view import AllCommentView
 from view.comment.comment_view import CommentView
 from view.comment.my_comment_view import MyCommentView
 from view.comment.sub_comment_view import SubCommentView
+from view.download.download_all_view import DownloadAllView
 from view.download.download_view import DownloadView
 from view.help.help_view import HelpView
 from view.history.history_view import HistoryView
@@ -36,6 +37,7 @@ from view.info.book_info_view import BookInfoView
 from view.read.read_view import ReadView
 from view.search.search_view import SearchView
 from view.setting.setting_view import SettingView
+from view.tool.local_read_view import LocalReadView
 from view.tool.waifu2x_tool_view import Waifu2xToolView
 from view.user.favorite_view import FavoriteView
 
@@ -93,6 +95,12 @@ class Ui_Main(object):
         self.indexView = IndexView()
         self.indexView.setObjectName(u"indexView")
         self.subStackWidget.addWidget(self.indexView)
+        self.localReadView = LocalReadView()
+        self.localReadView.setObjectName(u"localReadView")
+        self.subStackWidget.addWidget(self.localReadView)
+        self.downloadAllView = DownloadAllView()
+        self.downloadAllView.setObjectName(u"downloadAllView")
+        self.subStackWidget.addWidget(self.downloadAllView)
         self.helpView = HelpView()
         self.helpView.setObjectName(u"helpView")
         self.subStackWidget.addWidget(self.helpView)

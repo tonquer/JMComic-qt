@@ -7,4 +7,5 @@ bs4==0.0.1
 lxml==4.6.4
 pycryptodomex==3.12.0
 Pysocks==1.7.1
+natsort==8.2.0
 # pywin32==302

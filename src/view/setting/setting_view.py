@@ -16,6 +16,7 @@ from qt_owner import QtOwner
 from tools.log import Log
 from tools.str import Str
 from view.tool.doh_dns_view import DohDnsView
+from view.user.login_view import LoginView
 
 
 class SettingView(QtWidgets.QWidget, Ui_SettingNew):
@@ -92,6 +93,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.openCacheDir.clicked.connect(partial(self.OpenDir, self.cacheDir))
         self.openWaifu2xDir.clicked.connect(partial(self.OpenDir, self.waifu2xDir))
 
+        self.openProxy.clicked.connect(self.OpenProxy)
         # TODO
         self.languageButton3.setVisible(False)
         self.categorySize.setVisible(False)
@@ -233,6 +235,18 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.downScale.setValue(Setting.DownloadScale.value)
         self.downModel.setCurrentIndex(Setting.DownloadModel.value)
         self.SetDownloadLabel()
+
+    def OpenProxy(self):
+        loginView = LoginView(QtOwner().owner, False)
+        loginView.tabWidget.setCurrentIndex(3)
+        loginView.tabWidget.removeTab(0)
+        loginView.tabWidget.removeTab(0)
+        loginView.tabWidget.removeTab(0)
+        loginView.loginButton.setText(Str.GetStr(Str.Save))
+        loginView.show()
+
+        loginView.closed.connect(QtOwner().owner.navigationWidget.UpdateProxyName)
+        return
 
     def retranslateUi(self, SettingNew):
         Ui_SettingNew.retranslateUi(self, SettingNew)

@@ -835,6 +835,13 @@ class ToolUtil(object):
             num = 0
         elif epsId < 268850:
             num = 10
+        elif epsId > 421926:
+            string = str(epsId) + pictureName
+            string = string.encode()
+            string = hashlib.md5(string).hexdigest()
+            num = ord(string[-1])
+            num %= 8
+            num = num * 2 + 2
         else:
             string = str(epsId) + pictureName
             string = string.encode()

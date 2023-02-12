@@ -73,6 +73,7 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
 
     def UpdateProxyName(self):
         self.proxyName.setText("分流{}".format(str(Setting.ProxySelectIndex.value)))
+        self.proxyImgName.setText("分流{}".format(str(Setting.ProxyImgSelectIndex.value)))
 
     # def UpdateUserBack(self, raw):
     #     st = raw["st"]

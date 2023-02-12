@@ -68,6 +68,7 @@ jobs:
         pip install Pysocks==1.7.1
         pip install bs4==0.0.1
         pip install lxml==4.6.4
+        pip install natsort==8.2.0
         pip install pycryptodomex==3.12.0
         pip install waifu2x-vulkan==1.1.5
     - name: Build

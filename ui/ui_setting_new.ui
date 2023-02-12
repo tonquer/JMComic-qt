@@ -95,7 +95,7 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>-377</y>
+          <y>-1004</y>
           <width>661</width>
           <height>2896</height>
          </rect>
@@ -1049,7 +1049,7 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_31">
               <item>
-               <widget class="QPushButton" name="openProxy_2">
+               <widget class="QPushButton" name="openProxy">
                 <property name="text">
                  <string>打开分流设置</string>
                 </property>
@@ -2483,12 +2483,12 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="mainScaleGroup"/>
-  <buttongroup name="languageGroup"/>
-  <buttongroup name="saveNameGroup"/>
-  <buttongroup name="logGroup"/>
   <buttongroup name="proxyGroup"/>
+  <buttongroup name="languageGroup"/>
+  <buttongroup name="mainScaleGroup"/>
+  <buttongroup name="saveNameGroup"/>
   <buttongroup name="themeGroup"/>
   <buttongroup name="showCloseButtonGroup"/>
+  <buttongroup name="logGroup"/>
  </buttongroups>
 </ui>

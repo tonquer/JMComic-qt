@@ -104,6 +104,8 @@ class Setting:
     DohAddress = SettingValue("ProxySetting", "https://101.6.6.6:8443/dns-query", True)
     ApiVersion = SettingValue("ProxySetting", 0, False)
 
+    ProxyImgSelectIndex = SettingValue("ProxySetting", 1, False)
+
     # 下载与缓存
     SavePath = SettingValue("DownloadSetting", "", False)
     SaveNameType = SettingValue("DownloadSetting", 0, False)
@@ -147,6 +149,7 @@ class Setting:
     SavePassword = SettingValue("Other", 1, False)
     IsShowCmd = SettingValue("Other", 0, False)
     IsReDownload = SettingValue("Other", 0, False)
+    IsPreUpdate = SettingValue("Other", 0, False)
 
     # IpbMemberId = SettingValue("Other", "", False)
     # IpbPassHash = SettingValue("Other", "", False)
@@ -192,6 +195,13 @@ class Setting:
             os.mkdir(path)
         Setting.CheckRepair()
         return
+
+    @staticmethod
+    def GetLocalHomePath():
+        from PySide6.QtCore import QDir
+        homePath = QDir.homePath()
+        projectName = ".comic-qt"
+        return os.path.join(homePath, projectName)
 
     @staticmethod
     def GetConfigPath():

@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from PySide6 import QtWidgets
 from PySide6.QtCore import QUrl
 from PySide6.QtGui import QDesktopServices
@@ -21,17 +23,27 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         self.speedTest = []
         self.speedIndex = 0
         self.speedPingNum = 0
-        self.buttonGroup.setId(self.radioButton_1, 1)
-        self.buttonGroup.setId(self.radioButton_2, 2)
-        self.buttonGroup.setId(self.radioButton_3, 3)
-        self.buttonGroup.setId(self.radioButton_4, 4)
+
+        self.pingBackNumCnt = {}
+        self.pingBackNumDict = {}
+        self.needBackNum = 0
+
+        self.radioApiGroup.setId(self.radioButton_1, 1)
+        self.radioApiGroup.setId(self.radioButton_2, 2)
+        self.radioApiGroup.setId(self.radioButton_3, 3)
+        self.radioApiGroup.setId(self.radioButton_4, 4)
+
+        self.radioImgGroup.setId(self.radio_img_1, 1)
+        self.radioImgGroup.setId(self.radio_img_2, 2)
+        self.radioImgGroup.setId(self.radio_img_3, 3)
+        self.radioImgGroup.setId(self.radio_img_4, 4)
         # self.buttonGroup.setId(self.radioButton_5, 5)
         self.testSpeedButton.clicked.connect(self.SpeedTest)
 
-        self.buttonGroup_2.setId(self.proxy_0, 0)
-        self.buttonGroup_2.setId(self.proxy_1, 1)
-        self.buttonGroup_2.setId(self.proxy_2, 2)
-        self.buttonGroup_2.setId(self.proxy_3, 2)
+        self.radioProxyGroup.setId(self.proxy_0, 0)
+        self.radioProxyGroup.setId(self.proxy_1, 1)
+        self.radioProxyGroup.setId(self.proxy_2, 2)
+        self.radioProxyGroup.setId(self.proxy_3, 3)
         self.LoadSetting()
         self.UpdateServer()
 
@@ -55,6 +67,10 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         self.radioButton_2.setEnabled(enabled)
         self.radioButton_3.setEnabled(enabled)
         self.radioButton_4.setEnabled(enabled)
+        self.radio_img_1.setEnabled(enabled)
+        self.radio_img_2.setEnabled(enabled)
+        self.radio_img_3.setEnabled(enabled)
+        self.radio_img_4.setEnabled(enabled)
         # self.radioButton_5.setEnabled(enabled)
 
     def LoadSetting(self):
@@ -66,12 +82,15 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         button.setChecked(True)
         button = getattr(self, "proxy_{}".format(int(Setting.IsHttpProxy.value)))
         button.setChecked(True)
+        button = getattr(self, "radio_img_{}".format(int(Setting.ProxyImgSelectIndex.value)))
+        button.setChecked(True)
 
     def SaveSetting(self):
-        Setting.IsHttpProxy.SetValue(int(self.buttonGroup_2.checkedId()))
+        Setting.IsHttpProxy.SetValue(int(self.radioProxyGroup.checkedId()))
         Setting.Sock5Proxy.SetValue(self.sockEdit.text())
         Setting.HttpProxy.SetValue(self.httpLine.text())
-        Setting.ProxySelectIndex.SetValue(self.buttonGroup.checkedId())
+        Setting.ProxySelectIndex.SetValue(self.radioApiGroup.checkedId())
+        Setting.ProxyImgSelectIndex.SetValue(self.radioImgGroup.checkedId())
         Setting.DohAddress.SetValue(self.dohEdit.text())
         Setting.IsOpenDoh.SetValue(int(self.dohBox.isChecked()))
         self.UpdateServer()
@@ -92,8 +111,10 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         self.speedPingNum = 0
         self.speedTest = []
 
-        for i in range(1, 9):
-            label = getattr(self, "label" + str(i))
+        for i in range(1, 5):
+            label = getattr(self, "label_api_" + str(i))
+            label.setText("")
+            label = getattr(self, "label_img_" + str(i))
             label.setText("")
 
         i = 1
@@ -101,10 +122,10 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
             imageUrl = config.PicUrlList[index]
             self.speedTest.append((address, imageUrl, False, False, i))
             i += 1
-            self.speedTest.append((address, imageUrl, True, False, i))
-            i += 1
 
         self.SetEnabled(False)
+        self.needBackNum = 0
+        self.speedPingNum = 0
         self.StartSpeedPing()
 
     def StartSpeedPing(self):
@@ -113,47 +134,77 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
             return
         address, imageProxy, isHttpProxy, isProxyUrl, i = self.speedTest[self.speedPingNum]
         httpProxy = self.httpLine.text()
-        if isHttpProxy and (self.buttonGroup_2.checkedId() == 0 or
-                            (self.buttonGroup_2.checkedId() == 1 and not self.httpLine.text()) or
-                            (self.buttonGroup_2.checkedId() == 2 and not self.sockEdit.text())):
-            label = getattr(self, "label"+str(i))
+        if ((self.radioProxyGroup.checkedId() == 1 and not self.httpLine.text()) or
+                            (self.radioProxyGroup.checkedId() == 2 and not self.sockEdit.text())):
+            label = getattr(self, "label_api_"+str(i))
             label.setText(Str.GetStr(Str.NoProxy))
             self.speedPingNum += 1
             self.StartSpeedPing()
             return
 
         request = req.SpeedTestPingReq()
-        if isHttpProxy and self.buttonGroup_2.checkedId() == 1:
+        if self.radioProxyGroup.checkedId() == 1:
             request.proxy = {"http": httpProxy, "https": httpProxy}
-        elif isHttpProxy and self.buttonGroup_2.checkedId() == 3:
+        elif self.radioProxyGroup.checkedId() == 3:
             request.proxy = ""
         else:
             request.proxy = {"http": None, "https": None}
 
         if isProxyUrl:
+            if "user-agent" in request.headers:
+                request.headers.pop("user-agent")
             request.proxyUrl = config.ProxyApiDomain
         else:
             request.proxyUrl = ""
 
-        if isHttpProxy and self.buttonGroup_2.checkedId() == 2:
+        if self.radioProxyGroup.checkedId() == 2:
             self.SetSock5Proxy(True)
         else:
             self.SetSock5Proxy(False)
+
         request.timeout = 2
         request.url = request.url.replace(config.Url2, address)
-        self.AddHttpTask(request, self.SpeedTestPingBack, i)
+        self.pingBackNumCnt[i] = 0
+        self.pingBackNumDict[i] = [0, 0, 0]
+        request1 = deepcopy(request)
+        request2 = deepcopy(request)
+        self.AddHttpTask(lambda x: Server().TestSpeedPing(request, x), self.SpeedTestPingBack, (i, 0))
+        self.AddHttpTask(lambda x: Server().TestSpeedPing(request1, x), self.SpeedTestPingBack, (i, 1))
+        self.AddHttpTask(lambda x: Server().TestSpeedPing(request2, x), self.SpeedTestPingBack, (i, 2))
+        self.needBackNum += 1
         return
 
-    def SpeedTestPingBack(self, raw, i):
+    def SpeedTestPingBack(self, raw, v):
+        i, backNum = v
         data = raw["data"]
-        label = getattr(self, "label" + str(i))
+        st = raw["st"]
+        label = getattr(self, "label_api_" + str(i))
         if float(data) > 0.0:
-            label.setText("<font color=#7fb80e>{}</font>".format(str(int(float(data)*500)) + "ms") + "/")
+            self.pingBackNumDict[i][backNum] = int(float(data))
+            label.setText("<font color=#7fb80e>{}</font>".format(str(int(float(data))) + "ms"))
         else:
-            label.setText("<font color=#d71345>{}</font>".format("fail") + "/")
-        self.speedPingNum += 1
-        self.StartSpeedPing()
-        return
+            self.pingBackNumDict[i][backNum] = str(st)
+            label.setText("<font color=#d71345>{}</font>".format(Str.GetStr(st)))
+        self.pingBackNumCnt[i] += 1
+
+        if self.pingBackNumCnt[i] >= 3:
+            sumData = 0
+            sumCnt = 0
+            sumSt = 0
+            for data in self.pingBackNumDict[i]:
+                if isinstance(data, int):
+                    sumData += data
+                    sumCnt += 1
+                else:
+                    sumSt = data
+            if sumCnt >= 1:
+                label.setText("<font color=#7fb80e>{}</font>".format(str(int(float(sumData / sumCnt))) + "ms"))
+            else:
+                label.setText("<font color=#d71345>{}</font>".format(Str.GetStr(int(sumSt))))
+
+            self.speedPingNum += 1
+            self.StartSpeedPing()
+            return
 
     def StartSpeedTest(self):
         if len(self.speedTest) <= self.speedIndex:
@@ -163,43 +214,48 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
 
         address, imgUrl, isHttpProxy, isProxyUrl, i = self.speedTest[self.speedIndex]
         httpProxy = self.httpLine.text()
-        if isHttpProxy and (self.buttonGroup_2.checkedId() == 0 or
-                            (self.buttonGroup_2.checkedId() == 1 and not self.httpLine.text()) or
-                            (self.buttonGroup_2.checkedId() == 2 and not self.sockEdit.text())):
-            label = getattr(self, "label" + str(i))
+        if ((self.radioProxyGroup.checkedId() == 1 and not self.httpLine.text()) or
+                            (self.radioProxyGroup.checkedId() == 2 and not self.sockEdit.text())):
+            label = getattr(self, "label_img_" + str(i))
             label.setText(Str.GetStr(Str.NoProxy))
             self.speedIndex += 1
             self.StartSpeedTest()
             return
 
         request = req.SpeedTestReq()
-        if isHttpProxy and self.buttonGroup_2.checkedId() == 1:
+        request.isUseHttps = self.httpsBox.isChecked()
+        if self.radioProxyGroup.checkedId() == 1:
             request.proxy = {"http": httpProxy, "https": httpProxy}
-        else:
+        elif self.radioProxyGroup.checkedId() == 3:
             request.proxy = ""
+        else:
+            request.proxy = {"http": None, "https": None}
 
         if isProxyUrl:
+            if "user-agent" in request.headers:
+                request.headers.pop("user-agent")
             request.proxyUrl = config.ProxyImgDomain
         else:
             request.proxyUrl = ""
 
-        if isHttpProxy and self.buttonGroup_2.checkedId() == 2:
+        if self.radioProxyGroup.checkedId() == 2:
             self.SetSock5Proxy(True)
         else:
             self.SetSock5Proxy(False)
-        request.timeout = 2
+
         request.url = request.url.replace(config.PicUrl2, imgUrl)
-        self.AddHttpTask(request, self.SpeedTestBack, i)
+        self.AddHttpTask(lambda x: Server().TestSpeed(request, x), self.SpeedTestBack, i)
         return
 
     def SpeedTestBack(self, raw, i):
         data = raw["data"]
+        st = raw["st"]
         if not data:
-            data = "<font color=#d71345>fail</font>"
+            data = "<font color=#d71345>{}</font>".format(Str.GetStr(st))
         else:
             data = "<font color=#7fb80e>{}</font>".format(data)
-        label = getattr(self, "label" + str(i))
-        label.setText(label.text()+data)
+        label = getattr(self, "label_img_" + str(i))
+        label.setText(data)
         self.speedIndex += 1
         self.StartSpeedTest()
         return

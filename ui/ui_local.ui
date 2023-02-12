@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Favorite</class>
- <widget class="QWidget" name="Favorite">
+ <class>Local</class>
+ <widget class="QWidget" name="Local">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,10 +11,40 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>收藏</string>
+   <string>本地漫画</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="toolButton">
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>导入</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="2" column="0">
     <layout class="QGridLayout" name="gridLayout_3">
      <item row="0" column="0">
       <widget class="ComicListWidget" name="bookList">
@@ -25,7 +55,7 @@
      </item>
     </layout>
    </item>
-   <item row="1" column="0">
+   <item row="3" column="0">
     <layout class="QGridLayout" name="gridLayout_4">
      <item row="0" column="0">
       <layout class="QHBoxLayout" name="horizontalLayout">
@@ -37,25 +67,41 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="folderBox">
+        <widget class="QComboBox" name="sortKeyCombox">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
          <property name="minimumSize">
           <size>
-           <width>120</width>
+           <width>100</width>
            <height>0</height>
           </size>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="sortCombox">
          <item>
           <property name="text">
-           <string>收藏时间</string>
+           <string>上次阅读时间</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>更新时间</string>
+           <string>添加时间</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="sortIdCombox">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <item>
+          <property name="text">
+           <string>降序</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>升序</string>
           </property>
          </item>
         </widget>
@@ -171,7 +217,7 @@
   <connection>
    <sender>jumpButton</sender>
    <signal>clicked()</signal>
-   <receiver>Favorite</receiver>
+   <receiver>Local</receiver>
    <slot>JumpPage()</slot>
    <hints>
     <hint type="sourcelabel">

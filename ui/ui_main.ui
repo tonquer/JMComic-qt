@@ -87,6 +87,8 @@
           <item>
            <widget class="AnimationStackWidget" name="subStackWidget">
             <widget class="IndexView" name="indexView"/>
+            <widget class="LocalReadView" name="localReadView"/>
+            <widget class="DownloadAllView" name="downloadAllView"/>
             <widget class="HelpView" name="helpView"/>
             <widget class="SettingView" name="settingView"/>
             <widget class="SearchView" name="searchView"/>
@@ -228,6 +230,18 @@
    <class>RemoteHistoryView</class>
    <extends>QWidget</extends>
    <header location="global">view.history.remote_history_view.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>LocalReadView</class>
+   <extends>QWidget</extends>
+   <header location="global">view.tool.local_read_view.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>DownloadAllView</class>
+   <extends>QWidget</extends>
+   <header location="global">view.download.download_all_view.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -88,8 +88,7 @@ class ServerReq(object):
         return \
         {
             "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-            "Upgrade-Insecure-Requests": "1",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.56"
+            "Upgrade-Insecure-Requests": "1"
         }
     
     def ParseData(self, data) -> str:
@@ -111,7 +110,16 @@ class CheckUpdateReq(ServerReq):
         method = "GET"
         super(self.__class__, self).__init__(url, {}, method)
         self.isParseRes = False
-        self.headers = self.GetWebHeader()
+        self.headers = {}
+
+
+# 检查Pre更新
+class CheckPreUpdateReq(ServerReq):
+    def __init__(self, url=config.UpdateUrl):
+        method = "GET"
+        super(self.__class__, self).__init__(url.replace("/latest", ""), {}, method)
+        self.isParseRes = False
+        self.useImgProxy = False
 
 
 # 下载图片

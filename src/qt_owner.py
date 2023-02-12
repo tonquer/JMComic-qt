@@ -106,6 +106,10 @@ class QtOwner(Singleton):
         return self.owner.bookInfoView
 
     @property
+    def localReadView(self):
+        return self.owner.localReadView
+
+    @property
     def favoriteView(self):
         return self.owner.favorityView
 
@@ -156,6 +160,10 @@ class QtOwner(Singleton):
         arg = {"refresh": True}
         self.owner.SwitchWidget(self.owner.indexView, **arg)
 
+    def OpenDownloadAll(self, books):
+        arg = {"books": books}
+        self.owner.SwitchWidget(self.owner.downloadAllView, **arg)
+
     def OpenSubComment(self, commentId, widget, commentList):
         # self.owner.subCommentView.SetOpenEvent(commentId, widget)
         arg = {"bookId": commentId, "commentList": commentList}
@@ -194,6 +202,10 @@ class QtOwner(Singleton):
         self.owner.totalStackWidget.setCurrentIndex(1)
         self.owner.readView.OpenPage(bookId, index, pageIndex=pageIndex, isOffline=isOffline)
 
+    def OpenLocalReadView(self, v):
+        self.owner.totalStackWidget.setCurrentIndex(1)
+        self.owner.readView.OpenLocalPage(v)
+
     def CloseReadView(self):
         self.owner.totalStackWidget.setCurrentIndex(0)
         QtOwner().bookInfoView.ReloadHistory.emit()
@@ -206,6 +218,9 @@ class QtOwner(Singleton):
         # self.owner.subCommentView.SetOpenEvent(commentId, widget)
         arg = {"bookId": bookId, "bookName": bookName}
         self.owner.SwitchWidget(self.owner.bookInfoView, **arg)
+
+    def OpenLocalBook(self, bookId):
+        self.owner.localReadView.OpenLocalBook(bookId)
 
     def OpenEpsInfo(self, bookId):
         # self.owner.subCommentView.SetOpenEvent(commentId, widget)

@@ -29,8 +29,8 @@ class ComicListWidget(BaseListWidget):
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.itemClicked.connect(self.SelectItem)
         self.isDelMenu = False
-        self.isMoveMenu = False
         self.isGame = False
+        self.isLocal = False
 
     def SelectMenuBook(self, pos):
         index = self.indexAt(pos)
@@ -38,8 +38,11 @@ class ComicListWidget(BaseListWidget):
         if index.isValid() and widget:
             assert isinstance(widget, ComicItemWidget)
             popMenu = QMenu(self)
-            action = popMenu.addAction(Str.GetStr(Str.Open))
-            action.triggered.connect(partial(self.OpenBookInfoHandler, index))
+
+            if not self.isLocal:
+                action = popMenu.addAction(Str.GetStr(Str.Open))
+                action.triggered.connect(partial(self.OpenBookInfoHandler, index))
+
             action = popMenu.addAction(Str.GetStr(Str.LookCover))
             action.triggered.connect(partial(self.OpenPicture, index))
             action = popMenu.addAction(Str.GetStr(Str.ReDownloadCover))
@@ -55,11 +58,15 @@ class ComicListWidget(BaseListWidget):
                     action.triggered.connect(partial(self.CancleWaifu2xPicture, index))
             action = popMenu.addAction(Str.GetStr(Str.CopyTitle))
             action.triggered.connect(partial(self.CopyHandler, index))
-            action = popMenu.addAction(Str.GetStr(Str.Download))
-            action.triggered.connect(partial(self.DownloadHandler, index))
-            if self.isMoveMenu:
-                action = popMenu.addAction(Str.GetStr(Str.Move))
-                action.triggered.connect(partial(self.MoveHandler, index))
+
+            if not self.isLocal:
+                action = popMenu.addAction(Str.GetStr(Str.Download))
+                action.triggered.connect(partial(self.DownloadHandler, index))
+
+                # if not self.isGame:
+                #     action = popMenu.addAction(Str.GetStr(Str.DownloadAll))
+                #     action.triggered.connect(self.OpenBookDownloadAll)
+
             if self.isDelMenu:
                 action = popMenu.addAction(Str.GetStr(Str.Delete))
                 action.triggered.connect(partial(self.DelHandler, index))
@@ -75,6 +82,37 @@ class ComicListWidget(BaseListWidget):
         categories = ",".join(v.baseInfo.tagList)
         self.AddBookItem(_id, title, categories, url)
 
+    def AddBookByLocal(self, v, isFirstAdd=False):
+        from task.task_local import LocalData
+        assert isinstance(v, LocalData)
+        index = self.count()
+        widget = ComicItemWidget()
+        widget.setFocusPolicy(Qt.NoFocus)
+        widget.id = v.id
+        title = v.title
+        widget.index = index
+        widget.title = v.title
+        widget.picNum = v.picCnt
+        widget.url = v.file
+        title += "<font color=#d5577c>{}</font>".format("(" + str(v.picCnt) + "P)")
+        if v.lastReadTime:
+            categories = "{} {}".format(ToolUtil.GetUpdateStrByTick(v.lastReadTime), Str.GetStr(Str.Looked))
+
+            widget.timeLabel.setText(categories)
+        else:
+            widget.timeLabel.setVisible(False)
+
+        # widget.toolButton.setVisible(False)
+        widget.categoryLabel.setVisible(False)
+        widget.starButton.setVisible(False)
+        widget.nameLable.setText(title)
+        item = QListWidgetItem(self)
+        item.setFlags(item.flags() & ~Qt.ItemIsSelectable)
+        item.setSizeHint(widget.sizeHint())
+        self.setItemWidget(item, widget)
+        widget.picLabel.setText(Str.GetStr(Str.LoadingPicture))
+        widget.PicLoad.connect(self.LoadingPicture)
+
     def AddBookItemByHistory(self, v):
         _id = v.bookId
         title = v.name
@@ -87,6 +125,9 @@ class ComicListWidget(BaseListWidget):
         index = self.count()
         widget = ComicItemWidget()
         widget.setFocusPolicy(Qt.NoFocus)
+        widget.title = title
+        widget.category = categoryStr
+
         widget.id = _id
         widget.url = url
         widget.index = index
@@ -155,6 +196,8 @@ class ComicListWidget(BaseListWidget):
         assert isinstance(widget, ComicItemWidget)
         if self.isGame:
             QtOwner().OpenGameInfo(widget.id)
+        elif self.isLocal:
+            QtOwner().OpenLocalBook(widget.id)
         else:
             QtOwner().OpenBookInfo(widget.id, widget.GetTitle())
         return
@@ -187,13 +230,16 @@ class ComicListWidget(BaseListWidget):
 
     def Waifu2xPicture(self, index, isIfSize=False):
         widget = self.indexWidget(index)
+        assert isinstance(widget, ComicItemWidget)
         if widget and widget.picData:
-            assert isinstance(widget, ComicItemWidget)
-            w, h, mat, _ = ToolUtil.GetPictureSize(widget.picData)
+            w, h, mat,_ = ToolUtil.GetPictureSize(widget.picData)
             if max(w, h) <= Setting.CoverMaxNum.value or not isIfSize:
                 model = ToolUtil.GetModelByIndex(Setting.CoverLookNoise.value, Setting.CoverLookScale.value, Setting.CoverLookModel.value, mat)
                 widget.isWaifu2xLoading = True
-                self.AddConvertTask(widget.path, widget.picData, model, self.Waifu2xPictureBack, index)
+                if self.isLocal:
+                    self.AddConvertTask(widget.path, widget.picData, model, self.Waifu2xPictureBack, index, noSaveCache=True)
+                else:
+                    self.AddConvertTask(widget.path, widget.picData, model, self.Waifu2xPictureBack, index)
 
     def CancleWaifu2xPicture(self, index):
         widget = self.indexWidget(index)
@@ -223,11 +269,14 @@ class ComicListWidget(BaseListWidget):
         if widget:
             assert isinstance(widget, ComicItemWidget)
             self.MoveCallBack(widget.id)
+    def OpenBookDownloadAll(self):
+        from view.download.download_all_item import DownloadAllItem
+        allData = DownloadAllItem.MakeAllItem(self)
+        QtOwner().OpenDownloadAll(allData)
 
     def DelHandler(self, index):
         widget = self.indexWidget(index)
         if widget:
-            assert isinstance(widget, ComicItemWidget)
             self.DelCallBack(widget.id)
 
     def DelCallBack(self, cfgId):
@@ -239,6 +288,5 @@ class ComicListWidget(BaseListWidget):
     def DownloadHandler(self, index):
         widget = self.indexWidget(index)
         if widget:
-            assert isinstance(widget, ComicItemWidget)
             QtOwner().OpenEpsInfo(widget.id)
         pass

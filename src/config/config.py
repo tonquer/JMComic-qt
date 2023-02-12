@@ -1,6 +1,9 @@
 import time
 
-Url = "https://jmcomic.ggo.icu"       # 域名
+Url = "https://jmcomic1.group/"       # 域名
+UrlBack = "https://jmcomic.ggo.icu/"       # 域名
+
+
 # Url = "https://jmcomic1.cc"       # 域名
 Url2 = "https://www.asjmapihost.cc"       # 域名
 # Url2 = "https://www.jmapibranch3.cc"       # 域名
@@ -27,16 +30,21 @@ PreLook = 4                    # 预显示
 
 IsLoadingPicture = True
 
-UpdateUrl2 = "https://github.com/tonquer/JMComic-qt/releases/latest"
-UpdateUrl2Back = "https://github.com/tonquer/JMComic-qt/"
-UpdateUrl = "https://hub2.ggo.icu/tonquer/JMComic-qt/releases/latest"
-UpdateUrlBack = "https://hub2.ggo.icu/tonquer/JMComic-qt/"
-UpdateUrl3 = "https://hub.bika.life/tonquer/JMComic-qt/releases/latest"
-UpdateUrl3Back = "https://hub.bika.life/tonquer/JMComic-qt/"
+UpdateUrl = "https://github.com/tonquer/JMComic-qt/releases/latest"
+UpdateUrlApi = "https://api.github.com/repos/tonquer/JMComic-qt/releases"
+UpdateUrlBack = "https://github.com/tonquer/JMComic-qt/"
 
-UpdateVersion = "v1.0.7"
-RealVersion = "v1.0.7"
-VersionTime = "2022-11-27"
+UpdateUrl2 = "https://hub.ggo.icu/tonquer/JMComic-qt/releases/latest"
+UpdateUrl2Api = "https://api.ggo.icu/repos/tonquer/JMComic-qt/releases"
+UpdateUrl2Back = "https://hub.ggo.icu/tonquer/JMComic-qt/"
+
+UpdateUrl3 = "https://hub.fastgit.xyz/tonquer/JMComic-qt/releases/latest"
+UpdateUrl3Api = "https://api.fastgit.xyz/repos/tonquer/JMComic-qt/releases"
+UpdateUrl3Back = "https://hub.fastgit.xyz/tonquer/JMComic-qt"
+
+UpdateVersion = "v1.0.8"
+RealVersion = "v1.0.8"
+VersionTime = "2023-2-12"
 
 Waifu2xVersion = "1.1.5"
 LoginUserName = ""
@@ -55,9 +63,9 @@ Waifu2xPath = "waifu2x"
 IsTips = 1
 
 # ISSUES
-Issues2 = "https://github.com/tonquer/JMComic-qt/issues"
-Issues1 = "https://hub2.ggo.icu/tonquer/JMComic-qt/issues"
-Issues3 = "https://hub.bika.life/tonquer/JMComic-qt/issues"
+Issues1 = "https://github.com/tonquer/JMComic-qt/issues"
+Issues2 = "https://hub.ggo.icu/tonquer/JMComic-qt/issues"
+Issues3 = "https://hub.fastgit.xyz/tonquer/JMComic-qt/issues"
 
 # cookie
 ipcountry = ""

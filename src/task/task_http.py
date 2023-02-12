@@ -1,4 +1,5 @@
 import pickle
+from types import FunctionType
 
 from tools.log import Log
 from task.qt_task import QtTaskQObject, TaskBase, QtHttpTask
@@ -22,7 +23,12 @@ class TaskHttp(TaskBase):
             taskIds.add(self.taskId)
 
         from server.server import Server
-        return Server().Send(req, backParam=self.taskId)
+        if isinstance(req, FunctionType):
+            req(self.taskId)
+        else:
+            from server.server import Server
+            Server().Send(req, backParam=self.taskId)
+        return
 
     def HandlerTask(self, taskId, data):
         try:

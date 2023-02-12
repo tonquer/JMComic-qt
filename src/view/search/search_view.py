@@ -1,4 +1,5 @@
 import json
+import re
 
 from PySide6.QtCore import QEvent, Qt
 from PySide6.QtGui import QHelpEvent
@@ -43,6 +44,11 @@ class SearchView(QWidget, Ui_Search, QtTaskBase):
 
     def SwitchCurrent(self, **kwargs):
         text = kwargs.get("text")
+
+        if text and (re.match('JM\d+', text) or re.match('jm\d+', text)):
+            QtOwner().OpenBookInfo(text.lower().replace("jm", ""))
+            return
+
         if text is not None:
             self.text = text
             self.lineEdit.setText(self.text)

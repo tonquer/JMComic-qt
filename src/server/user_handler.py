@@ -55,6 +55,38 @@ class CheckUpdateHandler(object):
                 TaskBase.taskObj.taskBack.emit(task.bakParam, pickle.dumps(data))
 
 
+@handler(req.CheckPreUpdateReq)
+class CheckPreUpdateReqHandler(object):
+    def __call__(self, task):
+        data = {"st": task.status, "data": ""}
+        try:
+            if not task.res.GetText() or task.status == Status.NetError:
+                return
+            if task.res.raw.status_code != 200:
+                return
+            rawData = json.loads(task.res.raw.text)
+            if not rawData:
+                return
+            v = rawData[0]
+            verData = v.get("tag_name")
+            info = verData.replace("v", "").split(".")
+            version = int(info[0]) * 100 + int(info[1]) * 10 + int(info[2]) * 1
+            info2 = re.findall(r"\d+\d*", os.path.basename(config.UpdateVersion))
+            curversion = int(info2[0]) * 100 + int(info2[1]) * 10 + int(info2[2]) * 1
+
+            rawData = v.get("body")
+
+            if version > curversion:
+                data["data"] = rawData
+            else:
+                data["data"] = "no"
+
+        except Exception as es:
+            pass
+        finally:
+            if task.bakParam:
+                TaskBase.taskObj.taskBack.emit(task.bakParam, pickle.dumps(data))
+
 # @handler(req.GetUserInfoReq)
 # class GetUserInfoReqHandler(object):
 #     def __call__(self, task: Task):
@@ -814,8 +846,9 @@ class SpeedTestPingHandler(object):
         data = {"st": task.status, "data": task.res.GetText()}
         if hasattr(task.res.raw, "elapsed"):
             if task.res.raw.status_code == 401 or task.res.raw.status_code == 200:
-                data["data"] = str(task.res.raw.elapsed.total_seconds() / 2)
+                data["data"] = str(task.res.raw.elapsed.total_seconds()*1000//4)
             else:
+                data["st"] = Status.Error
                 data["data"] = "0"
             TaskBase.taskObj.taskBack.emit(task.bakParam, pickle.dumps(data))
         else:
@@ -847,7 +880,7 @@ class SpeedTestHandler(object):
                     if consume >= 3.0:
                         break
                 consume = time.time() - now
-                downloadSize = getSize / consume
+                downloadSize = getSize / max(0.0001, consume)
                 speed = ToolUtil.GetDownloadSize(downloadSize)
                 if backData.bakParam:
                     data["data"] = speed
