@@ -61,7 +61,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         self.isOffline = False
         self.isLocal = False
         self.cacheBook = None
-        QtOwner().owner.WindowsSizeChange.connect(self.qtTool.ClearQImage)
+        # QtOwner().owner.WindowsSizeChange.connect(self.qtTool.ClearQImage)
 
     @property
     def scrollArea(self):

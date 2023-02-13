@@ -101,7 +101,7 @@ class ReadGraphicsView(QGraphicsView, SmoothScroll):
         self.startPos = QPoint()
         self.labelWaifu2xState = {}
         # self.setSceneRect(-self.width()//2, -self.height()//2, self.width(), self.height())
-        QtOwner().owner.WindowsSizeChange.connect(self.ChangeScale)
+        QtOwner().owner.WindowsSizeChange.connect(self.ResetSize)
 
     @property
     def readImg(self):
@@ -190,6 +190,9 @@ class ReadGraphicsView(QGraphicsView, SmoothScroll):
                     self.scale(1.1, 1.1)
 
         self.frame.scrollArea.ResetLabelSize(self.qtTool.maxPic)
+
+    def ResetSize(self):
+        self.qtTool.ChangeReadMode2(self.readImg.stripModel)
 
     def ScaleResetVer(self):
         if not ReadMode.isScroll(self.initReadMode) or self.initReadMode == ReadMode.UpDown:

@@ -88,7 +88,7 @@ class TaskQImage(TaskBase):
         try:
             info = self.tasks.get(taskId)
             if not info:
-                Log.Warn("[Task] not find taskId:{}, {}".format(taskId, len(newData)))
+                Log.Warn("[Task] not find taskId:{}".format(taskId))
                 return
             assert isinstance(info, QtQImageTask)
             if info.cleanFlag:

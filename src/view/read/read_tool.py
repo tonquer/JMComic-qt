@@ -511,7 +511,12 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
         return False
 
     def ChangeReadMode(self, index):
+        self.ChangeReadMode2(index)
+        self.imgFrame.InitHelp()
+
+    def ChangeReadMode2(self, index):
         self.stripModel = ReadMode(index)
+
         if self.stripModel == ReadMode.LeftRight:
             self.ScalePicture2(100)
             # self.zoomSlider.setValue(100)
@@ -553,7 +558,6 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
 
         Setting.LookReadMode.SetValue(index)
         # QtOwner().SetV("Read/LookReadMode", config.LookReadMode)
-        self.imgFrame.InitHelp()
 
     def ClearQImage(self):
         for index, v in self.readImg.pictureData.items():
