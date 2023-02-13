@@ -192,7 +192,7 @@ class ReadGraphicsView(QGraphicsView, SmoothScroll):
         self.frame.scrollArea.ResetLabelSize(self.qtTool.maxPic)
 
     def ResetSize(self):
-        self.qtTool.ChangeReadMode2(self.readImg.stripModel)
+        self.qtTool.ChangeReadMode2(self.readImg.stripModel.value)
 
     def ScaleResetVer(self):
         if not ReadMode.isScroll(self.initReadMode) or self.initReadMode == ReadMode.UpDown:

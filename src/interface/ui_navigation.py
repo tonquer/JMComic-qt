@@ -141,7 +141,7 @@ class Ui_Navigation(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 253, 608))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, -433, 253, 608))
         self.verticalLayout_3 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_3.setSpacing(6)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
@@ -318,6 +318,7 @@ class Ui_Navigation(object):
         self.verticalLayout_3.addWidget(self.downloadButton)
 
         self.localReadButton = QToolButton(self.scrollAreaWidgetContents)
+        self.buttonGroup.addButton(self.localReadButton)
         self.localReadButton.setObjectName(u"localReadButton")
         sizePolicy1.setHeightForWidth(self.localReadButton.sizePolicy().hasHeightForWidth())
         self.localReadButton.setSizePolicy(sizePolicy1)
