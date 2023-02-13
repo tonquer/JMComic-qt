@@ -193,6 +193,9 @@ class Setting:
         path = Setting.GetConfigPath()
         if not os.path.isdir(path):
             os.mkdir(path)
+        path2 = Setting.GetLocalHomePath()
+        if not os.path.isdir(path2):
+            os.mkdir(path2)
         Setting.CheckRepair()
         return
 
