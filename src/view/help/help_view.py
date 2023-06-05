@@ -111,6 +111,11 @@ class HelpView(QWidget, Ui_Help, QtTaskBase):
         url = UrlList[0] if self.checkUpdateIndex >= len(UrlList) else UrlList[self.checkUpdateIndex]
         QDesktopServices.openUrl(QUrl(url))
 
+    def OpenProxyUrl(self):
+        UrlList = [config.ProxyUrl1, config.ProxyUrl2, config.ProxyUrl3]
+        url = UrlList[0] if self.checkUpdateIndex >= len(UrlList) else UrlList[self.checkUpdateIndex]
+        QDesktopServices.openUrl(QUrl(url))
+
     def OpenLogDir(self):
         path = Setting.GetLogPath()
         QDesktopServices.openUrl(QUrl.fromLocalFile(path))

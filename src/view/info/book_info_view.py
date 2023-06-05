@@ -1,8 +1,9 @@
 from PySide6 import QtWidgets, QtCore, QtGui
 from PySide6.QtCore import Qt, QSize, QEvent, Signal
 from PySide6.QtGui import QColor, QFont, QPixmap, QIcon
-from PySide6.QtWidgets import QListWidgetItem, QLabel
+from PySide6.QtWidgets import QListWidgetItem, QLabel, QScroller, QPushButton
 
+from component.layout.flow_layout import FlowLayout
 from config.setting import Setting
 from interface.ui_book_info import Ui_BookInfo
 from qt_owner import QtOwner
@@ -50,9 +51,9 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.description.adjustSize()
         self.title.adjustSize()
 
-        self.tagsList.clicked.connect(self.ClickTagsItem)
-        self.tagsList.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.tagsList.customContextMenuRequested.connect(self.CopyClickTagsItem)
+        # self.tagsList.clicked.connect(self.ClickTagsItem)
+        # self.tagsList.setContextMenuPolicy(Qt.CustomContextMenu)
+        # self.tagsList.customContextMenuRequested.connect(self.CopyClickTagsItem)
 
         self.epsListWidget.setFlow(self.epsListWidget.LeftToRight)
         self.epsListWidget.setWrapping(True)
@@ -66,7 +67,8 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.listWidget.setFrameShape(self.listWidget.NoFrame)
         self.listWidget.setResizeMode(self.listWidget.Adjust)
         self.listWidget.clicked.connect(self.OpenReadImg2)
-
+        if Setting.IsGrabGesture.value:
+            QScroller.grabGesture(self.epsListWidget, QScroller.LeftMouseButtonGesture)
         # QScroller.grabGesture(self.epsListWidget, QScroller.LeftMouseButtonGesture)
         # self.epsListWidget.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
         # self.epsListWidget.verticalScrollBar().setStyleSheet(QssDataMgr().GetData('qt_list_scrollbar'))
@@ -78,6 +80,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.commentNum = 0
         self.ReloadHistory.connect(self.LoadHistory)
         self.readOffline.clicked.connect(self.StartRead2)
+        self.flowLayout = FlowLayout(self.tagList)
 
     def UpdateFavoriteIcon(self):
         p = QPixmap()
@@ -117,7 +120,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
 
     def OpenBookBack(self, raw):
         QtOwner().CloseLoading()
-        self.tagsList.clear()
+        self.ClearTags()
         self.autorList.clear()
         info = BookMgr().books.get(self.bookId)
         st = raw["st"]
@@ -147,7 +150,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             # for name in info.categories:
             #     self.categoriesList.AddItem(name)
             for name in info.baseInfo.tagList:
-                self.tagsList.AddItem(name)
+                self.AddTags(name)
             # self.starButton.setText(str(info.totalLikes))
             # self.views.setText(str(info.totalViews))
             # self.isFavorite = info.isFavourite
@@ -218,6 +221,26 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
     #     if status == Status.Ok:
     #         self.userIconData = data
     #         self.user_icon.SetPicture(data)
+
+    def ClearTags(self):
+        while 1:
+            child = self.flowLayout.takeAt(0)
+            if not child:
+                break
+            if child.widget():
+                child.widget().setParent(None)
+            del child
+        return
+
+    def AddTags(self, name):
+        box = QPushButton(name)
+        # box.setMinimumWidth(160)
+        # self.allBox[text] = box
+        box.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        box.customContextMenuRequested.connect(self.CopyClickTagsItem)
+        box.clicked.connect(self.ClickTagsItem)
+        self.flowLayout.addWidget(box)
+        return
 
     def UpdatePicture(self, data, status):
         if status == Status.Ok:
@@ -405,16 +428,15 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         QtOwner().OpenSearch2Author(text)
         return
 
-    def ClickTagsItem(self, modelIndex):
-        index = modelIndex.row()
-        item = self.tagsList.item(index)
-        if not item:
-            return
-        widget = self.tagsList.itemWidget(item)
-        text = widget.text()
+    def ClickTagsItem(self):
+        text = self.sender().text()
         # QtOwner().owner.searchForm.SearchTags(text)
-        QtOwner().OpenSearch2Tag(text)
+        QtOwner().OpenSearch2(text)
         return
+
+    def CopyClickTagsItem(self):
+        text = self.sender().text()
+        QtOwner().CopyText(text)
 
     def eventFilter(self, obj, event):
         if event.type() == QEvent.MouseButtonPress:
@@ -435,14 +457,6 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         if Qt.Key_Escape == key:
             self.close()
         return super(self.__class__, self).keyPressEvent(ev)
-
-    def CopyClickTagsItem(self, pos):
-        index = self.tagsList.indexAt(pos)
-        item = self.tagsList.itemFromIndex(index)
-        if index.isValid() and item:
-            widget = self.tagsList.itemWidget(item)
-            text = widget.text()
-            QtOwner().CopyText(text)
 
     def CopyClickCategoriesItem(self, pos):
         index = self.categoriesList.indexAt(pos)

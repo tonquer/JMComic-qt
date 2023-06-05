@@ -20,14 +20,14 @@ class ServerReq(object):
         self.isUseHttps = bool(Setting.IsUseHttps.value)
         self.proxyUrl = ""
         self.cookies = {}
-        if Setting.ProxySelectIndex.value == 5:
-            host = ToolUtil.GetUrlHost(url)
-            if host in config.Url2List:
-                self.proxyUrl = config.ProxyApiDomain
-            elif host == config.Url:
-                self.proxyUrl = config.ProxyApiDomain
-            elif host in config.PicUrlList:
-                self.proxyUrl = config.ProxyImgDomain
+        # if Setting.ProxySelectIndex.value == 5:
+        #     host = ToolUtil.GetUrlHost(url)
+        #     if host in config.Url2List:
+        #         self.proxyUrl = config.ProxyApiDomain
+        #     elif host == config.Url:
+        #         self.proxyUrl = config.ProxyApiDomain
+        #     elif host in config.PicUrlList:
+        #         self.proxyUrl = config.ProxyImgDomain
 
         if Setting.IsHttpProxy.value == 1:
             self.proxy = {"http": Setting.HttpProxy.value, "https": Setting.HttpProxy.value}
@@ -61,7 +61,7 @@ class ServerReq(object):
         token = hashlib.md5(param.encode("utf-8")).hexdigest()
 
         header = {
-            "tokenparam": "{},1.4.7".format(self.now),
+            "tokenparam": "{},1.5.2".format(self.now),
             "token": token,
             "user-agent": "okhttp/3.12.1",
             "accept-encoding": "gzip",
@@ -75,7 +75,7 @@ class ServerReq(object):
         token = hashlib.md5(param.encode("utf-8")).hexdigest()
 
         header = {
-            "tokenparam": "{},1.4.7".format(self.now),
+            "tokenparam": "{},1.5.2".format(self.now),
             "token": token,
             "user-agent": "okhttp/3.12.1",
             "accept-encoding": "gzip",
@@ -763,7 +763,7 @@ class SpeedTestReq(ServerReq):
     URLS = [
         # "/media/photos/295840/00001.jpg"
         # "/media/photos/295840/00002.jpg",
-        "/media/photos/295840/00003.jpg",
+        "/media/photos/292840/00002.webp",
         # "/media/photos/295840/00004.jpg",
     ]
 

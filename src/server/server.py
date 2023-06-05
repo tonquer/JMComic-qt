@@ -129,8 +129,23 @@ class Server(Singleton):
                 Log.Error(es)
         pass
 
-    def UpdateDns(self, domain, address):
-        host_table[domain] = address
+    def UpdateDns(self, address, imageAddress):
+        for domain in config.Url2List:
+            domain = ToolUtil.GetUrlHost(domain)
+            if is_ipaddress(address):
+                host_table[domain] = address
+            elif not address and domain in host_table:
+                host_table.pop(domain)
+
+        for domain in config.PicUrlList:
+            domain = ToolUtil.GetUrlHost(domain)
+            if is_ipaddress(imageAddress):
+                host_table[domain] = imageAddress
+            elif not imageAddress and domain in host_table:
+                host_table.pop(domain)
+        # 换一个，清空pool
+        self.session = requests.session()
+        return
 
     def ClearDns(self):
         host_table.clear()

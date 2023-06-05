@@ -1,4 +1,5 @@
 import os
+import time
 
 from config import config
 from config.setting import Setting
@@ -26,6 +27,7 @@ class DownloadItem(QtTaskBase):
         QtTaskBase.__init__(self)
         self.bookId = ""             # 书籍id
         self.title = ""              # 标题
+        self.tick = int(time.time())                #
         self.author = ""              # 作者名
         self.savePath = ""           # 保存路径
         self.convertPath = ""        # Waifu2x路径
@@ -45,7 +47,7 @@ class DownloadItem(QtTaskBase):
         self.speedDownloadLen = 0
         self.downloadReset = 0
         self.convertReset = 0
-        self.tick = 0
+        self.cvTick = 0
         self.dirty = True
 
     @property
@@ -80,7 +82,7 @@ class DownloadItem(QtTaskBase):
 
     @property
     def convertTick(self):
-        return str(self.tick) + 's'
+        return str(self.cvTick) + 's'
 
     @property
     def curConvertCnt(self):
@@ -259,9 +261,9 @@ class DownloadItem(QtTaskBase):
 
         return self.Converting
 
-    def ConvertSucCallBack(self, tick):
+    def ConvertSucCallBack(self, cvTick):
         self.dirty = True
-        self.tick = tick
+        self.cvTick = cvTick
         self.curConvertEpsInfo.dirty = True
         self.curConvertEpsInfo.curPreConvertId += 1
         while True:
@@ -282,19 +284,20 @@ class DownloadItem(QtTaskBase):
     def GetConvertPath(self):
 
         if not self.convertPath and Setting.SavePath.value:
-            path = os.path.join(Setting.SavePath.value, config.SavePathDir)
-            path2 = os.path.join(path, ToolUtil.GetCanSaveName(self.title))
-            self.convertPath = os.path.join(path2, "waifu2x")
-            if Setting.SaveNameType.value == SaveNameType.AuthorAndTitle:
-                if self.author:
-                    path2 = os.path.join(path, ToolUtil.GetCanSaveName("[{}]".format(self.author)+self.title))
-                    self.convertPath = os.path.join(path2, "waifu2x")
-            elif Setting.SaveNameType.value == SaveNameType.AuthorDir:
-                if self.author:
-                    path2 = os.path.join(path, os.path.join(ToolUtil.GetCanSaveName(self.author), ToolUtil.GetCanSaveName(self.title)))
-                else:
-                    path2 = os.path.join(path, os.path.join("default", ToolUtil.GetCanSaveName(self.title)))
-                self.convertPath = os.path.join(path2, "waifu2x")
+            self.convertPath = self.savePath.replace("original", "waifu2x")
+            # path = os.path.join(Setting.SavePath.value, config.SavePathDir)
+            # path2 = os.path.join(path, ToolUtil.GetCanSaveName(self.title))
+            # self.convertPath = os.path.join(path2, "waifu2x")
+            # if Setting.SaveNameType.value == SaveNameType.AuthorAndTitle:
+            #     if self.author:
+            #         path2 = os.path.join(path, ToolUtil.GetCanSaveName("[{}]".format(self.author)+self.title))
+            #         self.convertPath = os.path.join(path2, "waifu2x")
+            # elif Setting.SaveNameType.value == SaveNameType.AuthorDir:
+            #     if self.author:
+            #         path2 = os.path.join(path, os.path.join(ToolUtil.GetCanSaveName(self.author), ToolUtil.GetCanSaveName(self.title)))
+            #     else:
+            #         path2 = os.path.join(path, os.path.join("default", ToolUtil.GetCanSaveName(self.title)))
+            #     self.convertPath = os.path.join(path2, "waifu2x")
 
         downloadPath = os.path.join(self.savePath, ToolUtil.GetCanSaveName(self.curConvertEpsInfo.epsTitle))
         loadPath = os.path.join(downloadPath, "{:04}".format(self.curConvertEpsInfo.curPreConvertId + 1))

@@ -7,7 +7,7 @@ from functools import partial
 from PySide6 import QtWidgets
 from PySide6.QtCore import QSettings, Qt, QSize, QUrl, QFile, QTranslator, QLocale
 from PySide6.QtGui import QDesktopServices, QFontDatabase
-from PySide6.QtWidgets import QFileDialog
+from PySide6.QtWidgets import QFileDialog, QScroller, QScrollerProperties
 
 from config import config
 from config.setting import Setting, SettingValue
@@ -51,10 +51,11 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.coverCheckBox.clicked.connect(partial(self.CheckButtonEvent, Setting.CoverIsOpenWaifu, self.coverCheckBox))
         self.downAuto.clicked.connect(partial(self.CheckButtonEvent, Setting.DownloadAuto, self.downAuto))
         self.titleBox.clicked.connect(partial(self.CheckButtonEvent, Setting.IsNotUseTitleBar, self.titleBox))
+        self.grabGestureBox.clicked.connect(partial(self.CheckButtonEvent, Setting.IsGrabGesture, self.grabGestureBox))
 
         # LineEdit:
         self.httpEdit.editingFinished.connect(partial(self.LineEditEvent, Setting.HttpProxy, self.httpEdit))
-        self.dohLine.editingFinished.connect(partial(self.LineEditEvent, Setting.DohAddress, self.dohLine))
+        # self.dohLine.editingFinished.connect(partial(self.LineEditEvent, Setting.DohAddress, self.dohLine))
         # Button:
 
         # comboBox:
@@ -99,7 +100,16 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.categorySize.setVisible(False)
 
         self.msgLabel.setVisible(False)
-        self.dohButton.clicked.connect(self.OpenDohView)
+
+        if Setting.IsGrabGesture.value:
+            QScroller.grabGesture(self.scrollArea, QScroller.LeftMouseButtonGesture)
+            propertiesOne = QScroller.scroller(self).scrollerProperties()
+            propertiesOne.setScrollMetric(QScrollerProperties.MousePressEventDelay, 0)
+            propertiesOne.setScrollMetric(QScrollerProperties.VerticalOvershootPolicy, QScrollerProperties.OvershootAlwaysOff)
+            propertiesOne.setScrollMetric(QScrollerProperties.HorizontalOvershootPolicy, QScrollerProperties.OvershootAlwaysOff)
+            QScroller.scroller(self.scrollArea).setScrollerProperties(propertiesOne)
+
+        # self.dohButton.clicked.connect(self.OpenDohView)
 
     def MoveToLabel(self, label):
         p = label.pos()
@@ -204,6 +214,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.httpEdit.setText(Setting.HttpProxy.value)
         self.sockEdit.setText(Setting.Sock5Proxy.value)
         self.titleBox.setChecked(Setting.IsNotUseTitleBar.value)
+        self.grabGestureBox.setChecked(Setting.IsGrabGesture.value)
         for index in range(self.encodeSelect.count()):
             if Setting.SelectEncodeGpu.value == self.encodeSelect.itemText(index):
                 self.encodeSelect.setCurrentIndex(index)

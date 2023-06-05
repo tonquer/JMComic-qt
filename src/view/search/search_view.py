@@ -71,8 +71,8 @@ class SearchView(QWidget, Ui_Search, QtTaskBase):
                     self.bookList.UpdateMaxPage(maxPages)
                     self.spinBox.setMaximum(maxPages)
                 self.spinBox.setValue(page)
-                self.bookList.UpdatePage(page)
-                self.label.setText(self.bookList.GetPageText())
+                self.bookList.UpdatePage(page, self.bookList.pages)
+                self.label.setText(self.bookList.GetPageStr())
                 for v in bookList:
                     self.bookList.AddBookItemByBook(v)
             else:

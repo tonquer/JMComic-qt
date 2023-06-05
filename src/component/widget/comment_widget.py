@@ -59,7 +59,7 @@ class CommentWidget(QtWidgets.QWidget, Ui_Comment, QtTaskBase):
         self.listWidget.UpdatePage(1, 1)
         self.listWidget.UpdateState()
         self.spinBox.setValue(1)
-        self.nums.setText(self.listWidget.GetPageText())
+        self.nums.setText(self.listWidget.GetPageStr())
         self.ClearTask()
 
     def JumpPage(self):
@@ -100,8 +100,8 @@ class CommentWidget(QtWidgets.QWidget, Ui_Comment, QtTaskBase):
                     self.listWidget.UpdateMaxPage(maxPages)
                     self.spinBox.setMaximum(maxPages)
                 self.spinBox.setValue(page)
-                self.listWidget.UpdatePage(page)
-                self.nums.setText(self.listWidget.GetPageText())
+                self.listWidget.UpdatePage(page, self.listWidget.pages)
+                self.nums.setText(self.listWidget.GetPageStr())
 
                 for index, info in enumerate(comments):
                     self.listWidget.AddUserItem(info, "")

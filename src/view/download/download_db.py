@@ -1,5 +1,6 @@
 import json
 import os.path
+import time
 
 from PySide6.QtSql import QSqlDatabase, QSqlQuery
 
@@ -23,6 +24,7 @@ class DownloadDb(object):
             downloadEpsIds varchar,\
             curDownloadEpsId int,\
             curConvertEpsId int,\
+            tick int,\
             title varchar,\
             savePath varchar,\
             convertPath varchar,\
@@ -68,15 +70,15 @@ class DownloadDb(object):
 
     def AddDownloadDB(self, task):
         assert isinstance(task, DownloadItem)
-
+        tick = int(time.time())
         query = QSqlQuery(self.db)
         sql = "INSERT INTO download(bookId, downloadEpsIds, curDownloadEpsId, curConvertEpsId, title, " \
-              "savePath, convertPath, status, convertStatus) " \
+              "savePath, convertPath, status, convertStatus, tick) " \
               "VALUES ('{0}', '{1}', {2}, {3}, '{4}', '{5}', '{6}', '{7}', '{8}') " \
               "ON CONFLICT(bookId) DO UPDATE SET downloadEpsIds='{1}', curDownloadEpsId={2}, curConvertEpsId={3}, " \
-              "title = '{4}', savePath = '{5}', convertPath= '{6}', status = '{7}', convertStatus = '{8}'".\
+              "title = '{4}', savePath = '{5}', convertPath= '{6}', status = '{7}', convertStatus = '{8}', {9}".\
             format(task.bookId, json.dumps(task.epsIds), task.curDownloadEpsId, task.curConvertEpsId, task.title.replace("'", "''"),
-                   task.savePath.replace("'", "''"), task.convertPath.replace("'", "''"), task.status, task.convertStatus)
+                   task.savePath.replace("'", "''"), task.convertPath.replace("'", "''"), task.status, task.convertStatus, tick)
 
         suc = query.exec_(sql)
         if not suc:
@@ -102,7 +104,7 @@ class DownloadDb(object):
         query = QSqlQuery(self.db)
         suc = query.exec_(
             """
-            select * from download
+            select bookId,downloadEpsIds,curDownloadEpsId,curConvertEpsId,title,savePath,convertPath,status,convertStatus,tick  from download
             """
         )
         if not suc:
@@ -121,6 +123,7 @@ class DownloadDb(object):
             info.convertPath = query.value(6)
             info.status = query.value(7)
             info.convertStatus = query.value(8)
+            info.tick = query.value(9)
             downloads[info.bookId] = info
 
         query = QSqlQuery(self.db)

@@ -115,7 +115,7 @@ class CategoryView(QWidget, Ui_Category, QtTaskBase):
         assert isinstance(category, Category)
         self.spinBox.setMaximum(bookWidget.pages)
         self.spinBox.setValue(bookWidget.page)
-        self.label.setText(bookWidget.GetPageText())
+        self.label.setText(bookWidget.GetPageStr())
 
         if bookWidget.count() > 0 and not isForce:
             return
@@ -156,8 +156,8 @@ class CategoryView(QWidget, Ui_Category, QtTaskBase):
                 maxPages = (total - 1) // max(1, len(bookList)) + 1
                 bookWidget.UpdateMaxPage(maxPages)
                 self.spinBox.setMaximum(maxPages)
-            bookWidget.UpdatePage(page)
-            self.label.setText(bookWidget.GetPageText())
+            bookWidget.UpdatePage(page, bookWidget.pages)
+            self.label.setText(bookWidget.GetPageStr())
             for v in bookList:
                 bookWidget.AddBookItemByBook(v)
         else:

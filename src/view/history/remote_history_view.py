@@ -48,8 +48,8 @@ class RemoteHistoryView(QWidget, Ui_History, QtTaskBase):
                     maxPage = (total - 1) // max(1, len(bookList)) + 1
                     self.bookList.UpdateMaxPage(maxPage)
                     self.spinBox.setMaximum(maxPage)
-                self.bookList.UpdatePage(page)
-                self.nums.setText(self.bookList.GetPageText())
+                self.bookList.UpdatePage(page, self.bookList.pages)
+                self.nums.setText(self.bookList.GetPageStr())
                 for book in bookList:
                     self.bookList.AddBookItemByBook(book)
             else:

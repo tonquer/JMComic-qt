@@ -34,10 +34,11 @@ class QLocalTask(object):
 
 
 class LocalData(object):
-    Type1 = 1
-    Type2 = 2
-    Type3 = 3
-    Type4 = 4
+    Type1 = 1    # 加载目录
+    Type2 = 2    # 加载文件
+    Type3 = 3    #
+    Type4 = 4    #
+    Type5 = 5    # 批量加载
 
     AllPictureFormat = ["jpg", "jpeg", "webp", "gif", "apng", "png"]
 
@@ -183,16 +184,18 @@ class TaskLocal(TaskBase, QtTaskBase):
             return
         type = task.type
         dir = task.path
-        if type == 1:
+        if type == LocalData.Type1:
             st, data = self.ParseBookInfoByDir(dir)
             datas = [data]
-        elif type == 2:
+        elif type == LocalData.Type2:
             st, data = self.ParseBookInfoByFile(dir)
             datas = [data]
-        elif type == 3:
+        elif type == LocalData.Type3:
             st, datas = self.ParseBookInfoByFile(dir)
-        elif type == 4:
+        elif type == LocalData.Type4:
             st, datas = self.ParseBookInfoByFile(dir)
+        elif type == LocalData.Type5:
+            st, datas = self.ParseBookInfoByFileAll(dir)
 
         self.taskObj.localBack.emit(taskId, st, datas)
 
@@ -289,7 +292,7 @@ class TaskLocal(TaskBase, QtTaskBase):
             l = LocalData()
             l.path = nextPath
             l.file = dirName
-            l.id = hashlib.md5(l.path.encode("utf-8")).hexdigest()
+            l.id = hashlib.md5(l.file.encode("utf-8")).hexdigest()
             l.main_id = l.id
             l.title = os.path.basename(dirName)
             l.isZipFile = False
@@ -366,6 +369,19 @@ class TaskLocal(TaskBase, QtTaskBase):
             Log.Error(es)
             return Str.ErrorPath, ""
         return Status.Ok, l
+
+    def ParseBookInfoByFileAll(self, fileNames):
+        allBooks = []
+        for url in fileNames:
+            if os.path.isfile(url):
+                st, v = self.ParseBookInfoByFile(url)
+            elif os.path.isdir(url):
+                st, v = self.ParseBookInfoByDir(url)
+            else:
+                st = Status.Error
+            if st == Status.Ok:
+                allBooks.append(v)
+        return Status.Ok, allBooks
 
     def GetBookCover(self, v):
         return self.GetBookPicture(v, 0, 1)

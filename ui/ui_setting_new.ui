@@ -81,12 +81,12 @@
       <widget class="SmoothScrollArea" name="scrollArea">
        <property name="styleSheet">
         <string notr="true">.QFrame
-        {
-            background-color: rgb(253, 253, 253);
-            
-            border:2px solid rgb(234,234,234);
-            border-radius:5px
-        }        </string>
+         {
+         background-color: rgb(253, 253, 253);
+
+         border:2px solid rgb(234,234,234);
+         border-radius:5px
+         }        </string>
        </property>
        <property name="widgetResizable">
         <bool>true</bool>
@@ -95,9 +95,9 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>-1004</y>
+          <y>-1441</y>
           <width>661</width>
-          <height>2896</height>
+          <height>2891</height>
          </rect>
         </property>
         <property name="styleSheet">
@@ -156,6 +156,43 @@
           </widget>
          </item>
          <item>
+          <widget class="QFrame" name="frame_16">
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_20">
+            <item>
+             <widget class="QLabel" name="label_37">
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>19</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>触控（重启生效）：</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="grabGestureBox">
+              <property name="text">
+               <string>启用触控优化</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
           <widget class="QFrame" name="frame_2">
            <property name="font">
             <font>
@@ -198,9 +235,9 @@
              </widget>
             </item>
             <item>
-             <widget class="QRadioButton" name="themeButton1">
+             <widget class="QRadioButton" name="themeButton2">
               <property name="text">
-               <string>黑</string>
+               <string>白</string>
               </property>
               <attribute name="buttonGroup">
                <string notr="true">themeGroup</string>
@@ -208,9 +245,9 @@
              </widget>
             </item>
             <item>
-             <widget class="QRadioButton" name="themeButton2">
+             <widget class="QRadioButton" name="themeButton1">
               <property name="text">
-               <string>白</string>
+               <string>黑</string>
               </property>
               <attribute name="buttonGroup">
                <string notr="true">themeGroup</string>
@@ -290,7 +327,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QFrame" name="frame_15">
+          <widget class="QFrame" name="frame_7">
            <property name="frameShape">
             <enum>QFrame::StyledPanel</enum>
            </property>
@@ -299,7 +336,7 @@
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_18">
             <item>
-             <widget class="QLabel" name="label_9">
+             <widget class="QLabel" name="label_8">
               <property name="font">
                <font>
                 <pointsize>12</pointsize>
@@ -311,9 +348,9 @@
              </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_24">
+             <layout class="QHBoxLayout" name="horizontalLayout_3">
               <item>
-               <widget class="QLabel" name="label_34">
+               <widget class="QLabel" name="label_33">
                 <property name="text">
                  <string>字体选择：</string>
                 </property>
@@ -352,7 +389,7 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_25">
               <item>
-               <widget class="QLabel" name="label_35">
+               <widget class="QLabel" name="label_34">
                 <property name="text">
                  <string>字体大小：</string>
                 </property>
@@ -446,7 +483,7 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_26">
               <item>
-               <widget class="QLabel" name="label_36">
+               <widget class="QLabel" name="label_35">
                 <property name="text">
                  <string>字体粗细：</string>
                 </property>
@@ -600,16 +637,16 @@
           </widget>
          </item>
          <item>
-          <widget class="QFrame" name="frame_7">
+          <widget class="QFrame" name="frame">
            <property name="frameShape">
             <enum>QFrame::StyledPanel</enum>
            </property>
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_19">
+           <layout class="QVBoxLayout" name="verticalLayout_14">
             <item>
-             <widget class="QLabel" name="label_33">
+             <widget class="QLabel" name="label_30">
               <property name="font">
                <font>
                 <pointsize>12</pointsize>
@@ -640,7 +677,7 @@
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_21">
             <item>
-             <widget class="QLabel" name="label_40">
+             <widget class="QLabel" name="label_38">
               <property name="font">
                <font>
                 <pointsize>12</pointsize>
@@ -930,7 +967,7 @@
              </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_27">
+             <layout class="QHBoxLayout" name="horizontalLayout_23">
               <item>
                <widget class="QRadioButton" name="proxy1">
                 <property name="minimumSize">
@@ -955,7 +992,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="label_32">
+               <widget class="QLabel" name="label_31">
                 <property name="text">
                  <string>代理地址</string>
                 </property>
@@ -983,7 +1020,7 @@
              </layout>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_28">
+             <layout class="QHBoxLayout" name="horizontalLayout_24">
               <item>
                <widget class="QRadioButton" name="proxy2">
                 <property name="minimumSize">
@@ -1008,7 +1045,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="label_37">
+               <widget class="QLabel" name="label_32">
                 <property name="text">
                  <string>代理地址</string>
                 </property>
@@ -1016,116 +1053,6 @@
               </item>
               <item>
                <widget class="QLineEdit" name="sockEdit"/>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer_26">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_29">
-              <item>
-               <widget class="QRadioButton" name="proxy3">
-                <property name="text">
-                 <string>使用系统代理</string>
-                </property>
-                <attribute name="buttonGroup">
-                 <string notr="true">proxyGroup</string>
-                </attribute>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_31">
-              <item>
-               <widget class="QPushButton" name="openProxy">
-                <property name="text">
-                 <string>打开分流设置</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer_28">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QFrame" name="frame">
-           <layout class="QVBoxLayout" name="verticalLayout_14">
-            <item>
-             <widget class="QLabel" name="label_30">
-              <property name="font">
-               <font>
-                <pointsize>12</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>Doh DNS配置（启用后能避免SNI阻断和DNS拦截，如果使用了代理，可不启用）：</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="dohRadio">
-              <property name="text">
-               <string>Api启用Doh</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="dohPictureRadio">
-              <property name="text">
-               <string>图片启用Doh（开启会加长图片加载速度）</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_23">
-              <item>
-               <widget class="QLabel" name="label_31">
-                <property name="minimumSize">
-                 <size>
-                  <width>60</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>DoH地址：</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="dohLine">
-                <property name="minimumSize">
-                 <size>
-                  <width>150</width>
-                  <height>0</height>
-                 </size>
-                </property>
-               </widget>
               </item>
               <item>
                <spacer name="horizontalSpacer_22">
@@ -1143,9 +1070,82 @@
              </layout>
             </item>
             <item>
-             <widget class="QCommandLinkButton" name="dohButton">
+             <layout class="QHBoxLayout" name="horizontalLayout_27">
+              <item>
+               <widget class="QRadioButton" name="proxy3">
+                <property name="text">
+                 <string>使用系统代理</string>
+                </property>
+                <attribute name="buttonGroup">
+                 <string notr="true">proxyGroup</string>
+                </attribute>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_28">
+              <item>
+               <widget class="QPushButton" name="openProxy">
+                <property name="text">
+                 <string>打开分流设置</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_26">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QFrame" name="frame_6">
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_9">
+            <item>
+             <widget class="QLabel" name="label_9">
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>19</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+               </font>
+              </property>
               <property name="text">
-               <string>查看DoH DNS解析</string>
+               <string>聊天室：</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="chatProxy">
+              <property name="text">
+               <string>启用代理</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
               </property>
              </widget>
             </item>
@@ -1316,7 +1316,7 @@
              </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_30">
+             <layout class="QHBoxLayout" name="horizontalLayout_29">
               <item>
                <widget class="WheelComboBox" name="tileComboBox">
                 <item>
@@ -2178,16 +2178,16 @@
           </widget>
          </item>
          <item>
-          <widget class="QFrame" name="frame_16">
+          <widget class="QFrame" name="frame_15">
            <property name="frameShape">
             <enum>QFrame::StyledPanel</enum>
            </property>
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_20">
+           <layout class="QVBoxLayout" name="verticalLayout_19">
             <item>
-             <widget class="QLabel" name="label_38">
+             <widget class="QLabel" name="label_36">
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
@@ -2394,7 +2394,54 @@
              </layout>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_20"/>
+             <layout class="QHBoxLayout" name="horizontalLayout_20">
+              <item>
+               <widget class="QLabel" name="label_27">
+                <property name="minimumSize">
+                 <size>
+                  <width>80</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>聊天缓存</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="chatDir">
+                <property name="minimumSize">
+                 <size>
+                  <width>150</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="openChatDir">
+                <property name="text">
+                 <string>打开目录</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_18">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
             </item>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_19">
@@ -2483,12 +2530,12 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="proxyGroup"/>
-  <buttongroup name="languageGroup"/>
-  <buttongroup name="mainScaleGroup"/>
-  <buttongroup name="saveNameGroup"/>
-  <buttongroup name="themeGroup"/>
   <buttongroup name="showCloseButtonGroup"/>
+  <buttongroup name="mainScaleGroup"/>
+  <buttongroup name="themeGroup"/>
+  <buttongroup name="languageGroup"/>
   <buttongroup name="logGroup"/>
+  <buttongroup name="saveNameGroup"/>
+  <buttongroup name="proxyGroup"/>
  </buttongroups>
 </ui>

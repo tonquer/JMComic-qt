@@ -32,13 +32,14 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         self.radioApiGroup.setId(self.radioButton_2, 2)
         self.radioApiGroup.setId(self.radioButton_3, 3)
         self.radioApiGroup.setId(self.radioButton_4, 4)
+        self.radioApiGroup.setId(self.radioButton_5, 5)
 
         self.radioImgGroup.setId(self.radio_img_1, 1)
         self.radioImgGroup.setId(self.radio_img_2, 2)
         self.radioImgGroup.setId(self.radio_img_3, 3)
         self.radioImgGroup.setId(self.radio_img_4, 4)
+        self.radioImgGroup.setId(self.radio_img_5, 5)
         # self.buttonGroup.setId(self.radioButton_5, 5)
-        self.testSpeedButton.clicked.connect(self.SpeedTest)
 
         self.radioProxyGroup.setId(self.proxy_0, 0)
         self.radioProxyGroup.setId(self.proxy_1, 1)
@@ -46,6 +47,8 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         self.radioProxyGroup.setId(self.proxy_3, 3)
         self.LoadSetting()
         self.UpdateServer()
+        self.commandLinkButton.clicked.connect(self.OpenUrl)
+        self.maxNum = 6
 
     def Init(self):
         self.LoadSetting()
@@ -55,27 +58,31 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
 
     def SetEnabled(self, enabled):
         self.testSpeedButton.setEnabled(enabled)
-        self.dohBox.setEnabled(enabled)
-        self.dohEdit.setEnabled(enabled)
+        # self.dohBox.setEnabled(enabled)
+        # self.dohEdit.setEnabled(enabled)
         self.proxy_0.setEnabled(enabled)
         self.proxy_1.setEnabled(enabled)
         self.proxy_2.setEnabled(enabled)
         self.proxy_3.setEnabled(enabled)
         self.httpLine.setEnabled(enabled)
         self.sockEdit.setEnabled(enabled)
+        self.cdn_img_ip.setEnabled(enabled)
+        self.cdn_api_ip.setEnabled(enabled)
         self.radioButton_1.setEnabled(enabled)
         self.radioButton_2.setEnabled(enabled)
         self.radioButton_3.setEnabled(enabled)
         self.radioButton_4.setEnabled(enabled)
+        self.radioButton_5.setEnabled(enabled)
         self.radio_img_1.setEnabled(enabled)
         self.radio_img_2.setEnabled(enabled)
         self.radio_img_3.setEnabled(enabled)
         self.radio_img_4.setEnabled(enabled)
+        self.radio_img_5.setEnabled(enabled)
         # self.radioButton_5.setEnabled(enabled)
 
     def LoadSetting(self):
-        self.dohBox.setChecked(Setting.IsOpenDoh.value)
-        self.dohEdit.setText(Setting.DohAddress.value)
+        # self.dohBox.setChecked(Setting.IsOpenDoh.value)
+        # self.dohEdit.setText(Setting.DohAddress.value)
         self.httpLine.setText(Setting.HttpProxy.value)
         self.sockEdit.setText(Setting.Sock5Proxy.value)
         button = getattr(self, "radioButton_{}".format(Setting.ProxySelectIndex.value))
@@ -84,6 +91,8 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         button.setChecked(True)
         button = getattr(self, "radio_img_{}".format(int(Setting.ProxyImgSelectIndex.value)))
         button.setChecked(True)
+        self.cdn_api_ip.setText(Setting.PreferCDNIP.value)
+        self.cdn_img_ip.setText(Setting.PreferCDNIPImg.value)
 
     def SaveSetting(self):
         Setting.IsHttpProxy.SetValue(int(self.radioProxyGroup.checkedId()))
@@ -91,8 +100,8 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         Setting.HttpProxy.SetValue(self.httpLine.text())
         Setting.ProxySelectIndex.SetValue(self.radioApiGroup.checkedId())
         Setting.ProxyImgSelectIndex.SetValue(self.radioImgGroup.checkedId())
-        Setting.DohAddress.SetValue(self.dohEdit.text())
-        Setting.IsOpenDoh.SetValue(int(self.dohBox.isChecked()))
+        # Setting.DohAddress.SetValue(self.dohEdit.text())
+        # Setting.IsOpenDoh.SetValue(int(self.dohBox.isChecked()))
         self.UpdateServer()
         QtOwner().ShowMsg(Str.GetStr(Str.SaveSuc))
         return
@@ -103,15 +112,24 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
             index = 0
         config.Url2 = config.Url2List[index]
         config.PicUrl2 = config.PicUrlList[index]
+        if Setting.ProxyImgSelectIndex.value == 5:
+            imageServer = Setting.PreferCDNIPImg.value
+        else:
+            imageServer = ""
+        if Setting.ProxySelectIndex.value == 5:
+            address = Setting.PreferCDNIP.value
+        else:
+            address = ""
+        Server().UpdateDns(address, imageServer)
         QtOwner().settingView.SetSock5Proxy()
-        Log.Info("update proxy, setId:{}".format(Setting.ProxySelectIndex.value))
+        Log.Info("update proxy, setId:{}:{}, address:{}, img:{}".format(Setting.ProxySelectIndex.value, Setting.ProxyImgSelectIndex.value, address, imageServer))
 
     def SpeedTest(self):
         self.speedIndex = 0
         self.speedPingNum = 0
         self.speedTest = []
 
-        for i in range(1, 5):
+        for i in range(1, self.maxNum):
             label = getattr(self, "label_api_" + str(i))
             label.setText("")
             label = getattr(self, "label_img_" + str(i))
@@ -120,7 +138,15 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         i = 1
         for index, address in enumerate(config.Url2List):
             imageUrl = config.PicUrlList[index]
-            self.speedTest.append((address, imageUrl, False, False, i))
+            self.speedTest.append((address, imageUrl, False, False, ("", ""), i))
+            i += 1
+
+        PreferCDNIP = self.cdn_api_ip.text()
+        imgCDNIP = self.cdn_img_ip.text()
+        if PreferCDNIP or imgCDNIP:
+            self.speedTest.append((config.Url2List[0], config.PicUrlList[0], False, False, (PreferCDNIP, imgCDNIP), i))
+            i += 1
+        else:
             i += 1
 
         self.SetEnabled(False)
@@ -132,7 +158,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         if len(self.speedTest) <= self.speedPingNum:
             self.StartSpeedTest()
             return
-        address, imageProxy, isHttpProxy, isProxyUrl, i = self.speedTest[self.speedPingNum]
+        address, imageProxy, isHttpProxy, isProxyUrl, dnslist, i = self.speedTest[self.speedPingNum]
         httpProxy = self.httpLine.text()
         if ((self.radioProxyGroup.checkedId() == 1 and not self.httpLine.text()) or
                             (self.radioProxyGroup.checkedId() == 2 and not self.sockEdit.text())):
@@ -163,6 +189,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
             self.SetSock5Proxy(False)
 
         request.timeout = 2
+        Server().UpdateDns(dnslist[0], dnslist[1])
         request.url = request.url.replace(config.Url2, address)
         self.pingBackNumCnt[i] = 0
         self.pingBackNumDict[i] = [0, 0, 0]
@@ -212,7 +239,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
             self.SetEnabled(True)
             return
 
-        address, imgUrl, isHttpProxy, isProxyUrl, i = self.speedTest[self.speedIndex]
+        address, imgUrl, isHttpProxy, isProxyUrl, dnslist, i = self.speedTest[self.speedIndex]
         httpProxy = self.httpLine.text()
         if ((self.radioProxyGroup.checkedId() == 1 and not self.httpLine.text()) or
                             (self.radioProxyGroup.checkedId() == 2 and not self.sockEdit.text())):
@@ -242,7 +269,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
             self.SetSock5Proxy(True)
         else:
             self.SetSock5Proxy(False)
-
+        Server().UpdateDns(dnslist[0], dnslist[1])
         request.url = request.url.replace(config.PicUrl2, imgUrl)
         self.AddHttpTask(lambda x: Server().TestSpeed(request, x), self.SpeedTestBack, i)
         return
@@ -259,6 +286,9 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         self.speedIndex += 1
         self.StartSpeedTest()
         return
+
+    def OpenUrl(self):
+        QtOwner().owner.helpView.OpenProxyUrl()
 
     def SetSock5Proxy(self, isProxy):
         import socket

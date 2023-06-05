@@ -1,6 +1,6 @@
 from PySide6.QtCore import QPropertyAnimation, QRect, QEasingCurve, QFile, QEvent, QSize
 from PySide6.QtGui import QPixmap, Qt, QIcon
-from PySide6.QtWidgets import QWidget
+from PySide6.QtWidgets import QWidget, QScroller, QScrollerProperties
 
 from config import config
 from config.setting import Setting
@@ -32,6 +32,14 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
         self.picData = None
         self.offlineButton.SetState(False)
         self.offlineButton.Switch.connect(self.SwitchOffline)
+
+        if Setting.IsGrabGesture.value:
+            QScroller.grabGesture(self.scrollArea, QScroller.LeftMouseButtonGesture)
+            propertiesOne = QScroller.scroller(self).scrollerProperties()
+            propertiesOne.setScrollMetric(QScrollerProperties.MousePressEventDelay, 0)
+            propertiesOne.setScrollMetric(QScrollerProperties.VerticalOvershootPolicy, QScrollerProperties.OvershootAlwaysOff)
+            propertiesOne.setScrollMetric(QScrollerProperties.HorizontalOvershootPolicy, QScrollerProperties.OvershootAlwaysOff)
+            QScroller.scroller(self.scrollArea).setScrollerProperties(propertiesOne)
 
     def SwitchOffline(self, state):
         QtOwner().isOfflineModel = state
@@ -72,8 +80,15 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
     #     self.AddHttpTask(req.GetUserInfoReq(), self.UpdateUserBack)
 
     def UpdateProxyName(self):
-        self.proxyName.setText("分流{}".format(str(Setting.ProxySelectIndex.value)))
-        self.proxyImgName.setText("分流{}".format(str(Setting.ProxyImgSelectIndex.value)))
+        if Setting.ProxySelectIndex.value == 5:
+            self.proxyName.setText("CDN_{}".format(str(Setting.PreferCDNIP.value)))
+        else:
+            self.proxyName.setText("分流{}".format(str(Setting.ProxySelectIndex.value)))
+
+        if Setting.ProxyImgSelectIndex.value == 5:
+            self.proxyImgName.setText("CDN_{}".format(str(Setting.PreferCDNIPImg.value)))
+        else:
+            self.proxyImgName.setText("分流{}".format(str(Setting.ProxyImgSelectIndex.value)))
 
     # def UpdateUserBack(self, raw):
     #     st = raw["st"]

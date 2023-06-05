@@ -96,7 +96,7 @@ class Setting:
     IsHttpProxy = SettingValue("ProxySetting", 0, False, ["", "Http", "Sock5", "system"])
     HttpProxy = SettingValue("ProxySetting", "", False)
     Sock5Proxy = SettingValue("ProxySetting", "", False)
-    PreferCDNIP = SettingValue("ProxySetting", "104.16.109.107", False)
+    PreferCDNIP = SettingValue("ProxySetting", "104.18.227.172", False)
     IsUseHttps = SettingValue("ProxySetting", 1, False)
     ProxySelectIndex = SettingValue("ProxySetting", 1, False)
     IsOpenDoh = SettingValue("ProxySetting", 0, False)
@@ -105,6 +105,7 @@ class Setting:
     ApiVersion = SettingValue("ProxySetting", 0, False)
 
     ProxyImgSelectIndex = SettingValue("ProxySetting", 1, False)
+    PreferCDNIPImg = SettingValue("ProxySetting", "104.18.227.172", False)
 
     # 下载与缓存
     SavePath = SettingValue("DownloadSetting", "", False)
@@ -148,6 +149,7 @@ class Setting:
     AutoLogin = SettingValue("Other", 0, False)
     SavePassword = SettingValue("Other", 1, False)
     IsShowCmd = SettingValue("Other", 0, False)
+    IsGrabGesture = SettingValue("Other", 0, True)
     IsReDownload = SettingValue("Other", 0, False)
     IsPreUpdate = SettingValue("Other", 0, False)
 

@@ -54,7 +54,11 @@ class TaskQImage(TaskBase):
                     info.data = ToolUtil.SegmentationPicture(info.data, epsId, scrambleId, pitureName)
                 q.loadFromData(info.data)
                 q.setDevicePixelRatio(info.radio)
-                newQ = q.scaled(info.toW * info.radio, info.toH * info.radio, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                if info.toW > 0:
+                    newQ = q.scaled(info.toW * info.radio, info.toH * info.radio, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                else:
+                    newQ = q
+
             except Exception as es:
                 Log.Error(es)
             finally:

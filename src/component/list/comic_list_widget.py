@@ -31,6 +31,7 @@ class ComicListWidget(BaseListWidget):
         self.isDelMenu = False
         self.isGame = False
         self.isLocal = False
+        self.openMenu = False
 
     def SelectMenuBook(self, pos):
         index = self.indexAt(pos)
@@ -70,6 +71,9 @@ class ComicListWidget(BaseListWidget):
             if self.isDelMenu:
                 action = popMenu.addAction(Str.GetStr(Str.Delete))
                 action.triggered.connect(partial(self.DelHandler, index))
+            if self.openMenu:
+                action = popMenu.addAction(Str.GetStr(Str.OpenDir))
+                action.triggered.connect(partial(self.OpenDirHandler, index))
             popMenu.exec_(QCursor.pos())
         return
 
@@ -290,3 +294,6 @@ class ComicListWidget(BaseListWidget):
         if widget:
             QtOwner().OpenEpsInfo(widget.id)
         pass
+
+    def OpenDirHandler(self, index):
+        return
