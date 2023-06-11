@@ -179,6 +179,13 @@
         </layout>
        </item>
        <item>
+        <widget class="QRadioButton" name="loginProxy">
+         <property name="text">
+          <string>使用注册分流（无法注册可尝试开启）</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="testSpeedButton">
          <property name="text">
           <string>测速</string>
@@ -530,8 +537,8 @@
   <slot>OpenUrl()</slot>
  </slots>
  <buttongroups>
-  <buttongroup name="radioProxyGroup"/>
   <buttongroup name="radioApiGroup"/>
+  <buttongroup name="radioProxyGroup"/>
   <buttongroup name="radioImgGroup"/>
  </buttongroups>
 </ui>

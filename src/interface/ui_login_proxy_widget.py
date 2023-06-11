@@ -140,6 +140,11 @@ class Ui_LoginProxyWidget(object):
 
         self.verticalLayout.addLayout(self.horizontalLayout_9)
 
+        self.loginProxy = QRadioButton(self.scrollAreaWidgetContents)
+        self.loginProxy.setObjectName(u"loginProxy")
+
+        self.verticalLayout.addWidget(self.loginProxy)
+
         self.testSpeedButton = QPushButton(self.scrollAreaWidgetContents)
         self.testSpeedButton.setObjectName(u"testSpeedButton")
 
@@ -370,6 +375,7 @@ class Ui_LoginProxyWidget(object):
         self.sockEdit.setPlaceholderText("")
         self.proxy_3.setText(QCoreApplication.translate("LoginProxyWidget", u"\u4f7f\u7528\u7cfb\u7edf\u4ee3\u7406", None))
         self.httpsBox.setText(QCoreApplication.translate("LoginProxyWidget", u"\u542f\u7528Https\uff08\u5982\u679c\u51fa\u73b0\u8fde\u63a5\u88ab\u91cd\u7f6e\uff0c\u5efa\u8bae\u5173\u95ed\u8bd5\u8bd5\uff09", None))
+        self.loginProxy.setText(QCoreApplication.translate("LoginProxyWidget", u"\u4f7f\u7528\u6ce8\u518c\u5206\u6d41\uff08\u65e0\u6cd5\u6ce8\u518c\u53ef\u5c1d\u8bd5\u5f00\u542f\uff09", None))
         self.testSpeedButton.setText(QCoreApplication.translate("LoginProxyWidget", u"\u6d4b\u901f", None))
 #if QT_CONFIG(tooltip)
         self.radioButton_4.setToolTip(QCoreApplication.translate("LoginProxyWidget", u"\u6240\u4ee5\u5206\u6d41\u4e0d\u53ef\u4f7f\u7528\u65f6\uff0c\u81ea\u52a8\u89e3\u9501", None))

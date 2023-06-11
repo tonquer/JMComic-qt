@@ -40,6 +40,7 @@ from view.setting.setting_view import SettingView
 from view.tool.local_read_view import LocalReadView
 from view.tool.waifu2x_tool_view import Waifu2xToolView
 from view.user.favorite_view import FavoriteView
+from view.user.local_favorite_view import LocalFavoriteView
 
 class Ui_Main(object):
     def setupUi(self, Main):
@@ -149,6 +150,9 @@ class Ui_Main(object):
         self.myCommentView = MyCommentView()
         self.myCommentView.setObjectName(u"myCommentView")
         self.subStackWidget.addWidget(self.myCommentView)
+        self.localFavoriteView = LocalFavoriteView()
+        self.localFavoriteView.setObjectName(u"localFavoriteView")
+        self.subStackWidget.addWidget(self.localFavoriteView)
 
         self.verticalLayout.addWidget(self.subStackWidget)
 

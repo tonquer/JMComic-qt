@@ -82,6 +82,7 @@ class BookBaseInfo(object):
         self.views = ""
         self.authorList = []
         self.tagList = []
+        self.category = []
         self.updateDate = ""
         self.coverUrl = ""
         self.tagStr = ""
@@ -103,6 +104,7 @@ class BookBaseInfo(object):
         self.tagStr = o.tagStr
         self.authorList = o.authorList
         self.tagList = o.tagList
+        self.category = o.category
 
 
 class BookPageInfo(object):

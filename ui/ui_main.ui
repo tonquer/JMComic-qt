@@ -105,6 +105,7 @@
             <widget class="HistoryView" name="historyView"/>
             <widget class="RemoteHistoryView" name="remoteHistoryView"/>
             <widget class="MyCommentView" name="myCommentView"/>
+            <widget class="LocalFavoriteView" name="localFavoriteView"/>
            </widget>
           </item>
          </layout>
@@ -242,6 +243,12 @@
    <class>DownloadAllView</class>
    <extends>QWidget</extends>
    <header location="global">view.download.download_all_view.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>LocalFavoriteView</class>
+   <extends>QWidget</extends>
+   <header location="global">view.user.local_favorite_view.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

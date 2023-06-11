@@ -424,7 +424,7 @@ QScrollArea {background-color:transparent;}</string>
                   <string notr="true">background-color:transparent;</string>
                  </property>
                  <property name="text">
-                  <string/>
+                  <string>收藏</string>
                  </property>
                  <property name="icon">
                   <iconset resource="../res/images.qrc">
@@ -439,6 +439,35 @@ QScrollArea {background-color:transparent;}</string>
                  </property>
                  <property name="checkable">
                   <bool>false</bool>
+                 </property>
+                 <property name="toolButtonStyle">
+                  <enum>Qt::ToolButtonTextBesideIcon</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QToolButton" name="localButton">
+                 <property name="minimumSize">
+                  <size>
+                   <width>40</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>本地</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../res/images.qrc">
+                   <normaloff>:/png/icon/icon_like_off.png</normaloff>:/png/icon/icon_like_off.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>50</width>
+                   <height>50</height>
+                  </size>
+                 </property>
+                 <property name="toolButtonStyle">
+                  <enum>Qt::ToolButtonTextBesideIcon</enum>
                  </property>
                 </widget>
                </item>
@@ -457,7 +486,7 @@ QScrollArea {background-color:transparent;}</string>
                   <string notr="true">background-color:transparent;</string>
                  </property>
                  <property name="text">
-                  <string/>
+                  <string>评论</string>
                  </property>
                  <property name="icon">
                   <iconset resource="../res/images.qrc">
@@ -468,6 +497,9 @@ QScrollArea {background-color:transparent;}</string>
                    <width>50</width>
                    <height>50</height>
                   </size>
+                 </property>
+                 <property name="toolButtonStyle">
+                  <enum>Qt::ToolButtonTextBesideIcon</enum>
                  </property>
                 </widget>
                </item>
@@ -706,8 +738,8 @@ QListWidget::item {
    <slot>StartRead()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>519</x>
-     <y>478</y>
+     <x>627</x>
+     <y>503</y>
     </hint>
     <hint type="destinationlabel">
      <x>313</x>
@@ -722,8 +754,8 @@ QListWidget::item {
    <slot>AddDownload()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>438</x>
-     <y>478</y>
+     <x>546</x>
+     <y>503</y>
     </hint>
     <hint type="destinationlabel">
      <x>788</x>
@@ -738,12 +770,28 @@ QListWidget::item {
    <slot>AddFavorite()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>392</x>
-     <y>478</y>
+     <x>297</x>
+     <y>503</y>
     </hint>
     <hint type="destinationlabel">
      <x>781</x>
      <y>432</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>localButton</sender>
+   <signal>clicked()</signal>
+   <receiver>BookInfo</receiver>
+   <slot>AddLocalFavorite()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>350</x>
+     <y>477</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>7</x>
+     <y>452</y>
     </hint>
    </hints>
   </connection>
@@ -754,5 +802,6 @@ QListWidget::item {
   <slot>StartRead()</slot>
   <slot>AddBookLike()</slot>
   <slot>ChangeTab()</slot>
+  <slot>AddLocalFavorite()</slot>
  </slots>
 </ui>

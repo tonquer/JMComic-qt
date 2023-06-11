@@ -84,13 +84,32 @@ class ServerReq(object):
             header["Content-Type"] = "application/x-www-form-urlencoded"
         return header
 
-    def GetWebHeader(self) -> dict:
+    def GetWebHeader2(self) -> dict:
         return \
         {
-            "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-            "Upgrade-Insecure-Requests": "1"
+            # "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+            # "Upgrade-Insecure-Requests": "1",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.43"
         }
-    
+
+    def GetWebHeader(self) -> dict:
+        return {
+        # 'authority': '18comic.org',
+          "accept":"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+          "accept-encoding":"gzip, deflate, br",
+           # "cookie": 'ipcountry=CN; ipm5=6846bee8bfbb7323e83d0f32c635eae9',
+          "accept-language":"zh-CN,zh;q=0.9",
+           "upgrade-insecure-requests":"1",
+            # 'sec-ch-ua':'"Not.A/Brand";v="8", "Chromium";v="114", "Microsoft Edge";v="114"',
+            # 'sec-ch-ua-mobile': '?0',
+            # 'sec-ch-ua-platform': '"Windows"',
+            # 'sec-fetch-dest': 'document',
+            # 'sec-fetch-mode': 'navigate',
+            # 'sec-fetch-site': 'none',
+            # 'sec-fetch-user': '?1',
+            'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.43"
+        }
+
     def ParseData(self, data) -> str:
         param = "{}{}".format(self.now, "18comicAPPContent")
         key = hashlib.md5(param.encode("utf-8")).hexdigest()
@@ -140,7 +159,7 @@ class DownloadBookReq(ServerReq):
 # 注册前，需要获取cookie
 class LoginPreReq(ServerReq):
     def __init__(self):
-        method = "Get"
+        method = "Get2"
         url = config.Url + "/login"
         super(self.__class__, self).__init__(url, {}, method)
         self.headers = self.GetWebHeader()
@@ -225,7 +244,7 @@ class ResetPasswordReq(ServerReq):
 # 验证码图片
 class GetCaptchaReq(ServerReq):
     def __init__(self):
-        method = "Get"
+        method = "Get2"
         url = config.Url + "/captcha"
 
         data = dict()

@@ -38,6 +38,13 @@ class DownloadDb(object):
             Log.Warn(a)
 
         query = QSqlQuery(self.db)
+        sql = """ALTER TABLE 'download' ADD 'tick' int DEFAULT 1683388800;"""
+        suc = query.exec_(sql)
+        if not suc:
+            a = query.lastError().text()
+            Log.Warn(a)
+
+        query = QSqlQuery(self.db)
         sql = """\
             create table if not exists download_eps(\
             bookId varchar,\

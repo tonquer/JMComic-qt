@@ -99,7 +99,7 @@ class FavoriteView(QtWidgets.QWidget, Ui_Favorite, QtTaskBase):
         if page > self.bookList.pages:
             return
         self.bookList.clear()
-        self.RefreshData(self.bookList.page)
+        self.RefreshData(page)
 
     def RefreshData(self, page=1):
         QtOwner().ShowLoading()

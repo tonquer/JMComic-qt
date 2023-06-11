@@ -1,6 +1,6 @@
 import time
 
-Url = "https://jmcomic1.group/"       # 域名
+Url = "https://18comic.org/"       # 域名
 UrlBack = "https://jmcomic.ggo.icu/"       # 域名
 
 

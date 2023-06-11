@@ -86,6 +86,10 @@ class QtOwner(Singleton):
         return self._localServer()
 
     @property
+    def localFavoriteView(self):
+        return self.owner.localFavoriteView
+
+    @property
     def downloadView(self):
         return self.owner.downloadView
 

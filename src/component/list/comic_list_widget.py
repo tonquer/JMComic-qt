@@ -83,7 +83,7 @@ class ComicListWidget(BaseListWidget):
         title = v.baseInfo.title
         url = v.baseInfo.coverUrl
         _id = v.baseInfo.id
-        categories = ",".join(v.baseInfo.tagList)
+        categories = ",".join(v.baseInfo.category)
         self.AddBookItem(_id, title, categories, url)
 
     def AddBookByLocal(self, v, isFirstAdd=False):
@@ -273,10 +273,6 @@ class ComicListWidget(BaseListWidget):
         if widget:
             assert isinstance(widget, ComicItemWidget)
             self.MoveCallBack(widget.id)
-    def OpenBookDownloadAll(self):
-        from view.download.download_all_item import DownloadAllItem
-        allData = DownloadAllItem.MakeAllItem(self)
-        QtOwner().OpenDownloadAll(allData)
 
     def DelHandler(self, index):
         widget = self.indexWidget(index)

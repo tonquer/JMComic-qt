@@ -49,6 +49,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         self.UpdateServer()
         self.commandLinkButton.clicked.connect(self.OpenUrl)
         self.maxNum = 6
+        self.loginProxy.hide()
 
     def Init(self):
         self.LoadSetting()
@@ -93,6 +94,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         button.setChecked(True)
         self.cdn_api_ip.setText(Setting.PreferCDNIP.value)
         self.cdn_img_ip.setText(Setting.PreferCDNIPImg.value)
+        self.loginProxy.setChecked(bool(Setting.IsLoginProxy.value))
 
     def SaveSetting(self):
         Setting.IsHttpProxy.SetValue(int(self.radioProxyGroup.checkedId()))
@@ -100,6 +102,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         Setting.HttpProxy.SetValue(self.httpLine.text())
         Setting.ProxySelectIndex.SetValue(self.radioApiGroup.checkedId())
         Setting.ProxyImgSelectIndex.SetValue(self.radioImgGroup.checkedId())
+        Setting.IsLoginProxy.SetValue(int(self.loginProxy.isChecked()))
         # Setting.DohAddress.SetValue(self.dohEdit.text())
         # Setting.IsOpenDoh.SetValue(int(self.dohBox.isChecked()))
         self.UpdateServer()
@@ -120,7 +123,10 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
             address = Setting.PreferCDNIP.value
         else:
             address = ""
-        Server().UpdateDns(address, imageServer)
+        if Setting.IsLoginProxy.value:
+            Server().UpdateDns(address, imageServer, "47.87.215.162")
+        else:
+            Server().UpdateDns(address, imageServer)
         QtOwner().settingView.SetSock5Proxy()
         Log.Info("update proxy, setId:{}:{}, address:{}, img:{}".format(Setting.ProxySelectIndex.value, Setting.ProxyImgSelectIndex.value, address, imageServer))
 

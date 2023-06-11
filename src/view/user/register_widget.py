@@ -19,6 +19,7 @@ class RegisterWidget(QtWidgets.QWidget, Ui_RegisterWidget, QtTaskBase):
         Ui_RegisterWidget.__init__(self)
         QtTaskBase.__init__(self)
         self.setupUi(self)
+        self.verPicture.setText(Str.GetStr(Str.LoadingPicture))
         # reg = QRegularExpression("^[A-Z0-9a-z\\.\\_]{1,16}$")
         # validator = QRegularExpressionValidator(reg, self.userEdit)
         # self.userEdit.setValidator(validator)
@@ -59,6 +60,8 @@ class RegisterWidget(QtWidgets.QWidget, Ui_RegisterWidget, QtTaskBase):
             p.loadFromData(content)
             p.setDevicePixelRatio(self.devicePixelRatio())
             self.verPicture.setPixmap(p)
+        else:
+            self.verPicture.setText(Str.GetStr(Str.LoadingFail))
 
     def RegisterBack(self, raw):
         self.CloseLoading.emit()

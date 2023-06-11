@@ -89,6 +89,11 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         else:
             self.favoriteButton.setIcon(QIcon(":/png/icon/icon_like_off.png"))
 
+        if QtOwner().localFavoriteView.IsHave(self.bookId):
+            self.localButton.setIcon(QIcon(":/png/icon/icon_like.png"))
+        else:
+            self.localButton.setIcon(QIcon(":/png/icon/icon_like_off.png"))
+
     def Clear(self):
         self.ClearTask()
         self.epsListWidget.clear()
@@ -258,7 +263,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
                     model = ToolUtil.GetModelByIndex(Setting.CoverLookNoise.value, Setting.CoverLookScale.value, Setting.CoverLookModel.value, mat)
                     self.AddConvertTask(self.path, self.pictureData, model, self.Waifu2xPictureBack)
         else:
-            self.picture.setPixmap(None)
+            self.picture.setPixmap(QPixmap())
             self.picture.setText(Str.GetStr(Str.LoadingFail))
         return
 
@@ -328,6 +333,18 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             QtOwner().ShowError(Str.GetStr(Str.NotLogin))
             return
         self.AddHttpTask(req.AddAndDelFavoritesReq2(self.bookId), self.AddFavoriteBack)
+
+    def AddLocalFavorite(self):
+        if QtOwner().localFavoriteView.IsHave(self.bookId):
+            QtOwner().localFavoriteView.DelFavorites(self.bookId)
+            QtOwner().ShowMsg(Str.GetStr(Str.DelFavoriteSuc))
+            self.UpdateFavoriteIcon()
+        else:
+            bookInfo = BookMgr().GetBook(self.bookId)
+            if bookInfo:
+                QtOwner().localFavoriteView.AddFavorites(bookInfo)
+                QtOwner().ShowMsg(Str.GetStr(Str.AddFavoriteSuc))
+                self.UpdateFavoriteIcon()
 
     def DelFavoriteBack(self, raw):
         if not config.LoginUserName:

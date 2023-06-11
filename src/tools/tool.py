@@ -405,10 +405,10 @@ class ToolUtil(object):
         b.baseInfo.coverUrl = "/media/albums/{}_3x4.jpg".format(b.baseInfo.id)
         category = v.get("category", {}).get("title")
         if category:
-            b.baseInfo.tagList.append(category)
+            b.baseInfo.category.append(category)
         category = v.get("category_sub", {}).get("title")
         if category:
-            b.baseInfo.tagList.append(category)
+            b.baseInfo.category.append(category)
         return b
 
     @staticmethod

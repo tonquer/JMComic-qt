@@ -41,6 +41,7 @@ from view.setting.setting_view import SettingView
 from view.tool.local_read_view import LocalReadView
 from view.tool.waifu2x_tool_view import Waifu2xToolView
 from view.user.favorite_view import FavoriteView
+from view.user.local_favorite_view import LocalFavoriteView
 
 class Ui_MainWindows(object):
     def setupUi(self, MainWindows):
@@ -102,6 +103,9 @@ class Ui_MainWindows(object):
         self.indexView = IndexView()
         self.indexView.setObjectName(u"indexView")
         self.subStackWidget.addWidget(self.indexView)
+        self.localFavoriteView = LocalFavoriteView()
+        self.localFavoriteView.setObjectName(u"localFavoriteView")
+        self.subStackWidget.addWidget(self.localFavoriteView)
         self.localReadView = LocalReadView()
         self.localReadView.setObjectName(u"localReadView")
         self.subStackWidget.addWidget(self.localReadView)

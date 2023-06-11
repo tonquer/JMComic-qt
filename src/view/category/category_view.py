@@ -114,7 +114,7 @@ class CategoryView(QWidget, Ui_Category, QtTaskBase):
             return
         assert isinstance(category, Category)
         self.spinBox.setMaximum(bookWidget.pages)
-        self.spinBox.setValue(bookWidget.page)
+        self.spinBox.setValue(page)
         self.label.setText(bookWidget.GetPageStr())
 
         if bookWidget.count() > 0 and not isForce:
@@ -173,5 +173,5 @@ class CategoryView(QWidget, Ui_Category, QtTaskBase):
         category = self.indexCategory.get(index)
         assert isinstance(category, Category)
         sortId = self.sortList[self.sortCombox.currentIndex()]
-        self.AddHttpTask(req.GetSearchCategoryReq2(category.name, bookWidget.page + 1, sortId), self._SearchCategoryBack, (bookWidget.page + 1, index))
+        self.AddHttpTask(req.GetSearchCategoryReq2(category.slug, bookWidget.page + 1, sortId), self._SearchCategoryBack, (bookWidget.page + 1, index))
         return

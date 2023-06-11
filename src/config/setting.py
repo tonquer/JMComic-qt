@@ -107,6 +107,8 @@ class Setting:
     ProxyImgSelectIndex = SettingValue("ProxySetting", 1, False)
     PreferCDNIPImg = SettingValue("ProxySetting", "104.18.227.172", False)
 
+    IsLoginProxy = SettingValue("ProxySetting", 0, False)
+
     # 下载与缓存
     SavePath = SettingValue("DownloadSetting", "", False)
     SaveNameType = SettingValue("DownloadSetting", 0, False)

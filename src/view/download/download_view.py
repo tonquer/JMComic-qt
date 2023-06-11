@@ -75,7 +75,8 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Interactive)
         # self.tableWidget.setColumnWidth(0, 40)
         print(self.width())
-        self.tableWidget.setColumnWidth(1, 300)
+        self.tableWidget.setColumnWidth(1, 200)
+        self.tableWidget.setColumnWidth(2, 300)
 
     # 修复下数据
     def RepairData(self, task):

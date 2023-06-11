@@ -263,6 +263,7 @@ class GetIndexInfoReq2Handler(object):
             cookies = requests.utils.dict_from_cookiejar(task.res.raw.cookies)
             Log.Info("latest suc, cookies:{}".format(cookies))
             bookInfo = ToolUtil.ParseIndex2(task.req.ParseData(v.get("data")))
+
             data["st"] = Status.Ok
             data["bookInfo"] = bookInfo
         except Exception as es:
@@ -759,6 +760,8 @@ class DownloadBookHandler(object):
                         TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, -Status.Error, b"")
                     return
                 fileSize = int(r.headers.get('Content-Length', 0))
+                if fileSize <= 0:
+                    fileSize = 100000
                 getSize = 0
                 data = b""
                 now = time.time()

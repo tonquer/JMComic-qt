@@ -18,7 +18,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QAbstractItemView, QApplication, QFrame, QGridLayout,
     QHBoxLayout, QLabel, QLayout, QListView,
     QListWidgetItem, QPlainTextEdit, QPushButton, QSizePolicy,
-    QSpacerItem, QTabWidget, QVBoxLayout, QWidget)
+    QSpacerItem, QTabWidget, QToolButton, QVBoxLayout,
+    QWidget)
 
 from component.button.icon_tool_button import IconToolButton
 from component.list.eps_list_widget import EpsListWidget
@@ -286,18 +287,31 @@ class Ui_BookInfo(object):
         self.favoriteButton.setIcon(icon)
         self.favoriteButton.setIconSize(QSize(50, 50))
         self.favoriteButton.setCheckable(False)
+        self.favoriteButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
 
         self.horizontalLayout_2.addWidget(self.favoriteButton)
+
+        self.localButton = QToolButton(self.tab)
+        self.localButton.setObjectName(u"localButton")
+        self.localButton.setMinimumSize(QSize(40, 40))
+        icon1 = QIcon()
+        icon1.addFile(u":/png/icon/icon_like_off.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.localButton.setIcon(icon1)
+        self.localButton.setIconSize(QSize(50, 50))
+        self.localButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+
+        self.horizontalLayout_2.addWidget(self.localButton)
 
         self.commentButton = IconToolButton(self.tab)
         self.commentButton.setObjectName(u"commentButton")
         self.commentButton.setMinimumSize(QSize(40, 40))
         self.commentButton.setCursor(QCursor(Qt.PointingHandCursor))
         self.commentButton.setStyleSheet(u"background-color:transparent;")
-        icon1 = QIcon()
-        icon1.addFile(u":/png/icon/icon_comment.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.commentButton.setIcon(icon1)
+        icon2 = QIcon()
+        icon2.addFile(u":/png/icon/icon_comment.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.commentButton.setIcon(icon2)
         self.commentButton.setIconSize(QSize(50, 50))
+        self.commentButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
 
         self.horizontalLayout_2.addWidget(self.commentButton)
 
@@ -306,9 +320,9 @@ class Ui_BookInfo(object):
         self.downloadButton.setMinimumSize(QSize(40, 40))
         self.downloadButton.setCursor(QCursor(Qt.PointingHandCursor))
         self.downloadButton.setStyleSheet(u"background-color:transparent;")
-        icon2 = QIcon()
-        icon2.addFile(u":/png/icon/ic_get_app_black_36dp.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.downloadButton.setIcon(icon2)
+        icon3 = QIcon()
+        icon3.addFile(u":/png/icon/ic_get_app_black_36dp.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.downloadButton.setIcon(icon3)
         self.downloadButton.setIconSize(QSize(50, 50))
 
         self.horizontalLayout_2.addWidget(self.downloadButton)
@@ -420,6 +434,7 @@ class Ui_BookInfo(object):
         self.startRead.clicked.connect(BookInfo.StartRead)
         self.downloadButton.clicked.connect(BookInfo.AddDownload)
         self.favoriteButton.clicked.connect(BookInfo.AddFavorite)
+        self.localButton.clicked.connect(BookInfo.AddLocalFavorite)
 
         self.tabWidget.setCurrentIndex(0)
 
@@ -443,8 +458,9 @@ class Ui_BookInfo(object):
         self.label_5.setText(QCoreApplication.translate("BookInfo", u"Tags\uff1a", None))
         self.label_7.setText(QCoreApplication.translate("BookInfo", u"\u89c2\u770b\u6570\uff1a", None))
         self.views.setText("")
-        self.favoriteButton.setText("")
-        self.commentButton.setText("")
+        self.favoriteButton.setText(QCoreApplication.translate("BookInfo", u"\u6536\u85cf", None))
+        self.localButton.setText(QCoreApplication.translate("BookInfo", u"\u672c\u5730", None))
+        self.commentButton.setText(QCoreApplication.translate("BookInfo", u"\u8bc4\u8bba", None))
         self.downloadButton.setText("")
         self.startRead.setText(QCoreApplication.translate("BookInfo", u"\u5f00\u59cb\u9605\u8bfb", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("BookInfo", u"\u9605\u8bfb", None))
