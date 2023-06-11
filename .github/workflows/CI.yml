@@ -70,7 +70,7 @@ jobs:
         pip install lxml==4.6.4
         pip install natsort==8.2.0
         pip install pycryptodomex==3.12.0
-        pip install waifu2x-vulkan==1.1.5
+        pip install waifu2x-vulkan==1.1.6
     - name: Build
       run: |
         cd src

@@ -67,7 +67,7 @@ jobs:
         pip install pycryptodomex==3.12.0
         pip install Pysocks==1.7.1
         pip install natsort==8.2.0
-        pip install https://github.com/tonquer/waifu2x-vulkan/releases/download/v1.1.5/waifu2x_vulkan-1.1.5-cp37-cp37m-macosx_10_15_x86_64.whl
+        pip install https://github.com/tonquer/waifu2x-vulkan/releases/download/v1.1.6/waifu2x_vulkan-1.1.6-cp37-cp37m-macosx_10_15_x86_64.whl
         brew install create-dmg
     - name: Build
       run: |
@@ -84,11 +84,14 @@ jobs:
             --hidden-import view \
             --strip --windowed -i Icon.icns \
             start.py
-        rm -rf dist/JMComic
-        cp Icon.icns dist/
-        ln -s /Applications/   dist/Applications
-        create-dmg --volname "JMComic" --volicon "Icon.icns" --icon "Icon.icns" 200 190 \
-            --hide-extension "Icon.icns" ${{ env.PACKAGENAME }}.dmg dist/
+        xattr -cr dist/JMComic.app
+        create-dmg --volname "JMComic" --volicon "Icon.icns" --icon "JMComic.app" 200 190 \
+            --window-pos 200 120 \
+            --window-size 800 400 \
+            --icon-size 100 \
+            --hide-extension "JMComic.app" --app-drop-link 600 185 \
+            ${{ env.PACKAGENAME }}.dmg dist/JMComic.app
+
         zip -9 jmcomic.zip ${{ env.PACKAGENAME }}.dmg
         mv ${{ env.PACKAGENAME }}.dmg ..
         mv jmcomic.zip ..
@@ -170,7 +173,7 @@ jobs:
         pip install requests==2.26.0
         pip install urllib3==1.25.11
         pip install pillow==8.3.2
-        pip install waifu2x-vulkan==1.1.5
+        pip install waifu2x-vulkan==1.1.6
         pip install bs4==0.0.1
         pip install lxml==4.6.4
         pip install pycryptodomex==3.12.0
