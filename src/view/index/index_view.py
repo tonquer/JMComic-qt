@@ -21,6 +21,9 @@ class IndexView(QWidget, Ui_Index, QtTaskBase):
         self.bookWidgetList = []
         self.tabWidget.currentChanged.connect(self.SwitchCheck)
         self.newIndex = 0
+        self.widget.setVisible(True)
+        self.newListWidget.LoadCallBack = self.LoadNextPage
+        self.jumpButton.clicked.connect(self.JumpPage)
 
     def SwitchCurrent(self, **kwargs):
         refresh = kwargs.get("refresh")
@@ -41,12 +44,12 @@ class IndexView(QWidget, Ui_Index, QtTaskBase):
                 bookInfo = raw["bookInfo"]
                 for key, bookList in bookInfo.items():
                     w = self.AddTab(key)
-                    self.newIndex += 1
                     for v in bookList:
                         w.AddBookItemByBook(v)
                 self.tabWidget.setCurrentIndex(0)
             else:
                 QtOwner().CheckShowMsg( raw)
+            self.GetLatestInfo()
         except Exception as es:
             Log.Error(es)
             self.isInit = False
@@ -57,22 +60,41 @@ class IndexView(QWidget, Ui_Index, QtTaskBase):
         newListWidget = ComicListWidget(tab)
         verticalLayout.addWidget(newListWidget)
         self.bookWidgetList.append(newListWidget)
-        self.tabWidget.insertTab(0, tab, name)
+        self.tabWidget.addTab(tab, name)
         return newListWidget
 
     def SwitchCheck(self, index):
-        if self.tabWidget.currentIndex() == self.newIndex and not self.isInitNew:
+        if self.tabWidget.currentIndex() == self.newIndex:
             QtOwner().ShowLoading()
-            self.AddHttpTask(req.GetLatestInfoReq2(), self.GetLatestInfoBack)
+            self.widget.setVisible(True)
+            self.newListWidget.clear()
+            self.GetLatestInfo()
+        else:
+            self.widget.setVisible(False)
         return
 
-    def GetLatestInfoBack(self, raw):
+    def JumpPage(self):
+        self.newListWidget.clear()
+        self.GetLatestInfo(self.spinBox.value())
+
+    def GetLatestInfo(self, page=1):
+        QtOwner().ShowLoading()
+        self.AddHttpTask(req.GetLatestInfoReq2(page-1), self.GetLatestInfoBack, page)
+
+    def GetLatestInfoBack(self, raw, page):
         QtOwner().CloseLoading()
         st = raw["st"]
+        self.newListWidget.UpdateState()
         if st == Status.Ok:
             self.isInitNew = True
             bookList = raw["bookList"]
             for v in bookList:
                 self.newListWidget.AddBookItemByBook(v)
+            self.spinBox.setValue(page)
+            self.spinBox.setMaximum(999)
+            self.newListWidget.UpdatePage(page, 999)
         else:
-            QtOwner().CheckShowMsg( raw)
+            QtOwner().CheckShowMsg(raw)
+
+    def LoadNextPage(self):
+        self.GetLatestInfo(self.newListWidget.page + 1)
