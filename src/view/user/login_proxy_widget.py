@@ -103,6 +103,8 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         Setting.ProxySelectIndex.SetValue(self.radioApiGroup.checkedId())
         Setting.ProxyImgSelectIndex.SetValue(self.radioImgGroup.checkedId())
         Setting.IsLoginProxy.SetValue(int(self.loginProxy.isChecked()))
+        Setting.PreferCDNIPImg.SetValue(self.cdn_img_ip.text())
+        Setting.PreferCDNIP.SetValue(self.cdn_api_ip.text())
         # Setting.DohAddress.SetValue(self.dohEdit.text())
         # Setting.IsOpenDoh.SetValue(int(self.dohBox.isChecked()))
         self.UpdateServer()

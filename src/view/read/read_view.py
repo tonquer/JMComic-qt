@@ -815,7 +815,6 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
             if not bookInfo or not downInfo:
                 QtOwner().ShowError(Str.GetStr(Str.FileError))
             else:
-                assert isinstance(bookInfo, Book)
                 assert isinstance(downInfo, DownloadEpsItem)
                 raw = {"st": Status.Ok, "maxPic": downInfo.picCnt, "title": downInfo.epsTitle}
                 self.StartLoadPicUrlBack(raw, "")
@@ -829,7 +828,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
             self.AddDownloadBook(self.bookId, self.epsId, i,
                                  downloadCallBack=self.UpdateProcessBar,
                                  completeCallBack=self.CompleteDownloadPic,
-                                 backParam=i, loadPath=loadPath)
+                                 backParam=i)
         else:
             self.AddDownloadBookCache(loadPath, completeCallBack=self.CompleteDownloadPic, backParam=i)
         if i not in self.pictureData:
