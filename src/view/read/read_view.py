@@ -64,6 +64,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         self.isOffline = False
         self.isLocal = False
         self.cacheBook = None
+        self.lastPath = ""
         # QtOwner().owner.WindowsSizeChange.connect(self.qtTool.ClearQImage)
 
     @property
@@ -143,10 +144,14 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         action.triggered.connect(self.qtTool.OpenNextEps)
 
         menu4 = popMenu.addMenu(Str.GetStr(Str.Copy))
-        action = menu4.addAction(Str.GetStr(Str.CopyPicture))
+        action = menu4.addAction(Str.GetStr(Str.CopyPicture) + "(F1)")
         action.triggered.connect(self.CopyPicture)
-        action = menu4.addAction(Str.GetStr(Str.CopyFile))
+
+        action = menu4.addAction(Str.GetStr(Str.CopyFile) + "(F3)")
         action.triggered.connect(self.CopyFile)
+
+        action = menu4.addAction(Str.GetStr(Str.CopyFileLast) + "(F4)")
+        action.triggered.connect(self.CopyLastFile)
 
         action = popMenu.addAction(Str.GetStr(Str.AutoScroll)+"(F5)")
         action.triggered.connect(self.qtTool.SwitchScrollAndTurn)
@@ -862,29 +867,67 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         if not info.data and not info.waifuData:
             return
 
-        today = time.strftime("%Y%m%d%H%M%S", time.localtime(time.time()))
+        # today = time.strftime("%Y%m%d%H%M%S", time.localtime(time.time()))
         if info.waifuData:
-            path = "{}_waifu2x.jpg".format(today)
+            path = "{}_{}_waifu2x.jpg".format(self.bookId, self.curIndex+1)
             data = info.waifuData
         else:
-            path = "{}.jpg".format(today)
-            if not (self.isLocal or self.isOffline) and info.saveParams:
-                epsId, scrambleId, pitureName = info.saveParams
-                data = ToolUtil.SegmentationPicture(info.data, epsId, scrambleId, pitureName)
-            else:
-                data = info.data
+            path = "{}_{}.jpg".format(self.bookId, self.curIndex+1)
+            data = info.data
         if not data:
             return
         try:
+            if self.lastPath:
+                path = os.path.join(self.lastPath, path)
             filepath = QFileDialog.getSaveFileName(self, Str.GetStr(Str.Save), path, "Image Files(*.jpg *.png)")
             if filepath and len(filepath) >= 1:
                 name = filepath[0]
                 if not name:
                     return
+                self.lastPath = os.path.dirname(name)
                 f = open(name, "wb")
                 f.write(data)
                 f.close()
-                QtOwner().ShowMsg(Str.GetStr(Str.CopySuc))
+                QtOwner().ShowMsg(Str.GetStr(Str.SaveSuc))
+        except Exception as es:
+            Log.Error(es)
+
+    def CopyLastFile(self):
+        info = self.pictureData.get(self.curIndex)
+        if not info:
+            return
+        assert isinstance(info, QtFileData)
+        if not info.data and not info.waifuData:
+            return
+
+        if info.waifuData:
+            path = "{}_{}_waifu2x.jpg".format(self.bookId, self.curIndex+1)
+            data = info.waifuData
+        else:
+            path = "{}_{}.jpg".format(self.bookId, self.curIndex+1)
+            data = info.data
+        if not data:
+            return
+        try:
+            if self.lastPath:
+                name = os.path.join(self.lastPath, path)
+            else:
+                if self.lastPath:
+                    path = os.path.join(self.lastPath, path)
+                filepath = QFileDialog.getSaveFileName(self, Str.GetStr(Str.Save), path, "Image Files(*.jpg *.png)")
+                if filepath and len(filepath) >= 1:
+                    name = filepath[0]
+                    if not name:
+                        return
+                    self.lastPath = os.path.dirname(name)
+                else:
+                    return
+
+            # self.lastPath = os.path.dirname(name)
+            f = open(name, "wb")
+            f.write(data)
+            f.close()
+            QtOwner().ShowMsg(Str.GetStr(Str.SaveSuc))
         except Exception as es:
             Log.Error(es)
 

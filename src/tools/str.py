@@ -228,7 +228,8 @@ class Str:
     SupportDrop = 148         # 支持拖拽文件导入
     AlreadyHave = 149         # 已存在
     SameWight = 150    # 等宽模式
-
+    CopyFileLast = 151     # 保存上次路径
+    
     @classmethod
     def Reload(cls):
         cls.obj = QtStrObj()
@@ -434,6 +435,7 @@ class Str:
         cls.strDict[cls.Copy] = QCoreApplication.translate("cls.obj", "复制", None)
         cls.strDict[cls.CopyPicture] = QCoreApplication.translate("cls.obj", "复制图片到剪贴板", None)
         cls.strDict[cls.CopyFile] = QCoreApplication.translate("cls.obj", "保存文件", None)
+        cls.strDict[cls.CopyFileLast] = QCoreApplication.translate("cls.obj", "保存上次路径", None)
         cls.strDict[cls.MainUi] = QCoreApplication.translate("cls.obj", "主界面", None)
         cls.strDict[cls.ShowMin] = QCoreApplication.translate("cls.obj", "最小化", None)
         cls.strDict[cls.DownloadAll] = QCoreApplication.translate("cls.obj", "批量下载", None)
