@@ -236,6 +236,16 @@ class DownloadStatus(QtTaskBase):
                 self.AddDownloadBook(task.bookId, epsId, index, self.DownloadStCallBack, self.DownloadCallBack, self.DownloadCompleteCallBack, task.bookId, savePath=savePath, cleanFlag=task.cleanFlag, isInit=isInit)
             self.UpdateTableItem(task)
             self.UpdateTaskDB(task)
+        elif msg == Str.SpacePic:
+            newStatus = task.DownloadFailCallBack()
+            self.SetNewStatus(task, newStatus)
+            if newStatus == task.Downloading:
+                epsIndex, index, savePath, isInit = task.GetDownloadPath()
+                self.AddDownloadBook(task.bookId, epsIndex, index, self.DownloadStCallBack, self.DownloadCallBack,
+                                     self.DownloadCompleteCallBack, task.bookId, savePath=savePath,
+                                     cleanFlag=task.cleanFlag, isInit=isInit)
+            self.UpdateTableItem(task)
+            self.UpdateTaskDB(task)
         else:
             self.SetNewStatus(task, task.Error)
         return

@@ -1,7 +1,10 @@
+import os
+import shutil
+
 from PySide6 import QtWidgets, QtCore, QtGui
 from PySide6.QtCore import Qt, QSize, QEvent, Signal
 from PySide6.QtGui import QColor, QFont, QPixmap, QIcon
-from PySide6.QtWidgets import QListWidgetItem, QLabel, QScroller, QPushButton
+from PySide6.QtWidgets import QListWidgetItem, QLabel, QScroller, QPushButton, QMessageBox
 
 from component.layout.flow_layout import FlowLayout
 from config.setting import Setting
@@ -93,6 +96,12 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             self.localButton.setIcon(QIcon(":/png/icon/icon_like.png"))
         else:
             self.localButton.setIcon(QIcon(":/png/icon/icon_like_off.png"))
+        path = os.path.join(os.path.join(Setting.SavePath.value, config.CachePathDir), "book/{}".format(self.bookId))
+        waifuPath = os.path.join(os.path.join(Setting.SavePath.value, config.CachePathDir), "waifu2x/book/{}".format(self.bookId))
+        if os.path.isdir(path) or os.path.isdir(waifuPath):
+            self.clearButton.setIcon(QIcon(":/png/icon/clear_on.png"))
+        else:
+            self.clearButton.setIcon(QIcon(":/png/icon/clear_off.png"))
 
     def Clear(self):
         self.ClearTask()
@@ -101,9 +110,9 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
     def SwitchCurrent(self, **kwargs):
         bookId = kwargs.get("bookId")
         if bookId:
-            self.bookId = bookId
-            self.idLabel.setText(bookId)
-            self.OpenBook(bookId)
+            self.bookId = str(bookId)
+            self.idLabel.setText(self.bookId)
+            self.OpenBook(self.bookId)
 
         bookName = kwargs.get("bookName")
         if bookName:
@@ -345,6 +354,21 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
                 QtOwner().localFavoriteView.AddFavorites(bookInfo)
                 QtOwner().ShowMsg(Str.GetStr(Str.AddFavoriteSuc))
                 self.UpdateFavoriteIcon()
+
+    def ClearCache(self):
+        isClear = QMessageBox.information(self, '清除缓存', "是否清除本书所有缓存", QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
+        if isClear == QtWidgets.QMessageBox.Yes:
+            if not Setting.SavePath.value:
+                return
+            path = os.path.join(os.path.join(Setting.SavePath.value, config.CachePathDir),
+                                "book/{}".format(self.bookId))
+            waifuPath = os.path.join(os.path.join(Setting.SavePath.value, config.CachePathDir),
+                                     "waifu2x/book/{}".format(self.bookId))
+            if os.path.isdir(path):
+                shutil.rmtree(path, True)
+            if os.path.isdir(waifuPath):
+                shutil.rmtree(waifuPath, True)
+        self.UpdateFavoriteIcon()
 
     def DelFavoriteBack(self, raw):
         if not config.LoginUserName:

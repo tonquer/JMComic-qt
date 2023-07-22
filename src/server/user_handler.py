@@ -11,6 +11,7 @@ from task.qt_task import TaskBase
 from server import req
 from tools.status import Status
 from tools.log import Log
+from tools.str import Str
 from tools.tool import ToolUtil
 from .server import handler, Task, Server
 
@@ -783,6 +784,13 @@ class DownloadBookHandler(object):
 
                 # Log.Info("size:{}, url:{}".format(ToolUtil.GetDownloadSize(fileSize), backData.req.url))
                 _, _, mat, isAni = ToolUtil.GetPictureSize(data)
+                if not data:
+                    if backData.bakParam:
+                        from server.req import ServerReq
+                        ServerReq.SPACE_PIC.add(backData.req.url)
+                        TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, -Str.SpacePic, b"")
+                    return
+
                 if config.IsUseCache and len(data) > 0:
                     try:
                         for path in [backData.req.cachePath]:

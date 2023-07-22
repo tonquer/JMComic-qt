@@ -518,7 +518,7 @@ QScrollArea {background-color:transparent;}</string>
                   <string notr="true">background-color:transparent;</string>
                  </property>
                  <property name="text">
-                  <string/>
+                  <string>下载</string>
                  </property>
                  <property name="icon">
                   <iconset resource="../res/images.qrc">
@@ -529,6 +529,35 @@ QScrollArea {background-color:transparent;}</string>
                    <width>50</width>
                    <height>50</height>
                   </size>
+                 </property>
+                 <property name="toolButtonStyle">
+                  <enum>Qt::ToolButtonTextBesideIcon</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QToolButton" name="clearButton">
+                 <property name="minimumSize">
+                  <size>
+                   <width>40</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>清理</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../res/images.qrc">
+                   <normaloff>:/png/icon/clear_off.png</normaloff>:/png/icon/clear_off.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>50</width>
+                   <height>50</height>
+                  </size>
+                 </property>
+                 <property name="toolButtonStyle">
+                  <enum>Qt::ToolButtonTextBesideIcon</enum>
                  </property>
                 </widget>
                </item>
@@ -754,7 +783,7 @@ QListWidget::item {
    <slot>AddDownload()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>546</x>
+     <x>516</x>
      <y>503</y>
     </hint>
     <hint type="destinationlabel">
@@ -770,7 +799,7 @@ QListWidget::item {
    <slot>AddFavorite()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>297</x>
+     <x>231</x>
      <y>503</y>
     </hint>
     <hint type="destinationlabel">
@@ -786,12 +815,28 @@ QListWidget::item {
    <slot>AddLocalFavorite()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>350</x>
-     <y>477</y>
+     <x>326</x>
+     <y>503</y>
     </hint>
     <hint type="destinationlabel">
      <x>7</x>
      <y>452</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>clearButton</sender>
+   <signal>clicked()</signal>
+   <receiver>BookInfo</receiver>
+   <slot>ClearCache()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>562</x>
+     <y>482</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>897</x>
+     <y>391</y>
     </hint>
    </hints>
   </connection>
@@ -803,5 +848,6 @@ QListWidget::item {
   <slot>AddBookLike()</slot>
   <slot>ChangeTab()</slot>
   <slot>AddLocalFavorite()</slot>
+  <slot>ClearCache()</slot>
  </slots>
 </ui>

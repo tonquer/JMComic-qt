@@ -113,10 +113,13 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
 
     def UpdateServer(self):
         index = Setting.ProxySelectIndex.value-1
+        index2 = Setting.ProxyImgSelectIndex.value-1
         if index < 0 or index >= len(config.Url2List):
             index = 0
+        if index2 < 0 or index >= len(config.PicUrlList):
+            index2 = 0
         config.Url2 = config.Url2List[index]
-        config.PicUrl2 = config.PicUrlList[index]
+        config.PicUrl2 = config.PicUrlList[index2]
         if Setting.ProxyImgSelectIndex.value == 5:
             imageServer = Setting.PreferCDNIPImg.value
         else:

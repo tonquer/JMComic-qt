@@ -118,6 +118,7 @@ class TaskDownload(TaskBase, QtTaskBase):
             v = {"st": Status.SaveError}
             self.CallBookBack(v, info)
             return
+        # 表示成功但是没有图片
         st = Str.Error
         if laveFileSize < -2:
             st = - laveFileSize

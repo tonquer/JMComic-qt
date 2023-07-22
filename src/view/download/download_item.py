@@ -49,6 +49,7 @@ class DownloadItem(QtTaskBase):
         self.convertReset = 0
         self.cvTick = 0
         self.dirty = True
+        self.resetCnt = 0
 
     @property
     def curDownloadPic(self):
@@ -148,6 +149,7 @@ class DownloadItem(QtTaskBase):
 
     # 初始化下载，检查下载的索引
     def DownloadInit(self):
+        self.resetCnt = 0
         if not self.epsIds:
             return self.Error
 
@@ -169,6 +171,7 @@ class DownloadItem(QtTaskBase):
 
     # 初始化成功回调
     def DownloadInitCallBack(self, bookName, author, title, maxPic):
+        self.resetCnt = 0
         if not self.title:
             self.title = bookName
             self.dirty = True
@@ -183,6 +186,7 @@ class DownloadItem(QtTaskBase):
 
     # 下载成功回调
     def DownloadSucCallBack(self):
+        self.resetCnt = 0
         self.dirty = True
         self.curDownloadEpsInfo.dirty = True
         self.curDownloadEpsInfo.curPreDownloadIndex += 1
@@ -195,6 +199,22 @@ class DownloadItem(QtTaskBase):
             else:
                 break
         self.curDownloadEpsInfo.dirty = True
+        return self.Downloading
+
+    # 下载失败回调
+    def DownloadFailCallBack(self):
+        self.resetCnt += 1
+        if self.resetCnt >= 3:
+            return self.Error
+
+        while True:
+            if self.curDownloadEpsInfo.isDownloadComplete():
+                index = self.epsIds.index(self.curDownloadEpsId)
+                if index + 1 >= len(self.epsIds):
+                    return self.Success
+                self.curDownloadEpsId = self.epsIds[index + 1]
+            else:
+                break
         return self.Downloading
 
     # 获得下载参数

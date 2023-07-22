@@ -324,8 +324,20 @@ class Ui_BookInfo(object):
         icon3.addFile(u":/png/icon/ic_get_app_black_36dp.png", QSize(), QIcon.Normal, QIcon.Off)
         self.downloadButton.setIcon(icon3)
         self.downloadButton.setIconSize(QSize(50, 50))
+        self.downloadButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
 
         self.horizontalLayout_2.addWidget(self.downloadButton)
+
+        self.clearButton = QToolButton(self.tab)
+        self.clearButton.setObjectName(u"clearButton")
+        self.clearButton.setMinimumSize(QSize(40, 40))
+        icon4 = QIcon()
+        icon4.addFile(u":/png/icon/clear_off.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.clearButton.setIcon(icon4)
+        self.clearButton.setIconSize(QSize(50, 50))
+        self.clearButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+
+        self.horizontalLayout_2.addWidget(self.clearButton)
 
         self.startRead = QPushButton(self.tab)
         self.startRead.setObjectName(u"startRead")
@@ -435,6 +447,7 @@ class Ui_BookInfo(object):
         self.downloadButton.clicked.connect(BookInfo.AddDownload)
         self.favoriteButton.clicked.connect(BookInfo.AddFavorite)
         self.localButton.clicked.connect(BookInfo.AddLocalFavorite)
+        self.clearButton.clicked.connect(BookInfo.ClearCache)
 
         self.tabWidget.setCurrentIndex(0)
 
@@ -461,7 +474,8 @@ class Ui_BookInfo(object):
         self.favoriteButton.setText(QCoreApplication.translate("BookInfo", u"\u6536\u85cf", None))
         self.localButton.setText(QCoreApplication.translate("BookInfo", u"\u672c\u5730", None))
         self.commentButton.setText(QCoreApplication.translate("BookInfo", u"\u8bc4\u8bba", None))
-        self.downloadButton.setText("")
+        self.downloadButton.setText(QCoreApplication.translate("BookInfo", u"\u4e0b\u8f7d", None))
+        self.clearButton.setText(QCoreApplication.translate("BookInfo", u"\u6e05\u7406", None))
         self.startRead.setText(QCoreApplication.translate("BookInfo", u"\u5f00\u59cb\u9605\u8bfb", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("BookInfo", u"\u9605\u8bfb", None))
         self.label_9.setText(QCoreApplication.translate("BookInfo", u"\u53ef\u79bb\u7ebf\u9605\u8bfb\u5df2\u4e0b\u8f7d\u7684\u7ae0\u8282\uff1a", None))

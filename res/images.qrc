@@ -48,6 +48,8 @@
     <file>icon/icon_game_ios.png</file>
     <file>icon/icon_like.png</file>
     <file>icon/icon_like_off.png</file>
+    <file>icon/clear_on.png</file>
+    <file>icon/clear_off.png</file>
     <file>icon/loading_gif.gif</file>
     <file>icon/loading_gif.webp</file>
     <file>icon/loading.gif</file>

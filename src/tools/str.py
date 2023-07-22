@@ -45,6 +45,7 @@ class Str:
     AccountAlready = 1029    # "账号已被注册"
     NotAdult = 1030          # "未成年禁止注册"
     SpaceEps = 1031          # "空白章节"
+    SpacePic = 1032          # "空白图片"
 
     Success = 2001         # "下载完成"
     Reading = 2002         # "获取信息"
@@ -263,6 +264,7 @@ class Str:
         cls.strDict[cls.AccountAlready] = QCoreApplication.translate("cls.obj", "账号已被注册", None)
         cls.strDict[cls.NotAdult] = QCoreApplication.translate("cls.obj", "未成年禁止注册", None)
         cls.strDict[cls.SpaceEps] = QCoreApplication.translate("cls.obj", "空白章节", None)
+        cls.strDict[cls.SpacePic] = QCoreApplication.translate("cls.obj", "空白图片", None)
 
         cls.strDict[cls.LoadingPicture] = QCoreApplication.translate("cls.obj",  "图片加载中...", None)
         cls.strDict[cls.LoadingFail] = QCoreApplication.translate("cls.obj",  "图片加载失败", None)

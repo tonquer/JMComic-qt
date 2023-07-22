@@ -52,10 +52,10 @@ class QtTaskBase:
     def AddHttpTask(self, req, callBack=None, backParam=None):
         from tools.qt_domain import QtDomainMgr
         from task.task_http import TaskHttp
-        if not Setting.IsOpenDoh.value:
-            return TaskHttp().AddHttpTask(req, callBack, backParam, cleanFlag=self.__taskFlagId)
-        else:
-            return QtDomainMgr().AddHttpTask(req, callBack, backParam, cleanFlag=self.__taskFlagId)
+        # if not Setting.IsOpenDoh.value:
+        return TaskHttp().AddHttpTask(req, callBack, backParam, cleanFlag=self.__taskFlagId)
+        # else:
+        #     return QtDomainMgr().AddHttpTask(req, callBack, backParam, cleanFlag=self.__taskFlagId)
 
     # downloadCallBack(data, laveFileSize, backParam)
     # downloadCallBack(data, laveFileSize)
@@ -91,12 +91,12 @@ class QtTaskBase:
                 filePath2 = os.path.join(os.path.join(Setting.SavePath.value, config.CachePathDir), path)
                 cachePath = filePath2
 
-        if not Setting.IsOpenDohPicture.value:
-            return TaskDownload().DownloadTask(url, downloadCallBack, completeCallBack, downloadStCallBack, backParam, loadPath,
+        # if not Setting.IsOpenDohPicture.value:
+        return TaskDownload().DownloadTask(url, downloadCallBack, completeCallBack, downloadStCallBack, backParam, loadPath,
                                                cachePath, savePath, saveParam, cleanFlag, isReload)
-        else:
-            return QtDomainMgr().AddDownloadTask(url, downloadCallBack, completeCallBack, downloadStCallBack, backParam, loadPath,
-                                               cachePath, savePath, saveParam, cleanFlag, isReload)
+        # else:
+        #     return QtDomainMgr().AddDownloadTask(url, downloadCallBack, completeCallBack, downloadStCallBack, backParam, loadPath,
+        #                                        cachePath, savePath, saveParam, cleanFlag, isReload)
 
     # completeCallBack(saveData, taskId, backParam, tick)
     def AddConvertTask(self, path, imgData, model, completeCallBack, backParam=None, preDownPath=None, noSaveCache=False, saveParams=None, cleanFlag=""):

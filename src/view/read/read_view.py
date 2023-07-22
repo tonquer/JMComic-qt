@@ -431,6 +431,8 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
             self.pictureData[index] = p
         if st == Status.FileError:
             QtOwner().ShowError(Str.GetStr(st))
+        # elif st == Str.SpacePic:
+        #     QtOwner().ShowError(Str.GetStr(st)+"{}".format(index+1))
         elif st != Status.Ok:
             p.state = p.DownloadReset
             if QtOwner().owner.totalStackWidget.currentIndex == 0:
