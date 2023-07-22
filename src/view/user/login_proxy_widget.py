@@ -116,7 +116,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         index2 = Setting.ProxyImgSelectIndex.value-1
         if index < 0 or index >= len(config.Url2List):
             index = 0
-        if index2 < 0 or index >= len(config.PicUrlList):
+        if index2 < 0 or index2 >= len(config.PicUrlList):
             index2 = 0
         config.Url2 = config.Url2List[index]
         config.PicUrl2 = config.PicUrlList[index2]
