@@ -63,9 +63,9 @@ class ServerReq(object):
         token = hashlib.md5(param.encode("utf-8")).hexdigest()
 
         header = {
-            "tokenparam": "{},1.5.5".format(self.now),
+            "tokenparam": "{},1.5.7".format(self.now),
             "token": token,
-            "user-agent": "okhttp/3.12.1",
+            "user-agent": "Mozilla/5.0 (Linux; Android 7.1.2; DT1901A Build/N2G47O; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/86.0.4240.198 Mobile Safari/537.36",
             "accept-encoding": "gzip",
         }
         if method == "POST":
@@ -77,9 +77,9 @@ class ServerReq(object):
         token = hashlib.md5(param.encode("utf-8")).hexdigest()
 
         header = {
-            "tokenparam": "{},1.5.2".format(self.now),
+            "tokenparam": "{},1.5.7".format(self.now),
             "token": token,
-            "user-agent": "okhttp/3.12.1",
+            "user-agent": "Mozilla/5.0 (Linux; Android 7.1.2; DT1901A Build/N2G47O; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/86.0.4240.198 Mobile Safari/537.36",
             "accept-encoding": "gzip",
         }
         if method == "POST":
