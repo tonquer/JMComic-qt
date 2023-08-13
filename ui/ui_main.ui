@@ -87,6 +87,7 @@
           <item>
            <widget class="AnimationStackWidget" name="subStackWidget">
             <widget class="IndexView" name="indexView"/>
+            <widget class="LocalReadEpsView" name="localReadEpsView"/>
             <widget class="LocalReadView" name="localReadView"/>
             <widget class="DownloadAllView" name="downloadAllView"/>
             <widget class="HelpView" name="helpView"/>
@@ -126,15 +127,15 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>IndexView</class>
-   <extends>QWidget</extends>
-   <header location="global">view.index.index_view.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>SettingView</class>
    <extends>QWidget</extends>
    <header location="global">view.setting.setting_view.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>DownloadView</class>
+   <extends>QWidget</extends>
+   <header location="global">view.download.download_view.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -162,6 +163,12 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>HistoryView</class>
+   <extends>QWidget</extends>
+   <header location="global">view.history.history_view.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>BookInfoView</class>
    <extends>QWidget</extends>
    <header>view.info.book_info_view.h</header>
@@ -174,15 +181,15 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>BookEpsView</class>
-   <extends>QWidget</extends>
-   <header location="global">view.info.book_eps_view.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>HelpView</class>
    <extends>QWidget</extends>
    <header location="global">view.help.help_view.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>LocalReadView</class>
+   <extends>QWidget</extends>
+   <header location="global">view.tool.local_read_view.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -192,15 +199,27 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>SubCommentView</class>
+   <class>LocalReadEpsView</class>
    <extends>QWidget</extends>
-   <header location="global">view.comment.sub_comment_view.h</header>
+   <header location="global">view.tool.local_read_eps_view.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>DownloadView</class>
+   <class>IndexView</class>
    <extends>QWidget</extends>
-   <header location="global">view.download.download_view.h</header>
+   <header location="global">view.index.index_view.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>BookEpsView</class>
+   <extends>QWidget</extends>
+   <header location="global">view.info.book_eps_view.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SubCommentView</class>
+   <extends>QWidget</extends>
+   <header location="global">view.comment.sub_comment_view.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -216,12 +235,6 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>HistoryView</class>
-   <extends>QWidget</extends>
-   <header location="global">view.history.history_view.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>MyCommentView</class>
    <extends>QWidget</extends>
    <header location="global">view.comment.my_comment_view.h</header>
@@ -231,12 +244,6 @@
    <class>RemoteHistoryView</class>
    <extends>QWidget</extends>
    <header location="global">view.history.remote_history_view.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>LocalReadView</class>
-   <extends>QWidget</extends>
-   <header location="global">view.tool.local_read_view.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

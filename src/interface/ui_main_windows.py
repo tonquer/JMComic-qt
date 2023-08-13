@@ -38,6 +38,7 @@ from view.info.book_info_view import BookInfoView
 from view.read.read_view import ReadView
 from view.search.search_view import SearchView
 from view.setting.setting_view import SettingView
+from view.tool.local_read_eps_view import LocalReadEpsView
 from view.tool.local_read_view import LocalReadView
 from view.tool.waifu2x_tool_view import Waifu2xToolView
 from view.user.favorite_view import FavoriteView
@@ -103,6 +104,9 @@ class Ui_MainWindows(object):
         self.indexView = IndexView()
         self.indexView.setObjectName(u"indexView")
         self.subStackWidget.addWidget(self.indexView)
+        self.localReadEpsView = LocalReadEpsView()
+        self.localReadEpsView.setObjectName(u"localReadEpsView")
+        self.subStackWidget.addWidget(self.localReadEpsView)
         self.localFavoriteView = LocalFavoriteView()
         self.localFavoriteView.setObjectName(u"localFavoriteView")
         self.subStackWidget.addWidget(self.localFavoriteView)

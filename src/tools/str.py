@@ -45,7 +45,6 @@ class Str:
     AccountAlready = 1029    # "账号已被注册"
     NotAdult = 1030          # "未成年禁止注册"
     SpaceEps = 1031          # "空白章节"
-    SpacePic = 1032          # "空白图片"
 
     Success = 2001         # "下载完成"
     Reading = 2002         # "获取信息"
@@ -229,7 +228,9 @@ class Str:
     AlreadyHave = 149         # 已存在
     SameWight = 150    # 等宽模式
     CopyFileLast = 151     # 保存上次路径
-    
+    ImportDouble = 152     # 导入多章节目录
+
+
     @classmethod
     def Reload(cls):
         cls.obj = QtStrObj()
@@ -265,7 +266,6 @@ class Str:
         cls.strDict[cls.AccountAlready] = QCoreApplication.translate("cls.obj", "账号已被注册", None)
         cls.strDict[cls.NotAdult] = QCoreApplication.translate("cls.obj", "未成年禁止注册", None)
         cls.strDict[cls.SpaceEps] = QCoreApplication.translate("cls.obj", "空白章节", None)
-        cls.strDict[cls.SpacePic] = QCoreApplication.translate("cls.obj", "空白图片", None)
 
         cls.strDict[cls.LoadingPicture] = QCoreApplication.translate("cls.obj",  "图片加载中...", None)
         cls.strDict[cls.LoadingFail] = QCoreApplication.translate("cls.obj",  "图片加载失败", None)
@@ -435,7 +435,6 @@ class Str:
         cls.strDict[cls.Copy] = QCoreApplication.translate("cls.obj", "复制", None)
         cls.strDict[cls.CopyPicture] = QCoreApplication.translate("cls.obj", "复制图片到剪贴板", None)
         cls.strDict[cls.CopyFile] = QCoreApplication.translate("cls.obj", "保存文件", None)
-        cls.strDict[cls.CopyFileLast] = QCoreApplication.translate("cls.obj", "保存上次路径", None)
         cls.strDict[cls.MainUi] = QCoreApplication.translate("cls.obj", "主界面", None)
         cls.strDict[cls.ShowMin] = QCoreApplication.translate("cls.obj", "最小化", None)
         cls.strDict[cls.DownloadAll] = QCoreApplication.translate("cls.obj", "批量下载", None)
@@ -446,10 +445,12 @@ class Str:
         cls.strDict[cls.SupportDrop] = QCoreApplication.translate("cls.obj", "支持拖拽文件导入", None)
         cls.strDict[cls.AlreadyHave] = QCoreApplication.translate("cls.obj", "已存在", None)
         cls.strDict[cls.SameWight] = QCoreApplication.translate("cls.obj", "等宽模式", None)
+        cls.strDict[cls.CopyFileLast] = QCoreApplication.translate("cls.obj", "保存上次路径", None)
+        cls.strDict[cls.ImportDouble] = QCoreApplication.translate("cls.obj", "导入多章节目录", None)
 
     @classmethod
-    def GetStr(cls, enumType):
-        return cls.strDict.get(enumType, "")
+    def GetStr(cls, enumType, defualt=""):
+        return cls.strDict.get(enumType, defualt)
 
     @classmethod
     def CheckStr(cls):

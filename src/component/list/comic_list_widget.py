@@ -31,6 +31,7 @@ class ComicListWidget(BaseListWidget):
         self.isDelMenu = False
         self.isGame = False
         self.isLocal = False
+        self.isLocalEps = False
         self.openMenu = False
 
     def SelectMenuBook(self, pos):
@@ -86,7 +87,7 @@ class ComicListWidget(BaseListWidget):
         categories = ",".join(v.baseInfo.category)
         self.AddBookItem(_id, title, categories, url)
 
-    def AddBookByLocal(self, v, isFirstAdd=False):
+    def AddBookByLocal(self, v, category=""):
         from task.task_local import LocalData
         assert isinstance(v, LocalData)
         index = self.count()
@@ -98,17 +99,23 @@ class ComicListWidget(BaseListWidget):
         widget.title = v.title
         widget.picNum = v.picCnt
         widget.url = v.file
-        title += "<font color=#d5577c>{}</font>".format("(" + str(v.picCnt) + "P)")
+        if len(v.eps) > 0:
+            title += "<font color=#d5577c>{}</font>".format("(" + str(len(v.eps)) + "E)")
+        else:
+            title += "<font color=#d5577c>{}</font>".format("(" + str(v.picCnt) + "P)")
         if v.lastReadTime:
             categories = "{} {}".format(ToolUtil.GetUpdateStrByTick(v.lastReadTime), Str.GetStr(Str.Looked))
 
             widget.timeLabel.setText(categories)
         else:
             widget.timeLabel.setVisible(False)
+            widget.starButton.setVisible(False)
 
-        # widget.toolButton.setVisible(False)
         widget.categoryLabel.setVisible(False)
-        widget.starButton.setVisible(False)
+        if category:
+            widget.categoryLabel.setText(category)
+            widget.categoryLabel.setVisible(True)
+
         widget.nameLable.setText(title)
         item = QListWidgetItem(self)
         item.setFlags(item.flags() & ~Qt.ItemIsSelectable)
@@ -200,6 +207,8 @@ class ComicListWidget(BaseListWidget):
         assert isinstance(widget, ComicItemWidget)
         if self.isGame:
             QtOwner().OpenGameInfo(widget.id)
+        elif self.isLocalEps:
+            QtOwner().OpenLocalEpsBook(widget.id)
         elif self.isLocal:
             QtOwner().OpenLocalBook(widget.id)
         else:
