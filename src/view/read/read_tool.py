@@ -178,6 +178,7 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
 
         if self.curIndex >= self.maxPic - 1:
             if self.readImg.isLocal:
+                QtOwner().ShowMsg(Str.GetStr(Str.AutoSkipNext))
                 self.OpenNextEps()
                 return
             elif self.readImg.isOffline:
@@ -226,6 +227,7 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
 
         if self.curIndex <= 0:
             if self.readImg.isLocal:
+                QtOwner().ShowMsg(Str.GetStr(Str.AutoSkipLast))
                 self.OpenLastEps()
                 return
             elif self.readImg.isOffline:
