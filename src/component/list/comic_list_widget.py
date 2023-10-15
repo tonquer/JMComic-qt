@@ -29,6 +29,7 @@ class ComicListWidget(BaseListWidget):
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.itemClicked.connect(self.SelectItem)
         self.isDelMenu = False
+        self.isMoveMenu = False
         self.isGame = False
         self.isLocal = False
         self.isLocalEps = False
@@ -72,6 +73,9 @@ class ComicListWidget(BaseListWidget):
             if self.isDelMenu:
                 action = popMenu.addAction(Str.GetStr(Str.Delete))
                 action.triggered.connect(partial(self.DelHandler, index))
+            if self.isMoveMenu:
+                action = popMenu.addAction(Str.GetStr(Str.Move))
+                action.triggered.connect(partial(self.MoveHandler, index))
             if self.openMenu:
                 action = popMenu.addAction(Str.GetStr(Str.OpenDir))
                 action.triggered.connect(partial(self.OpenDirHandler, index))
