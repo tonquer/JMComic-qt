@@ -59,6 +59,7 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
         self.radioButton.setChecked(Setting.DownloadAuto.value)
         datas = self.db.LoadDownload(self)
         self.redownloadRadio.clicked.connect(self.SwitchReDownload)
+        self.webp2Png.clicked.connect(self.SwitchWebp2png)
         for task in datas.values():
             self.downloadDict[task.bookId] = task
             if not task.epsIds:
@@ -116,6 +117,8 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
         self.failTimer.start()
         self.redownloadRadio.setCheckable(True)
         self.redownloadRadio.setChecked(bool(Setting.IsReDownload.value))
+        self.webp2Png.setCheckable(True)
+        self.webp2Png.setChecked(bool(Setting.WebpToPng.value))
 
     def GetDownloadEpsInfo(self, bookId, epsId):
         info = self.GetDownloadInfo(bookId)
@@ -549,6 +552,9 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
 
     def SwitchReDownload(self):
         Setting.IsReDownload.SetValue(int(self.redownloadRadio.isChecked()))
+
+    def SwitchWebp2png(self):
+        Setting.WebpToPng.SetValue(int(self.webp2Png.isChecked()))
 
     def CheckFailReDownload(self):
         if not Setting.IsReDownload.value:

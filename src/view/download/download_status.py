@@ -196,6 +196,12 @@ class DownloadStatus(QtTaskBase):
             author = data.get("author")
             task.DownloadInitCallBack(bookName, author, title, maxPic)
             self.StartItemDownload(task)
+        elif st == Str.SpaceEps:
+            # 空白章节
+            newStatus = task.SkipCurEps()
+            self.SetNewStatus(task, newStatus)
+            if newStatus == task.Downloading:
+                self.StartItemDownload(task)
         elif st == Str.Cache:
             # 进行下一个图片
             newStatus = task.DownloadSucCallBack()

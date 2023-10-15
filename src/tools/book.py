@@ -116,6 +116,29 @@ class BookPageInfo(object):
         self.commentNum = 0   #
         self.epsInfo = {}     # 章节信息
 
+    def maxEps(self):
+        if not self.epsInfo:
+            return 0
+        return max(self.epsInfo.keys())
+
+    def nextEps(self, index):
+        nextIndex = index + 1
+        while True:
+            if nextIndex >= self.maxEps():
+                return nextIndex
+            if nextIndex in self.epsInfo:
+                return nextIndex
+            nextIndex += 1
+
+    def lastEps(self, index):
+        lastEps = index - 1
+        while True:
+            if lastEps < 0:
+                return 0
+            if lastEps in self.epsInfo:
+                return lastEps
+            lastEps -= 1
+
     def Copy(self, o):
         self.kv.update(o.kv)
         self.createDate = o.createDate

@@ -42,9 +42,9 @@ UpdateUrl3 = "https://hub.fastgit.xyz/tonquer/JMComic-qt/releases/latest"
 UpdateUrl3Api = "https://api.fastgit.xyz/repos/tonquer/JMComic-qt/releases"
 UpdateUrl3Back = "https://hub.fastgit.xyz/tonquer/JMComic-qt"
 
-UpdateVersion = "v1.1.4"
-RealVersion = "v1.1.4"
-VersionTime = "2023-8-13"
+UpdateVersion = "v1.1.5"
+RealVersion = "v1.1.5"
+VersionTime = "2023-10-15"
 
 Waifu2xVersion = "1.1.6"
 LoginUserName = ""

@@ -228,11 +228,15 @@ class TaskDownload(TaskBase, QtTaskBase):
                 isReset or self.SetTaskStatus(taskId, backData, task.ReadingEps)
 
                 epsInfo = info.pageInfo.epsInfo.get(task.epsIndex)
-                assert isinstance(epsInfo, BookEps)
+                if info.pageInfo.epsInfo  and not epsInfo:
+                    self.SetTaskStatus(taskId, backData, Str.SpaceEps)
+                    return
+
                 if not epsInfo.pictureUrl:
                     self.AddHttpTask(req.GetBookEpsInfoReq2(task.bookId, epsInfo.epsId), self.HandlerDownload, (taskId, task.ReadingEps))
                     return
 
+                assert isinstance(epsInfo, BookEps)
                 task.status = task.ReadingEps
             if task.status == task.ReadingEps:
                 isReset or self.SetTaskStatus(taskId, backData, task.ReadingPicture)

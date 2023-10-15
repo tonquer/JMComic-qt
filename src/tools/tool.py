@@ -569,10 +569,18 @@ class ToolUtil(object):
         for info in raw.get("series", []):
             if str(info.get("id")) == str(epsInfo.epsId):
                 epsInfo.index = int(info.get("sort")) - 1
+        allIds = []
+        idMap = {}
         for name in raw.get("images", []):
             picId = re.search(r"\d+", name).group()
-            epsInfo.pictureName[int(picId)-1] = name.split(".")[0]
-            epsInfo.pictureUrl[int(picId)-1] = "/media/photos/{}/{}".format(epsInfo.epsId, name)
+            allIds.append(int(picId) -1)
+        for index, picId in enumerate(sorted(allIds)):
+                idMap[picId] = index
+        for name in raw.get("images", []):
+            picId = re.search(r"\d+", name).group()
+            index = idMap.get(int(picId)-1)
+            epsInfo.pictureName[index] = name.split(".")[0]
+            epsInfo.pictureUrl[index] = "/media/photos/{}/{}".format(epsInfo.epsId, name)
         return epsInfo
 
     @staticmethod
@@ -900,6 +908,49 @@ class ToolUtil(object):
         desImg.close()
         des.close()
         return value
+
+    # 图片分割合成
+    @staticmethod
+    def SegmentationPictureToDisk(imgData, epsId, scramble_id, bookId, path, toFormat):
+        num = ToolUtil.GetSegmentationNum(epsId, scramble_id, bookId)
+        if num <= 1:
+            return imgData
+
+        from PIL import Image
+        from io import BytesIO
+        src = BytesIO(imgData)
+        srcImg = Image.open(src)
+
+        size = (width, height) = srcImg.size
+        desImg = Image.new(srcImg.mode, size)
+        format = srcImg.format
+
+        rem = height % num
+        copyHeight = math.floor(height / num)
+        block = []
+        totalH = 0
+        for i in range(num):
+            h = copyHeight * (i + 1)
+            if i == num - 1:
+                h += rem
+            block.append((totalH, h))
+            totalH = h
+
+        h = 0
+        for start, end in reversed(block):
+            coH = end - start
+            temp_img = srcImg.crop((0, start, width, end))
+            desImg.paste(temp_img, (0, h, width, h + coH))
+            h += coH
+
+        srcImg.close()
+        src.close()
+
+        # des = BytesIO()
+        desImg.save(path, toFormat)
+        # value = des.getvalue()
+        # desImg.close()
+        # des.close()
 
     @staticmethod
     def IsSameName(name1, name2):

@@ -189,7 +189,7 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
             else:
 
                 bookInfo = BookMgr().books.get(bookId)
-                if epsId + 1 < len(bookInfo.pageInfo.epsInfo):
+                if epsId + 1 < bookInfo.pageInfo.maxEps():
                     QtOwner().ShowMsg(Str.GetStr(Str.AutoSkipNext))
                     self.OpenNextEps()
                 return
@@ -349,57 +349,56 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
         bookId = self.readImg.bookId
         bookInfo = BookMgr().books.get(bookId)
 
-        epsId -= 1
+        lasEps = epsId - 1
         if self.readImg.isLocal:
             if epsId < 0:
                 QtOwner().ShowMsg(Str.GetStr(Str.AlreadyLastChapter))
                 return
-            self.readImg.OpenLocalPage(self.readImg._cacheBook, epsId, 9999)
+            self.readImg.OpenLocalPage(self.readImg._cacheBook, lasEps, 9999)
             return
         elif self.readImg.isOffline:
             if not QtOwner().downloadView.IsDownloadEpsId(self.readImg.bookId, self.readImg.epsId - 1):
                 QtOwner().ShowMsg(Str.GetStr(Str.NotDownload))
                 return
         else:
-            if epsId >= len(bookInfo.pageInfo.epsInfo):
+            lasEps = bookInfo.pageInfo.lastEps(epsId)
+            if lasEps >= bookInfo.pageInfo.maxEps():
                 return
 
-        if epsId < 0:
+        if lasEps < 0:
             QtOwner().ShowMsg(Str.GetStr(Str.AlreadyLastChapter))
             return
 
         self.readImg.AddHistory()
         QtOwner().bookInfoView.LoadHistory()
-        self.readImg.OpenPage(bookId, epsId, 9999)
+        self.readImg.OpenPage(bookId, lasEps, 9999)
         return
 
     def OpenNextEps(self):
         epsId = self.readImg.epsId
         bookId = self.readImg.bookId
         bookInfo = BookMgr().books.get(bookId)
-        epsId += 1
+        nextEps = epsId + 1
         if self.readImg.isLocal:
-            if epsId >= len(self.readImg._cacheBook.eps):
+            if nextEps >= len(self.readImg._cacheBook.eps):
                 QtOwner().ShowMsg(Str.GetStr(Str.AlreadyNextChapter))
                 return
-            self.readImg.OpenLocalPage(self.readImg._cacheBook, epsId, 0)
+            self.readImg.OpenLocalPage(self.readImg._cacheBook, nextEps, 0)
             return
         elif self.readImg.isOffline:
             if not QtOwner().downloadView.IsDownloadEpsId(self.readImg.bookId, self.readImg.epsId + 1):
                 QtOwner().ShowMsg(Str.GetStr(Str.NotDownload))
                 return
         else:
-            if epsId >= len(bookInfo.pageInfo.epsInfo):
+            nextEps = bookInfo.pageInfo.nextEps(epsId)
+            if nextEps >= bookInfo.pageInfo.maxEps():
                 QtOwner().ShowMsg(Str.GetStr(Str.AlreadyNextChapter))
-                return
-
-            if epsId >= len(bookInfo.pageInfo.epsInfo):
                 return
 
         # title = bookInfo.GetEpsTitle(epsId)
         self.readImg.AddHistory()
         QtOwner().bookInfoView.LoadHistory()
-        self.readImg.OpenPage(bookId, epsId)
+        self.readImg.OpenPage(bookId, nextEps)
         return
 
     def SkipPicture(self, index=0):

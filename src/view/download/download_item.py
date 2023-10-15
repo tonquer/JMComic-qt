@@ -67,6 +67,7 @@ class DownloadItem(QtTaskBase):
             return len(self.epsIds)
         if self.curDownloadEpsInfo.curPreDownloadIndex > 0 and self.curDownloadEpsInfo.curPreDownloadIndex >= self.curDownloadEpsInfo.picCnt:
             return self.epsIds.index(self.curDownloadEpsId) + 1
+
         return self.epsIds.index(self.curDownloadEpsId)
 
     @property
@@ -183,6 +184,26 @@ class DownloadItem(QtTaskBase):
         self.curDownloadEpsInfo.picCnt = maxPic
         self.curDownloadEpsInfo.epsTitle = title
         return
+
+    def SkipCurEps(self):
+        if self.curDownloadEpsId in self.epsIds:
+            self.epsIds.remove(self.curDownloadEpsId)
+
+        if not self.epsIds:
+            return self.Error
+
+        if self.curDownloadEpsInfo.isDownloadComplete():
+            index = self.epsIds.index(self.curDownloadEpsId)
+            if index + 1 >= len(self.epsIds):
+                self.curDownloadEpsId = self.epsIds[len(self.epsIds)-1]
+                return self.Success
+            self.curDownloadEpsId = self.epsIds[index + 1]
+
+        if self.curDownloadEpsId not in self.epsIds:
+            self.curDownloadEpsId = self.epsIds[len(self.epsIds)-1]
+
+        self.curDownloadEpsInfo.dirty = True
+        return self.Downloading
 
     # 下载成功回调
     def DownloadSucCallBack(self):

@@ -77,6 +77,7 @@ class Str:
     ErrorPath = 4005        # "错误的路径"
     NotPictureFile = 4006        # "没有发现图片文件"
     FileLock = 4007        # "文件已加密"
+    SpacePic = 4008        # "文件已加密"
 
     LoadingPicture = 1     # "图片加载中..."
     LoadingFail = 2        # "图片加载失败"
@@ -303,6 +304,7 @@ class Str:
         cls.strDict[cls.ErrorPath] = QCoreApplication.translate("cls.obj",  "错误的路径", None)
         cls.strDict[cls.NotPictureFile] = QCoreApplication.translate("cls.obj",  "没有发现图片文件", None)
         cls.strDict[cls.FileLock] = QCoreApplication.translate("cls.obj",  "文件已加密", None)
+        cls.strDict[cls.SpacePic] = QCoreApplication.translate("cls.obj",  "空白章节", None)
 
         cls.strDict[cls.Menu] = QCoreApplication.translate("cls.obj",  "菜单", None)
         cls.strDict[cls.FullSwitch] = QCoreApplication.translate("cls.obj",  "全屏切换", None)

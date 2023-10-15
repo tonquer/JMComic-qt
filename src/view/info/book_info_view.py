@@ -324,6 +324,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             #     item.setBackground(QColor(0, 0, 0, 0))
             item.setSizeHint(label.sizeHint() + QSize(20, 20))
             item.setToolTip(epsInfo.title)
+            item.index = index
             self.epsListWidget.setItemWidget(item, label)
 
         return
@@ -356,14 +357,16 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
                 self.UpdateFavoriteIcon()
 
     def ClearCache(self):
-        isClear = QMessageBox.information(self, '清除缓存', "是否清除本书所有缓存", QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
+
+        path = os.path.join(os.path.join(Setting.SavePath.value, config.CachePathDir),
+                            "book/{}".format(self.bookId))
+        waifuPath = os.path.join(os.path.join(Setting.SavePath.value, config.CachePathDir),
+                                 "waifu2x/book/{}".format(self.bookId))
+
+        isClear = QMessageBox.information(self, '清除缓存', "是否清除本书所有缓存\n{}\n{}".format(path, waifuPath), QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
         if isClear == QtWidgets.QMessageBox.Yes:
             if not Setting.SavePath.value:
                 return
-            path = os.path.join(os.path.join(Setting.SavePath.value, config.CachePathDir),
-                                "book/{}".format(self.bookId))
-            waifuPath = os.path.join(os.path.join(Setting.SavePath.value, config.CachePathDir),
-                                     "waifu2x/book/{}".format(self.bookId))
             if os.path.isdir(path):
                 shutil.rmtree(path, True)
             if os.path.isdir(waifuPath):
@@ -402,14 +405,14 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         book = BookMgr().GetBook(self.bookId)
         if not book:
             return
-        self.OpenReadIndex(index)
+        self.OpenReadIndex(item.index)
 
     def OpenReadImg2(self, modelIndex):
         index = modelIndex.row()
         item = self.listWidget.item(index)
         if not item:
             return
-        if not QtOwner().downloadView.IsDownloadEpsId(self.bookId, index):
+        if not QtOwner().downloadView.IsDownloadEpsId(self.bookId, item.index):
             QtOwner().ShowError(Str.GetStr(Str.NotDownload))
             return
         self.OpenReadIndex(index, isOffline=True)

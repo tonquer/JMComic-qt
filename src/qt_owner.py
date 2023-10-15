@@ -20,6 +20,7 @@ class QtOwner(Singleton):
         from tools.user import User
         self.user = User()
         self.isOfflineModel = False
+        self.closeType = 1   # 1普通， 2关闭弹窗触发， 3任务栏触发
 
     def SetLogin(self):
         self.user.isLogin = True
@@ -167,6 +168,10 @@ class QtOwner(Singleton):
     def OpenDownloadAll(self, books):
         arg = {"books": books}
         self.owner.SwitchWidget(self.owner.downloadAllView, **arg)
+
+    def OpenLocalDelAll(self):
+        arg = {}
+        self.owner.SwitchWidget(self.owner.localReadAllView, **arg)
 
     def OpenSubComment(self, commentId, widget, commentList):
         # self.owner.subCommentView.SetOpenEvent(commentId, widget)

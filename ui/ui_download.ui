@@ -32,6 +32,13 @@
         </spacer>
        </item>
        <item>
+        <widget class="QCheckBox" name="webp2Png">
+         <property name="text">
+          <string>Webp保存为Png</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QCheckBox" name="redownloadRadio">
          <property name="text">
           <string>下载失败后1分钟自动重试</string>

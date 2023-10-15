@@ -68,6 +68,8 @@ class BookEpsView(QtWidgets.QWidget, Ui_BookEps, QtTaskBase):
             item = QListWidgetItem(self.listWidget)
             item.setSizeHint(label.sizeHint() + QSize(20, 20))
             item.setToolTip(epsInfo.title)
+            item.index = index
+
             if index in downloadEpsId:
                 item.setSelected(True)
             else:
@@ -105,7 +107,7 @@ class BookEpsView(QtWidgets.QWidget, Ui_BookEps, QtTaskBase):
         for i in range(self.listWidget.count()):
             item = self.listWidget.item(i)
             if item.isSelected():
-                downloadIds.append(i)
+                downloadIds.append(item.index)
 
             # if item.background().color() == self.blue:
             #     downloadIds.append(i)

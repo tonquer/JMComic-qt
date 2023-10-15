@@ -34,6 +34,11 @@ class Ui_Download(object):
 
         self.horizontalLayout.addItem(self.horizontalSpacer)
 
+        self.webp2Png = QCheckBox(Download)
+        self.webp2Png.setObjectName(u"webp2Png")
+
+        self.horizontalLayout.addWidget(self.webp2Png)
+
         self.redownloadRadio = QCheckBox(Download)
         self.redownloadRadio.setObjectName(u"redownloadRadio")
 
@@ -114,6 +119,7 @@ class Ui_Download(object):
 
     def retranslateUi(self, Download):
         Download.setWindowTitle(QCoreApplication.translate("Download", u"\u4e0b\u8f7d", None))
+        self.webp2Png.setText(QCoreApplication.translate("Download", u"Webp\u4fdd\u5b58\u4e3aPng", None))
         self.redownloadRadio.setText(QCoreApplication.translate("Download", u"\u4e0b\u8f7d\u5931\u8d25\u540e1\u5206\u949f\u81ea\u52a8\u91cd\u8bd5", None))
         self.pushButton.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u5f00\u59cb\u4e0b\u8f7d", None))
         self.pushButton_3.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u6682\u505c\u4e0b\u8f7d", None))

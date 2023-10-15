@@ -35,7 +35,7 @@ class MainView(Main, QtTaskBase):
         self.setWindowIcon(QIcon(":/png/icon/logo_round.png"))
         # self.setAttribute(Qt.WA_TranslucentBackground)
         self.setAttribute(Qt.WA_QuitOnClose, True)
-        QtOwner().app.lastWindowClosed.connect(self.LastWindowsClose)
+        # QtOwner().app.lastWindowClosed.connect(self.LastWindowsClose)
         screens = QGuiApplication.screens()
         # print(screens[0].geometry(), screens[1].geometry())
         if Setting.ScreenIndex.value >= len(screens):
@@ -291,9 +291,9 @@ class MainView(Main, QtTaskBase):
     #     super().resizeEvent(e)
     #     self.adjustWidgetGeometry()
 
-    def LastWindowsClose(self):
-        self.window().close()
-        return
+    # def LastWindowsClose(self):
+    #     self.window().close()
+    #     return
 
     def closeEvent(self, a0) -> None:
         if self.totalStackWidget.currentIndex() == 1:

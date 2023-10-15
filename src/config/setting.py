@@ -153,6 +153,7 @@ class Setting:
     IsShowCmd = SettingValue("Other", 0, False)
     IsGrabGesture = SettingValue("Other", 0, True)
     IsReDownload = SettingValue("Other", 0, False)
+    WebpToPng = SettingValue("Other", 0, False)
     IsPreUpdate = SettingValue("Other", 0, False)
 
     # IpbMemberId = SettingValue("Other", "", False)

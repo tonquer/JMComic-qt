@@ -7,6 +7,7 @@ import time
 import requests
 
 from config import config
+from config.setting import Setting
 from task.qt_task import TaskBase
 from server import req
 from tools.status import Status
@@ -813,13 +814,18 @@ class DownloadBookHandler(object):
                             if not os.path.isdir(fileDir):
                                 os.makedirs(fileDir)
                             saveParam = backData.req.saveParam
+                            Log.Debug("add download cache, cachePath:{}".format(filePath))
                             if not isAni:
-                                data2 = ToolUtil. SegmentationPicture(data, saveParam[0], saveParam[1], saveParam[2])
+                                if mat == "webp" and Setting.WebpToPng.value > 0:
+                                    ToolUtil.SegmentationPictureToDisk(data, saveParam[0], saveParam[1], saveParam[2], filePath+".png", "png")
+                                    continue
+                                else:
+                                    data2 = ToolUtil.SegmentationPicture(data, saveParam[0], saveParam[1], saveParam[2])
                             else:
                                 data2 = data
+
                             with open(filePath+"."+mat, "wb+") as f:
                                 f.write(data2)
-                            Log.Debug("add download cache, cachePath:{}".format(filePath))
                     except Exception as es:
                         Log.Error(es)
                         # 保存失败了

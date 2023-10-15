@@ -87,8 +87,9 @@
           <item>
            <widget class="AnimationStackWidget" name="subStackWidget">
             <widget class="IndexView" name="indexView"/>
+            <widget class="LocalReadAllView" name="localReadAllView"/>
             <widget class="LocalReadEpsView" name="localReadEpsView"/>
-            <widget class="LocalReadView" name="localReadView"/>
+            <widget class="LocalReadAllView" name="localReadView"/>
             <widget class="DownloadAllView" name="downloadAllView"/>
             <widget class="HelpView" name="helpView"/>
             <widget class="SettingView" name="settingView"/>
@@ -187,12 +188,6 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>LocalReadView</class>
-   <extends>QWidget</extends>
-   <header location="global">view.tool.local_read_view.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>CommentView</class>
    <extends>QWidget</extends>
    <header location="global">view.comment.comment_view.h</header>
@@ -256,6 +251,12 @@
    <class>LocalFavoriteView</class>
    <extends>QWidget</extends>
    <header location="global">view.user.local_favorite_view.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>LocalReadAllView</class>
+   <extends>QWidget</extends>
+   <header>view.tool.local_read_all_view.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

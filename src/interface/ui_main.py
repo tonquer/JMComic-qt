@@ -37,8 +37,8 @@ from view.info.book_info_view import BookInfoView
 from view.read.read_view import ReadView
 from view.search.search_view import SearchView
 from view.setting.setting_view import SettingView
+from view.tool.local_read_all_view import LocalReadAllView
 from view.tool.local_read_eps_view import LocalReadEpsView
-from view.tool.local_read_view import LocalReadView
 from view.tool.waifu2x_tool_view import Waifu2xToolView
 from view.user.favorite_view import FavoriteView
 from view.user.local_favorite_view import LocalFavoriteView
@@ -97,10 +97,13 @@ class Ui_Main(object):
         self.indexView = IndexView()
         self.indexView.setObjectName(u"indexView")
         self.subStackWidget.addWidget(self.indexView)
+        self.localReadAllView = LocalReadAllView()
+        self.localReadAllView.setObjectName(u"localReadAllView")
+        self.subStackWidget.addWidget(self.localReadAllView)
         self.localReadEpsView = LocalReadEpsView()
         self.localReadEpsView.setObjectName(u"localReadEpsView")
         self.subStackWidget.addWidget(self.localReadEpsView)
-        self.localReadView = LocalReadView()
+        self.localReadView = LocalReadAllView()
         self.localReadView.setObjectName(u"localReadView")
         self.subStackWidget.addWidget(self.localReadView)
         self.downloadAllView = DownloadAllView()
