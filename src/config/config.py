@@ -9,7 +9,7 @@ Url2 = "https://www.asjmapihost.cc"       # 域名
 # Url2 = "https://www.jmapibranch3.cc"       # 域名
 PicUrl2 = "https://cdn-msp.jmapiproxy2.cc"       # 域名
 
-Url2List = ["https://www.jmapinode1.cc", "https://www.jmapinode2.cc", "https://www.jmapinode3.cc", "https://www.jmapibranch2.cc"]
+Url2List = ["https://www.jmapinode1.top", "https://www.jmapinode2.top", "https://www.jmapinode3.top", "https://www.jmapibranch2.cc"]
 PicUrlList = ["https://cdn-msp.jmapiproxy1.cc", "https://cdn-msp.jmapiproxy2.cc", "https://cdn-msp.jmapiproxy3.cc", "https://cdn-msp.jmapiproxy4.cc"]
 Now = int(time.time())
 ProxyApiDomain = "api.bika.life"
@@ -42,8 +42,8 @@ UpdateUrl3 = "https://hub.fastgit.xyz/tonquer/JMComic-qt/releases/latest"
 UpdateUrl3Api = "https://api.fastgit.xyz/repos/tonquer/JMComic-qt/releases"
 UpdateUrl3Back = "https://hub.fastgit.xyz/tonquer/JMComic-qt"
 
-UpdateVersion = "v1.1.5"
-RealVersion = "v1.1.5"
+UpdateVersion = "v1.1.6"
+RealVersion = "v1.1.6"
 VersionTime = "2023-10-15"
 
 Waifu2xVersion = "1.1.6"
