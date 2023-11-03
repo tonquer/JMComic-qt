@@ -1,4 +1,5 @@
 from copy import deepcopy
+import random
 
 from PySide6 import QtWidgets
 from PySide6.QtCore import QUrl
@@ -12,6 +13,7 @@ from server import req, Log
 from server.server import Server
 from task.qt_task import QtTaskBase
 from tools.str import Str
+from view.user.ua import UALIST
 
 
 class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
@@ -50,6 +52,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         self.commandLinkButton.clicked.connect(self.OpenUrl)
         self.maxNum = 6
         self.loginProxy.hide()
+        self.uaRandom.clicked.connect(self.RandomUa)
 
     def Init(self):
         self.LoadSetting()
@@ -81,6 +84,13 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         self.radio_img_5.setEnabled(enabled)
         # self.radioButton_5.setEnabled(enabled)
 
+    def RandomUa(self):
+        # str1 = random.sample('qwertyuiopasdfghjklzxcvbnm1234567890', 7)
+        # ua = "Mozilla/5.0 (Linux; Android 7.1.2; {} Build/N2G47O; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/86.0.4240.198 Mobile Safari/537.36".format(str1)
+        ua = random.choice(UALIST)
+        self.uaEdit.setText(ua)
+        return
+
     def LoadSetting(self):
         # self.dohBox.setChecked(Setting.IsOpenDoh.value)
         # self.dohEdit.setText(Setting.DohAddress.value)
@@ -94,6 +104,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         button.setChecked(True)
         self.cdn_api_ip.setText(Setting.PreferCDNIP.value)
         self.cdn_img_ip.setText(Setting.PreferCDNIPImg.value)
+        self.uaEdit.setText(Setting.UerAgent.value)
         self.loginProxy.setChecked(bool(Setting.IsLoginProxy.value))
 
     def SaveSetting(self):
@@ -105,6 +116,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         Setting.IsLoginProxy.SetValue(int(self.loginProxy.isChecked()))
         Setting.PreferCDNIPImg.SetValue(self.cdn_img_ip.text())
         Setting.PreferCDNIP.SetValue(self.cdn_api_ip.text())
+        Setting.UerAgent.SetValue(self.uaEdit.text())
         # Setting.DohAddress.SetValue(self.dohEdit.text())
         # Setting.IsOpenDoh.SetValue(int(self.dohBox.isChecked()))
         self.UpdateServer()

@@ -155,6 +155,7 @@ class Setting:
     IsReDownload = SettingValue("Other", 0, False)
     WebpToPng = SettingValue("Other", 0, False)
     IsPreUpdate = SettingValue("Other", 0, False)
+    UerAgent = SettingValue("Other", "", False)
 
     # IpbMemberId = SettingValue("Other", "", False)
     # IpbPassHash = SettingValue("Other", "", False)

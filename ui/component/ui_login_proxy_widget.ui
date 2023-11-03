@@ -33,8 +33,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>521</width>
-        <height>463</height>
+        <width>504</width>
+        <height>515</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -184,6 +184,46 @@
           <string>使用注册分流（无法注册可尝试开启）</string>
          </property>
         </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QLabel" name="label_9">
+           <property name="minimumSize">
+            <size>
+             <width>90</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>UA设置:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="uaRandom">
+           <property name="text">
+            <string>随机生成</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="uaEdit"/>
        </item>
        <item>
         <widget class="QPushButton" name="testSpeedButton">
@@ -537,8 +577,8 @@
   <slot>OpenUrl()</slot>
  </slots>
  <buttongroups>
-  <buttongroup name="radioApiGroup"/>
   <buttongroup name="radioProxyGroup"/>
   <buttongroup name="radioImgGroup"/>
+  <buttongroup name="radioApiGroup"/>
  </buttongroups>
 </ui>

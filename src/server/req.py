@@ -61,11 +61,15 @@ class ServerReq(object):
     def GetHeader(self, _url: str, method: str) -> dict:
         param = "{}{}".format(self.now, "18comicAPP")
         token = hashlib.md5(param.encode("utf-8")).hexdigest()
+        if Setting.UerAgent.value:
+            ua = Setting.UerAgent.value
+        else:
+            ua = "Mozilla/5.0 (Linux; Android 7.1.2; DT1901A Build/N2G47O; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/86.0.4240.198 Mobile Safari/537.36"
 
         header = {
             "tokenparam": "{},1.6.1".format(self.now),
             "token": token,
-            "user-agent": "Mozilla/5.0 (Linux; Android 7.1.2; DT1901A Build/N2G47O; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/86.0.4240.198 Mobile Safari/537.36",
+            "user-agent": ua,
             "accept-encoding": "gzip",
         }
         if method == "POST":
@@ -192,9 +196,6 @@ class LoginReq2(ServerReq):
         data = dict()
         data["username"] = userId
         data["password"] = passwd
-        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
-        data["view_mode_debug"] = "1"
-        data["view_mode"] = "null"
         super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
 
 
@@ -294,9 +295,6 @@ class GetBookInfoReq2(ServerReq):
         url = config.Url2 + "/album"
         method = "GET"
         data = dict()
-        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
-        data["view_mode_debug"] = "1"
-        data["view_mode"] = "null"
         data["comicName"] = ""
         data["id"] = bookId
 
@@ -333,9 +331,6 @@ class GetBookEpsInfoReq2(ServerReq):
         url = config.Url2 + "/chapter"
         method = "GET"
         data = dict()
-        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
-        data["view_mode_debug"] = "1"
-        data["view_mode"] = "null"
         data["comicName"] = ""
         data["skip"] = ""
         data["id"] = epsId
@@ -408,9 +403,6 @@ class GetSearchReq2(ServerReq):
 
         data = dict()
         data["search_query"] = search
-        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
-        data["view_mode_debug"] = "1"
-        data["view_mode"] = "null"
         if page > 1:
             data['page'] = str(page)
         if sort:
@@ -429,9 +421,6 @@ class GetCategoryReq2(ServerReq):
     def __init__(self):
         url = config.Url2 + "/categories"
         data = dict()
-        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
-        data["view_mode_debug"] = "1"
-        data["view_mode"] = "null"
         param = ToolUtil.DictToUrl(data)
         if param:
             url += "/?" + param
@@ -453,9 +442,6 @@ class GetSearchCategoryReq2(ServerReq):
         url = config.Url2 + "/categories/filter"
 
         data = dict()
-        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
-        data["view_mode_debug"] = "1"
-        data["view_mode"] = "null"
 
         if page > 1:
             data['page'] = str(page)
@@ -487,9 +473,6 @@ class GetIndexInfoReq2(ServerReq):
         url = config.Url2 + "/promote"
         method = "GET"
         data = dict()
-        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
-        data["view_mode_debug"] = "1"
-        data["view_mode"] = "null"
         data["page"] = page
 
         param = ToolUtil.DictToUrl(data)
@@ -505,9 +488,6 @@ class GetLatestInfoReq2(ServerReq):
         url = config.Url2 + "/latest"
         method = "GET"
         data = dict()
-        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
-        data["view_mode_debug"] = "1"
-        data["view_mode"] = "null"
         data["page"] = page
 
         param = ToolUtil.DictToUrl(data)
@@ -525,9 +505,6 @@ class GetFavoritesReq2(ServerReq):
         url = config.Url2 + "/favorite"
         method = "GET"
         data = dict()
-        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
-        data["view_mode_debug"] = "1"
-        data["view_mode"] = "null"
         data["page"] = page
         if fid:
             data["folder_id"] = fid
@@ -549,10 +526,7 @@ class AddFavoritesFoldReq2(ServerReq):
         url = config.Url2 + "/favorite_folder"
         method = "POST"
         data = dict()
-        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
-        data["view_mode_debug"] = "1"
         data["folder_name"] = name
-        data["view_mode"] = "null"
         data["type"] = "add"
         super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
 
@@ -563,10 +537,7 @@ class DelFavoritesFoldReq2(ServerReq):
         url = config.Url2 + "/favorite_folder"
         method = "POST"
         data = dict()
-        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
-        data["view_mode_debug"] = "1"
         data["folder_id"] = fid
-        data["view_mode"] = "null"
         data["type"] = "del"
         super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
 
@@ -576,10 +547,7 @@ class MoveFavoritesFoldReq2(ServerReq):
         url = config.Url2 + "/favorite_folder"
         method = "POST"
         data = dict()
-        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
-        data["view_mode_debug"] = "1"
         data["folder_id"] = fid
-        data["view_mode"] = "null"
         data["type"] = "move"
         data["aid"] = bookId
         super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
@@ -591,9 +559,6 @@ class AddAndDelFavoritesReq2(ServerReq):
         url = config.Url2 + "/favorite"
         method = "POST"
         data = dict()
-        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
-        data["view_mode_debug"] = "1"
-        data["view_mode"] = "null"
         data["aid"] = bookId
         super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
 
@@ -651,9 +616,6 @@ class GetCommentReq2(ServerReq):
         url = config.Url2 + "/forum"
         method = "GET"
         data = dict()
-        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
-        data["view_mode_debug"] = "1"
-        data["view_mode"] = "null"
         data["mode"] = readMode
         if bookId:
             data["aid"] = bookId
@@ -672,9 +634,6 @@ class GetMyCommentReq2(ServerReq):
         url = config.Url2 + "/forum"
         method = "GET"
         data = dict()
-        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
-        data["view_mode_debug"] = "1"
-        data["view_mode"] = "null"
         data["mode"] = "undefined"
         data["uid"] = uid
         data["page"] = page
@@ -691,9 +650,6 @@ class SendCommentReq2(ServerReq):
         url = config.Url2 + "/comment"
         method = "POST"
         data = dict()
-        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
-        data["view_mode_debug"] = "1"
-        data["view_mode"] = "null"
         data["comment"] = comment
         data["aid"] = bookId
         if cid:
@@ -707,9 +663,6 @@ class GetHistoryReq2(ServerReq):
         url = config.Url2 + "/watch_list"
         method = "GET"
         data = dict()
-        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
-        data["view_mode_debug"] = "1"
-        data["view_mode"] = "null"
         data["page"] = page
         super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
 
@@ -765,9 +718,6 @@ class SpeedTestPingReq(ServerReq):
     def __init__(self):
         url = config.Url2 + "/latest"
         data = dict()
-        data["key"] = "0b931a6f4b5ccc3f8d870839d07ae7b2"
-        data["view_mode_debug"] = "1"
-        data["view_mode"] = "null"
         data["page"] = "0"
 
         method = "GET"

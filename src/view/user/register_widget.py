@@ -1,6 +1,6 @@
 from PySide6 import QtWidgets
-from PySide6.QtCore import Qt, QRegularExpression, Signal
-from PySide6.QtGui import QRegularExpressionValidator, QPixmap
+from PySide6.QtCore import Qt, QRegularExpression, Signal, QUrl
+from PySide6.QtGui import QRegularExpressionValidator, QPixmap, QDesktopServices
 
 from component.label.msg_label import MsgLabel
 from interface.ui_register_widget import Ui_RegisterWidget
@@ -20,9 +20,17 @@ class RegisterWidget(QtWidgets.QWidget, Ui_RegisterWidget, QtTaskBase):
         QtTaskBase.__init__(self)
         self.setupUi(self)
         self.verPicture.setText(Str.GetStr(Str.LoadingPicture))
+        self.commandLinkButton.clicked.connect(self.OpenUrl)
+        self.commandLinkButton_2.clicked.connect(self.OpenUrl2)
         # reg = QRegularExpression("^[A-Z0-9a-z\\.\\_]{1,16}$")
         # validator = QRegularExpressionValidator(reg, self.userEdit)
         # self.userEdit.setValidator(validator)
+
+    def  OpenUrl(self):
+        QDesktopServices.openUrl(QUrl(self.commandLinkButton.text()))
+
+    def  OpenUrl2(self):
+        QDesktopServices.openUrl(QUrl(self.commandLinkButton_2.text()))
 
     def Init(self):
         self.LoadVer()
