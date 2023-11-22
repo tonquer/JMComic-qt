@@ -88,7 +88,8 @@ class LocalFavoriteView(QtWidgets.QWidget, Ui_LocalFavorite, QtTaskBase):
 
     def DelCallBack(self, bookId):
         self.DelFavorites(bookId)
-        self.RefreshDataFocus()
+        self.bookList.DelBookID(bookId)
+        # self.RefreshDataFocus()
         pass
 
     def IsHave(self, bookId):

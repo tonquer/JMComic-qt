@@ -50,7 +50,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.preDownWaifu2x.clicked.connect(partial(self.CheckButtonEvent, Setting.PreDownWaifu2x, self.preDownWaifu2x))
         self.coverCheckBox.clicked.connect(partial(self.CheckButtonEvent, Setting.CoverIsOpenWaifu, self.coverCheckBox))
         self.downAuto.clicked.connect(partial(self.CheckButtonEvent, Setting.DownloadAuto, self.downAuto))
-        self.titleBox.clicked.connect(partial(self.CheckButtonEvent, Setting.IsNotUseTitleBar, self.titleBox))
+        self.titleBox.clicked.connect(partial(self.CheckButtonEvent, Setting.IsUseTitleBar, self.titleBox))
         self.grabGestureBox.clicked.connect(partial(self.CheckButtonEvent, Setting.IsGrabGesture, self.grabGestureBox))
 
         # LineEdit:
@@ -213,7 +213,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.SetRadioGroup("logutton", Setting.LogIndex.value)
         self.httpEdit.setText(Setting.HttpProxy.value)
         self.sockEdit.setText(Setting.Sock5Proxy.value)
-        self.titleBox.setChecked(Setting.IsNotUseTitleBar.value)
+        self.titleBox.setChecked(Setting.IsUseTitleBar.value)
         self.grabGestureBox.setChecked(Setting.IsGrabGesture.value)
         for index in range(self.encodeSelect.count()):
             if Setting.SelectEncodeGpu.value == self.encodeSelect.itemText(index):
@@ -340,6 +340,8 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
             f = QFile(":/file/theme/light_pink.qss")
         f.open(QFile.ReadOnly)
         data = str(f.readAll(), encoding='utf-8')
+        if Setting.FontName.value:
+            data = data.replace("/*replace*/", "font-family: {};".format(Setting.FontName.value))
         QtOwner().app.setStyleSheet(data)
         self.SetSettingTheme(themeId)
         f.close()

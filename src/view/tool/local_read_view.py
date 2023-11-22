@@ -226,7 +226,8 @@ class LocalReadView(QWidget, Ui_Local, QtTaskBase):
             return
         del self.allBookInfos[bookId]
         self.db.DelDownloadDB(bookId)
-        self.Init()
+        # self.Init()
+        self.bookList.DelBookID(bookId)
 
     def DelLocalReadAll(self, bookIds):
         for bookId in bookIds:

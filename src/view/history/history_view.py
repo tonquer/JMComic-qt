@@ -156,10 +156,10 @@ class HistoryView(QtWidgets.QWidget, Ui_History):
             return
         self.history.pop(bookId)
         self.DelHistory(bookId)
-
-        page = 1
-        self.bookList.page = page
-        self.bookList.clear()
-        self.RefreshData(page)
-        self.UpdatePageLabel()
+        self.bookList.DelBookID(bookId)
+        # page = 1
+        # self.bookList.page = page
+        # self.bookList.clear()
+        # self.RefreshData(page)
+        # self.UpdatePageLabel()
         return

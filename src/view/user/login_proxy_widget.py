@@ -1,3 +1,4 @@
+import urllib
 from copy import deepcopy
 import random
 
@@ -56,6 +57,11 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
 
     def Init(self):
         self.LoadSetting()
+        proxy = urllib.request.getproxies()
+        if isinstance(proxy, dict) and proxy.get("http"):
+            self.checkLabel.setVisible(False)
+        else:
+            self.checkLabel.setVisible(True)
 
     def ClickButton(self):
         self.SaveSetting()

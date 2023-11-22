@@ -83,7 +83,7 @@ class Setting:
     CoverSize = SettingValue("GeneraSetting", 100, False)  #
     CategorySize = SettingValue("GeneraSetting", 80, False)  #
     ScaleLevel = SettingValue("GeneraSetting", 0, True, ["Auto", 100, 125, 150, 175, 200])
-    IsNotUseTitleBar = SettingValue("GeneraSetting", 0, True)
+    IsUseTitleBar = SettingValue("GeneraSetting", 1, True)
 
     FontName = SettingValue("GeneraSetting", "", True)
     FontSize = SettingValue("GeneraSetting", "", True)
@@ -203,6 +203,7 @@ class Setting:
         if not os.path.isdir(path2):
             os.mkdir(path2)
         Setting.CheckRepair()
+        Setting.CheckRepairLocalDb()
         return
 
     @staticmethod
@@ -247,6 +248,28 @@ class Setting:
                     oldFilePath = os.path.join(oldPath, file)
                     if os.path.isfile(oldFilePath):
                         shutil.move(oldFilePath, filePath)
+        except Exception as es:
+            from tools.log import Log
+            Log.Error(es)
+
+    @staticmethod
+    def CheckRepairLocalDb():
+        try:
+            fileName = os.path.join(Setting.GetLocalHomePath(), "local_read.db")
+            toFileName = os.path.join(Setting.GetConfigPath(), "local_read.db")
+            from config import config
+            copyOkName = os.path.join(Setting.GetLocalHomePath(), "{}_local.ok".format(config.ProjectName))
+            from PySide6.QtCore import QDir
+            if os.path.isfile(copyOkName):
+                return
+            if not os.path.isfile(fileName):
+                return
+            if os.path.isfile(toFileName):
+                return
+            shutil.copy(fileName, copyOkName)
+            shutil.copy(fileName, toFileName)
+            from server import Log
+            Log.Warn("copy local read db")
         except Exception as es:
             from tools.log import Log
             Log.Error(es)

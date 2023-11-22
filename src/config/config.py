@@ -15,6 +15,7 @@ Now = int(time.time())
 ProxyApiDomain = "api.bika.life"
 ProxyImgDomain = "img.bika.life"
 
+ProjectName = "JMComic"
 ThreadNum = 10                 # 线程
 DownloadThreadNum = 5          # 下载线程
 ConvertThreadNum = 3           # 转换线程

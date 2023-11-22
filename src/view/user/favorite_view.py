@@ -88,7 +88,8 @@ class FavoriteView(QtWidgets.QWidget, Ui_Favorite, QtTaskBase):
         QtOwner().CloseLoading()
         st = raw["st"]
         if st == Status.Ok:
-            self.RefreshDataFocus()
+            self.bookList.DelBookID(bookId)
+            # self.RefreshDataFocus()
         QtOwner().CheckShowMsg(raw)
 
     def LoadNextPage(self):

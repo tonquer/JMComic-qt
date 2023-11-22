@@ -129,6 +129,7 @@ class ServerReq(object):
         from jmcomic import JmCryptoTool
         return JmCryptoTool.decode_resp_data(data, ts=self.now)
 
+
 # 检查更新
 class CheckUpdateReq(ServerReq):
     def __init__(self, url):

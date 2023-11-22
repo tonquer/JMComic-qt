@@ -177,6 +177,14 @@ class ComicListWidget(BaseListWidget):
         # if url and config.IsLoadingPicture:
         #     self.AddDownloadTask(url, widget.path, completeCallBack=self.LoadingPictureComplete, backParam=index)
 
+    def DelBookID(self, bookID):
+        for row in range(0, self.count()):
+            item = self.item(row)
+            w = self.itemWidget(item)
+            if w.id == bookID:
+                item.setHidden(True)
+                break
+
     def LoadingPicture(self, index):
         item = self.item(index)
         widget = self.itemWidget(item)

@@ -119,6 +119,19 @@ class Ui_LoginProxyWidget(object):
 
         self.horizontalLayout_12.addWidget(self.proxy_3)
 
+        self.checkLabel = QLabel(self.scrollAreaWidgetContents)
+        self.checkLabel.setObjectName(u"checkLabel")
+        font = QFont()
+        font.setBold(False)
+        self.checkLabel.setFont(font)
+        self.checkLabel.setStyleSheet(u"color:rgb(255, 0, 0)")
+
+        self.horizontalLayout_12.addWidget(self.checkLabel)
+
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_12.addItem(self.horizontalSpacer_2)
+
 
         self.verticalLayout.addLayout(self.horizontalLayout_12)
 
@@ -399,6 +412,7 @@ class Ui_LoginProxyWidget(object):
 #endif // QT_CONFIG(tooltip)
         self.sockEdit.setPlaceholderText("")
         self.proxy_3.setText(QCoreApplication.translate("LoginProxyWidget", u"\u4f7f\u7528\u7cfb\u7edf\u4ee3\u7406", None))
+        self.checkLabel.setText(QCoreApplication.translate("LoginProxyWidget", u"\u672a\u68c0\u6d4b\u5230\u7cfb\u7edf\u4ee3\u7406", None))
         self.httpsBox.setText(QCoreApplication.translate("LoginProxyWidget", u"\u542f\u7528Https\uff08\u5982\u679c\u51fa\u73b0\u8fde\u63a5\u88ab\u91cd\u7f6e\uff0c\u5efa\u8bae\u5173\u95ed\u8bd5\u8bd5\uff09", None))
         self.loginProxy.setText(QCoreApplication.translate("LoginProxyWidget", u"\u4f7f\u7528\u6ce8\u518c\u5206\u6d41\uff08\u65e0\u6cd5\u6ce8\u518c\u53ef\u5c1d\u8bd5\u5f00\u542f\uff09", None))
         self.label_9.setText(QCoreApplication.translate("LoginProxyWidget", u"UA\u8bbe\u7f6e:", None))

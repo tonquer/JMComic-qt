@@ -71,6 +71,7 @@ jobs:
         pip install natsort==8.2.0
         pip install pycryptodomex==3.12.0
         pip install waifu2x-vulkan==1.1.6
+        pip install jmcomic>=2.4.3
     - name: Build
       run: |
         cd src
@@ -88,4 +89,47 @@ jobs:
       with:
         name: ${{ env.PACKAGENAME }}
         path: ${{ env.PACKAGENAME }}
+        retention-days: 7
+
+  ubuntu:
+    runs-on: ubuntu-latest
+    env:
+      PACKAGENAME: bika_py37_linux
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.7
+    - name: Install dependencies
+      run: |
+        sudo apt-get install -y fuse libfuse2
+        python -m pip install --upgrade pip
+        pip install pyinstaller==4.8
+        pip install https://github.com/tonquer/waifu2x-vulkan/releases/download/v1.1.6/waifu2x_vulkan-1.1.6-cp37-cp37m-linux_x86_64.whl
+        pip install -r src/requirements.txt
+    - name: Build
+      run: |
+        cd src
+        pyinstaller -w start.py
+        cd dist
+        mkdir -p jmcomic.AppRun/usr/bin
+        wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+        chmod +x appimagetool-x86_64.AppImage
+        cp -r ../../res/appimage/* jmcomic.AppRun/
+        cp -r ../../res/icon/logo_round.png jmcomic.AppRun/JMComic.png
+        cp -r start/* jmcomic.AppRun/usr/bin/
+        cp -r ../db  jmcomic.AppRun/
+
+        mv jmcomic.AppRun/usr/bin/start jmcomic.AppRun/usr/bin/JMComic
+        chmod +x jmcomic.AppRun/AppRun
+        chmod +x jmcomic.AppRun/usr/bin/PicJMComicACG
+        ./appimagetool-x86_64.AppImage jmcomic.AppRun
+        mv JMComic-x86_64.AppImage ../../${{ env.PACKAGENAME }}-x86_64.AppImage
+        cd ../..
+    - name: Upload
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ env.PACKAGENAME }}
+        path: ${{ env.PACKAGENAME }}-x86_64.AppImage
         retention-days: 7
