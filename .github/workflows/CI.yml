@@ -119,7 +119,6 @@ jobs:
         cp -r ../../res/appimage/* jmcomic.AppRun/
         cp -r ../../res/icon/logo_round.png jmcomic.AppRun/JMComic.png
         cp -r start/* jmcomic.AppRun/usr/bin/
-        cp -r ../db  jmcomic.AppRun/
 
         mv jmcomic.AppRun/usr/bin/start jmcomic.AppRun/usr/bin/JMComic
         chmod +x jmcomic.AppRun/AppRun
