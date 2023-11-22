@@ -8,4 +8,5 @@ lxml==4.6.4
 pycryptodomex==3.12.0
 Pysocks==1.7.1
 natsort==8.2.0
+jmcomic>=2.4.3
 # pywin32==302

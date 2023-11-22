@@ -117,16 +117,17 @@ class ServerReq(object):
         }
 
     def ParseData(self, data) -> str:
-        param = "{}{}".format(self.now, "18comicAPPContent")
-        key = hashlib.md5(param.encode("utf-8")).hexdigest()
-        aes = AES.new(key.encode("utf-8"), AES.MODE_ECB)
-        byteData = base64.b64decode(data.encode("utf-8"))
-        result = aes.decrypt(byteData)
-        unpad = lambda s: s[0:-s[-1]]
-        result2 = unpad(result)
-        newData = result2.decode()
-        return newData
-
+        # param = "{}{}".format(self.now, "18comicAPPContent")
+        # key = hashlib.md5(param.encode("utf-8")).hexdigest()
+        # aes = AES.new(key.encode("utf-8"), AES.MODE_ECB)
+        # byteData = base64.b64decode(data.encode("utf-8"))
+        # result = aes.decrypt(byteData)
+        # unpad = lambda s: s[0:-s[-1]]
+        # result2 = unpad(result)
+        # newData = result2.decode()
+        # return newData
+        from jmcomic import JmCryptoTool
+        return JmCryptoTool.decode_resp_data(data, ts=self.now)
 
 # 检查更新
 class CheckUpdateReq(ServerReq):
