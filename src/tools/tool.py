@@ -913,13 +913,14 @@ class ToolUtil(object):
     @staticmethod
     def SegmentationPictureToDisk(imgData, epsId, scramble_id, bookId, path, toFormat):
         num = ToolUtil.GetSegmentationNum(epsId, scramble_id, bookId)
-        if num <= 1:
-            return imgData
 
         from PIL import Image
         from io import BytesIO
         src = BytesIO(imgData)
         srcImg = Image.open(src)
+        if num <= 1:
+            srcImg.save(path, toFormat)
+            return
 
         size = (width, height) = srcImg.size
         desImg = Image.new(srcImg.mode, size)
