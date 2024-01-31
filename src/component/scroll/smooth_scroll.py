@@ -6,6 +6,7 @@ from PySide6.QtCore import QPoint, Qt, QDateTime, QTimer
 from PySide6.QtGui import QWheelEvent
 from PySide6.QtWidgets import QApplication
 
+from config.setting import Setting
 from view.read.read_enum import ReadMode
 
 
@@ -38,7 +39,8 @@ class SmoothScroll:
         accerationRatio = min(len(self.scrollStamps) / 15, 1)
         self.qEventParam = (e.position(), e.globalPosition(), e.buttons())
         # 计算步数
-        self.stepsTotal = self.fps * self.duration / 1000
+        duration = int(self.duration)
+        self.stepsTotal = self.fps * duration / 1000
         # 计算每一个事件对应的移动距离
         delta = e.angleDelta().y() * self.stepRatio
         if self.acceleration > 0:

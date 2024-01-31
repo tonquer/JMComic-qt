@@ -27,27 +27,15 @@ class CheckUpdateHandler(object):
             if task.res.raw.status_code != 200:
                 return
 
-            updateInfo = re.findall(r"<meta property=\"og:description\" content=\"([^\"]*)\"", task.res.raw.text)
-            if updateInfo:
-                rawData = updateInfo[0]
-            else:
-                rawData = ""
-
-            versionInfo = re.findall("<meta property=\"og:url\" content=\".*tag/([^\"]*)\"", task.res.raw.text)
-            if versionInfo:
-                verData = versionInfo[0]
-            else:
-                verData = ""
-
+            verData = task.res.GetText()
             info = verData.replace("v", "").split(".")
             version = int(info[0]) * 100 + int(info[1]) * 10 + int(info[2]) * 1
+
             info2 = re.findall(r"\d+\d*", os.path.basename(config.UpdateVersion))
             curversion = int(info2[0]) * 100 + int(info2[1]) * 10 + int(info2[2]) * 1
 
-            rawData = "\n\nv" + ".".join(info) + "\n" + rawData
-
             if version > curversion:
-                data["data"] = rawData
+                data["data"] = verData.replace("\r\n", "").replace("\n", "")
             else:
                 data["data"] = "no"
         except Exception as es:
@@ -57,8 +45,8 @@ class CheckUpdateHandler(object):
                 TaskBase.taskObj.taskBack.emit(task.bakParam, pickle.dumps(data))
 
 
-@handler(req.CheckPreUpdateReq)
-class CheckPreUpdateReqHandler(object):
+@handler(req.CheckUpdateInfoReq)
+class CheckUpdateInfoHandler(object):
     def __call__(self, task):
         data = {"st": task.status, "data": ""}
         try:
@@ -66,29 +54,13 @@ class CheckPreUpdateReqHandler(object):
                 return
             if task.res.raw.status_code != 200:
                 return
-            rawData = json.loads(task.res.raw.text)
-            if not rawData:
-                return
-            v = rawData[0]
-            verData = v.get("tag_name")
-            info = verData.replace("v", "").split(".")
-            version = int(info[0]) * 100 + int(info[1]) * 10 + int(info[2]) * 1
-            info2 = re.findall(r"\d+\d*", os.path.basename(config.UpdateVersion))
-            curversion = int(info2[0]) * 100 + int(info2[1]) * 10 + int(info2[2]) * 1
 
-            rawData = v.get("body")
-
-            if version > curversion:
-                data["data"] = rawData
-            else:
-                data["data"] = "no"
-
+            data["data"] = task.res.GetText()
         except Exception as es:
             pass
         finally:
             if task.bakParam:
                 TaskBase.taskObj.taskBack.emit(task.bakParam, pickle.dumps(data))
-
 # @handler(req.GetUserInfoReq)
 # class GetUserInfoReqHandler(object):
 #     def __call__(self, task: Task):
@@ -761,27 +733,40 @@ class DownloadBookHandler(object):
                     if backData.bakParam:
                         TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, -Status.Error, b"")
                     return
+
                 fileSize = int(r.headers.get('Content-Length', 0))
-                if fileSize <= 0:
-                    fileSize = 100000
                 getSize = 0
                 data = b""
-                now = time.time()
 
                 addSize = 0
+                now = time.time()
+                isAlreadySend = False
                 # 网速快，太卡了，优化成最多100ms一次
-                for chunk in r.iter_content(chunk_size=4096):
-                    cur = time.time()
-                    tick = cur - now
-                    addSize += len(chunk)
-                    if tick >= 0.1:
-                        if backData.bakParam and addSize > 0:
-                            TaskBase.taskObj.downloadBack.emit(backData.bakParam, addSize, max(1, fileSize-getSize), b"")
-                            addSize = 0
-                        now = cur
+                try:
+                    for chunk in r.iter_content(chunk_size=4096):
+                        cur = time.time()
+                        tick = cur - now
+                        addSize += len(chunk)
+                        if tick >= 0.1:
+                            isAlreadySend = True
+                            if backData.bakParam and addSize > 0:
+                                TaskBase.taskObj.downloadBack.emit(backData.bakParam, addSize,
+                                                                   max(1, fileSize - getSize), b"")
+                                addSize = 0
+                            now = cur
 
-                    getSize += len(chunk)
-                    data += chunk
+                        getSize += len(chunk)
+                        data += chunk
+                    if not isAlreadySend:
+                        if backData.bakParam:
+                            TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, getSize, b"")
+
+                except Exception as es:
+                    Log.Error(es)
+                    if backData.req.resetCnt > 0:
+                        backData.req.isReset = True
+                        Server().ReDownload(backData)
+                        return
 
                 # Log.Info("size:{}, url:{}".format(ToolUtil.GetDownloadSize(fileSize), backData.req.url))
                 _, _, mat, isAni = ToolUtil.GetPictureSize(data)
@@ -829,15 +814,17 @@ class DownloadBookHandler(object):
                     except Exception as es:
                         Log.Error(es)
                         # 保存失败了
-                        if backData.backParam:
-                            TaskBase.taskObj.downloadBack.emit(backData.backParam, 0, -2, b"")
+                        if backData.bakParam:
+                            TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, -2, b"")
 
                 if backData.bakParam:
                     TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, 0, data)
+
             except Exception as es:
+                backData.status = Status.DownloadFail
                 Log.Error(es)
-                if backData.backParam:
-                    TaskBase.taskObj.downloadBack.emit(backData.backParam, 0, -1, b"")
+                if backData.bakParam:
+                    TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, -backData.status, b"")
 
 
 @handler(req.DnsOverHttpsReq)
@@ -884,7 +871,9 @@ class SpeedTestHandler(object):
             r = backData.res
             try:
                 if r.status_code != 200:
+                    data["st"] = Status.Error
                     if backData.bakParam:
+                        data["st"] = Status.Error
                         TaskBase.taskObj.taskBack.emit(backData.bakParam, pickle.dumps(data))
                     return
 
@@ -897,7 +886,7 @@ class SpeedTestHandler(object):
                     if consume >= 3.0:
                         break
                 consume = time.time() - now
-                downloadSize = getSize / max(0.0001, consume)
+                downloadSize = getSize / consume
                 speed = ToolUtil.GetDownloadSize(downloadSize)
                 if backData.bakParam:
                     data["data"] = speed
@@ -905,5 +894,6 @@ class SpeedTestHandler(object):
 
             except Exception as es:
                 Log.Error(es)
+                data["st"] = Status.DownloadFail
                 if backData.bakParam:
                     TaskBase.taskObj.taskBack.emit(backData.bakParam, pickle.dumps(data))

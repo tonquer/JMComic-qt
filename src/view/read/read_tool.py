@@ -116,6 +116,7 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
         self.gpuLabel.setMaximumWidth(250)
         self.curWaifu2x.clicked.connect(self.OpenCurWaifu)
         self.preDownWaifu2x.clicked.connect(self.OpenPreDownloadWaifu2x)
+        # self.upDownScrollSpeed.valueChanged.connect(self.SaveUpDownSetting)
 
 
     @property
@@ -163,6 +164,9 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
     @scaleCnt.setter
     def scaleCnt(self, value):
         self.imgFrame.scaleCnt = value
+
+    # def SaveUpDownSetting(self):
+    #     Setting.UpDownScrollSpeed.SetValue(self.upDownScrollSpeed.value())
 
     def NextPage(self):
         if self.stripModel in [ReadMode.RightLeftDouble, ReadMode.RightLeftScroll]:

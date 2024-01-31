@@ -5,12 +5,12 @@ UrlBack = "https://jmcomic.ggo.icu/"       # 域名
 
 
 # Url = "https://jmcomic1.cc"       # 域名
-Url2 = "https://www.asjmapihost.cc"       # 域名
+Url2 = "https://www.jmapinode.biz"       # 域名
 # Url2 = "https://www.jmapibranch3.cc"       # 域名
-PicUrl2 = "https://cdn-msp.jmapiproxy2.cc"       # 域名
+PicUrl2 = "https://cdn-msp.jmapinodeudzn.net"       # 域名
 
-Url2List = ["https://www.jmapinode1.top", "https://www.jmapinode2.top", "https://www.jmapinode3.top", "https://www.jmapibranch2.cc"]
-PicUrlList = ["https://cdn-msp.jmapiproxy1.cc", "https://cdn-msp.jmapiproxy2.cc", "https://cdn-msp.jmapiproxy3.cc", "https://cdn-msp.jmapiproxy4.cc"]
+Url2List = ["https://www.jmapinode.biz", "https://www.jmapinode.vip", "https://www.jmapinode3.top", "https://www.jmapibranch2.cc"]
+PicUrlList = ["https://cdn-msp.jmapinodeudzn.net", "https://cdn-msp2.jmapinodeudzn.net", "https://cdn-msp.jmapiproxy3.cc", "https://cdn-msp.jmapiproxy4.cc"]
 Now = int(time.time())
 ProxyApiDomain = "api.bika.life"
 ProxyImgDomain = "img.bika.life"
@@ -31,21 +31,15 @@ PreLook = 4                    # 预显示
 
 IsLoadingPicture = True
 
-UpdateUrl = "https://github.com/tonquer/JMComic-qt/releases/latest"
-UpdateUrlApi = "https://api.github.com/repos/tonquer/JMComic-qt/releases"
+AppUrl = "https://app.ggo.icu/JMComic"
+
 UpdateUrlBack = "https://github.com/tonquer/JMComic-qt/"
-
-UpdateUrl2 = "https://hub.ggo.icu/tonquer/JMComic-qt/releases/latest"
-UpdateUrl2Api = "https://api.ggo.icu/repos/tonquer/JMComic-qt/releases"
 UpdateUrl2Back = "https://hub.ggo.icu/tonquer/JMComic-qt/"
-
-UpdateUrl3 = "https://hub.fastgit.xyz/tonquer/JMComic-qt/releases/latest"
-UpdateUrl3Api = "https://api.fastgit.xyz/repos/tonquer/JMComic-qt/releases"
 UpdateUrl3Back = "https://hub.fastgit.xyz/tonquer/JMComic-qt"
 
-UpdateVersion = "v1.1.8"
-RealVersion = "v1.1.8.1"
-VersionTime = "2023-11-22"
+UpdateVersion = "v1.1.9"
+RealVersion = "v1.1.9"
+VersionTime = "2024-1-31"
 
 Waifu2xVersion = "1.1.6"
 LoginUserName = ""

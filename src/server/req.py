@@ -67,7 +67,7 @@ class ServerReq(object):
             ua = "Mozilla/5.0 (Linux; Android 7.1.2; DT1901A Build/N2G47O; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/86.0.4240.198 Mobile Safari/537.36"
 
         header = {
-            "tokenparam": "{},1.6.1".format(self.now),
+            "tokenparam": "{},1.6.6".format(self.now),
             "token": token,
             "user-agent": ua,
             "accept-encoding": "gzip",
@@ -81,7 +81,7 @@ class ServerReq(object):
         token = hashlib.md5(param.encode("utf-8")).hexdigest()
 
         header = {
-            "tokenparam": "{},1.6.1".format(self.now),
+            "tokenparam": "{},1.6.6".format(self.now),
             "token": token,
             "user-agent": "Mozilla/5.0 (Linux; Android 7.1.2; DT1901A Build/N2G47O; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/86.0.4240.198 Mobile Safari/537.36",
             "accept-encoding": "gzip",
@@ -132,26 +132,37 @@ class ServerReq(object):
 
 # 检查更新
 class CheckUpdateReq(ServerReq):
-    def __init__(self, url):
-        # url = config.UpdateUrl
+    def __init__(self, isPre=False):
         method = "GET"
+        data = dict()
+        data["version"] = config.UpdateVersion
+        data["ver_time"] = config.VersionTime
+        if not isPre:
+            url = config.AppUrl + "/version.txt?"
+        else:
+            url = config.AppUrl + "/version_pre.txt?"
+        url += ToolUtil.DictToUrl(data)
         super(self.__class__, self).__init__(url, {}, method)
         self.isParseRes = False
-        self.headers = {}
+        self.useImgProxy = False
 
 
-# 检查Pre更新
-class CheckPreUpdateReq(ServerReq):
-    def __init__(self, url=config.UpdateUrl):
+# 检查更新
+class CheckUpdateInfoReq(ServerReq):
+    def __init__(self, newVersion):
         method = "GET"
-        super(self.__class__, self).__init__(url.replace("/latest", ""), {}, method)
+        data = dict()
+        data["version"] = config.UpdateVersion
+        url = config.AppUrl + "/{}.txt?".format(newVersion)
+        url += ToolUtil.DictToUrl(data)
+        super(self.__class__, self).__init__(url, {}, method)
         self.isParseRes = False
         self.useImgProxy = False
 
 
 # 下载图片
 class DownloadBookReq(ServerReq):
-    def __init__(self, url, loadPath="", cachePath="", savePath="", saveParam=(0, 0, ""), isReload=False):
+    def __init__(self, url, loadPath="", cachePath="", savePath="", saveParam=(0, 0, ""), isReload=False, resetCnt=1):
         method = "Download"
         self.url = url
         if self.url in ServerReq.SPACE_PIC:
@@ -162,6 +173,8 @@ class DownloadBookReq(ServerReq):
         self.savePath = savePath
         self.saveParam = saveParam
         self.isReload = isReload
+        self.resetCnt = resetCnt
+        self.isReset = False
         super(self.__class__, self).__init__(self.url, {}, method)
         self.headers = dict()
         self.headers["Accept-Encoding"] ="None"
@@ -756,3 +769,5 @@ class SpeedTestReq(ServerReq):
         self.headers['expires'] = '0'
         self.headers['pragma'] = 'no-cache'
         self.isReload = False
+        self.resetCnt = 2
+        self.isReset = False

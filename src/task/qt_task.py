@@ -77,7 +77,7 @@ class QtTaskBase:
     # downloadCallBack(data, laveFileSize)
     # downloadCompleteBack(data, st)
     # downloadCompleteBack(data, st, backParam)
-    def AddDownloadTask(self, url, path="", downloadCallBack=None, completeCallBack=None, downloadStCallBack=None, backParam=None, loadPath="", cachePath="", savePath="",  saveParam="", cleanFlag="", isReload=False):
+    def AddDownloadTask(self, url, path="", downloadCallBack=None, completeCallBack=None, downloadStCallBack=None, backParam=None, loadPath="", cachePath="", savePath="",  saveParam="", cleanFlag="", isReload=False, resetCnt=1):
         from tools.qt_domain import QtDomainMgr
         from task.task_download import TaskDownload
         if not cleanFlag:
@@ -93,7 +93,7 @@ class QtTaskBase:
 
         # if not Setting.IsOpenDohPicture.value:
         return TaskDownload().DownloadTask(url, downloadCallBack, completeCallBack, downloadStCallBack, backParam, loadPath,
-                                               cachePath, savePath, saveParam, cleanFlag, isReload)
+                                               cachePath, savePath, saveParam, cleanFlag, isReload, resetCnt)
         # else:
         #     return QtDomainMgr().AddDownloadTask(url, downloadCallBack, completeCallBack, downloadStCallBack, backParam, loadPath,
         #                                        cachePath, savePath, saveParam, cleanFlag, isReload)

@@ -67,7 +67,7 @@ class TaskDownload(TaskBase, QtTaskBase):
                 break
             self.HandlerDownload({"st": Status.Ok}, (v, QtDownloadTask.Waiting))
 
-    def DownloadTask(self, url, downloadCallBack=None, completeCallBack=None, downloadStCallBack=None, backParam=None, loadPath="", cachePath="", savePath="", saveParam="", cleanFlag="", isReload=False):
+    def DownloadTask(self, url, downloadCallBack=None, completeCallBack=None, downloadStCallBack=None, backParam=None, loadPath="", cachePath="", savePath="", saveParam="", cleanFlag="", isReload=False, resetCnt=1):
         self.taskId += 1
         data = QtDownloadTask(self.taskId)
         data.downloadCallBack = downloadCallBack
@@ -89,7 +89,7 @@ class TaskDownload(TaskBase, QtTaskBase):
         Log.Debug("add download info, cachePath:{}, loadPath:{}, savePath:{}".format(data.cachePath, data.loadPath, data.savePath))
         from server.server import Server
         from server import req
-        Server().Download(req.DownloadBookReq(url,  data.loadPath, data.cachePath, data.savePath, data.saveParam, data.isReload), backParams=self.taskId)
+        Server().Download(req.DownloadBookReq(url,  data.loadPath, data.cachePath, data.savePath, data.saveParam, data.isReload, resetCnt), backParams=self.taskId)
         return self.taskId
 
     def DownloadCache(self, filePath, completeCallBack=None, backParam = 0, cleanFlag=""):
@@ -289,9 +289,9 @@ class TaskDownload(TaskBase, QtTaskBase):
                 if not imgUrl:
                     self.SetTaskStatus(taskId, backData, task.Error)
                     return
-
+                resetCnt = 3
                 self.AddDownloadTask(imgUrl, "", task.downloadCallBack, task.downloadCompleteBack, task.statusBack,
-                    task.backParam, task.loadPath, task.cachePath, task.savePath, task.saveParam, task.cleanFlag)
+                    task.backParam, task.loadPath, task.cachePath, task.savePath, task.saveParam, task.cleanFlag, resetCnt=resetCnt)
         except Exception as es:
             self.SetTaskStatus(taskId, backData, task.Error)
             Log.Error(es)

@@ -10,7 +10,7 @@ from natsort import natsorted
 from interface.ui_index import Ui_Index
 from interface.ui_local import Ui_Local
 from qt_owner import QtOwner
-from server import  Status, time
+from server import Status, time
 from task.qt_task import QtTaskBase
 from task.task_local import LocalData
 from tools.str import Str
@@ -120,7 +120,7 @@ class LocalReadView(QWidget, Ui_Local, QtTaskBase):
         showIds = list(set(allBookId) & set(allBookId2))
         showLen = 30
         maxPage = len(showIds) // showLen + 1
-        showStart = (page-1)*showLen
+        showStart = (page - 1) * showLen
         showEnd = page * showLen - 1
         self.spinBox.setValue(page)
         self.spinBox.setMaximum(maxPage)
@@ -144,7 +144,7 @@ class LocalReadView(QWidget, Ui_Local, QtTaskBase):
         return
 
     def LoadNextPage(self):
-        self.ShowPages(self.bookList.page+1)
+        self.ShowPages(self.bookList.page + 1)
 
     def JumpPage(self):
         page = int(self.spinBox.text())
@@ -182,7 +182,7 @@ class LocalReadView(QWidget, Ui_Local, QtTaskBase):
         if sortKeyID == 0:
             datas.sort(key=lambda a: a.lastReadTime, reverse=isRevert)
         elif sortKeyID == 2:
-            datas = natsorted(datas, key=lambda a:a.title, reverse=isRevert)
+            datas = natsorted(datas, key=lambda a: a.title, reverse=isRevert)
         else:
             datas.sort(key=lambda a: a.addTime, reverse=isRevert)
         return datas
@@ -267,6 +267,7 @@ class LocalReadView(QWidget, Ui_Local, QtTaskBase):
         assert isinstance(v, LocalData)
         newV = books[0]
         v.CopyData(newV)
+        self.db.AddLoadLocalBook(v)
         if v.eps != []:
             QtOwner().OpenLocalEpsView(v.id)
             return
@@ -326,10 +327,14 @@ class LocalReadView(QWidget, Ui_Local, QtTaskBase):
             self.lastPath = url
         for v in books:
             if v.id in self.allBookInfos:
+                # 已存在则更新
                 alreadyNum += 1
+                self.allBookInfos[v.id].CopyData(v)
+                self.db.AddLoadLocalBook(self.allBookInfos[v.id])
             else:
                 self.allBookInfos[v.id] = v
                 addNum += 1
+                # 忽略
                 if self.curSelectCategory:
                     category = self.curSelectCategory
                     self.db.AddCategory(self.curSelectCategory, v.id)
@@ -372,8 +377,13 @@ class LocalReadView(QWidget, Ui_Local, QtTaskBase):
     def CheckAction4(self):
         return
 
+    # 批量导入下载目录
+    def ImportDownloadDirs(self, dirs):
+        self.AddLocalTaskLoad(LocalData.Type6, dirs, "", self.CheckAction1LoadBack)
+        return
+
     def dragEnterEvent(self, event):
-        if(event.mimeData().hasUrls()):
+        if (event.mimeData().hasUrls()):
             event.acceptProposedAction()
         else:
             event.ignore()
@@ -382,8 +392,8 @@ class LocalReadView(QWidget, Ui_Local, QtTaskBase):
         return
 
     def dropEvent(self, event):
-        mimeData  = event.mimeData()
-        if(mimeData.hasUrls()):
+        mimeData = event.mimeData()
+        if (mimeData.hasUrls()):
             urls = mimeData.urls()
             QtOwner().ShowLoading()
             fileNames = [str(i.toLocalFile()) for i in urls]

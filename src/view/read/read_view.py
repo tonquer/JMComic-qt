@@ -65,6 +65,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         self.isLocal = False
         self._cacheBook = None
         self.lastPath = ""
+        self.InitSetting()
         # QtOwner().owner.WindowsSizeChange.connect(self.qtTool.ClearQImage)
 
     @property
@@ -185,6 +186,16 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         if QtOwner().owner.windowState() == Qt.WindowFullScreen:
             self.qtTool.FullScreen(True)
         QtOwner().CloseReadView()
+        self.SaveSetting()
+
+    def SaveSetting(self):
+        # Setting.ScaleCnt.SetValue(self.frame.scaleCnt)
+        # Setting.UpDownScrollSpeed.SetValue(self.qtTool.upDownScrollSpeed.value())
+        return
+
+    def InitSetting(self):
+        # self.qtTool.upDownScrollSpeed.setValue(Setting.UpDownScrollSpeed.value)
+        pass
 
     def Clear(self):
         Setting.TurnSpeed.SetValue(int(self.qtTool.turnSpeed.value() * 1000))

@@ -79,6 +79,12 @@ class Str:
     FileLock = 4007        # "文件已加密"
     SpacePic = 4008        # "文件已加密"
 
+    CvSuccess = 5001          # "完成"
+    CvReading = 5002          # 获取信息
+    CvWaifu2x = 5003          # 转换中
+    CvCompose = 5004          # 压缩中
+    CvError = 5005            # 出错了
+
     LoadingPicture = 1     # "图片加载中..."
     LoadingFail = 2        # "图片加载失败"
     LoginCookie = 3        # "使用Cookie登录"
@@ -230,6 +236,8 @@ class Str:
     SameWight = 150    # 等宽模式
     CopyFileLast = 151     # 保存上次路径
     ImportDouble = 152     # 导入多章节目录
+    ImportLocal = 153      # 导入本地漫画中
+    NotUpdateEps = 154      # 没有可更新的章节
 
 
     @classmethod
@@ -305,6 +313,12 @@ class Str:
         cls.strDict[cls.NotPictureFile] = QCoreApplication.translate("cls.obj",  "没有发现图片文件", None)
         cls.strDict[cls.FileLock] = QCoreApplication.translate("cls.obj",  "文件已加密", None)
         cls.strDict[cls.SpacePic] = QCoreApplication.translate("cls.obj",  "空白章节", None)
+
+        cls.strDict[cls.CvSuccess] = QCoreApplication.translate("cls.obj",  "完成", None)
+        cls.strDict[cls.CvReading] = QCoreApplication.translate("cls.obj",  "获取信息", None)
+        cls.strDict[cls.CvWaifu2x] = QCoreApplication.translate("cls.obj",  "转换中", None)
+        cls.strDict[cls.CvCompose] = QCoreApplication.translate("cls.obj",  "压缩中", None)
+        cls.strDict[cls.CvError] = QCoreApplication.translate("cls.obj",  "出错了", None)
 
         cls.strDict[cls.Menu] = QCoreApplication.translate("cls.obj",  "菜单", None)
         cls.strDict[cls.FullSwitch] = QCoreApplication.translate("cls.obj",  "全屏切换", None)
@@ -449,6 +463,8 @@ class Str:
         cls.strDict[cls.SameWight] = QCoreApplication.translate("cls.obj", "等宽模式", None)
         cls.strDict[cls.CopyFileLast] = QCoreApplication.translate("cls.obj", "保存上次路径", None)
         cls.strDict[cls.ImportDouble] = QCoreApplication.translate("cls.obj", "导入多章节目录", None)
+        cls.strDict[cls.ImportLocal] = QCoreApplication.translate("cls.obj", "导入到本地漫画中", None)
+        cls.strDict[cls.NotUpdateEps] = QCoreApplication.translate("cls.obj", "没有可更新章节", None)
 
     @classmethod
     def GetStr(cls, enumType, defualt=""):
