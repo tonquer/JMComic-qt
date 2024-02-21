@@ -139,6 +139,7 @@ jobs:
         pip install pyinstaller==4.6
         pip install https://github.com/tonquer/waifu2x-vulkan/releases/download/v1.1.6/waifu2x_vulkan-1.1.6-cp37-cp37m-macosx_10_15_x86_64.whl
         pip install -r src/requirements_macos.txt
+        brew install create-dmg
     - name: Build
       run: |
         cd src
