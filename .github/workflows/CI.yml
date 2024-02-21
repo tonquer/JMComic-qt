@@ -60,18 +60,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install pyinstaller==4.6
-        pip install pywin32==302
-        pip install PySide6==6.1.3
-        pip install requests==2.26.0
-        pip install urllib3==1.25.11
-        pip install pillow==8.3.2
-        pip install Pysocks==1.7.1
-        pip install bs4==0.0.1
-        pip install lxml==4.6.4
-        pip install natsort==8.2.0
-        pip install pycryptodomex==3.12.0
-        pip install waifu2x-vulkan==1.1.6
-        pip install jmcomic>=2.4.3
+        pip install -r src\requirements_win7.txt
     - name: Build
       run: |
         cd src
@@ -94,7 +83,7 @@ jobs:
   ubuntu:
     runs-on: ubuntu-latest
     env:
-      PACKAGENAME: bika_py37_linux
+      PACKAGENAME: jmcomic_py37_linux
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python 3.7
@@ -131,4 +120,55 @@ jobs:
       with:
         name: ${{ env.PACKAGENAME }}
         path: ${{ env.PACKAGENAME }}-x86_64.AppImage
+        retention-days: 7
+
+  macos:
+    runs-on: macos-latest
+    env:
+      PACKAGENAME: jmcomic_py37_macos
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.7
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller==4.6
+        pip install https://github.com/tonquer/waifu2x-vulkan/releases/download/v1.1.6/waifu2x_vulkan-1.1.6-cp37-cp37m-macosx_10_15_x86_64.whl
+        pip install -r src\requirements_macos.txt
+    - name: Build
+      run: |
+        cd src
+        cp ../res/icon/Icon.icns ./
+        pyinstaller --clean --onedir --name JMComic \
+            --hidden-import waifu2x_vulkan --hidden-import PySide6 --hidden-import requests \
+            --hidden-import urllib3 --hidden-import websocket-client --hidden-import pillow \
+            --hidden-import config \
+            --hidden-import component \
+            --hidden-import server \
+            --hidden-import task \
+            --hidden-import tools \
+            --hidden-import view \
+            --strip --windowed -i Icon.icns \
+            start.py
+        xattr -cr dist/JMComic.app
+        create-dmg --volname "JMComic" --volicon "Icon.icns" --icon "JMComic.app" 200 190 \
+            --window-pos 200 120 \
+            --window-size 800 400 \
+            --icon-size 100 \
+            --hide-extension "JMComic.app" --app-drop-link 600 185 \
+            ${{ env.PACKAGENAME }}.dmg dist/JMComic.app
+
+        zip -9 jmcomic.zip ${{ env.PACKAGENAME }}.dmg
+        mv ${{ env.PACKAGENAME }}.dmg ..
+        mv jmcomic.zip ..
+        cd ..
+    - name: Upload
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ env.PACKAGENAME }}
+        path: ${{ env.PACKAGENAME }}.dmg
         retention-days: 7
