@@ -31,7 +31,7 @@ jobs:
         cd src
         cp ..\res\icon\icon.ico .\
 
-        pyinstaller --hidden-import=_cffi_backend --collect-all curl_cffi -F -w -i icon.ico start.py
+        pyinstaller --hidden-import=_cffi_backend --collect-data curl_cffi -F -w -i icon.ico start.py
         mv dist jmcomic
         cp ..\LICENSE jmcomic\
         cp ..\CHANGELOG jmcomic\
@@ -65,7 +65,7 @@ jobs:
       run: |
         cd src
         cp ..\res\icon\icon.ico .\
-        pyinstaller --hidden-import=_cffi_backend --collect-all curl_cffi -F -w -i icon.ico start.py
+        pyinstaller --hidden-import=_cffi_backend --collect-data curl_cffi -F -w -i icon.ico start.py
         mv dist jmcomic
         cp ..\LICENSE jmcomic\
         cp ..\CHANGELOG jmcomic\
@@ -100,7 +100,7 @@ jobs:
     - name: Build
       run: |
         cd src
-        pyinstaller --hidden-import=_cffi_backend --collect-all curl_cffi -w start.py
+        pyinstaller --hidden-import=_cffi_backend --collect-data curl_cffi -w start.py
         cd dist
         mkdir -p jmcomic.AppRun/usr/bin
         wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
@@ -153,7 +153,7 @@ jobs:
             --hidden-import task \
             --hidden-import tools \
             --hidden-import view \
-            --hidden-import=_cffi_backend --collect-all curl_cffi \
+            --hidden-import=_cffi_backend --collect-data curl_cffi \
             --strip --windowed -i Icon.icns \
             start.py
         xattr -cr dist/JMComic.app

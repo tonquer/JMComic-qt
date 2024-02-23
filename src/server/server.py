@@ -9,7 +9,6 @@ import requests
 from curl_cffi import requests as requests2, CurlOpt
 
 import urllib3
-from curl_cffi._wrapper import lib
 from urllib3.util.ssl_ import is_ipaddress
 
 import server.req as req
