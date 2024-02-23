@@ -5,7 +5,6 @@ from tools.tool import ToolUtil
 
 class BaseRes(object):
     def __init__(self, data, isParseRes) -> None:
-        super().__init__()
         self.raw = data
         self.data = {}
         self.message = ""

@@ -1,17 +1,4 @@
-import time
 
-Url = "https://18comic.org/"       # 域名
-UrlBack = "https://jmcomic.ggo.icu/"       # 域名
-
-
-# Url = "https://jmcomic1.cc"       # 域名
-Url2 = "https://www.jmapinode.biz"       # 域名
-# Url2 = "https://www.jmapibranch3.cc"       # 域名
-PicUrl2 = "https://cdn-msp.jmapinodeudzn.net"       # 域名
-
-Url2List = ["https://www.jmapinode.biz", "https://www.jmapinode.vip", "https://www.jmapinode3.top", "https://www.jmapibranch2.cc"]
-PicUrlList = ["https://cdn-msp.jmapinodeudzn.net", "https://cdn-msp2.jmapinodeudzn.net", "https://cdn-msp.jmapiproxy3.cc", "https://cdn-msp.jmapiproxy4.cc"]
-Now = int(time.time())
 ProxyApiDomain = "api.bika.life"
 ProxyImgDomain = "img.bika.life"
 
@@ -37,9 +24,9 @@ UpdateUrlBack = "https://github.com/tonquer/JMComic-qt/"
 UpdateUrl2Back = "https://hub.ggo.icu/tonquer/JMComic-qt/"
 UpdateUrl3Back = "https://hub.fastgit.xyz/tonquer/JMComic-qt"
 
-UpdateVersion = "v1.1.9"
-RealVersion = "v1.1.9"
-VersionTime = "2024-1-31"
+UpdateVersion = "v1.2.0"
+RealVersion = "v1.2.0"
+VersionTime = "2024-2-23"
 
 Waifu2xVersion = "1.1.6"
 LoginUserName = ""

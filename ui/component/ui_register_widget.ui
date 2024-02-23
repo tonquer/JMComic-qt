@@ -16,56 +16,7 @@
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
     <layout class="QGridLayout" name="gridLayout">
-     <item row="16" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="QLabel" name="verLabel">
-         <property name="minimumSize">
-          <size>
-           <width>80</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>验证码</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="verEdit"/>
-       </item>
-      </layout>
-     </item>
-     <item row="14" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout_19">
-       <item>
-        <widget class="QLabel" name="passwd">
-         <property name="minimumSize">
-          <size>
-           <width>80</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>60</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>密码：</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="passwdEdit"/>
-       </item>
-      </layout>
-     </item>
-     <item row="17" column="1">
+     <item row="18" column="1">
       <layout class="QHBoxLayout" name="horizontalLayout_10">
        <item>
         <widget class="QRadioButton" name="gender_Male">
@@ -92,21 +43,27 @@
        </item>
       </layout>
      </item>
-     <item row="0" column="1">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>请自行网页注册</string>
-       </property>
-      </widget>
+     <item row="17" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QLabel" name="verLabel">
+         <property name="minimumSize">
+          <size>
+           <width>80</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>验证码</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="verEdit"/>
+       </item>
+      </layout>
      </item>
-     <item row="1" column="1">
-      <widget class="QCommandLinkButton" name="commandLinkButton">
-       <property name="text">
-        <string>https://18comic.vip/signup</string>
-       </property>
-      </widget>
-     </item>
-     <item row="12" column="1">
+     <item row="13" column="1">
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
         <widget class="QLabel" name="user">
@@ -145,7 +102,46 @@
        </item>
       </layout>
      </item>
-     <item row="15" column="1" alignment="Qt::AlignHCenter">
+     <item row="0" column="1">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>如果无法使用，请自行网页注册</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <layout class="QVBoxLayout" name="linkLayout"/>
+     </item>
+     <item row="15" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout_19">
+       <item>
+        <widget class="QLabel" name="passwd">
+         <property name="minimumSize">
+          <size>
+           <width>80</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>60</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>密码：</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="passwdEdit"/>
+       </item>
+      </layout>
+     </item>
+     <item row="16" column="1" alignment="Qt::AlignHCenter">
       <widget class="QLabel" name="verPicture">
        <property name="minimumSize">
         <size>
@@ -164,7 +160,7 @@
        </property>
       </widget>
      </item>
-     <item row="13" column="1">
+     <item row="14" column="1">
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <widget class="QLabel" name="name">
@@ -193,13 +189,6 @@
        </item>
       </layout>
      </item>
-     <item row="2" column="1">
-      <widget class="QCommandLinkButton" name="commandLinkButton_2">
-       <property name="text">
-        <string>https://18comic.org/signup</string>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
   </layout>
@@ -208,6 +197,7 @@
   <tabstop>userEdit</tabstop>
   <tabstop>nameEdit</tabstop>
   <tabstop>passwdEdit</tabstop>
+  <tabstop>verEdit</tabstop>
   <tabstop>gender_Male</tabstop>
   <tabstop>gender_Female</tabstop>
  </tabstops>

@@ -15,9 +15,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QButtonGroup, QCommandLinkButton, QGridLayout,
-    QHBoxLayout, QLabel, QLineEdit, QRadioButton,
-    QSizePolicy, QWidget)
+from PySide6.QtWidgets import (QApplication, QButtonGroup, QGridLayout, QHBoxLayout,
+    QLabel, QLineEdit, QRadioButton, QSizePolicy,
+    QVBoxLayout, QWidget)
 
 class Ui_RegisterWidget(object):
     def setupUi(self, RegisterWidget):
@@ -28,40 +28,6 @@ class Ui_RegisterWidget(object):
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.gridLayout = QGridLayout()
         self.gridLayout.setObjectName(u"gridLayout")
-        self.horizontalLayout_2 = QHBoxLayout()
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.verLabel = QLabel(RegisterWidget)
-        self.verLabel.setObjectName(u"verLabel")
-        self.verLabel.setMinimumSize(QSize(80, 0))
-
-        self.horizontalLayout_2.addWidget(self.verLabel)
-
-        self.verEdit = QLineEdit(RegisterWidget)
-        self.verEdit.setObjectName(u"verEdit")
-
-        self.horizontalLayout_2.addWidget(self.verEdit)
-
-
-        self.gridLayout.addLayout(self.horizontalLayout_2, 16, 1, 1, 1)
-
-        self.horizontalLayout_19 = QHBoxLayout()
-        self.horizontalLayout_19.setObjectName(u"horizontalLayout_19")
-        self.passwd = QLabel(RegisterWidget)
-        self.passwd.setObjectName(u"passwd")
-        self.passwd.setMinimumSize(QSize(80, 0))
-        self.passwd.setMaximumSize(QSize(60, 16777215))
-        self.passwd.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
-
-        self.horizontalLayout_19.addWidget(self.passwd)
-
-        self.passwdEdit = QLineEdit(RegisterWidget)
-        self.passwdEdit.setObjectName(u"passwdEdit")
-
-        self.horizontalLayout_19.addWidget(self.passwdEdit)
-
-
-        self.gridLayout.addLayout(self.horizontalLayout_19, 14, 1, 1, 1)
-
         self.horizontalLayout_10 = QHBoxLayout()
         self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
         self.gender_Male = QRadioButton(RegisterWidget)
@@ -80,17 +46,23 @@ class Ui_RegisterWidget(object):
         self.horizontalLayout_10.addWidget(self.gender_Female)
 
 
-        self.gridLayout.addLayout(self.horizontalLayout_10, 17, 1, 1, 1)
+        self.gridLayout.addLayout(self.horizontalLayout_10, 18, 1, 1, 1)
 
-        self.label = QLabel(RegisterWidget)
-        self.label.setObjectName(u"label")
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.verLabel = QLabel(RegisterWidget)
+        self.verLabel.setObjectName(u"verLabel")
+        self.verLabel.setMinimumSize(QSize(80, 0))
 
-        self.gridLayout.addWidget(self.label, 0, 1, 1, 1)
+        self.horizontalLayout_2.addWidget(self.verLabel)
 
-        self.commandLinkButton = QCommandLinkButton(RegisterWidget)
-        self.commandLinkButton.setObjectName(u"commandLinkButton")
+        self.verEdit = QLineEdit(RegisterWidget)
+        self.verEdit.setObjectName(u"verEdit")
 
-        self.gridLayout.addWidget(self.commandLinkButton, 1, 1, 1, 1)
+        self.horizontalLayout_2.addWidget(self.verEdit)
+
+
+        self.gridLayout.addLayout(self.horizontalLayout_2, 17, 1, 1, 1)
 
         self.horizontalLayout_3 = QHBoxLayout()
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
@@ -110,14 +82,42 @@ class Ui_RegisterWidget(object):
         self.horizontalLayout_3.addWidget(self.userEdit)
 
 
-        self.gridLayout.addLayout(self.horizontalLayout_3, 12, 1, 1, 1)
+        self.gridLayout.addLayout(self.horizontalLayout_3, 13, 1, 1, 1)
+
+        self.label = QLabel(RegisterWidget)
+        self.label.setObjectName(u"label")
+
+        self.gridLayout.addWidget(self.label, 0, 1, 1, 1)
+
+        self.linkLayout = QVBoxLayout()
+        self.linkLayout.setObjectName(u"linkLayout")
+
+        self.gridLayout.addLayout(self.linkLayout, 1, 1, 1, 1)
+
+        self.horizontalLayout_19 = QHBoxLayout()
+        self.horizontalLayout_19.setObjectName(u"horizontalLayout_19")
+        self.passwd = QLabel(RegisterWidget)
+        self.passwd.setObjectName(u"passwd")
+        self.passwd.setMinimumSize(QSize(80, 0))
+        self.passwd.setMaximumSize(QSize(60, 16777215))
+        self.passwd.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+
+        self.horizontalLayout_19.addWidget(self.passwd)
+
+        self.passwdEdit = QLineEdit(RegisterWidget)
+        self.passwdEdit.setObjectName(u"passwdEdit")
+
+        self.horizontalLayout_19.addWidget(self.passwdEdit)
+
+
+        self.gridLayout.addLayout(self.horizontalLayout_19, 15, 1, 1, 1)
 
         self.verPicture = QLabel(RegisterWidget)
         self.verPicture.setObjectName(u"verPicture")
         self.verPicture.setMinimumSize(QSize(0, 0))
         self.verPicture.setMaximumSize(QSize(16777215, 100))
 
-        self.gridLayout.addWidget(self.verPicture, 15, 1, 1, 1, Qt.AlignHCenter)
+        self.gridLayout.addWidget(self.verPicture, 16, 1, 1, 1, Qt.AlignHCenter)
 
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
@@ -135,19 +135,15 @@ class Ui_RegisterWidget(object):
         self.horizontalLayout.addWidget(self.nameEdit)
 
 
-        self.gridLayout.addLayout(self.horizontalLayout, 13, 1, 1, 1)
-
-        self.commandLinkButton_2 = QCommandLinkButton(RegisterWidget)
-        self.commandLinkButton_2.setObjectName(u"commandLinkButton_2")
-
-        self.gridLayout.addWidget(self.commandLinkButton_2, 2, 1, 1, 1)
+        self.gridLayout.addLayout(self.horizontalLayout, 14, 1, 1, 1)
 
 
         self.gridLayout_2.addLayout(self.gridLayout, 0, 0, 1, 1)
 
         QWidget.setTabOrder(self.userEdit, self.nameEdit)
         QWidget.setTabOrder(self.nameEdit, self.passwdEdit)
-        QWidget.setTabOrder(self.passwdEdit, self.gender_Male)
+        QWidget.setTabOrder(self.passwdEdit, self.verEdit)
+        QWidget.setTabOrder(self.verEdit, self.gender_Male)
         QWidget.setTabOrder(self.gender_Male, self.gender_Female)
 
         self.retranslateUi(RegisterWidget)
@@ -157,15 +153,13 @@ class Ui_RegisterWidget(object):
 
     def retranslateUi(self, RegisterWidget):
         RegisterWidget.setWindowTitle(QCoreApplication.translate("RegisterWidget", u"\u65b0\u7528\u6237\u6ce8\u518c", None))
-        self.verLabel.setText(QCoreApplication.translate("RegisterWidget", u"\u9a8c\u8bc1\u7801", None))
-        self.passwd.setText(QCoreApplication.translate("RegisterWidget", u"\u5bc6\u7801\uff1a", None))
         self.gender_Male.setText(QCoreApplication.translate("RegisterWidget", u"\u7537", None))
         self.gender_Female.setText(QCoreApplication.translate("RegisterWidget", u"\u5973", None))
-        self.label.setText(QCoreApplication.translate("RegisterWidget", u"\u8bf7\u81ea\u884c\u7f51\u9875\u6ce8\u518c", None))
-        self.commandLinkButton.setText(QCoreApplication.translate("RegisterWidget", u"https://18comic.vip/signup", None))
+        self.verLabel.setText(QCoreApplication.translate("RegisterWidget", u"\u9a8c\u8bc1\u7801", None))
         self.user.setText(QCoreApplication.translate("RegisterWidget", u"\u90ae\u7bb1\uff1a", None))
+        self.label.setText(QCoreApplication.translate("RegisterWidget", u"\u5982\u679c\u65e0\u6cd5\u4f7f\u7528\uff0c\u8bf7\u81ea\u884c\u7f51\u9875\u6ce8\u518c", None))
+        self.passwd.setText(QCoreApplication.translate("RegisterWidget", u"\u5bc6\u7801\uff1a", None))
         self.verPicture.setText(QCoreApplication.translate("RegisterWidget", u"\u9a8c\u8bc1\u7801\u3002\u3002\u3002", None))
         self.name.setText(QCoreApplication.translate("RegisterWidget", u"\u7528\u6237\u540d\uff1a", None))
-        self.commandLinkButton_2.setText(QCoreApplication.translate("RegisterWidget", u"https://18comic.org/signup", None))
     # retranslateUi
 

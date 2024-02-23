@@ -6,6 +6,7 @@ from PySide6.QtCore import Signal, QObject
 from PySide6.QtGui import QImage
 
 from config import config
+from config.global_config import GlobalConfig
 from config.setting import Setting
 from tools.singleton import Singleton
 from tools.str import Str
@@ -84,7 +85,7 @@ class QtTaskBase:
             cleanFlag = self.__taskFlagId
 
         if "https://" not in url and "http://" not in url:
-            url = config.PicUrl2 + url
+            url = GlobalConfig.PicUrl2.value + url
 
         if not cachePath and not savePath:
             if Setting.SavePath.value and path:

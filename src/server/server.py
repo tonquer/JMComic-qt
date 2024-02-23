@@ -5,12 +5,17 @@ from queue import Queue
 
 # import cloudscraper
 import requests
+
+from curl_cffi import requests as requests2, CurlOpt
+
 import urllib3
+from curl_cffi._wrapper import lib
 from urllib3.util.ssl_ import is_ipaddress
 
 import server.req as req
 import server.res as res
 from config import config
+from config.global_config import GlobalConfig
 from qt_owner import QtOwner
 from task.qt_task import TaskBase
 from tools.log import Log
@@ -52,6 +57,17 @@ def handler(request):
     return generator
 
 
+class NewSession(requests2.Session):
+    def __init__(self, **kwargs):
+        requests2.Session.__init__(self, **kwargs)
+
+    def _set_curl_options(self, *args, **kwargs):
+        c = args[0]
+        if GlobalConfig.WebDnsList.value:
+            c.setopt(CurlOpt.RESOLVE, GlobalConfig.WebDnsList.value)
+        return requests2.Session._set_curl_options(self, *args, **kwargs)
+
+
 class Task(object):
     def __init__(self, request, backParam="", cacheAndLoadPath="", loadPath=""):
         self.req = request
@@ -73,11 +89,13 @@ class Task(object):
             return getattr(self.res.raw, "text", "")
         return ""
 
+
 class Server(Singleton):
     def __init__(self) -> None:
-        super().__init__()
+        Singleton.__init__(self)
         self.handler = {}
         self.session = requests.session()
+        self.session2 = NewSession()
         # self.session2 = cloudscraper.session()
         self.address = ""
         self.imageServer = ""
@@ -132,20 +150,20 @@ class Server(Singleton):
         pass
 
     def UpdateDns(self, address, imageAddress, loginProxy=""):
-        for domain in config.Url2List:
+        for domain in GlobalConfig.Url2List.value:
             domain = ToolUtil.GetUrlHost(domain)
             if is_ipaddress(address):
                 host_table[domain] = address
             elif not address and domain in host_table:
                 host_table.pop(domain)
 
-        for domain in config.PicUrlList:
+        for domain in GlobalConfig.PicUrlList.value:
             domain = ToolUtil.GetUrlHost(domain)
             if is_ipaddress(imageAddress):
                 host_table[domain] = imageAddress
             elif not imageAddress and domain in host_table:
                 host_table.pop(domain)
-        domain = ToolUtil.GetUrlHost(config.Url)
+        domain = ToolUtil.GetUrlHost(GlobalConfig.Url.value)
         if loginProxy:
             host_table[domain] = loginProxy
         else:
@@ -192,6 +210,8 @@ class Server(Singleton):
 
             if task.req.method.lower() == "post":
                 self.Post(task)
+            elif task.req.method.lower() == "post2":
+                self.Post2(task)
             elif task.req.method.lower() == "get":
                 self.Get(task)
             elif task.req.method.lower() == "get2":
@@ -209,7 +229,7 @@ class Server(Singleton):
             Log.Info("response-> backId:{}, {}, st:{}, {}".format(task.backParam, task.req.__class__.__name__, task.status, task.res))
         try:
             self.handler.get(task.req.__class__.__name__)(task)
-            if task.res.raw:
+            if isinstance(task.res.raw, requests.Response):
                 task.res.raw.close()
         except Exception as es:
             if isinstance(es, requests.exceptions.ConnectTimeout):
@@ -242,21 +262,29 @@ class Server(Singleton):
             request.headers = {}
 
         task.res = res.BaseRes("", False)
-        # cookies = {
-        #     "ipcountry":"HK",
-        #     "ipm5":"2ebae54515aafbccee8659e12042f376",
-        #     "AVS": "420poj44dl1n9cbv9uhi938p37",
-        #     "shunt":"_gid=GA1.2.1946130758.1639648117",
-        #     "_ga":"GA1.1.1715701600.1639648117",
-        #     "cover":"1",
-        #     "_ga_VW05C6PGN3":"GS1.1.1639648117.1.0.1639648117.0",
-        #     "guide":"1"
-        # }
         if task.req.cookies:
             r = self.session.post(request.url, proxies=request.proxy, headers=request.headers, data=request.params,
                                   timeout=task.timeout, verify=False, cookies=task.req.cookies)
         else:
             r = self.session.post(request.url, proxies=request.proxy, headers=request.headers, data=request.params,
+                                  timeout=task.timeout, verify=False)
+        task.res = res.BaseRes(r, request.isParseRes)
+        return task
+
+    def Post2(self, task):
+        request = task.req
+        if request.params == None:
+            request.params = {}
+
+        if request.headers == None:
+            request.headers = {}
+
+        task.res = res.BaseRes("", False)
+        if task.req.cookies:
+            r = self.session2.post(request.url, proxies=request.proxy, impersonate="chrome110", headers=request.headers, data=request.params,
+                                  timeout=task.timeout, verify=False, cookies=task.req.cookies)
+        else:
+            r = self.session2.post(request.url, proxies=request.proxy, impersonate="chrome110", headers=request.headers, data=request.params,
                                   timeout=task.timeout, verify=False)
         task.res = res.BaseRes(r, request.isParseRes)
         return task
@@ -302,9 +330,9 @@ class Server(Singleton):
 
         task.res = res.BaseRes("", False)
         if task.req.cookies:
-            r = self.session.get(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout, cookies=task.req.cookies)
+            r = self.session2.get(request.url, proxies=request.proxy, impersonate="chrome110", headers=request.headers, timeout=task.timeout, cookies=task.req.cookies)
         else:
-            r = self.session.get(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout)
+            r = self.session2.get(request.url, proxies=request.proxy, impersonate="chrome110", headers=request.headers, timeout=task.timeout)
         task.res = res.BaseRes(r, request.isParseRes)
         return task
 

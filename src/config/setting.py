@@ -101,13 +101,14 @@ class Setting:
     ProxySelectIndex = SettingValue("ProxySetting", 1, False)
     IsOpenDoh = SettingValue("ProxySetting", 0, False)
     IsOpenDohPicture = SettingValue("ProxySetting", 0, False)
-    DohAddress = SettingValue("ProxySetting", "https://101.6.6.6:8443/dns-query", True)
+    DohAddress = SettingValue("ProxySetting", "https://doh.pub/dns-query", True)
     ApiVersion = SettingValue("ProxySetting", 0, False)
 
     ProxyImgSelectIndex = SettingValue("ProxySetting", 1, False)
     PreferCDNIPImg = SettingValue("ProxySetting", "104.18.227.172", False)
 
     IsLoginProxy = SettingValue("ProxySetting", 0, False)
+    RegisterProsyIndex = SettingValue("ProxySetting", 1, False)
 
     # 下载与缓存
     SavePath = SettingValue("DownloadSetting", "", False)
@@ -158,7 +159,7 @@ class Setting:
     WebpToPng = SettingValue("Other", 0, False)
     IsPreUpdate = SettingValue("Other", 0, False)
     UerAgent = SettingValue("Other", "", False)
-
+    GlobalConfig = SettingValue("Other", "", False)
     # IpbMemberId = SettingValue("Other", "", False)
     # IpbPassHash = SettingValue("Other", "", False)
     # Igneous = SettingValue("Other", "", False)

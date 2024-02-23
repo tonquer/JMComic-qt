@@ -12,7 +12,7 @@ from component.widget.main_widget import Main
 from config import config
 from config.setting import Setting
 from qt_owner import QtOwner
-from server import req
+from server import req, GlobalConfig
 from server.server import Server
 from task.qt_task import QtTaskBase
 from task.task_qimage import TaskQImage
@@ -62,6 +62,7 @@ class MainView(Main, QtTaskBase):
 
         self.subStackWidget.setCurrentIndex(0)
         self.settingView.LoadSetting()
+        GlobalConfig.LoadSetting()
 
         self.searchView.searchTab.hide()
         self.searchView2.searchWidget.hide()
@@ -132,6 +133,7 @@ class MainView(Main, QtTaskBase):
 
     def Init(self):
         IsCanUse = False
+        self.helpView.Init()
         self.downloadView.Init()
         if config.CanWaifu2x:
             from waifu2x_vulkan import waifu2x_vulkan
@@ -186,7 +188,7 @@ class MainView(Main, QtTaskBase):
         self.searchView.InitWord()
         self.msgLabel = MsgLabel(self)
         self.msgLabel.hide()
-        self.AddHttpTask(req.LoginPreReq())
+        self.AddHttpTask(req.LoginCheck301Req(), callBack=self.LoginCheckBack)
         # QtReadImgPoolManager().Init()
 
         if not Setting.SavePath.value:
@@ -195,6 +197,9 @@ class MainView(Main, QtTaskBase):
             view.closed.connect(self.OpenLoginView)
         else:
             self.OpenLoginView()
+
+    def LoginCheckBack(self, raw):
+        self.AddHttpTask(req.LoginPreReq())
 
     def ClearTabBar(self):
         for toolButton in self.toolButtons:

@@ -7,6 +7,7 @@ import time
 import requests
 
 from config import config
+from config.global_config import GlobalConfig
 from config.setting import Setting
 from task.qt_task import TaskBase
 from server import req
@@ -61,6 +62,25 @@ class CheckUpdateInfoHandler(object):
         finally:
             if task.bakParam:
                 TaskBase.taskObj.taskBack.emit(task.bakParam, pickle.dumps(data))
+
+
+@handler(req.CheckUpdateConfigReq)
+class CheckUpdateConfigHandler(object):
+    def __call__(self, task):
+        data = {"st": task.status, "data": ""}
+        try:
+            if not task.res.GetText() or task.status == Status.NetError:
+                return
+            if task.res.raw.status_code != 200:
+                return
+
+            data["data"] = task.res.GetText()
+        except Exception as es:
+            pass
+        finally:
+            if task.bakParam:
+                TaskBase.taskObj.taskBack.emit(task.bakParam, pickle.dumps(data))
+
 # @handler(req.GetUserInfoReq)
 # class GetUserInfoReqHandler(object):
 #     def __call__(self, task: Task):
@@ -88,14 +108,41 @@ class LoginPreHandler(object):
             if task.status != Status.Ok:
                 return
 
-            cookies = requests.utils.dict_from_cookiejar(task.res.raw.cookies)
+            cookie_dict = {}
+            for cookie in task.res.raw.cookies.jar:
+                cookie_dict[cookie.name] = cookie.value
             # print(cookies)
+            Log.Info("get pre cookies, {}, code:{}".format(cookie_dict, task.res.code))
+
+        except Exception as es:
+            data["st"] = Status.ParseError
+            Log.Error(es)
+        finally:
+            if task.backParam:
+                TaskBase.taskObj.taskBack.emit(task.backParam, pickle.dumps(data))
+
+
+@handler(req.LoginCheck301Req)
+class LoginCheck301Handler(object):
+    def __call__(self, task: Task):
+        data = {"st": task.status, "msg": ""}
+        try:
+            if task.status != Status.Ok:
+                return
+            if task.res.raw.status_code != 200:
+                data["msg"] = task.req.GetWebError(task.res.raw.text)
+
+            cookie_dict = {}
+            for cookie in task.res.raw.cookies.jar:
+                cookie_dict[cookie.name] = cookie.value
+                # print(cookies)
+            Log.Info("get pre cookies, {}, code:{}".format(cookie_dict, task.res.code))
             url = "https://" + ToolUtil.GetUrlHost(task.res.raw.url)
 
             ## 如果发生了301跳转，必须设置为新的域名，否则无法注册
-            # if url != config.Url:
-            #     Log.Warn("Login url change, url:{}->{}".format(config.Url, url))
-            #     config.Url = url
+            if url != GlobalConfig.Url.value:
+                Log.Warn("Login url change, url:{}->{}".format(GlobalConfig.Url.value, url))
+                # GlobalConfig.SetSetting("Url", url)
 
             # for raw in task.res.raw.history:
             #     cookies = requests.utils.dict_from_cookiejar(raw.cookies)
@@ -108,13 +155,17 @@ class LoginPreHandler(object):
             if task.backParam:
                 TaskBase.taskObj.taskBack.emit(task.backParam, pickle.dumps(data))
 
+
 @handler(req.GetCaptchaReq)
 class ParseMsgHandler(object):
     def __call__(self, task: Task):
-        data = {"st": task.status, "content": task.res.GetContent()}
+        data = {"st": task.status, "content": task.res.GetContent(), "msg": ""}
         try:
             if task.status != Status.Ok:
                 return
+            if task.res.raw.status_code != 200:
+                data["msg"] = task.req.GetWebError(task.res.raw.text)
+
         except Exception as es:
             data["st"] = Status.ParseError
             Log.Error(es)
@@ -146,6 +197,9 @@ class ParseMsgHandler(object):
                 st = Status.Ok
                 data["st"] = st
             else:
+                if task.res.raw.status_code != 200:
+                    data["msg"] = task.req.GetWebError(task.res.raw.text)
+
                 data["st"] = Status.Error
         except Exception as es:
             data["st"] = Status.ParseError

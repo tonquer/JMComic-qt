@@ -1,5 +1,6 @@
 from PySide6 import QtWidgets
-from PySide6.QtCore import Signal
+from PySide6.QtCore import Signal, QUrl
+from PySide6.QtGui import QDesktopServices
 
 from interface.ui_user_manager_widget import Ui_UserManagerWidget
 from qt_owner import QtOwner
@@ -20,9 +21,13 @@ class UserManagerWidget(QtWidgets.QWidget, Ui_UserManagerWidget, QtTaskBase):
         self.verfyButton.clicked.connect(self.RegisterVerifyEmail)
         self.resetButton.clicked.connect(self.ResetPassword)
         self.sendButton.clicked.connect(self.VerifyEmail)
+        self.commandLinkButton.clicked.connect(self.OpenUrl)
 
     def Init(self):
         return
+
+    def OpenUrl(self):
+        QDesktopServices.openUrl(QUrl("https://discord.com/invite/V74p7HM"))
 
     def RegisterVerifyEmail(self):
         email = self.verfyEdit.text()

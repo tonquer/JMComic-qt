@@ -4,9 +4,12 @@ import json
 import time
 
 from config import config
+from config.global_config import GlobalConfig
 from config.setting import Setting
+from tools.str import Str
 from tools.tool import ToolUtil
 from Cryptodome.Cipher import AES
+import platform
 
 
 class ServerReq(object):
@@ -24,11 +27,11 @@ class ServerReq(object):
         self.cookies = {}
         # if Setting.ProxySelectIndex.value == 5:
         #     host = ToolUtil.GetUrlHost(url)
-        #     if host in config.Url2List:
+        #     if host in GlobalConfig.Url2List.value:
         #         self.proxyUrl = config.ProxyApiDomain
-        #     elif host == config.Url:
+        #     elif host == GlobalConfig.Url.value:
         #         self.proxyUrl = config.ProxyApiDomain
-        #     elif host in config.PicUrlList:
+        #     elif host in GlobalConfig.PicUrlList.value:
         #         self.proxyUrl = config.ProxyImgDomain
 
         if Setting.IsHttpProxy.value == 1:
@@ -116,6 +119,16 @@ class ServerReq(object):
             'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.43"
         }
 
+    def GetWebError(self, text):
+        if "Edge IP Restricted" in text:
+            return "Edge IP Restricted"
+        elif "Just a moment..." in text:
+            return Str.GetStr(Str.NeedGoogle)
+        elif "Sorry, you have been blocked" in text:
+            return "Sorry, you have been blocked"
+        else:
+            return text
+
     def ParseData(self, data) -> str:
         # param = "{}{}".format(self.now, "18comicAPPContent")
         # key = hashlib.md5(param.encode("utf-8")).hexdigest()
@@ -136,7 +149,7 @@ class CheckUpdateReq(ServerReq):
         method = "GET"
         data = dict()
         data["version"] = config.UpdateVersion
-        data["ver_time"] = config.VersionTime
+        data["platform"] = platform.platform()
         if not isPre:
             url = config.AppUrl + "/version.txt?"
         else:
@@ -153,7 +166,22 @@ class CheckUpdateInfoReq(ServerReq):
         method = "GET"
         data = dict()
         data["version"] = config.UpdateVersion
+        data["platform"] = platform.platform()
         url = config.AppUrl + "/{}.txt?".format(newVersion)
+        url += ToolUtil.DictToUrl(data)
+        super(self.__class__, self).__init__(url, {}, method)
+        self.isParseRes = False
+        self.useImgProxy = False
+
+
+# 检查更新配置
+class CheckUpdateConfigReq(ServerReq):
+    def __init__(self):
+        method = "GET"
+        data = dict()
+        data["version"] = config.UpdateVersion
+        data["platform"] = platform.platform()
+        url = config.AppUrl + "/config.txt?"
         url += ToolUtil.DictToUrl(data)
         super(self.__class__, self).__init__(url, {}, method)
         self.isParseRes = False
@@ -181,10 +209,18 @@ class DownloadBookReq(ServerReq):
 
 
 # 注册前，需要获取cookie
+class LoginCheck301Req(ServerReq):
+    def __init__(self):
+        method = "Get2"
+        url = GlobalConfig.Url.value
+        super(self.__class__, self).__init__(url, {}, method)
+        self.headers = self.GetWebHeader()
+
+
 class LoginPreReq(ServerReq):
     def __init__(self):
         method = "Get2"
-        url = config.Url + "/login"
+        url = GlobalConfig.Url.value + "/login"
         super(self.__class__, self).__init__(url, {}, method)
         self.headers = self.GetWebHeader()
 
@@ -193,7 +229,7 @@ class LoginPreReq(ServerReq):
 # class LoginReq(ServerReq):
 #     def __init__(self, userId, passwd):
 #         method = "POST"
-#         url = config.Url + "/login"
+#         url = GlobalConfig.Url.value + "/login"
 #
 #         header = self.GetHeader(url, method)
 #         data = dict()
@@ -207,7 +243,7 @@ class LoginPreReq(ServerReq):
 class LoginReq2(ServerReq):
     def __init__(self, userId, passwd):
         method = "POST"
-        url = config.Url2 + "/login"
+        url = GlobalConfig.Url2.value + "/login"
         data = dict()
         data["username"] = userId
         data["password"] = passwd
@@ -219,9 +255,8 @@ class RegisterReq(ServerReq):
     def __init__(self, userId, email, passwd, passwd2, sex="Male",  ver=""):
         # [Male, Female]
 
-        method = "POST"
-        url = config.Url + "/signup"
-
+        method = "POST2"
+        url = GlobalConfig.Url.value + "/signup"
         data = dict()
         data["username"] = userId
         data["password"] = passwd
@@ -239,8 +274,8 @@ class RegisterReq(ServerReq):
 # 重新获取注册验证
 class RegisterVerifyMailReq(ServerReq):
     def __init__(self, email):
-        method = "POST"
-        url = config.Url + "/confirm"
+        method = "POST2"
+        url = GlobalConfig.Url.value + "/confirm"
 
         data = dict()
         data["email"] = email
@@ -252,8 +287,8 @@ class RegisterVerifyMailReq(ServerReq):
 # 重置密码
 class ResetPasswordReq(ServerReq):
     def __init__(self, email):
-        method = "POST"
-        url = config.Url + "/lost"
+        method = "POST2"
+        url = GlobalConfig.Url.value + "/lost"
 
         data = dict()
         data["email"] = email
@@ -266,7 +301,7 @@ class ResetPasswordReq(ServerReq):
 class GetCaptchaReq(ServerReq):
     def __init__(self):
         method = "Get2"
-        url = config.Url + "/captcha"
+        url = GlobalConfig.Url.value + "/captcha"
 
         data = dict()
         super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
@@ -276,9 +311,9 @@ class GetCaptchaReq(ServerReq):
 # 账号验证
 class VerifyMailReq(ServerReq):
     def __init__(self, url):
-        method = "GET"
+        method = "GET2"
         host = ToolUtil.GetUrlHost(url)
-        url = url.replace(host, ToolUtil.GetUrlHost(config.Url))
+        url = url.replace("\r", "").replace("\n", "").replace(" ", "").replace(host, ToolUtil.GetUrlHost(GlobalConfig.Url.value))
 
         super(self.__class__, self).__init__(url, {}, method)
         self.headers = self.GetWebHeader()
@@ -287,7 +322,7 @@ class VerifyMailReq(ServerReq):
 # class GetUserInfoReq(ServerReq):
 #     def __init__(self):
 #         method = "GET"
-#         url = config.Url + "/user"
+#         url = GlobalConfig.Url.value + "/user"
 #
 #         header = self.GetHeader(url, method)
 #         data = dict()
@@ -298,7 +333,7 @@ class VerifyMailReq(ServerReq):
 # class GetBookInfoReq(ServerReq):
 #     def __init__(self, bookId):
 #         self.bookId = bookId
-#         url = config.Url + "/album/{}".format(bookId)
+#         url = GlobalConfig.Url.value + "/album/{}".format(bookId)
 #         method = "GET"
 #         super(self.__class__, self).__init__(url, self.GetHeader(url, method), {}, method)
 
@@ -307,7 +342,7 @@ class VerifyMailReq(ServerReq):
 class GetBookInfoReq2(ServerReq):
     def __init__(self, bookId):
         self.bookId = bookId
-        url = config.Url2 + "/album"
+        url = GlobalConfig.Url2.value + "/album"
         method = "GET"
         data = dict()
         data["comicName"] = ""
@@ -324,7 +359,7 @@ class GetBookEpsScrambleReq2(ServerReq):
     def __init__(self, bookId, epsIndex, epsId):
         self.bookId = bookId
         self.epsIndex = epsIndex
-        url = config.Url2 + "/chapter_view_template"
+        url = GlobalConfig.Url2.value + "/chapter_view_template"
         method = "GET"
         data = dict()
         data["id"] = epsId
@@ -343,7 +378,7 @@ class GetBookEpsScrambleReq2(ServerReq):
 class GetBookEpsInfoReq2(ServerReq):
     def __init__(self, bookId, epsId):
         self.bookId = bookId
-        url = config.Url2 + "/chapter"
+        url = GlobalConfig.Url2.value + "/chapter"
         method = "GET"
         data = dict()
         data["comicName"] = ""
@@ -362,7 +397,7 @@ class GetBookEpsInfoReq2(ServerReq):
 #         from tools.book import BookMgr
 #         book = BookMgr().GetBook(bookId)
 #         epsInfo = book.pageInfo.epsInfo.get(epsId)
-#         url = config.Url + epsInfo.epsUrl
+#         url = GlobalConfig.Url.value + epsInfo.epsUrl
 #         method = "Get"
 #         self.bookId = bookId
 #         self.epsId = epsId
@@ -395,7 +430,7 @@ class GetBookEpsInfoReq2(ServerReq):
 #             data['t'] = sortDay
 #         if sort:
 #             data["o"] = sort
-#         url = config.Url + "/search/photos"
+#         url = GlobalConfig.Url.value + "/search/photos"
 #         if mainCategory:
 #             url += "/" + mainCategory
 #             if subCategory:
@@ -422,7 +457,7 @@ class GetSearchReq2(ServerReq):
             data['page'] = str(page)
         if sort:
             data["o"] = sort
-        url = config.Url2 + "/search"
+        url = GlobalConfig.Url2.value + "/search"
 
         param = ToolUtil.DictToUrl(data)
         if param:
@@ -434,7 +469,7 @@ class GetSearchReq2(ServerReq):
 # 分類请求
 class GetCategoryReq2(ServerReq):
     def __init__(self):
-        url = config.Url2 + "/categories"
+        url = GlobalConfig.Url2.value + "/categories"
         data = dict()
         param = ToolUtil.DictToUrl(data)
         if param:
@@ -454,7 +489,7 @@ class GetSearchCategoryReq2(ServerReq):
         # 最新, 同人, 单本, 短篇， 其他，韩漫， 美漫， CosPlay， 3D
         # category = ["0", "doujin", "single", "short", "another", "hanman", "meiman", "doujin_cosplay", "3D"]
 
-        url = config.Url2 + "/categories/filter"
+        url = GlobalConfig.Url2.value + "/categories/filter"
 
         data = dict()
 
@@ -476,7 +511,7 @@ class GetSearchCategoryReq2(ServerReq):
 # 获得首页
 # class GetIndexInfoReq(ServerReq):
 #     def __init__(self):
-#         url = config.Url
+#         url = GlobalConfig.Url.value
 #         method = "GET"
 #         super(self.__class__, self).__init__(url, self.GetHeader(url, method),
 #                                              {}, method)
@@ -485,7 +520,7 @@ class GetSearchCategoryReq2(ServerReq):
 # 获得首页
 class GetIndexInfoReq2(ServerReq):
     def __init__(self, page="0"):
-        url = config.Url2 + "/promote"
+        url = GlobalConfig.Url2.value + "/promote"
         method = "GET"
         data = dict()
         data["page"] = page
@@ -500,7 +535,7 @@ class GetIndexInfoReq2(ServerReq):
 # 获得最近更新
 class GetLatestInfoReq2(ServerReq):
     def __init__(self, page="0"):
-        url = config.Url2 + "/latest"
+        url = GlobalConfig.Url2.value + "/latest"
         method = "GET"
         data = dict()
         data["page"] = page
@@ -517,7 +552,7 @@ class GetFavoritesReq2(ServerReq):
     def __init__(self, page=1, sort="mr", fid=""):
         # 收藏时间, 更新时间
         # o = [mr, mp]
-        url = config.Url2 + "/favorite"
+        url = GlobalConfig.Url2.value + "/favorite"
         method = "GET"
         data = dict()
         data["page"] = page
@@ -538,7 +573,7 @@ class GetFavoritesReq2(ServerReq):
 # 添加收藏文件夹
 class AddFavoritesFoldReq2(ServerReq):
     def __init__(self, name=""):
-        url = config.Url2 + "/favorite_folder"
+        url = GlobalConfig.Url2.value + "/favorite_folder"
         method = "POST"
         data = dict()
         data["folder_name"] = name
@@ -549,7 +584,7 @@ class AddFavoritesFoldReq2(ServerReq):
 # 删除收藏文件夹
 class DelFavoritesFoldReq2(ServerReq):
     def __init__(self, fid=""):
-        url = config.Url2 + "/favorite_folder"
+        url = GlobalConfig.Url2.value + "/favorite_folder"
         method = "POST"
         data = dict()
         data["folder_id"] = fid
@@ -559,7 +594,7 @@ class DelFavoritesFoldReq2(ServerReq):
 # 移动收藏文件夹
 class MoveFavoritesFoldReq2(ServerReq):
     def __init__(self, bookId="", fid=""):
-        url = config.Url2 + "/favorite_folder"
+        url = GlobalConfig.Url2.value + "/favorite_folder"
         method = "POST"
         data = dict()
         data["folder_id"] = fid
@@ -571,7 +606,7 @@ class MoveFavoritesFoldReq2(ServerReq):
 # 添加收藏
 class AddAndDelFavoritesReq2(ServerReq):
     def __init__(self, bookId=""):
-        url = config.Url2 + "/favorite"
+        url = GlobalConfig.Url2.value + "/favorite"
         method = "POST"
         data = dict()
         data["aid"] = bookId
@@ -588,7 +623,7 @@ class AddAndDelFavoritesReq2(ServerReq):
 #         if page > 1:
 #             data['page'] = str(page)
 #         param = ToolUtil.DictToUrl(data)
-#         url = config.Url + "/user/" + config.LoginUserName + "/favorite/albums/?" + param
+#         url = GlobalConfig.Url.value + "/user/" + config.LoginUserName + "/favorite/albums/?" + param
 #         method = "GET"
 #
 #         super(self.__class__, self).__init__(url, self.GetHeader(url, method),
@@ -598,15 +633,15 @@ class AddAndDelFavoritesReq2(ServerReq):
 # 添加收藏
 # class AddFavoritesReq(ServerReq):
 #     def __init__(self, bookId=""):
-#         url = config.Url + "/ajax/favorite_album"
+#         url = GlobalConfig.Url.value + "/ajax/favorite_album"
 #         method = "POST"
 #         header = self.GetHeader(url, method)
 #         data = dict()
 #         data["album_id"] = bookId
 #         data["fid"] = 0
 #
-#         header["origin"] = config.Url
-#         header["referer"] = config.Url + "/album/{}/".format(bookId)
+#         header["origin"] = GlobalConfig.Url.value
+#         header["referer"] = GlobalConfig.Url.value + "/album/{}/".format(bookId)
 #         super(self.__class__, self).__init__(url, header,
 #                                              ToolUtil.DictToUrl(data), method)
 
@@ -614,7 +649,7 @@ class AddAndDelFavoritesReq2(ServerReq):
 # 删除收藏
 # class DelFavoritesReq(ServerReq):
 #     def __init__(self, bookId=""):
-#         url = config.Url + "/ajax/remove_album_playlist"
+#         url = GlobalConfig.Url.value + "/ajax/remove_album_playlist"
 #         method = "POST"
 #         header = self.GetHeader(url, method)
 #         data = dict()
@@ -628,7 +663,7 @@ class AddAndDelFavoritesReq2(ServerReq):
 class GetCommentReq2(ServerReq):
     def __init__(self, bookId="", page="1", readMode="manhua"):
         self.bookId = bookId
-        url = config.Url2 + "/forum"
+        url = GlobalConfig.Url2.value + "/forum"
         method = "GET"
         data = dict()
         data["mode"] = readMode
@@ -646,7 +681,7 @@ class GetCommentReq2(ServerReq):
 class GetMyCommentReq2(ServerReq):
     def __init__(self, uid, page="1"):
         self.uid = uid
-        url = config.Url2 + "/forum"
+        url = GlobalConfig.Url2.value + "/forum"
         method = "GET"
         data = dict()
         data["mode"] = "undefined"
@@ -662,7 +697,7 @@ class GetMyCommentReq2(ServerReq):
 # 发送评论
 class SendCommentReq2(ServerReq):
     def __init__(self, bookId="", comment="", cid=""):
-        url = config.Url2 + "/comment"
+        url = GlobalConfig.Url2.value + "/comment"
         method = "POST"
         data = dict()
         data["comment"] = comment
@@ -675,7 +710,7 @@ class SendCommentReq2(ServerReq):
 # 获取观看记录
 class GetHistoryReq2(ServerReq):
     def __init__(self, page=1):
-        url = config.Url2 + "/watch_list"
+        url = GlobalConfig.Url2.value + "/watch_list"
         method = "GET"
         data = dict()
         data["page"] = page
@@ -688,11 +723,11 @@ class GetHistoryReq2(ServerReq):
 #         data = dict()
 #         if bookId:
 #             # 漫画评论
-#             url = config.Url + "/ajax/album_pagination"
+#             url = GlobalConfig.Url.value + "/ajax/album_pagination"
 #             data["video_id"] = bookId
 #         else:
 #             # 全部评论
-#             url = config.Url + "/ajax/forum_more"
+#             url = GlobalConfig.Url.value + "/ajax/forum_more"
 #         method = "POST"
 #         header = self.GetHeader(url, method)
 #
@@ -703,7 +738,7 @@ class GetHistoryReq2(ServerReq):
 # 回复评论
 # class ReplySubCommentReq(ServerReq):
 #     def __init__(self, replyId="", comment=""):
-#         url = config.Url + "/ajax/forum_more"
+#         url = GlobalConfig.Url.value + "/ajax/forum_more"
 #         method = "POST"
 #         header = self.GetHeader(url, method)
 #         data = dict()
@@ -731,7 +766,7 @@ class DnsOverHttpsReq(ServerReq):
 # 测试Ping
 class SpeedTestPingReq(ServerReq):
     def __init__(self):
-        url = config.Url2 + "/latest"
+        url = GlobalConfig.Url2.value + "/latest"
         data = dict()
         data["page"] = "0"
 
@@ -762,7 +797,7 @@ class SpeedTestReq(ServerReq):
         if SpeedTestReq.Index >= len(SpeedTestReq.URLS):
             SpeedTestReq.Index = 0
 
-        url = config.PicUrl2 + url
+        url = GlobalConfig.PicUrl2.value + url
         method = "Download"
         super(self.__class__, self).__init__(url, {}, method)
         self.headers['cache-control'] = 'no-cache'

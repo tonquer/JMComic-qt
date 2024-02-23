@@ -7,6 +7,7 @@ from PySide6.QtCore import QUrl
 from PySide6.QtGui import QDesktopServices
 
 from config import config
+from config.global_config import GlobalConfig
 from config.setting import Setting
 from interface.ui_login_proxy_widget import Ui_LoginProxyWidget
 from qt_owner import QtOwner
@@ -132,12 +133,12 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
     def UpdateServer(self):
         index = Setting.ProxySelectIndex.value-1
         index2 = Setting.ProxyImgSelectIndex.value-1
-        if index < 0 or index >= len(config.Url2List):
+        if index < 0 or index >= len(GlobalConfig.Url2List.value):
             index = 0
-        if index2 < 0 or index2 >= len(config.PicUrlList):
+        if index2 < 0 or index2 >= len(GlobalConfig.PicUrlList.value):
             index2 = 0
-        config.Url2 = config.Url2List[index]
-        config.PicUrl2 = config.PicUrlList[index2]
+        GlobalConfig.Url2.value = GlobalConfig.Url2List.value[index]
+        GlobalConfig.PicUrl2.value = GlobalConfig.PicUrlList.value[index2]
         if Setting.ProxyImgSelectIndex.value == 5:
             imageServer = Setting.PreferCDNIPImg.value
         else:
@@ -165,15 +166,15 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
             label.setText("")
 
         i = 1
-        for index, address in enumerate(config.Url2List):
-            imageUrl = config.PicUrlList[index]
+        for index, address in enumerate(GlobalConfig.Url2List.value):
+            imageUrl = GlobalConfig.PicUrlList.value[index]
             self.speedTest.append((address, imageUrl, False, False, ("", ""), i))
             i += 1
 
         PreferCDNIP = self.cdn_api_ip.text()
         imgCDNIP = self.cdn_img_ip.text()
         if PreferCDNIP or imgCDNIP:
-            self.speedTest.append((config.Url2List[0], config.PicUrlList[0], False, False, (PreferCDNIP, imgCDNIP), i))
+            self.speedTest.append((GlobalConfig.Url2List.value[0], GlobalConfig.PicUrlList.value[0], False, False, (PreferCDNIP, imgCDNIP), i))
             i += 1
         else:
             i += 1
@@ -219,7 +220,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
 
         request.timeout = 2
         Server().UpdateDns(dnslist[0], dnslist[1])
-        request.url = request.url.replace(config.Url2, address)
+        request.url = request.url.replace(GlobalConfig.Url2.value, address)
         self.pingBackNumCnt[i] = 0
         self.pingBackNumDict[i] = [0, 0, 0]
         request1 = deepcopy(request)
@@ -299,7 +300,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         else:
             self.SetSock5Proxy(False)
         Server().UpdateDns(dnslist[0], dnslist[1])
-        request.url = request.url.replace(config.PicUrl2, imgUrl)
+        request.url = request.url.replace(GlobalConfig.PicUrl2.value, imgUrl)
         self.AddHttpTask(lambda x: Server().TestSpeed(request, x), self.SpeedTestBack, i)
         return
 
