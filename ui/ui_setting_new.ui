@@ -95,9 +95,9 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>-528</y>
+          <y>-614</y>
           <width>661</width>
-          <height>2891</height>
+          <height>3003</height>
          </rect>
         </property>
         <property name="styleSheet">
@@ -727,6 +727,7 @@
               <property name="font">
                <font>
                 <pointsize>12</pointsize>
+                <bold>true</bold>
                </font>
               </property>
               <property name="text">
@@ -778,6 +779,7 @@
               <property name="font">
                <font>
                 <pointsize>12</pointsize>
+                <bold>true</bold>
                </font>
               </property>
               <property name="text">
@@ -811,6 +813,109 @@
               </item>
               <item>
                <spacer name="horizontalSpacer_21">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_40">
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>标题显示行数</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_30">
+              <item>
+               <widget class="QComboBox" name="titleLineBox">
+                <item>
+                 <property name="text">
+                  <string>不显示</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>1行</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>2行</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>3行</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>全部</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_28">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_41">
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>分类显示</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_31">
+              <item>
+               <widget class="QComboBox" name="categoryBox">
+                <item>
+                 <property name="text">
+                  <string>显示</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>不显示</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_29">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
@@ -2531,11 +2636,11 @@
  <connections/>
  <buttongroups>
   <buttongroup name="saveNameGroup"/>
-  <buttongroup name="mainScaleGroup"/>
+  <buttongroup name="proxyGroup"/>
   <buttongroup name="languageGroup"/>
   <buttongroup name="themeGroup"/>
-  <buttongroup name="logGroup"/>
   <buttongroup name="showCloseButtonGroup"/>
-  <buttongroup name="proxyGroup"/>
+  <buttongroup name="mainScaleGroup"/>
+  <buttongroup name="logGroup"/>
  </buttongroups>
 </ui>

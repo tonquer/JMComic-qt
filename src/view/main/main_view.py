@@ -120,6 +120,7 @@ class MainView(Main, QtTaskBase):
         self.navigationWidget.remoteHistoryButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.remoteHistoryView)))
         self.navigationWidget.localReadButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.localReadView)))
         self.navigationWidget.localCollectButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.localFavoriteView)))
+        self.navigationWidget.weekButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.weekView)))
 
     def RetranslateUi(self):
         Main.retranslateUi(self, self)

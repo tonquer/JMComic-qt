@@ -715,6 +715,37 @@ class GetHistoryReq2Handler(object):
                 TaskBase.taskObj.taskBack.emit(task.backParam, pickle.dumps(data))
 
 
+@handler(req.GetWeekCategoriesReq2)
+@handler(req.GetWeekFilterReq2)
+@handler(req.GetBlogsReq2)
+@handler(req.GetBlogInfoReq2)
+@handler(req.GetBlogForumReq2)
+@handler(req.SignDailyReq2)
+@handler(req.GetDailyReq2)
+class GetReqRawDataHandler(object):
+    def __call__(self, task):
+        data = {"st": task.status}
+        try:
+            if task.status != Status.Ok:
+                return
+            v = json.loads(task.res.raw.text)
+            code = v.get("code")
+            data["errorMsg"] = v.get("errorMsg", "")
+            data["message"] = v.get("message", "")
+            if code != 200:
+                data["st"] = Status.Error
+                return
+            data2 = json.loads(task.req.ParseData(v.get("data")))
+            data["st"] = Status.Ok
+            data["data"] = data2
+        except Exception as es:
+            data["st"] = Status.ParseError
+            Log.Error(es)
+        finally:
+            if task.backParam:
+                TaskBase.taskObj.taskBack.emit(task.backParam, pickle.dumps(data))
+
+
 # @handler(req.GetBookImgUrl)
 # class GetBookImgUrlReqHandler(object):
 #     def __call__(self, task: Task):

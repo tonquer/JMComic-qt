@@ -120,7 +120,7 @@ class ComicListWidget(BaseListWidget):
             widget.categoryLabel.setText(category)
             widget.categoryLabel.setVisible(True)
 
-        widget.nameLable.setText(title)
+        widget.SetTitle(title)
         item = QListWidgetItem(self)
         item.setFlags(item.flags() & ~Qt.ItemIsSelectable)
         item.setSizeHint(widget.sizeHint())
@@ -147,8 +147,10 @@ class ComicListWidget(BaseListWidget):
         widget.url = url
         widget.index = index
         widget.categoryLabel.setText(categoryStr)
-        widget.nameLable.setText(title)
+        widget.SetTitle(title)
         widget.path = ToolUtil.GetRealPath(_id, "cover")
+        widget.starButton.setVisible(False)
+        widget.timeLabel.setVisible(False)
         # if updated_at:
         #     dayStr = ToolUtil.GetUpdateStr(updated_at)
         #     updateStr = dayStr + Str.GetStr(Str.Update)

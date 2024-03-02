@@ -87,6 +87,7 @@
           <item>
            <widget class="AnimationStackWidget" name="subStackWidget">
             <widget class="IndexView" name="indexView"/>
+            <widget class="WeekView" name="weekView"/>
             <widget class="LocalReadAllView" name="localReadAllView"/>
             <widget class="LocalReadEpsView" name="localReadEpsView"/>
             <widget class="LocalReadView" name="localReadView"/>
@@ -263,6 +264,12 @@
    <class>LocalReadView</class>
    <extends>QWidget</extends>
    <header location="global">view.tool.local_read_view.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>WeekView</class>
+   <extends>QWidget</extends>
+   <header location="global">view.index.week_view.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

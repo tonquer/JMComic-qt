@@ -32,6 +32,7 @@ from view.help.help_view import HelpView
 from view.history.history_view import HistoryView
 from view.history.remote_history_view import RemoteHistoryView
 from view.index.index_view import IndexView
+from view.index.week_view import WeekView
 from view.info.book_eps_view import BookEpsView
 from view.info.book_info_view import BookInfoView
 from view.read.read_view import ReadView
@@ -98,6 +99,9 @@ class Ui_Main(object):
         self.indexView = IndexView()
         self.indexView.setObjectName(u"indexView")
         self.subStackWidget.addWidget(self.indexView)
+        self.weekView = WeekView()
+        self.weekView.setObjectName(u"weekView")
+        self.subStackWidget.addWidget(self.weekView)
         self.localReadAllView = LocalReadAllView()
         self.localReadAllView.setObjectName(u"localReadAllView")
         self.subStackWidget.addWidget(self.localReadAllView)

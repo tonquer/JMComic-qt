@@ -1,10 +1,14 @@
+import time
+from datetime import datetime
+
 from PySide6.QtCore import QPropertyAnimation, QRect, QEasingCurve, QFile, QEvent, QSize
 from PySide6.QtGui import QPixmap, Qt, QIcon
-from PySide6.QtWidgets import QWidget, QScroller, QScrollerProperties
+from PySide6.QtWidgets import QWidget, QScroller, QScrollerProperties, QCalendarWidget
 
 from config import config
 from config.setting import Setting
 from interface.ui_navigation import Ui_Navigation
+from interface.ui_sign_widget import Ui_SignWidget
 from qt_owner import QtOwner
 from server import req
 from task.qt_task import QtTaskBase
@@ -12,6 +16,7 @@ from tools.status import Status
 from tools.str import Str
 from tools.user import User
 from view.user.login_view import LoginView
+from view.user.sign_view import SignView
 
 
 class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
@@ -32,6 +37,11 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
         self.picData = None
         self.offlineButton.SetState(False)
         self.offlineButton.Switch.connect(self.SwitchOffline)
+        # self.signButton.setEnabled(False)
+        self.signId = 0
+        self.signMap = {}
+        self.signButton.clicked.connect(self.OpenSign)
+        self.isDailySign = False
 
         if Setting.IsGrabGesture.value:
             QScroller.grabGesture(self.scrollArea, QScroller.LeftMouseButtonGesture)
@@ -40,6 +50,14 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
             propertiesOne.setScrollMetric(QScrollerProperties.VerticalOvershootPolicy, QScrollerProperties.OvershootAlwaysOff)
             propertiesOne.setScrollMetric(QScrollerProperties.HorizontalOvershootPolicy, QScrollerProperties.OvershootAlwaysOff)
             QScroller.scroller(self.scrollArea).setScrollerProperties(propertiesOne)
+
+    def OpenSign(self):
+        if self.isDailySign:
+            signView = SignView(QtOwner().owner, self.signMap)
+            signView.show()
+        else:
+            self.AddHttpTask(req.SignDailyReq2(QtOwner().user.uid, self.signId), self.GetSignBack)
+        return
 
     def SwitchOffline(self, state):
         QtOwner().isOfflineModel = state
@@ -69,7 +87,9 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
             return
         # self.pushButton.hide()
         user = QtOwner().user
-        self.levelLabel.setText("LV" + str(user.level))
+        self.levelLabel.setText("LV" + str(user.level) + "(" + str(user.exp) + "/" + str(user.nex_exp) + ")")
+        self.favorite.setText("(" + str(user.favorites) + "/" + str(user.canFavorites) + ")")
+        self.coins.setText(str(user.coin))
         self.titleLabel.setText(str(user.title))
         self.nameLabel.setText(str(user.name))
         config.LoginUserName = user.name.replace("@", "")
@@ -77,7 +97,39 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
             self.AddDownloadTask(user.imgUrl, "", completeCallBack=self.ShowUserImg)
 
         self.pushButton.setText(Str.GetStr(Str.LoginOut))
+        self.AddHttpTask(req.GetDailyReq2(user.uid), self.GetSignDailyBack)
     #     self.AddHttpTask(req.GetUserInfoReq(), self.UpdateUserBack)
+
+    def GetSignDailyBack(self, raw):
+        st = raw["st"]
+        curDate = datetime.today().day
+        if st == Status.Ok:
+            data = raw.get("data", {})
+            self.signId = data.get("daily_id", 0)
+            self.signMap.clear()
+            for v in data.get('record', []):
+                for v2 in v:
+                    signDate = int(v2["date"])
+                    self.signMap[signDate] = v2.get('signed')
+                    if signDate == curDate:
+                        self.isDailySign = v2.get('signed')
+        if self.isDailySign:
+            self.signButton.setText(Str.GetStr(Str.AlreadySign))
+        else:
+            self.signButton.setText(Str.GetStr(Str.Sign))
+            if Setting.AutoSign.value:
+                QtOwner().ShowMsg("已自动打卡")
+                self.signButton.click()
+        pass
+
+    def GetSignBack(self, raw):
+        st = raw.get("st")
+        msg = raw.get("data", {}).get("msg", "")
+        if st == Status.Ok:
+            self.isDailySign = True
+            self.signButton.setText(Str.GetStr(Str.AlreadySign))
+        QtOwner().ShowError(msg if msg else Str.GetStr(st))
+
 
     def UpdateProxyName(self):
         if Setting.ProxySelectIndex.value == 5:

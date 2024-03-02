@@ -15,10 +15,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QButtonGroup, QCheckBox, QCommandLinkButton,
-    QFrame, QHBoxLayout, QLabel, QLineEdit,
-    QPushButton, QRadioButton, QSizePolicy, QSpacerItem,
-    QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QButtonGroup, QCheckBox, QComboBox,
+    QCommandLinkButton, QFrame, QHBoxLayout, QLabel,
+    QLineEdit, QPushButton, QRadioButton, QSizePolicy,
+    QSpacerItem, QVBoxLayout, QWidget)
 
 from component.box.wheel_combo_box import WheelComboBox
 from component.box.wheel_double_spin_box import WheelDoubleSpinBox
@@ -83,7 +83,7 @@ class Ui_SettingNew(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, -528, 661, 2891))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, -614, 661, 3003))
         self.scrollAreaWidgetContents.setStyleSheet(u"")
         self.verticalLayout_4 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
@@ -423,7 +423,10 @@ class Ui_SettingNew(object):
         self.verticalLayout_17.setObjectName(u"verticalLayout_17")
         self.label_2 = QLabel(self.frame_14)
         self.label_2.setObjectName(u"label_2")
-        self.label_2.setFont(font1)
+        font2 = QFont()
+        font2.setPointSize(12)
+        font2.setBold(True)
+        self.label_2.setFont(font2)
 
         self.verticalLayout_17.addWidget(self.label_2)
 
@@ -448,7 +451,7 @@ class Ui_SettingNew(object):
 
         self.label_29 = QLabel(self.frame_14)
         self.label_29.setObjectName(u"label_29")
-        self.label_29.setFont(font1)
+        self.label_29.setFont(font2)
 
         self.verticalLayout_17.addWidget(self.label_29)
 
@@ -470,6 +473,53 @@ class Ui_SettingNew(object):
 
 
         self.verticalLayout_17.addLayout(self.horizontalLayout_22)
+
+        self.label_40 = QLabel(self.frame_14)
+        self.label_40.setObjectName(u"label_40")
+        self.label_40.setFont(font2)
+
+        self.verticalLayout_17.addWidget(self.label_40)
+
+        self.horizontalLayout_30 = QHBoxLayout()
+        self.horizontalLayout_30.setObjectName(u"horizontalLayout_30")
+        self.titleLineBox = QComboBox(self.frame_14)
+        self.titleLineBox.addItem("")
+        self.titleLineBox.addItem("")
+        self.titleLineBox.addItem("")
+        self.titleLineBox.addItem("")
+        self.titleLineBox.addItem("")
+        self.titleLineBox.setObjectName(u"titleLineBox")
+
+        self.horizontalLayout_30.addWidget(self.titleLineBox)
+
+        self.horizontalSpacer_28 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_30.addItem(self.horizontalSpacer_28)
+
+
+        self.verticalLayout_17.addLayout(self.horizontalLayout_30)
+
+        self.label_41 = QLabel(self.frame_14)
+        self.label_41.setObjectName(u"label_41")
+        self.label_41.setFont(font2)
+
+        self.verticalLayout_17.addWidget(self.label_41)
+
+        self.horizontalLayout_31 = QHBoxLayout()
+        self.horizontalLayout_31.setObjectName(u"horizontalLayout_31")
+        self.categoryBox = QComboBox(self.frame_14)
+        self.categoryBox.addItem("")
+        self.categoryBox.addItem("")
+        self.categoryBox.setObjectName(u"categoryBox")
+
+        self.horizontalLayout_31.addWidget(self.categoryBox)
+
+        self.horizontalSpacer_29 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_31.addItem(self.horizontalSpacer_29)
+
+
+        self.verticalLayout_17.addLayout(self.horizontalLayout_31)
 
 
         self.verticalLayout_4.addWidget(self.frame_14)
@@ -1380,6 +1430,17 @@ class Ui_SettingNew(object):
         self.showCloseButton1.setText(QCoreApplication.translate("SettingNew", u"\u5173\u95ed\u540e\u6700\u5c0f\u5316\u5230\u6258\u76d8", None))
         self.label_2.setText(QCoreApplication.translate("SettingNew", u"\u5c01\u9762\u663e\u793a\u5927\u5c0f\uff08\u9ed8\u8ba4\u4e3a100%\uff09\uff1a", None))
         self.label_29.setText(QCoreApplication.translate("SettingNew", u"\u5206\u7c7b\u5c01\u9762\u5927\u5c0f\uff1a", None))
+        self.label_40.setText(QCoreApplication.translate("SettingNew", u"\u6807\u9898\u663e\u793a\u884c\u6570", None))
+        self.titleLineBox.setItemText(0, QCoreApplication.translate("SettingNew", u"\u4e0d\u663e\u793a", None))
+        self.titleLineBox.setItemText(1, QCoreApplication.translate("SettingNew", u"1\u884c", None))
+        self.titleLineBox.setItemText(2, QCoreApplication.translate("SettingNew", u"2\u884c", None))
+        self.titleLineBox.setItemText(3, QCoreApplication.translate("SettingNew", u"3\u884c", None))
+        self.titleLineBox.setItemText(4, QCoreApplication.translate("SettingNew", u"\u5168\u90e8", None))
+
+        self.label_41.setText(QCoreApplication.translate("SettingNew", u"\u5206\u7c7b\u663e\u793a", None))
+        self.categoryBox.setItemText(0, QCoreApplication.translate("SettingNew", u"\u663e\u793a", None))
+        self.categoryBox.setItemText(1, QCoreApplication.translate("SettingNew", u"\u4e0d\u663e\u793a", None))
+
         self.label_10.setText(QCoreApplication.translate("SettingNew", u"\u65e5\u5fd7\u7b49\u7ea7\uff1a", None))
         self.logutton0.setText(QCoreApplication.translate("SettingNew", u"Warn", None))
         self.logutton1.setText(QCoreApplication.translate("SettingNew", u"Info", None))

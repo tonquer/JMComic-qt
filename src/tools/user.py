@@ -8,6 +8,8 @@ class User:
         self.userName = ""
         self.title = ""
         self.level = ""
+        self.exp = ""
+        self.nex_exp = ""
         self.favorites = 0
         self.canFavorites = 0
         self.coin = 0

@@ -58,6 +58,14 @@ class Ui_Navigation(object):
 
         self.verticalLayout.addWidget(self.pushButton, 0, Qt.AlignHCenter)
 
+        self.signButton = QPushButton(self.widget)
+        self.signButton.setObjectName(u"signButton")
+        sizePolicy.setHeightForWidth(self.signButton.sizePolicy().hasHeightForWidth())
+        self.signButton.setSizePolicy(sizePolicy)
+        self.signButton.setFocusPolicy(Qt.NoFocus)
+
+        self.verticalLayout.addWidget(self.signButton, 0, Qt.AlignHCenter)
+
         self.nameLabel = QLabel(self.widget)
         self.nameLabel.setObjectName(u"nameLabel")
 
@@ -68,6 +76,21 @@ class Ui_Navigation(object):
         self.titleLabel.setMinimumSize(QSize(150, 0))
 
         self.verticalLayout.addWidget(self.titleLabel)
+
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.label_6 = QLabel(self.widget)
+        self.label_6.setObjectName(u"label_6")
+
+        self.horizontalLayout_2.addWidget(self.label_6)
+
+        self.coins = QLabel(self.widget)
+        self.coins.setObjectName(u"coins")
+
+        self.horizontalLayout_2.addWidget(self.coins)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
 
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
@@ -83,6 +106,21 @@ class Ui_Navigation(object):
 
 
         self.verticalLayout.addLayout(self.horizontalLayout)
+
+        self.horizontalLayout_5 = QHBoxLayout()
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.label_8 = QLabel(self.widget)
+        self.label_8.setObjectName(u"label_8")
+
+        self.horizontalLayout_5.addWidget(self.label_8)
+
+        self.favorite = QLabel(self.widget)
+        self.favorite.setObjectName(u"favorite")
+
+        self.horizontalLayout_5.addWidget(self.favorite)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout_5)
 
         self.horizontalLayout_6 = QHBoxLayout()
         self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
@@ -141,7 +179,7 @@ class Ui_Navigation(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, -336, 253, 654))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 253, 654))
         self.verticalLayout_3 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_3.setSpacing(6)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
@@ -289,6 +327,22 @@ class Ui_Navigation(object):
 
         self.verticalLayout_3.addWidget(self.categoryButton)
 
+        self.weekButton = QToolButton(self.scrollAreaWidgetContents)
+        self.buttonGroup.addButton(self.weekButton)
+        self.weekButton.setObjectName(u"weekButton")
+        sizePolicy1.setHeightForWidth(self.weekButton.sizePolicy().hasHeightForWidth())
+        self.weekButton.setSizePolicy(sizePolicy1)
+        self.weekButton.setMinimumSize(QSize(150, 40))
+        self.weekButton.setFocusPolicy(Qt.NoFocus)
+        self.weekButton.setIcon(icon)
+        self.weekButton.setIconSize(QSize(32, 32))
+        self.weekButton.setCheckable(True)
+        self.weekButton.setPopupMode(QToolButton.DelayedPopup)
+        self.weekButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.weekButton.setArrowType(Qt.NoArrow)
+
+        self.verticalLayout_3.addWidget(self.weekButton)
+
         self.commentButton = QToolButton(self.scrollAreaWidgetContents)
         self.buttonGroup.addButton(self.commentButton)
         self.commentButton.setObjectName(u"commentButton")
@@ -417,10 +471,15 @@ class Ui_Navigation(object):
         Navigation.setWindowTitle(QCoreApplication.translate("Navigation", u"\u5bfc\u822a", None))
         self.picLabel.setText("")
         self.pushButton.setText(QCoreApplication.translate("Navigation", u"\u767b\u5f55", None))
+        self.signButton.setText(QCoreApplication.translate("Navigation", u"\u6253\u5361", None))
         self.nameLabel.setText("")
         self.titleLabel.setText("")
-        self.expLabel.setText("")
+        self.label_6.setText(QCoreApplication.translate("Navigation", u"J Coins\uff1a", None))
+        self.coins.setText("")
+        self.expLabel.setText(QCoreApplication.translate("Navigation", u"\u7b49\u7ea7:", None))
         self.levelLabel.setText("")
+        self.label_8.setText(QCoreApplication.translate("Navigation", u"\u6536\u85cf\u6570\uff1a", None))
+        self.favorite.setText("")
         self.label_4.setText(QCoreApplication.translate("Navigation", u"API\u5206\u6d41\uff1a", None))
         self.proxyName.setText("")
         self.label_7.setText(QCoreApplication.translate("Navigation", u"\u56fe\u7247\u5206\u6d41\uff1a", None))
@@ -436,6 +495,7 @@ class Ui_Navigation(object):
         self.indexButton.setText(QCoreApplication.translate("Navigation", u"\u9996\u9875", None))
         self.searchButton.setText(QCoreApplication.translate("Navigation", u"\u641c\u7d22", None))
         self.categoryButton.setText(QCoreApplication.translate("Navigation", u"\u5206\u7c7b\u4e0e\u6392\u884c", None))
+        self.weekButton.setText(QCoreApplication.translate("Navigation", u"\u6bcf\u5468\u5fc5\u770b", None))
         self.commentButton.setText(QCoreApplication.translate("Navigation", u"\u8bc4\u8bba", None))
         self.label_3.setText(QCoreApplication.translate("Navigation", u"\u5176\u4ed6", None))
         self.downloadButton.setText(QCoreApplication.translate("Navigation", u"\u4e0b\u8f7d", None))

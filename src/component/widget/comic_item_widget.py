@@ -1,5 +1,5 @@
 from PySide6.QtCore import Qt, QSize, Signal
-from PySide6.QtGui import QPixmap, QIcon, QFont
+from PySide6.QtGui import QPixmap, QIcon, QFont, QFontMetrics
 from PySide6.QtWidgets import QWidget
 
 from config import config
@@ -68,8 +68,60 @@ class ComicItemWidget(QWidget, Ui_ComicItem):
         self.isWaifu2xLoading = False
         self.isLoadPicture = False
 
+    def SetTitle(self, title):
+        self.title = title
+        if Setting.NotCategoryShow.value:
+           self.categoryLabel.setVisible(False)
+
+        if Setting.TitleLine.value == 0:
+            self.nameLable.setVisible(False)
+        elif Setting.TitleLine.value == 1:
+            self.nameLable.setWordWrap(False)
+            self.nameLable.setText(title)
+        elif Setting.TitleLine.value > 3:
+            self.nameLable.setText(title)
+        else:
+            title2 = self.ElidedLineText()
+            self.nameLable.setText(title2)
+
+    def ElidedLineText(self):
+        line = Setting.TitleLine.value
+        if line <= 0 :
+            line = 2
+        f = QFontMetrics(self.nameLable.font())
+        if (line == 1):
+            return f.elidedText(self.title, Qt.ElideRight, self.nameLable.maximumWidth())
+
+        strList = []
+        start = 0
+        isEnd = False
+        for i in range(1, len(self.title)):
+            if f.boundingRect(self.title[start:i]).width() >= self.nameLable.maximumWidth()-10:
+                strList.append(self.title[start:i])
+                if len(strList) >= line:
+                    isEnd = True
+                    break
+                start = i
+
+        if not isEnd:
+            strList.append(self.title[start:])
+
+        if not strList:
+            strList.append(self.title)
+        hasElided = True
+        endIndex = len(strList) - 1
+        endString = strList[endIndex]
+        if f.boundingRect(endString).width() < self.nameLable.maximumWidth():
+            hasElided = False
+
+        if (hasElided):
+            if len(endString) > 4 :
+                endString = endString[0:len(endString) - 4] + "..."
+                strList[endIndex] = endString
+        return "".join(strList)
+
     def GetTitle(self):
-        return self.nameLable.text()
+        return self.title
 
     def SetPicture(self, data):
         self.picData = data

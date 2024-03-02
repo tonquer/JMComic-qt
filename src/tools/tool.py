@@ -473,6 +473,8 @@ class ToolUtil(object):
         u.gender = raw.get("gender")
         u.favorites = raw.get('album_favorites')
         u.canFavorites = raw.get('album_favorites_max')
+        u.exp = raw.get('exp', 0)
+        u.nex_exp = raw.get('nextLevelExp', 0)
         return u
 
     # 解析搜索结果

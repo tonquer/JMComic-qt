@@ -68,6 +68,8 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.downNoise.currentIndexChanged.connect(partial(self.CheckRadioEvent, Setting.DownloadNoise))
         self.encodeSelect.currentTextChanged.connect(partial(self.CheckRadioEvent, Setting.SelectEncodeGpu))
         self.threadSelect.currentIndexChanged.connect(partial(self.CheckRadioEvent, Setting.Waifu2xCpuCore))
+        self.titleLineBox.currentIndexChanged.connect(partial(self.CheckRadioEvent, Setting.TitleLine))
+        self.categoryBox.currentIndexChanged.connect(partial(self.CheckRadioEvent, Setting.NotCategoryShow))
         self.fontBox.currentTextChanged.connect(partial(self.CheckRadioEvent, Setting.FontName))
         self.fontSize.currentTextChanged.connect(partial(self.CheckRadioEvent, Setting.FontSize))
         self.fontStyle.currentIndexChanged.connect(partial(self.CheckRadioEvent, Setting.FontStyle))
@@ -235,6 +237,8 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.readScale.setValue(Setting.LookScale.value)
         self.readModel.setCurrentIndex(Setting.LookModel.value)
 
+        self.categoryBox.setCurrentIndex(Setting.NotCategoryShow.value)
+        self.titleLineBox.setCurrentIndex(Setting.TitleLine.value)
         self.tileComboBox.setCurrentIndex(Setting.Waifu2xTileSize.value)
         self.coverCheckBox.setChecked(Setting.CoverIsOpenWaifu.value)
         self.coverNoise.setCurrentIndex(Setting.CoverLookNoise.value)

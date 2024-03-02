@@ -717,6 +717,85 @@ class GetHistoryReq2(ServerReq):
         super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
 
 
+# 获取周推荐分类
+class GetWeekCategoriesReq2(ServerReq):
+    def __init__(self, page=0):
+        url = GlobalConfig.Url2.value + "/week"
+        method = "GET"
+        data = dict()
+        data["page"] = page
+        super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
+
+
+# 获取周推荐
+class GetWeekFilterReq2(ServerReq):
+    def __init__(self, id, type, page=0):
+        url = GlobalConfig.Url2.value + "/week/filter?"
+        method = "GET"
+        data = dict()
+        data["page"] = page
+        data["id"] = id
+        data["type"] = type
+        url = url + ToolUtil.DictToUrl(data)
+        super(self.__class__, self).__init__(url, {}, method)
+
+
+# 获取深夜食堂
+class GetBlogsReq2(ServerReq):
+    def __init__(self, blog_type="dinner", search_query="", page=1):
+        url = GlobalConfig.Url2.value + "/blogs?"
+        method = "GET"
+        data = dict()
+        data["blog_type"] = blog_type
+        data["page"] = page
+        data["search_query"] = search_query
+        url = url + ToolUtil.DictToUrl(data)
+        super(self.__class__, self).__init__(url, {}, method)
+
+
+# 获取深夜食堂
+class GetBlogInfoReq2(ServerReq):
+    def __init__(self, id):
+        url = GlobalConfig.Url2.value + "/blog?"
+        method = "GET"
+        data = dict()
+        data["id"] = id
+        url = url + ToolUtil.DictToUrl(data)
+        super(self.__class__, self).__init__(url, {}, method)
+
+
+# 获取深夜食堂
+class GetBlogForumReq2(ServerReq):
+    def __init__(self, bid, page=1, mode="blog"):
+        url = GlobalConfig.Url2.value + "/forum?"
+        method = "GET"
+        data = dict()
+        data["bid"] = bid
+        data["page"] = page
+        data["mode"] = mode
+        url = url + ToolUtil.DictToUrl(data)
+        super(self.__class__, self).__init__(url, {}, method)
+
+# 获取签到信息
+class GetDailyReq2(ServerReq):
+    def __init__(self, user_id):
+        url = GlobalConfig.Url2.value + "/daily?user_id=" + user_id
+        method = "GET"
+        super(self.__class__, self).__init__(url, {}, method)
+
+
+# 签到
+class SignDailyReq2(ServerReq):
+    def __init__(self, user_id, daily_id):
+        url = GlobalConfig.Url2.value + "/daily_chk"
+        method = "POST"
+        data = dict()
+        data["user_id"] = user_id
+        data["daily_id"] = daily_id
+        super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
+
+
+
 # 查看评论
 # class LookCommentReq(ServerReq):
 #     def __init__(self, bookId="", page=1):

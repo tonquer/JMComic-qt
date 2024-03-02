@@ -22,7 +22,7 @@ class Ui_ComicItem(object):
     def setupUi(self, ComicItem):
         if not ComicItem.objectName():
             ComicItem.setObjectName(u"ComicItem")
-        ComicItem.resize(300, 300)
+        ComicItem.resize(300, 289)
         ComicItem.setMinimumSize(QSize(0, 0))
         ComicItem.setMaximumSize(QSize(16777215, 16777215))
         ComicItem.setStyleSheet(u"QToolButton\n"
@@ -66,7 +66,7 @@ class Ui_ComicItem(object):
 
         self.categoryLabel = QLabel(ComicItem)
         self.categoryLabel.setObjectName(u"categoryLabel")
-        self.categoryLabel.setMaximumSize(QSize(16777215, 16777215))
+        self.categoryLabel.setMaximumSize(QSize(16777215, 30))
         self.categoryLabel.setStyleSheet(u"color: rgb(133,133,133);\n"
 "")
 

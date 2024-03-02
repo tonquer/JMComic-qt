@@ -81,6 +81,8 @@ class Setting:
     ThemeIndex = SettingValue("GeneraSetting", 0, False, ["Auto", "light", "dark"])  #
     LogIndex = SettingValue("GeneraSetting", 0, False, ["warn", "info", "debug"])  # Warn Info Debug
     CoverSize = SettingValue("GeneraSetting", 100, False)  #
+    TitleLine = SettingValue("GeneraSetting", 2, False)  #
+    NotCategoryShow = SettingValue("GeneraSetting", 0, False)  #
     CategorySize = SettingValue("GeneraSetting", 80, False)  #
     ScaleLevel = SettingValue("GeneraSetting", 0, True, ["Auto", 100, 125, 150, 175, 200])
     IsUseTitleBar = SettingValue("GeneraSetting", 1, True)
@@ -152,6 +154,7 @@ class Setting:
     ChatSendAction = SettingValue("Other", 0, False, ["CtrlEnter", "Enter"])
     ScreenIndex = SettingValue("Other", 0, False)
     AutoLogin = SettingValue("Other", 0, False)
+    AutoSign = SettingValue("Other", 1, False)
     SavePassword = SettingValue("Other", 1, False)
     IsShowCmd = SettingValue("Other", 0, False)
     IsGrabGesture = SettingValue("Other", 0, True)
