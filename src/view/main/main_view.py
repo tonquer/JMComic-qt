@@ -123,14 +123,47 @@ class MainView(Main, QtTaskBase):
         self.navigationWidget.weekButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.weekView)))
 
     def RetranslateUi(self):
+        #main folder
         Main.retranslateUi(self, self)
-        self.indexView.retranslateUi(self.indexView)
-        self.settingView.retranslateUi(self.settingView)
-        self.searchView.retranslateUi(self.searchView)
-        self.favoriteView.retranslateUi(self.favoriteView)
-        self.readView.retranslateUi(self.readView)
+        #category folder
+        self.categoryView.retranslateUi(self.categoryView)
+        #comment folder
+        self.allCommentView.retranslateUi(self.allCommentView)
+        self.commentView.retranslateUi(self.commentView)
+        self.myCommentView.retranslateUi(self.myCommentView)
+        self.subCommentView.retranslateUi(self.subCommentView)
+        #download folder
+        self.downloadAllView.retranslateUi(self.downloadAllView)
+        self.downloadView.retranslateUi(self.downloadView)
+        #help folder
         self.helpView.retranslateUi(self.helpView)
+        #history folder
+        self.historyView.retranslateUi(self.historyView)
+        self.remoteHistoryView.retranslateUi(self.remoteHistoryView)
+        #index folder        
+        self.indexView.retranslateUi(self.indexView)
+        self.weekView.retranslateUi(self.weekView)
+        #info folder
+        self.bookEpsView.retranslateUi(self.bookEpsView)
+        self.bookInfoView.retranslateUi(self.bookInfoView)
+        #read folder
+        self.readView.retranslateUi(self.readView)
+        #search folder
+        self.searchView.retranslateUi(self.searchView)
+        #setting folder
+        self.settingView.retranslateUi(self.settingView)
+        #tool folder
         self.waifu2xToolView.retranslateUi(self.waifu2xToolView)
+        #user folder
+        self.favoriteView.retranslateUi(self.favoriteView)
+        self.localFavoriteView.retranslateUi(self.localFavoriteView)
+        self.localReadView.retranslateUi(self.localReadView)
+        self.localReadAllView.retranslateUi(self.localReadAllView)
+        self.localReadEpsView.retranslateUi(self.localReadEpsView)
+        #widgets
+        self.navigationWidget.retranslateUi(self.navigationWidget)
+        self.searchView2.retranslateUi(self.searchView2)
+
 
     def Init(self):
         IsCanUse = False
