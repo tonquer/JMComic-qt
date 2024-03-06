@@ -118,7 +118,7 @@
            <widget class="SearchView" name="searchView2"/>
            <widget class="CommentView" name="commentView"/>
            <widget class="SubCommentView" name="subCommentView"/>
-           <widget class="FavoriteView" name="favorityView"/>
+           <widget class="FavoriteView" name="favoriteView"/>
            <widget class="BookInfoView" name="bookInfoView"/>
            <widget class="Waifu2xToolView" name="waifu2xToolView"/>
            <widget class="BookEpsView" name="bookEpsView"/>
