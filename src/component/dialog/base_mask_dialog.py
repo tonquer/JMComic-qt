@@ -9,7 +9,8 @@ class BaseMaskDialog(QDialog):
     closed = Signal()
 
     def __init__(self, parent):
-        QDialog.__init__(self, parent=parent)
+        #QDialog.__init__(self, parent=parent)
+        super().__init__(parent)
         self.vBoxLayout = QVBoxLayout(self)
         self.windowMask = QWidget(self)
         # 蒙版中间的对话框，所有小部件以他为父级窗口
