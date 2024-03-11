@@ -20,7 +20,7 @@ class SmoothScroll:
         self.lastWheelEvent = None
         self.scrollStamps = deque()
         self.stepsLeftQueue = deque()
-        self.smoothMoveTimer = QTimer(self)
+        self.smoothMoveTimer = QTimer()
         self.smoothMode = SmoothMode(SmoothMode.LINEAR)
         self.smoothMoveTimer.timeout.connect(self.__smoothMove)
         self.qEventParam = []

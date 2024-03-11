@@ -4,7 +4,7 @@ import shutil
 from PySide6 import QtWidgets, QtCore, QtGui
 from PySide6.QtCore import Qt, QSize, QEvent, Signal
 from PySide6.QtGui import QColor, QFont, QPixmap, QIcon
-from PySide6.QtWidgets import QListWidgetItem, QLabel, QScroller, QPushButton, QMessageBox
+from PySide6.QtWidgets import QListWidgetItem, QLabel, QScroller, QPushButton, QMessageBox, QListWidget, QFrame
 
 from component.layout.flow_layout import FlowLayout
 from config.setting import Setting
@@ -58,17 +58,17 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         # self.tagsList.setContextMenuPolicy(Qt.CustomContextMenu)
         # self.tagsList.customContextMenuRequested.connect(self.CopyClickTagsItem)
 
-        self.epsListWidget.setFlow(self.epsListWidget.LeftToRight)
+        self.epsListWidget.setFlow(QListWidget.LeftToRight)
         self.epsListWidget.setWrapping(True)
-        self.epsListWidget.setFrameShape(self.epsListWidget.NoFrame)
-        self.epsListWidget.setResizeMode(self.epsListWidget.Adjust)
+        self.epsListWidget.setFrameShape(QFrame.NoFrame)
+        self.epsListWidget.setResizeMode(QListWidget.Adjust)
 
         self.epsListWidget.clicked.connect(self.OpenReadImg)
 
-        self.listWidget.setFlow(self.listWidget.LeftToRight)
+        self.listWidget.setFlow(QListWidget.LeftToRight)
         self.listWidget.setWrapping(True)
-        self.listWidget.setFrameShape(self.listWidget.NoFrame)
-        self.listWidget.setResizeMode(self.listWidget.Adjust)
+        self.listWidget.setFrameShape(QFrame.NoFrame)
+        self.listWidget.setResizeMode(QListWidget.Adjust)
         self.listWidget.clicked.connect(self.OpenReadImg2)
         if Setting.IsGrabGesture.value:
             QScroller.grabGesture(self.epsListWidget, QScroller.LeftMouseButtonGesture)

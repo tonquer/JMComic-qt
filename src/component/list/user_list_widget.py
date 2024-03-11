@@ -1,7 +1,7 @@
 from functools import partial
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QListWidgetItem
+from PySide6.QtWidgets import QListWidgetItem, QFrame, QListWidget
 
 from component.list.base_list_widget import BaseListWidget
 from config import config
@@ -16,14 +16,14 @@ class UserListWidget(BaseListWidget):
         self.resize(800, 600)
         # self.setMinimumHeight(400)
         # self.setFrameShape(self.NoFrame)  # 无边框
-        self.setFlow(self.TopToBottom)
+        self.setFlow(QListWidget.TopToBottom)
         # self.setWrapping(True)
         # self.setResizeMode(self.Adjust)
         # self.setContextMenuPolicy(Qt.CustomContextMenu)
         # self.customContextMenuRequested.connect(self.SelectMenuBook)
         # self.doubleClicked.connect(self.OpenBookInfo)
         # self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setFrameShape(self.NoFrame)  # 无边框
+        self.setFrameShape(QFrame.NoFrame)  # 无边框
         self.setFocusPolicy(Qt.NoFocus)
 
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)

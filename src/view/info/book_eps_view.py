@@ -1,7 +1,7 @@
 from PySide6 import QtWidgets
 from PySide6.QtCore import QSize
 from PySide6.QtGui import Qt, QFont
-from PySide6.QtWidgets import QLabel, QListWidgetItem
+from PySide6.QtWidgets import QLabel, QListWidgetItem, QListWidget, QFrame, QAbstractItemView
 
 from interface.ui_book_eps import Ui_BookEps
 from qt_owner import QtOwner
@@ -18,11 +18,11 @@ class BookEpsView(QtWidgets.QWidget, Ui_BookEps, QtTaskBase):
         Ui_BookEps.__init__(self)
         QtTaskBase.__init__(self)
         self.setupUi(self)
-        self.listWidget.setFlow(self.listWidget.LeftToRight)
+        self.listWidget.setFlow(QListWidget.LeftToRight)
         self.listWidget.setWrapping(True)
-        self.listWidget.setFrameShape(self.listWidget.NoFrame)
-        self.listWidget.setResizeMode(self.listWidget.Adjust)
-        self.listWidget.setSelectionMode(self.listWidget.MultiSelection)
+        self.listWidget.setFrameShape(QFrame.NoFrame)
+        self.listWidget.setResizeMode(QListWidget.Adjust)
+        self.listWidget.setSelectionMode(QAbstractItemView.MultiSelection)
         self.listWidget.setSpacing(6)
         self.bookId = ""
         self.selectButton.clicked.connect(self.SelectAll)
