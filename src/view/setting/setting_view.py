@@ -98,7 +98,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
 
         self.openProxy.clicked.connect(self.OpenProxy)
         # TODO
-        self.languageButton3.setVisible(False)
+        self.languageButton3.setVisible(True)
         self.categorySize.setVisible(False)
 
         self.msgLabel.setVisible(False)
@@ -308,9 +308,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
                 else:
                     language = 2
             else:
-                # TODO
-                # language = 3
-                language = 2
+                language = 3 # english
 
         if language == Setting.Language.autoValue:
             return
@@ -320,11 +318,18 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         if language == 1:
             QtOwner().app.removeTranslator(self.translate)
         elif language == 2:
-            self.translate.load(":/file/tr/tr_hk.qm")
-            QtOwner().app.installTranslator(self.translate)
+            success = self.translate.load(":/file/tr/tr_hk.qm")
+            if success:
+                QtOwner().app.installTranslator(self.translate)
+            else:
+                Log.Error("Failed to load hk translation.")
         else:
-            self.translate.load(":/file/tr/tr_en.qm")
-            QtOwner().app.installTranslator(self.translate)
+            success = self.translate.load(":/file/tr/tr_en.qm")
+            if success:
+                QtOwner().app.installTranslator(self.translate)
+            else:
+                Log.Error("Failed to load en translation.")
+   
         Str.Reload()
         QtOwner().owner.RetranslateUi()
 
