@@ -96,7 +96,7 @@
             <widget class="SettingView" name="settingView"/>
             <widget class="SearchView" name="searchView"/>
             <widget class="SearchView" name="searchView2"/>
-            <widget class="FavoriteView" name="favorityView"/>
+            <widget class="FavoriteView" name="favoriteView"/>
             <widget class="BookInfoView" name="bookInfoView"/>
             <widget class="Waifu2xToolView" name="waifu2xToolView"/>
             <widget class="BookEpsView" name="bookEpsView"/>
