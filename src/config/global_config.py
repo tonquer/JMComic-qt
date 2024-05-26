@@ -80,7 +80,7 @@ class GlobalConfig:
         try:
             for k, v in dict(Setting.GlobalConfig.value).items():
                 Log.Debug("load global setting, k={}, v={}".format(k, v))
-                value = getattr(GlobalConfig, k)
+                value = getattr(GlobalConfig, k, "")
                 if isinstance(value, GlobalItem) :
                     value.set_value(v)
         except Exception as es:
