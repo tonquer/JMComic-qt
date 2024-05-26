@@ -1,7 +1,7 @@
 from PySide6 import QtWidgets
 from PySide6.QtCore import QSize
 from PySide6.QtGui import Qt, QFont
-from PySide6.QtWidgets import QLabel, QListWidgetItem, QListWidget, QFrame, QAbstractItemView
+from PySide6.QtWidgets import QLabel, QListWidgetItem, QFrame, QListWidget, QAbstractItemView
 
 from interface.ui_book_eps import Ui_BookEps
 from qt_owner import QtOwner

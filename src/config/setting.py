@@ -145,8 +145,9 @@ class Setting:
     TurnSpeed = SettingValue("ReadSetting", 5000, False)
     ScrollSpeed = SettingValue("ReadSetting", 400, False)
     PreDownWaifu2x = SettingValue("ReadSetting", 1, False)
-    UpDownScrollSpeed = SettingValue("ReadSetting", 100, False)
-    ScaleCnt = SettingValue("ReadSetting", 0, False)
+    IsOpenOpenGL = SettingValue("ReadSetting", 1, True)
+    # UpDownScrollSpeed = SettingValue("ReadSetting", 100, False)
+    # ScaleCnt = SettingValue("ReadSetting", 0, False)
 
     # Other
     UserId = SettingValue("Other", "", False)

@@ -51,6 +51,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.coverCheckBox.clicked.connect(partial(self.CheckButtonEvent, Setting.CoverIsOpenWaifu, self.coverCheckBox))
         self.downAuto.clicked.connect(partial(self.CheckButtonEvent, Setting.DownloadAuto, self.downAuto))
         self.titleBox.clicked.connect(partial(self.CheckButtonEvent, Setting.IsUseTitleBar, self.titleBox))
+        self.openglBox.clicked.connect(partial(self.CheckButtonEvent, Setting.IsOpenOpenGL, self.openglBox))
         self.grabGestureBox.clicked.connect(partial(self.CheckButtonEvent, Setting.IsGrabGesture, self.grabGestureBox))
 
         # LineEdit:
@@ -97,7 +98,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.openWaifu2xDir.clicked.connect(partial(self.OpenDir, self.waifu2xDir))
 
         self.openProxy.clicked.connect(self.OpenProxy)
-        # TODO
+
         self.languageButton3.setVisible(True)
         self.categorySize.setVisible(False)
 
@@ -216,6 +217,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.httpEdit.setText(Setting.HttpProxy.value)
         self.sockEdit.setText(Setting.Sock5Proxy.value)
         self.titleBox.setChecked(Setting.IsUseTitleBar.value)
+        self.openglBox.setChecked(Setting.IsOpenOpenGL.value)
         self.grabGestureBox.setChecked(Setting.IsGrabGesture.value)
         for index in range(self.encodeSelect.count()):
             if Setting.SelectEncodeGpu.value == self.encodeSelect.itemText(index):
@@ -308,7 +310,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
                 else:
                     language = 2
             else:
-                language = 3 # english
+                language = 3
 
         if language == Setting.Language.autoValue:
             return
@@ -329,7 +331,6 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
                 QtOwner().app.installTranslator(self.translate)
             else:
                 Log.Error("Failed to load en translation.")
-   
         Str.Reload()
         QtOwner().owner.RetranslateUi()
 

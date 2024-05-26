@@ -9,6 +9,7 @@ from component.scroll.smooth_scroll_bar import SmoothScrollBar
 class TagListWidget(BaseListWidget):
     def __init__(self, parent):
         BaseListWidget.__init__(self, parent)
+
         self.setViewMode(QListWidget.ListMode)
         self.setFlow(QListWidget.LeftToRight)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)

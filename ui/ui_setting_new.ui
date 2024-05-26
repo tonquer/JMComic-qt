@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>880</width>
-    <height>789</height>
+    <height>805</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -95,9 +95,9 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>-614</y>
+          <y>0</y>
           <width>661</width>
-          <height>3003</height>
+          <height>3056</height>
          </rect>
         </property>
         <property name="styleSheet">
@@ -928,6 +928,26 @@
                </spacer>
               </item>
              </layout>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_42">
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>图片浏览设置</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="openglBox">
+              <property name="text">
+               <string>开启OpenGL加速</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -2635,12 +2655,12 @@
  <resources/>
  <connections/>
  <buttongroups>
+  <buttongroup name="logGroup"/>
+  <buttongroup name="languageGroup"/>
+  <buttongroup name="mainScaleGroup"/>
   <buttongroup name="saveNameGroup"/>
   <buttongroup name="proxyGroup"/>
-  <buttongroup name="languageGroup"/>
   <buttongroup name="themeGroup"/>
   <buttongroup name="showCloseButtonGroup"/>
-  <buttongroup name="mainScaleGroup"/>
-  <buttongroup name="logGroup"/>
  </buttongroups>
 </ui>

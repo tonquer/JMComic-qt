@@ -19,6 +19,7 @@ class ComicListWidget(BaseListWidget):
         BaseListWidget.__init__(self, parent)
         self.resize(800, 600)
         # self.setMinimumHeight(400)
+
         self.setFrameShape(QFrame.NoFrame)  # 无边框
         self.setFlow(QListWidget.LeftToRight)  # 从左到右
         self.setWrapping(True)
@@ -65,6 +66,18 @@ class ComicListWidget(BaseListWidget):
             if not self.isLocal:
                 action = popMenu.addAction(Str.GetStr(Str.Download))
                 action.triggered.connect(partial(self.DownloadHandler, index))
+                nas = QMenu(Str.GetStr(Str.NetNas))
+                nasDict = QtOwner().owner.nasView.nasDict
+                if not nasDict:
+                    action = nas.addAction(Str.GetStr(Str.CvSpace))
+                    action.setEnabled(False)
+                else:
+                    for k, v in nasDict.items():
+                        action = nas.addAction(v.title)
+                        if QtOwner().nasView.IsInUpload(k, widget.id):
+                            action.setEnabled(False)
+                        action.triggered.connect(partial(self.NasUploadHandler, k, index))
+                popMenu.addMenu(nas)
 
                 # if not self.isGame:
                 #     action = popMenu.addAction(Str.GetStr(Str.DownloadAll))
@@ -312,6 +325,12 @@ class ComicListWidget(BaseListWidget):
         widget = self.indexWidget(index)
         if widget:
             QtOwner().OpenEpsInfo(widget.id)
+        pass
+
+    def NasUploadHandler(self, nasId, index):
+        widget = self.indexWidget(index)
+        if widget:
+            QtOwner().nasView.AddNasUpload(nasId, widget.id)
         pass
 
     def OpenDirHandler(self, index):

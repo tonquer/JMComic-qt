@@ -26,6 +26,32 @@ class Ui_Download(object):
         Download.resize(1002, 510)
         self.gridLayout_2 = QGridLayout(Download)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
+        self.horizontalLayout_3 = QHBoxLayout()
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_3.addItem(self.horizontalSpacer_2)
+
+        self.webp2Png = QCheckBox(Download)
+        self.webp2Png.setObjectName(u"webp2Png")
+
+        self.horizontalLayout_3.addWidget(self.webp2Png)
+
+        self.redownloadRadio = QCheckBox(Download)
+        self.redownloadRadio.setObjectName(u"redownloadRadio")
+
+        self.horizontalLayout_3.addWidget(self.redownloadRadio)
+
+        self.radioButton = QRadioButton(Download)
+        self.radioButton.setObjectName(u"radioButton")
+        self.radioButton.setEnabled(True)
+        self.radioButton.setChecked(True)
+
+        self.horizontalLayout_3.addWidget(self.radioButton)
+
+
+        self.gridLayout_2.addLayout(self.horizontalLayout_3, 0, 0, 1, 1)
+
         self.gridLayout = QGridLayout()
         self.gridLayout.setObjectName(u"gridLayout")
         self.horizontalLayout = QHBoxLayout()
@@ -33,16 +59,6 @@ class Ui_Download(object):
         self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout.addItem(self.horizontalSpacer)
-
-        self.webp2Png = QCheckBox(Download)
-        self.webp2Png.setObjectName(u"webp2Png")
-
-        self.horizontalLayout.addWidget(self.webp2Png)
-
-        self.redownloadRadio = QCheckBox(Download)
-        self.redownloadRadio.setObjectName(u"redownloadRadio")
-
-        self.horizontalLayout.addWidget(self.redownloadRadio)
 
         self.pushButton = QPushButton(Download)
         self.pushButton.setObjectName(u"pushButton")
@@ -63,13 +79,6 @@ class Ui_Download(object):
         self.pushButton_4.setObjectName(u"pushButton_4")
 
         self.horizontalLayout.addWidget(self.pushButton_4)
-
-        self.radioButton = QRadioButton(Download)
-        self.radioButton.setObjectName(u"radioButton")
-        self.radioButton.setEnabled(True)
-        self.radioButton.setChecked(True)
-
-        self.horizontalLayout.addWidget(self.radioButton)
 
 
         self.gridLayout.addLayout(self.horizontalLayout, 2, 0, 1, 1)
@@ -104,7 +113,7 @@ class Ui_Download(object):
         self.gridLayout.addWidget(self.tableWidget, 5, 0, 1, 1)
 
 
-        self.gridLayout_2.addLayout(self.gridLayout, 0, 0, 1, 1)
+        self.gridLayout_2.addLayout(self.gridLayout, 3, 0, 1, 1)
 
 
         self.retranslateUi(Download)
@@ -121,11 +130,11 @@ class Ui_Download(object):
         Download.setWindowTitle(QCoreApplication.translate("Download", u"\u4e0b\u8f7d", None))
         self.webp2Png.setText(QCoreApplication.translate("Download", u"Webp\u4fdd\u5b58\u4e3aPng", None))
         self.redownloadRadio.setText(QCoreApplication.translate("Download", u"\u4e0b\u8f7d\u5931\u8d25\u540e1\u5206\u949f\u81ea\u52a8\u91cd\u8bd5", None))
+        self.radioButton.setText(QCoreApplication.translate("Download", u"\u4e0b\u8f7d\u81ea\u52a8\u8fdb\u884cWaifu2x\u8f6c\u6362", None))
         self.pushButton.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u5f00\u59cb\u4e0b\u8f7d", None))
         self.pushButton_3.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u6682\u505c\u4e0b\u8f7d", None))
         self.pushButton_2.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u5f00\u59cb\u8f6c\u6362", None))
         self.pushButton_4.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u6682\u505c\u8f6c\u6362", None))
-        self.radioButton.setText(QCoreApplication.translate("Download", u"\u4e0b\u8f7d\u81ea\u52a8\u8fdb\u884cWaifu2x\u8f6c\u6362", None))
         ___qtablewidgetitem = self.tableWidget.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("Download", u"id", None));
         ___qtablewidgetitem1 = self.tableWidget.horizontalHeaderItem(1)

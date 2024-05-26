@@ -84,19 +84,19 @@ class ComicItemWidget(QWidget, Ui_ComicItem):
             title2 = self.ElidedLineText()
             self.nameLable.setText(title2)
 
-    def ElidedLineText(self):
+    def ElidedLineText(self, fontColor):
         line = Setting.TitleLine.value
-        if line <= 0 :
+        if line <= 0:
             line = 2
         f = QFontMetrics(self.nameLable.font())
         if (line == 1):
-            return f.elidedText(self.title, Qt.ElideRight, self.nameLable.maximumWidth())
+            return f.elidedText(self.title + fontColor, Qt.ElideRight, self.nameLable.maximumWidth())
 
         strList = []
         start = 0
         isEnd = False
         for i in range(1, len(self.title)):
-            if f.boundingRect(self.title[start:i]).width() >= self.nameLable.maximumWidth()-10:
+            if f.boundingRect(self.title[start:i]).width() >= self.nameLable.maximumWidth() - 10:
                 strList.append(self.title[start:i])
                 if len(strList) >= line:
                     isEnd = True
@@ -108,16 +108,22 @@ class ComicItemWidget(QWidget, Ui_ComicItem):
 
         if not strList:
             strList.append(self.title)
+
+        # strList[-1] = strList[-1] + fontColor
+
         hasElided = True
         endIndex = len(strList) - 1
         endString = strList[endIndex]
-        if f.boundingRect(endString).width() < self.nameLable.maximumWidth():
+        if f.boundingRect(endString).width() < self.nameLable.maximumWidth() - 10:
+            strList[endIndex] += fontColor
             hasElided = False
 
         if (hasElided):
-            if len(endString) > 4 :
-                endString = endString[0:len(endString) - 4] + "..."
+            if len(endString) > 8:
+                endString = endString[0:len(endString) - 8] + "..." + fontColor
                 strList[endIndex] = endString
+            else:
+                strList[endIndex] += fontColor
         return "".join(strList)
 
     def GetTitle(self):

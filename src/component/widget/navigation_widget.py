@@ -25,6 +25,8 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
         QtTaskBase.__init__(self)
         self.setupUi(self)
         self.resize(260, 800)
+        if Setting.IsUseTitleBar.value:
+            self.scrollArea.setFixedHeight(350)
         self.__ani = QPropertyAnimation(self, b"geometry")
         self.__connect = None
         self.pictureData = ""
@@ -35,14 +37,16 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
         self.pushButton.clicked.connect(self.OpenLoginView)
         self.picLabel.installEventFilter(self)
         self.picData = None
-        self.offlineButton.SetState(False)
-        self.offlineButton.Switch.connect(self.SwitchOffline)
+        # self.offlineButton.SetState(False)
+
+        # self.offlineButton.Switch.connect(self.SwitchOffline)
         # self.signButton.setEnabled(False)
         self.signId = 0
         self.signMap = {}
         self.signButton.clicked.connect(self.OpenSign)
         self.isDailySign = False
-
+        self.proxyImgName.clicked.connect(self.OpenProxy)
+        self.proxyName.clicked.connect(self.OpenProxy)
         if Setting.IsGrabGesture.value:
             QScroller.grabGesture(self.scrollArea, QScroller.LeftMouseButtonGesture)
             propertiesOne = QScroller.scroller(self).scrollerProperties()
@@ -50,6 +54,10 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
             propertiesOne.setScrollMetric(QScrollerProperties.VerticalOvershootPolicy, QScrollerProperties.OvershootAlwaysOff)
             propertiesOne.setScrollMetric(QScrollerProperties.HorizontalOvershootPolicy, QScrollerProperties.OvershootAlwaysOff)
             QScroller.scroller(self.scrollArea).setScrollerProperties(propertiesOne)
+
+    def OpenProxy(self):
+        QtOwner().OpenProxy()
+        self.UpdateProxyName()
 
     def OpenSign(self):
         if self.isDailySign:
@@ -128,17 +136,22 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
         if st == Status.Ok:
             self.isDailySign = True
             self.signButton.setText(Str.GetStr(Str.AlreadySign))
+            curDate = datetime.today().day
+            self.signMap[curDate] = True
         QtOwner().ShowError(msg if msg else Str.GetStr(st))
-
 
     def UpdateProxyName(self):
         if Setting.ProxySelectIndex.value == 5:
             self.proxyName.setText("CDN_{}".format(str(Setting.PreferCDNIP.value)))
+        elif Setting.ProxySelectIndex.value == 6:
+            self.proxyName.setText("US反代分流")
         else:
             self.proxyName.setText("分流{}".format(str(Setting.ProxySelectIndex.value)))
 
         if Setting.ProxyImgSelectIndex.value == 5:
             self.proxyImgName.setText("CDN_{}".format(str(Setting.PreferCDNIPImg.value)))
+        elif Setting.ProxyImgSelectIndex.value == 6:
+            self.proxyImgName.setText("US反代分流")
         else:
             self.proxyImgName.setText("分流{}".format(str(Setting.ProxyImgSelectIndex.value)))
 

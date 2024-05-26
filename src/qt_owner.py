@@ -32,6 +32,7 @@ class QtOwner(Singleton):
         msg = raw.get("st")
         errorMsg = raw.get("errorMsg")
         if errorMsg:
+            errorMsg = errorMsg.replace("\n", "<br>")
             return self.ShowError(errorMsg)
         message = raw.get("message")
         if message:
@@ -65,12 +66,28 @@ class QtOwner(Singleton):
         self.owner.loadingDialog.close()
         return
 
+    def GetNasInfo(self, nasId):
+        return self.owner.nasView.nasDict.get(nasId)
+
     def CopyText(self, text):
         from PySide6.QtWidgets import QApplication
         clipboard = QApplication.clipboard()
         clipboard.setText(text)
         from tools.str import Str
         QtOwner().ShowMsg(Str.GetStr(Str.CopySuc))
+
+    def OpenProxy(self):
+        from view.user.login_view import LoginView
+        loginView = LoginView(QtOwner().owner, False)
+        loginView.tabWidget.setCurrentIndex(3)
+        loginView.tabWidget.removeTab(0)
+        loginView.tabWidget.removeTab(0)
+        loginView.tabWidget.removeTab(0)
+        loginView.loginButton.setText(Str.GetStr(Str.Save))
+        loginView.show()
+
+        loginView.closed.connect(QtOwner().owner.navigationWidget.UpdateProxyName)
+        return
 
     @property
     def owner(self):
@@ -89,6 +106,10 @@ class QtOwner(Singleton):
     @property
     def localFavoriteView(self):
         return self.owner.localFavoriteView
+
+    @property
+    def nasView(self):
+        return self.owner.nasView
 
     @property
     def downloadView(self):
@@ -299,7 +320,7 @@ class QtOwner(Singleton):
             if Setting.FontName.value:
                 f = QFont(Setting.FontName.value)
 
-            if Setting.FontSize.value and Setting.FontSize.value != "Default":
+            if Setting.FontSize.value and Setting.FontSize.value != "Defalut":
                 f.setPointSize(int(Setting.FontSize.value))
 
             if Setting.FontStyle.value:

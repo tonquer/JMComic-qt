@@ -116,7 +116,6 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
         self.gpuLabel.setMaximumWidth(250)
         self.curWaifu2x.clicked.connect(self.OpenCurWaifu)
         self.preDownWaifu2x.clicked.connect(self.OpenPreDownloadWaifu2x)
-        # self.upDownScrollSpeed.valueChanged.connect(self.SaveUpDownSetting)
 
 
     @property
@@ -164,9 +163,6 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
     @scaleCnt.setter
     def scaleCnt(self, value):
         self.imgFrame.scaleCnt = value
-
-    # def SaveUpDownSetting(self):
-    #     Setting.UpDownScrollSpeed.SetValue(self.upDownScrollSpeed.value())
 
     def NextPage(self):
         if self.stripModel in [ReadMode.RightLeftDouble, ReadMode.RightLeftScroll]:
@@ -527,6 +523,8 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
         self.imgFrame.isLastPageMode = False
         self.stripModel = ReadMode(index)
         self.scrollArea.initReadMode = self.stripModel
+        self.scrollArea.allItemsState.clear()
+
         self.ScalePicture2(100)
         if self.stripModel in [ReadMode.UpDown, ReadMode.Samewight]:
             self.ScalePicture2(80)
@@ -630,15 +628,15 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
             if self.stripModel == ReadMode.UpDown:
                 if self.imgFrame.scrollArea.vScrollBar.value() >= self.imgFrame.scrollArea.vScrollBar.maximum():
                     self.CloseScrollAndTurn()
-                self.imgFrame.scrollArea.vScrollBar.Scroll(value)
+                self.imgFrame.scrollArea.vScrollBar.scrollValue(value)
             elif self.stripModel == ReadMode.LeftRightScroll:
                 if self.imgFrame.scrollArea.hScrollBar.value() >= self.imgFrame.scrollArea.hScrollBar.maximum():
                     self.CloseScrollAndTurn()
-                self.imgFrame.scrollArea.hScrollBar.Scroll(value)
+                self.imgFrame.scrollArea.hScrollBar.scrollValue(value)
             elif self.stripModel == ReadMode.RightLeftScroll:
                 if self.imgFrame.scrollArea.hScrollBar.value() <= self.imgFrame.scrollArea.hScrollBar.minimum():
                     self.CloseScrollAndTurn()
-                self.imgFrame.scrollArea.hScrollBar.Scroll(-value)
+                self.imgFrame.scrollArea.hScrollBar.scrollValue(-value)
         else:
             self._NextPage()
         pass

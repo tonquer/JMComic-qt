@@ -64,6 +64,10 @@ class NewSession(requests2.Session):
         c = args[0]
         if GlobalConfig.WebDnsList.value:
             c.setopt(CurlOpt.RESOLVE, GlobalConfig.WebDnsList.value)
+        # c.setopt(CurlOpt.SSL_OPTIONS, CurlOpt.ALLO)
+        # c.setopt(CurlOpt.SSLVERSION, 6)
+        # c.setopt(CurlOpt.SSL_VERIFYHOST, False)
+        # c.setopt(CurlOpt.SSL_VERIFYPEER, False)
         return requests2.Session._set_curl_options(self, *args, **kwargs)
 
 
@@ -177,12 +181,12 @@ class Server(Singleton):
         host_table.clear()
 
     def __DealHeaders(self, request, token):
-        host = ToolUtil.GetUrlHost(request.url)
 
         if not request.isUseHttps:
             request.url = request.url.replace("https://", "http://")
 
         if request.proxyUrl:
+            host = ToolUtil.GetUrlHost(request.url)
             request.url = request.url.replace(host, request.proxyUrl+"/"+host)
 
     def Send(self, request, token="", backParam="", isASync=True):
@@ -326,8 +330,8 @@ class Server(Singleton):
 
         if request.headers == None:
             request.headers = {}
-
         task.res = res.BaseRes("", False)
+
         if task.req.cookies:
             r = self.session2.get(request.url, proxies=request.proxy, impersonate="chrome110", headers=request.headers, timeout=task.timeout, cookies=task.req.cookies)
         else:

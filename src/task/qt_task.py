@@ -20,6 +20,7 @@ class QtTaskQObject(QObject):
     imageBack = Signal(int, QImage)
     localBack = Signal(int, int, list)
     localReadBack = Signal(int, int, bytes)
+    uploadBack = Signal(int, int)
 
     def __init__(self):
         super(self.__class__, self).__init__()
@@ -85,7 +86,7 @@ class QtTaskBase:
             cleanFlag = self.__taskFlagId
 
         if "https://" not in url and "http://" not in url:
-            url = GlobalConfig.PicUrl2.value + url
+            url = GlobalConfig.GetImgUrl() + url
 
         if not cachePath and not savePath:
             if Setting.SavePath.value and path:
@@ -125,6 +126,10 @@ class QtTaskBase:
     def AddLocalTaskLoadPicture(self, v, index, backparam=None, callBack=None):
         from task.task_local import TaskLocal
         return TaskLocal().AddLoadReadPicture(v, index, backparam, callBack, cleanFlag=self.__taskFlagId)
+
+    def AddUploadTask(self, nas_id, type, srcDir, desFile, upDirPath, backParam=None, callBack=None):
+        from task.task_upload import TaskUpload
+        return TaskUpload().AddLoadReadPicture(nas_id, type, srcDir, desFile, upDirPath, backParam, callBack, cleanFlag=self.__taskFlagId)
 
     def ClearQImageTaskById(self, taskId):
         from task.task_qimage import TaskQImage

@@ -244,6 +244,7 @@ class LoginReq2Handler(object):
             data["user"] = user
         except Exception as es:
             data["st"] = Status.ParseError
+            data['errorMsg'] = task.res.GetText()
             Log.Warn("登陆失败！！！, code:{}, text:{}".format(str(task.res.code), task.res.GetText()))
             Log.Error(es)
         finally:

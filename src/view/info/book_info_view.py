@@ -1,10 +1,11 @@
 import os
 import shutil
+from functools import partial
 
 from PySide6 import QtWidgets, QtCore, QtGui
 from PySide6.QtCore import Qt, QSize, QEvent, Signal
-from PySide6.QtGui import QColor, QFont, QPixmap, QIcon
-from PySide6.QtWidgets import QListWidgetItem, QLabel, QScroller, QPushButton, QMessageBox, QListWidget, QFrame
+from PySide6.QtGui import QColor, QFont, QPixmap, QIcon, QCursor
+from PySide6.QtWidgets import QListWidgetItem, QLabel, QScroller, QPushButton, QMessageBox, QMenu, QListWidget, QFrame
 
 from component.layout.flow_layout import FlowLayout
 from config.setting import Setting
@@ -60,7 +61,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
 
         self.epsListWidget.setFlow(QListWidget.LeftToRight)
         self.epsListWidget.setWrapping(True)
-        self.epsListWidget.setFrameShape(QFrame.NoFrame)
+        self.epsListWidget.setFrameShape(QListWidget.NoFrame)
         self.epsListWidget.setResizeMode(QListWidget.Adjust)
 
         self.epsListWidget.clicked.connect(self.OpenReadImg)
@@ -84,6 +85,9 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.ReloadHistory.connect(self.LoadHistory)
         self.readOffline.clicked.connect(self.StartRead2)
         self.flowLayout = FlowLayout(self.tagList)
+        self.uploadButton.clicked.connect(self.ShowMenu)
+        # self.toolMenu = QMenu(self.uploadButton)
+        # self.uploadButton.setMenu(self.toolMenu)
 
     def UpdateFavoriteIcon(self):
         p = QPixmap()
@@ -146,6 +150,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             for author in info.baseInfo.authorList:
                 self.autorList.AddItem(author)
             title = info.baseInfo.title
+
             if info.pageInfo.pages:
                 title += "<font color=#d5577c>{}</font>".format("(" + str(info.pageInfo.pages) + "P)")
             self.title.setText(title)
@@ -516,3 +521,32 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             widget = self.autorList.itemWidget(item)
             text = widget.text()
             QtOwner().CopyText(text)
+
+    def ShowMenu(self):
+        if not self.bookName:
+            return
+        if not self.bookId:
+            return
+        toolMenu = QMenu(self.uploadButton)
+        toolMenu.clear()
+        title = self.bookName
+        if not title:
+            return
+        nasDict = QtOwner().owner.nasView.nasDict
+        action = toolMenu.addAction(Str.GetStr(Str.NetNas))
+        action.setEnabled(False)
+
+        if not nasDict:
+            action = toolMenu.addAction(Str.GetStr(Str.CvSpace))
+            action.setEnabled(False)
+        else:
+            for k, v in nasDict.items():
+                action = toolMenu.addAction(v.title)
+                if QtOwner().nasView.IsInUpload(k, self.bookId):
+                    action.setEnabled(False)
+                action.triggered.connect(partial(self.NasUploadHandler, k, title, k, self.bookId))
+        toolMenu.exec(QCursor().pos())
+
+    def NasUploadHandler(self, title, nasId, bookId):
+        QtOwner().nasView.AddNasUpload2(title, nasId, bookId)
+        return

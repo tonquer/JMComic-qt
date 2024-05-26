@@ -121,6 +121,7 @@ class MainView(Main, QtTaskBase):
         self.navigationWidget.localReadButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.localReadView)))
         self.navigationWidget.localCollectButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.localFavoriteView)))
         self.navigationWidget.weekButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.weekView)))
+        self.navigationWidget.nasButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.nasView)))
 
     def RetranslateUi(self):
         #main folder
@@ -140,7 +141,7 @@ class MainView(Main, QtTaskBase):
         #history folder
         self.historyView.retranslateUi(self.historyView)
         self.remoteHistoryView.retranslateUi(self.remoteHistoryView)
-        #index folder        
+        #index folder
         self.indexView.retranslateUi(self.indexView)
         self.weekView.retranslateUi(self.weekView)
         #info folder
@@ -163,12 +164,13 @@ class MainView(Main, QtTaskBase):
         #widgets
         self.navigationWidget.retranslateUi(self.navigationWidget)
         self.searchView2.retranslateUi(self.searchView2)
-
+        self.nasView.retranslateUi(self.nasView)
 
     def Init(self):
         IsCanUse = False
         self.helpView.Init()
         self.downloadView.Init()
+        self.nasView.Init()
         if config.CanWaifu2x:
             from waifu2x_vulkan import waifu2x_vulkan
             stat = waifu2x_vulkan.init()

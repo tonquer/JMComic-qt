@@ -10,3 +10,6 @@ Pysocks==1.7.1
 natsort==8.2.0
 curl_cffi==0.5.10
 jmcomic>=2.4.3
+webdavclient3==3.14.6
+tqdm==4.66.4
+pysmb==1.2.9.1

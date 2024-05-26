@@ -11,7 +11,7 @@ from config.global_config import GlobalConfig
 from config.setting import Setting
 from interface.ui_login_proxy_widget import Ui_LoginProxyWidget
 from qt_owner import QtOwner
-from server import req, Log
+from server import req, Log, ToolUtil
 from server.server import Server
 from task.qt_task import QtTaskBase
 from tools.str import Str
@@ -37,12 +37,14 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         self.radioApiGroup.setId(self.radioButton_3, 3)
         self.radioApiGroup.setId(self.radioButton_4, 4)
         self.radioApiGroup.setId(self.radioButton_5, 5)
+        self.radioApiGroup.setId(self.radioButton_6, 6)
 
         self.radioImgGroup.setId(self.radio_img_1, 1)
         self.radioImgGroup.setId(self.radio_img_2, 2)
         self.radioImgGroup.setId(self.radio_img_3, 3)
         self.radioImgGroup.setId(self.radio_img_4, 4)
         self.radioImgGroup.setId(self.radio_img_5, 5)
+        self.radioImgGroup.setId(self.radio_img_6, 6)
         # self.buttonGroup.setId(self.radioButton_5, 5)
 
         self.radioProxyGroup.setId(self.proxy_0, 0)
@@ -52,7 +54,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         self.LoadSetting()
         self.UpdateServer()
         self.commandLinkButton.clicked.connect(self.OpenUrl)
-        self.maxNum = 6
+        self.maxNum = 7
         self.loginProxy.hide()
         self.uaRandom.clicked.connect(self.RandomUa)
 
@@ -60,6 +62,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         self.LoadSetting()
         proxy = urllib.request.getproxies()
         if isinstance(proxy, dict) and proxy.get("http"):
+            self.proxyLabel.setText(proxy.get("http", ""))
             self.checkLabel.setVisible(False)
         else:
             self.checkLabel.setVisible(True)
@@ -84,11 +87,13 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         self.radioButton_3.setEnabled(enabled)
         self.radioButton_4.setEnabled(enabled)
         self.radioButton_5.setEnabled(enabled)
+        self.radioButton_6.setEnabled(enabled)
         self.radio_img_1.setEnabled(enabled)
         self.radio_img_2.setEnabled(enabled)
         self.radio_img_3.setEnabled(enabled)
         self.radio_img_4.setEnabled(enabled)
         self.radio_img_5.setEnabled(enabled)
+        self.radio_img_6.setEnabled(enabled)
         # self.radioButton_5.setEnabled(enabled)
 
     def RandomUa(self):
@@ -133,12 +138,13 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
     def UpdateServer(self):
         index = Setting.ProxySelectIndex.value-1
         index2 = Setting.ProxyImgSelectIndex.value-1
-        if index < 0 or index >= len(GlobalConfig.Url2List.value):
-            index = 0
-        if index2 < 0 or index2 >= len(GlobalConfig.PicUrlList.value):
-            index2 = 0
-        GlobalConfig.Url2.value = GlobalConfig.Url2List.value[index]
-        GlobalConfig.PicUrl2.value = GlobalConfig.PicUrlList.value[index2]
+        # if index < 0 or index >= len(GlobalConfig.Url2List.value):
+        #     index = 0
+        # if index2 < 0 or index2 >= len(GlobalConfig.PicUrlList.value):
+        #     index2 = 0
+
+        # GlobalConfig.Url2.value = GlobalConfig.Url2List.value[index]
+        # GlobalConfig.PicUrl2.value = GlobalConfig.PicUrlList.value[index2]
         if Setting.ProxyImgSelectIndex.value == 5:
             imageServer = Setting.PreferCDNIPImg.value
         else:
@@ -148,7 +154,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         else:
             address = ""
         if Setting.IsLoginProxy.value:
-            Server().UpdateDns(address, imageServer, "47.87.215.162")
+            Server().UpdateDns(address, imageServer)
         else:
             Server().UpdateDns(address, imageServer)
         QtOwner().settingView.SetSock5Proxy()
@@ -174,10 +180,13 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         PreferCDNIP = self.cdn_api_ip.text()
         imgCDNIP = self.cdn_img_ip.text()
         if PreferCDNIP or imgCDNIP:
-            self.speedTest.append((GlobalConfig.Url2List.value[0], GlobalConfig.PicUrlList.value[0], False, False, (PreferCDNIP, imgCDNIP), i))
+            self.speedTest.append((GlobalConfig.CdnApiUrl.value, GlobalConfig.CdnImgUrl.value, False, False, (PreferCDNIP, imgCDNIP), i))
             i += 1
         else:
             i += 1
+
+        self.speedTest.append((GlobalConfig.ProxyApiUrl.value, GlobalConfig.ProxyImgUrl.value, False, True, (GlobalConfig.ProxyApiDomain2.value, GlobalConfig.ProxyImgDomain2.value), i))
+        i += 1
 
         self.SetEnabled(False)
         self.needBackNum = 0
@@ -209,7 +218,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         if isProxyUrl:
             if "user-agent" in request.headers:
                 request.headers.pop("user-agent")
-            request.proxyUrl = config.ProxyApiDomain
+            request.proxyUrl = GlobalConfig.ProxyApiDomain2.value
         else:
             request.proxyUrl = ""
 
@@ -220,7 +229,9 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
 
         request.timeout = 2
         Server().UpdateDns(dnslist[0], dnslist[1])
-        request.url = request.url.replace(GlobalConfig.Url2.value, address)
+        host = ToolUtil.GetUrlHost(request.url)
+        host2 = ToolUtil.GetUrlHost(address)
+        request.url = request.url.replace(host, host2)
         self.pingBackNumCnt[i] = 0
         self.pingBackNumDict[i] = [0, 0, 0]
         request1 = deepcopy(request)
@@ -291,7 +302,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         if isProxyUrl:
             if "user-agent" in request.headers:
                 request.headers.pop("user-agent")
-            request.proxyUrl = config.ProxyImgDomain
+            request.proxyUrl = GlobalConfig.ProxyImgDomain2.value
         else:
             request.proxyUrl = ""
 
@@ -300,7 +311,9 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         else:
             self.SetSock5Proxy(False)
         Server().UpdateDns(dnslist[0], dnslist[1])
-        request.url = request.url.replace(GlobalConfig.PicUrl2.value, imgUrl)
+        host = ToolUtil.GetUrlHost(request.url)
+        host2 = ToolUtil.GetUrlHost(imgUrl)
+        request.url = request.url.replace(host, host2)
         self.AddHttpTask(lambda x: Server().TestSpeed(request, x), self.SpeedTestBack, i)
         return
 

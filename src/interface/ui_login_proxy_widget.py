@@ -36,7 +36,7 @@ class Ui_LoginProxyWidget(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 504, 515))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 504, 541))
         self.verticalLayout = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.horizontalLayout_11 = QHBoxLayout()
@@ -128,6 +128,11 @@ class Ui_LoginProxyWidget(object):
 
         self.horizontalLayout_12.addWidget(self.checkLabel)
 
+        self.proxyLabel = QLabel(self.scrollAreaWidgetContents)
+        self.proxyLabel.setObjectName(u"proxyLabel")
+
+        self.horizontalLayout_12.addWidget(self.proxyLabel)
+
         self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_12.addItem(self.horizontalSpacer_2)
@@ -197,6 +202,24 @@ class Ui_LoginProxyWidget(object):
 
         self.gridLayout_2 = QGridLayout()
         self.gridLayout_2.setObjectName(u"gridLayout_2")
+        self.label_api_3 = QLabel(self.scrollAreaWidgetContents)
+        self.label_api_3.setObjectName(u"label_api_3")
+
+        self.gridLayout_2.addWidget(self.label_api_3, 4, 1, 1, 1)
+
+        self.radio_img_3 = QRadioButton(self.scrollAreaWidgetContents)
+        self.radioImgGroup = QButtonGroup(LoginProxyWidget)
+        self.radioImgGroup.setObjectName(u"radioImgGroup")
+        self.radioImgGroup.addButton(self.radio_img_3)
+        self.radio_img_3.setObjectName(u"radio_img_3")
+
+        self.gridLayout_2.addWidget(self.radio_img_3, 4, 2, 1, 1)
+
+        self.label_api_4 = QLabel(self.scrollAreaWidgetContents)
+        self.label_api_4.setObjectName(u"label_api_4")
+
+        self.gridLayout_2.addWidget(self.label_api_4, 5, 1, 1, 1)
+
         self.radioButton_4 = QRadioButton(self.scrollAreaWidgetContents)
         self.radioApiGroup = QButtonGroup(LoginProxyWidget)
         self.radioApiGroup.setObjectName(u"radioApiGroup")
@@ -205,97 +228,10 @@ class Ui_LoginProxyWidget(object):
 
         self.gridLayout_2.addWidget(self.radioButton_4, 5, 0, 1, 1)
 
-        self.radio_img_5 = QRadioButton(self.scrollAreaWidgetContents)
-        self.radioImgGroup = QButtonGroup(LoginProxyWidget)
-        self.radioImgGroup.setObjectName(u"radioImgGroup")
-        self.radioImgGroup.addButton(self.radio_img_5)
-        self.radio_img_5.setObjectName(u"radio_img_5")
-
-        self.gridLayout_2.addWidget(self.radio_img_5, 6, 2, 1, 1)
-
-        self.label_img_3 = QLabel(self.scrollAreaWidgetContents)
-        self.label_img_3.setObjectName(u"label_img_3")
-
-        self.gridLayout_2.addWidget(self.label_img_3, 4, 3, 1, 1)
-
         self.label_api_1 = QLabel(self.scrollAreaWidgetContents)
         self.label_api_1.setObjectName(u"label_api_1")
 
         self.gridLayout_2.addWidget(self.label_api_1, 2, 1, 1, 1)
-
-        self.radioButton_5 = QRadioButton(self.scrollAreaWidgetContents)
-        self.radioApiGroup.addButton(self.radioButton_5)
-        self.radioButton_5.setObjectName(u"radioButton_5")
-
-        self.gridLayout_2.addWidget(self.radioButton_5, 6, 0, 1, 1)
-
-        self.radio_img_2 = QRadioButton(self.scrollAreaWidgetContents)
-        self.radioImgGroup.addButton(self.radio_img_2)
-        self.radio_img_2.setObjectName(u"radio_img_2")
-
-        self.gridLayout_2.addWidget(self.radio_img_2, 3, 2, 1, 1)
-
-        self.label_api_3 = QLabel(self.scrollAreaWidgetContents)
-        self.label_api_3.setObjectName(u"label_api_3")
-
-        self.gridLayout_2.addWidget(self.label_api_3, 4, 1, 1, 1)
-
-        self.radio_img_3 = QRadioButton(self.scrollAreaWidgetContents)
-        self.radioImgGroup.addButton(self.radio_img_3)
-        self.radio_img_3.setObjectName(u"radio_img_3")
-
-        self.gridLayout_2.addWidget(self.radio_img_3, 4, 2, 1, 1)
-
-        self.label_img_5 = QLabel(self.scrollAreaWidgetContents)
-        self.label_img_5.setObjectName(u"label_img_5")
-
-        self.gridLayout_2.addWidget(self.label_img_5, 6, 3, 1, 1)
-
-        self.label_api_2 = QLabel(self.scrollAreaWidgetContents)
-        self.label_api_2.setObjectName(u"label_api_2")
-
-        self.gridLayout_2.addWidget(self.label_api_2, 3, 1, 1, 1)
-
-        self.label_img_4 = QLabel(self.scrollAreaWidgetContents)
-        self.label_img_4.setObjectName(u"label_img_4")
-
-        self.gridLayout_2.addWidget(self.label_img_4, 5, 3, 1, 1)
-
-        self.radioButton_3 = QRadioButton(self.scrollAreaWidgetContents)
-        self.radioApiGroup.addButton(self.radioButton_3)
-        self.radioButton_3.setObjectName(u"radioButton_3")
-
-        self.gridLayout_2.addWidget(self.radioButton_3, 4, 0, 1, 1)
-
-        self.label_api_5 = QLabel(self.scrollAreaWidgetContents)
-        self.label_api_5.setObjectName(u"label_api_5")
-
-        self.gridLayout_2.addWidget(self.label_api_5, 6, 1, 1, 1)
-
-        self.label_2 = QLabel(self.scrollAreaWidgetContents)
-        self.label_2.setObjectName(u"label_2")
-        self.label_2.setAlignment(Qt.AlignCenter)
-
-        self.gridLayout_2.addWidget(self.label_2, 1, 0, 1, 1)
-
-        self.radio_img_4 = QRadioButton(self.scrollAreaWidgetContents)
-        self.radioImgGroup.addButton(self.radio_img_4)
-        self.radio_img_4.setObjectName(u"radio_img_4")
-
-        self.gridLayout_2.addWidget(self.radio_img_4, 5, 2, 1, 1)
-
-        self.label_6 = QLabel(self.scrollAreaWidgetContents)
-        self.label_6.setObjectName(u"label_6")
-        self.label_6.setAlignment(Qt.AlignCenter)
-
-        self.gridLayout_2.addWidget(self.label_6, 1, 1, 1, 1)
-
-        self.radioButton_1 = QRadioButton(self.scrollAreaWidgetContents)
-        self.radioApiGroup.addButton(self.radioButton_1)
-        self.radioButton_1.setObjectName(u"radioButton_1")
-        self.radioButton_1.setChecked(True)
-
-        self.gridLayout_2.addWidget(self.radioButton_1, 2, 0, 1, 1)
 
         self.radio_img_1 = QRadioButton(self.scrollAreaWidgetContents)
         self.radioImgGroup.addButton(self.radio_img_1)
@@ -304,16 +240,23 @@ class Ui_LoginProxyWidget(object):
 
         self.gridLayout_2.addWidget(self.radio_img_1, 2, 2, 1, 1)
 
-        self.label_img_2 = QLabel(self.scrollAreaWidgetContents)
-        self.label_img_2.setObjectName(u"label_img_2")
+        self.label_api_2 = QLabel(self.scrollAreaWidgetContents)
+        self.label_api_2.setObjectName(u"label_api_2")
 
-        self.gridLayout_2.addWidget(self.label_img_2, 3, 3, 1, 1)
+        self.gridLayout_2.addWidget(self.label_api_2, 3, 1, 1, 1)
 
-        self.label_7 = QLabel(self.scrollAreaWidgetContents)
-        self.label_7.setObjectName(u"label_7")
-        self.label_7.setAlignment(Qt.AlignCenter)
+        self.label_2 = QLabel(self.scrollAreaWidgetContents)
+        self.label_2.setObjectName(u"label_2")
+        self.label_2.setAlignment(Qt.AlignCenter)
 
-        self.gridLayout_2.addWidget(self.label_7, 1, 2, 1, 1)
+        self.gridLayout_2.addWidget(self.label_2, 1, 0, 1, 1)
+
+        self.radioButton_1 = QRadioButton(self.scrollAreaWidgetContents)
+        self.radioApiGroup.addButton(self.radioButton_1)
+        self.radioButton_1.setObjectName(u"radioButton_1")
+        self.radioButton_1.setChecked(True)
+
+        self.gridLayout_2.addWidget(self.radioButton_1, 2, 0, 1, 1)
 
         self.label_4 = QLabel(self.scrollAreaWidgetContents)
         self.label_4.setObjectName(u"label_4")
@@ -321,21 +264,105 @@ class Ui_LoginProxyWidget(object):
 
         self.gridLayout_2.addWidget(self.label_4, 1, 3, 1, 1)
 
-        self.label_img_1 = QLabel(self.scrollAreaWidgetContents)
-        self.label_img_1.setObjectName(u"label_img_1")
+        self.label_img_2 = QLabel(self.scrollAreaWidgetContents)
+        self.label_img_2.setObjectName(u"label_img_2")
 
-        self.gridLayout_2.addWidget(self.label_img_1, 2, 3, 1, 1)
+        self.gridLayout_2.addWidget(self.label_img_2, 3, 3, 1, 1)
 
-        self.label_api_4 = QLabel(self.scrollAreaWidgetContents)
-        self.label_api_4.setObjectName(u"label_api_4")
+        self.label_6 = QLabel(self.scrollAreaWidgetContents)
+        self.label_6.setObjectName(u"label_6")
+        self.label_6.setAlignment(Qt.AlignCenter)
 
-        self.gridLayout_2.addWidget(self.label_api_4, 5, 1, 1, 1)
+        self.gridLayout_2.addWidget(self.label_6, 1, 1, 1, 1)
+
+        self.radio_img_4 = QRadioButton(self.scrollAreaWidgetContents)
+        self.radioImgGroup.addButton(self.radio_img_4)
+        self.radio_img_4.setObjectName(u"radio_img_4")
+
+        self.gridLayout_2.addWidget(self.radio_img_4, 5, 2, 1, 1)
+
+        self.radioButton_3 = QRadioButton(self.scrollAreaWidgetContents)
+        self.radioApiGroup.addButton(self.radioButton_3)
+        self.radioButton_3.setObjectName(u"radioButton_3")
+
+        self.gridLayout_2.addWidget(self.radioButton_3, 4, 0, 1, 1)
+
+        self.label_7 = QLabel(self.scrollAreaWidgetContents)
+        self.label_7.setObjectName(u"label_7")
+        self.label_7.setAlignment(Qt.AlignCenter)
+
+        self.gridLayout_2.addWidget(self.label_7, 1, 2, 1, 1)
+
+        self.label_api_5 = QLabel(self.scrollAreaWidgetContents)
+        self.label_api_5.setObjectName(u"label_api_5")
+
+        self.gridLayout_2.addWidget(self.label_api_5, 7, 1, 1, 1)
+
+        self.label_img_4 = QLabel(self.scrollAreaWidgetContents)
+        self.label_img_4.setObjectName(u"label_img_4")
+
+        self.gridLayout_2.addWidget(self.label_img_4, 5, 3, 1, 1)
+
+        self.radioButton_5 = QRadioButton(self.scrollAreaWidgetContents)
+        self.radioApiGroup.addButton(self.radioButton_5)
+        self.radioButton_5.setObjectName(u"radioButton_5")
+
+        self.gridLayout_2.addWidget(self.radioButton_5, 7, 0, 1, 1)
 
         self.radioButton_2 = QRadioButton(self.scrollAreaWidgetContents)
         self.radioApiGroup.addButton(self.radioButton_2)
         self.radioButton_2.setObjectName(u"radioButton_2")
 
         self.gridLayout_2.addWidget(self.radioButton_2, 3, 0, 1, 1)
+
+        self.radio_img_2 = QRadioButton(self.scrollAreaWidgetContents)
+        self.radioImgGroup.addButton(self.radio_img_2)
+        self.radio_img_2.setObjectName(u"radio_img_2")
+
+        self.gridLayout_2.addWidget(self.radio_img_2, 3, 2, 1, 1)
+
+        self.radio_img_5 = QRadioButton(self.scrollAreaWidgetContents)
+        self.radioImgGroup.addButton(self.radio_img_5)
+        self.radio_img_5.setObjectName(u"radio_img_5")
+
+        self.gridLayout_2.addWidget(self.radio_img_5, 7, 2, 1, 1)
+
+        self.label_img_5 = QLabel(self.scrollAreaWidgetContents)
+        self.label_img_5.setObjectName(u"label_img_5")
+
+        self.gridLayout_2.addWidget(self.label_img_5, 7, 3, 1, 1)
+
+        self.label_img_3 = QLabel(self.scrollAreaWidgetContents)
+        self.label_img_3.setObjectName(u"label_img_3")
+
+        self.gridLayout_2.addWidget(self.label_img_3, 4, 3, 1, 1)
+
+        self.label_img_1 = QLabel(self.scrollAreaWidgetContents)
+        self.label_img_1.setObjectName(u"label_img_1")
+
+        self.gridLayout_2.addWidget(self.label_img_1, 2, 3, 1, 1)
+
+        self.radioButton_6 = QRadioButton(self.scrollAreaWidgetContents)
+        self.radioApiGroup.addButton(self.radioButton_6)
+        self.radioButton_6.setObjectName(u"radioButton_6")
+
+        self.gridLayout_2.addWidget(self.radioButton_6, 6, 0, 1, 1)
+
+        self.radio_img_6 = QRadioButton(self.scrollAreaWidgetContents)
+        self.radioImgGroup.addButton(self.radio_img_6)
+        self.radio_img_6.setObjectName(u"radio_img_6")
+
+        self.gridLayout_2.addWidget(self.radio_img_6, 6, 2, 1, 1)
+
+        self.label_api_6 = QLabel(self.scrollAreaWidgetContents)
+        self.label_api_6.setObjectName(u"label_api_6")
+
+        self.gridLayout_2.addWidget(self.label_api_6, 6, 1, 1, 1)
+
+        self.label_img_6 = QLabel(self.scrollAreaWidgetContents)
+        self.label_img_6.setObjectName(u"label_img_6")
+
+        self.gridLayout_2.addWidget(self.label_img_6, 6, 3, 1, 1)
 
 
         self.verticalLayout.addLayout(self.gridLayout_2)
@@ -413,41 +440,46 @@ class Ui_LoginProxyWidget(object):
         self.sockEdit.setPlaceholderText("")
         self.proxy_3.setText(QCoreApplication.translate("LoginProxyWidget", u"\u4f7f\u7528\u7cfb\u7edf\u4ee3\u7406", None))
         self.checkLabel.setText(QCoreApplication.translate("LoginProxyWidget", u"\u672a\u68c0\u6d4b\u5230\u7cfb\u7edf\u4ee3\u7406", None))
+        self.proxyLabel.setText("")
         self.httpsBox.setText(QCoreApplication.translate("LoginProxyWidget", u"\u542f\u7528Https\uff08\u5982\u679c\u51fa\u73b0\u8fde\u63a5\u88ab\u91cd\u7f6e\uff0c\u5efa\u8bae\u5173\u95ed\u8bd5\u8bd5\uff09", None))
         self.loginProxy.setText(QCoreApplication.translate("LoginProxyWidget", u"\u4f7f\u7528\u6ce8\u518c\u5206\u6d41\uff08\u65e0\u6cd5\u6ce8\u518c\u53ef\u5c1d\u8bd5\u5f00\u542f\uff09", None))
         self.label_9.setText(QCoreApplication.translate("LoginProxyWidget", u"UA\u8bbe\u7f6e:", None))
         self.uaRandom.setText(QCoreApplication.translate("LoginProxyWidget", u"\u968f\u673a\u751f\u6210", None))
         self.testSpeedButton.setText(QCoreApplication.translate("LoginProxyWidget", u"\u6d4b\u901f", None))
+        self.label_api_3.setText("")
+        self.radio_img_3.setText(QCoreApplication.translate("LoginProxyWidget", u"\u5206\u6d413", None))
+        self.label_api_4.setText("")
 #if QT_CONFIG(tooltip)
         self.radioButton_4.setToolTip(QCoreApplication.translate("LoginProxyWidget", u"\u6240\u4ee5\u5206\u6d41\u4e0d\u53ef\u4f7f\u7528\u65f6\uff0c\u81ea\u52a8\u89e3\u9501", None))
 #endif // QT_CONFIG(tooltip)
         self.radioButton_4.setText(QCoreApplication.translate("LoginProxyWidget", u"\u5206\u6d414", None))
-        self.radio_img_5.setText(QCoreApplication.translate("LoginProxyWidget", u"CDN\u5206\u6d41", None))
-        self.label_img_3.setText("")
         self.label_api_1.setText("")
-        self.radioButton_5.setText(QCoreApplication.translate("LoginProxyWidget", u"CDN\u5206\u6d41", None))
-        self.radio_img_2.setText(QCoreApplication.translate("LoginProxyWidget", u"\u5206\u6d412", None))
-        self.label_api_3.setText("")
-        self.radio_img_3.setText(QCoreApplication.translate("LoginProxyWidget", u"\u5206\u6d413", None))
-        self.label_img_5.setText("")
+        self.radio_img_1.setText(QCoreApplication.translate("LoginProxyWidget", u"\u5206\u6d411", None))
         self.label_api_2.setText("")
-        self.label_img_4.setText("")
-        self.radioButton_3.setText(QCoreApplication.translate("LoginProxyWidget", u"\u5206\u6d413", None))
-        self.label_api_5.setText("")
         self.label_2.setText(QCoreApplication.translate("LoginProxyWidget", u"Api\u5206\u6d41", None))
+        self.radioButton_1.setText(QCoreApplication.translate("LoginProxyWidget", u"\u5206\u6d411", None))
+        self.label_4.setText(QCoreApplication.translate("LoginProxyWidget", u"\u901f\u5ea6", None))
+        self.label_img_2.setText("")
+        self.label_6.setText(QCoreApplication.translate("LoginProxyWidget", u"\u5ef6\u8fdf", None))
 #if QT_CONFIG(tooltip)
         self.radio_img_4.setToolTip(QCoreApplication.translate("LoginProxyWidget", u"\u6240\u4ee5\u5206\u6d41\u4e0d\u53ef\u4f7f\u7528\u65f6\uff0c\u81ea\u52a8\u89e3\u9501", None))
 #endif // QT_CONFIG(tooltip)
         self.radio_img_4.setText(QCoreApplication.translate("LoginProxyWidget", u"\u5206\u6d414", None))
-        self.label_6.setText(QCoreApplication.translate("LoginProxyWidget", u"\u5ef6\u8fdf", None))
-        self.radioButton_1.setText(QCoreApplication.translate("LoginProxyWidget", u"\u5206\u6d411", None))
-        self.radio_img_1.setText(QCoreApplication.translate("LoginProxyWidget", u"\u5206\u6d411", None))
-        self.label_img_2.setText("")
+        self.radioButton_3.setText(QCoreApplication.translate("LoginProxyWidget", u"\u5206\u6d413", None))
         self.label_7.setText(QCoreApplication.translate("LoginProxyWidget", u"\u56fe\u7247\u5206\u6d41", None))
-        self.label_4.setText(QCoreApplication.translate("LoginProxyWidget", u"\u901f\u5ea6", None))
-        self.label_img_1.setText("")
-        self.label_api_4.setText("")
+        self.label_api_5.setText("")
+        self.label_img_4.setText("")
+        self.radioButton_5.setText(QCoreApplication.translate("LoginProxyWidget", u"CDN\u5206\u6d41", None))
         self.radioButton_2.setText(QCoreApplication.translate("LoginProxyWidget", u"\u5206\u6d412", None))
+        self.radio_img_2.setText(QCoreApplication.translate("LoginProxyWidget", u"\u5206\u6d412", None))
+        self.radio_img_5.setText(QCoreApplication.translate("LoginProxyWidget", u"CDN\u5206\u6d41", None))
+        self.label_img_5.setText("")
+        self.label_img_3.setText("")
+        self.label_img_1.setText("")
+        self.radioButton_6.setText(QCoreApplication.translate("LoginProxyWidget", u"US\u53cd\u4ee3\u5206\u6d41", None))
+        self.radio_img_6.setText(QCoreApplication.translate("LoginProxyWidget", u"US\u53cd\u4ee3\u5206\u6d41", None))
+        self.label_api_6.setText("")
+        self.label_img_6.setText("")
         self.label_11.setText(QCoreApplication.translate("LoginProxyWidget", u" CDN\u5730\u5740:", None))
         self.label_8.setText(QCoreApplication.translate("LoginProxyWidget", u"CDN\u5730\u5740:", None))
         self.label_3.setText(QCoreApplication.translate("LoginProxyWidget", u"CDN\u8bbe\u7f6e\u8bf7\u770b\u8bf4\u660e\u83b7\u53d6", None))

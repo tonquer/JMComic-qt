@@ -1,11 +1,12 @@
 import os
 import shutil
 import time
+from functools import partial
 
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt, QTimer, QUrl
 from PySide6.QtGui import QCursor, QDesktopServices, QAction
-from PySide6.QtWidgets import QHeaderView, QAbstractItemView, QMenu, QTableWidgetItem
+from PySide6.QtWidgets import QHeaderView, QAbstractItemView, QMenu, QTableWidgetItem, QMessageBox
 
 from config import config
 from config.setting import Setting
@@ -168,7 +169,7 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
     def SwitchCurrent(self, **kwargs):
         pass
 
-    def AddDownload(self, bookId, downloadIds):
+    def AddDownload(self, bookId, downloadIds, isWaifu2x=False):
         if not downloadIds:
             return
 
@@ -176,7 +177,6 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
             task = DownloadItem()
             task.bookId = bookId
             self.downloadDict[task.bookId] = task
-            downloadIds.sort()
             for epsId in downloadIds:
                 if epsId in task.epsIds:
                     continue
@@ -186,7 +186,7 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
             task.tableRow = rowCont
             self.tableWidget.insertRow(rowCont)
             self.SetNewStatus(task, task.Waiting)
-            if Setting.DownloadAuto.value:
+            if Setting.DownloadAuto.value or isWaifu2x:
                 self.SetNewCovertStatus(task, task.Waiting)
         else:
             task = self.downloadDict.get(bookId)
@@ -199,7 +199,7 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
             if task.status == task.Success:
                 self.SetNewStatus(task, task.Waiting)
             if task.convertStatus == task.ConvertSuccess:
-                if Setting.DownloadAuto.value:
+                if Setting.DownloadAuto.value or isWaifu2x:
                     self.SetNewCovertStatus(task, task.Waiting)
                 else:
                     self.SetNewCovertStatus(task, task.Pause)
@@ -301,6 +301,7 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
                 row = selectRows.pop()
                 col = 0
                 bookId = self.tableWidget.item(row, col).text()
+                title = self.tableWidget.item(row, 2).text()
                 task = self.downloadDict.get(bookId)
                 if not task:
                     return
@@ -319,6 +320,20 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
                     menu.addAction(pauseConvertAction)
                 elif task.convertStatus in [task.Pause, task.Error]:
                     menu.addAction(startConvertAction)
+                if title:
+                    nas = QMenu(Str.GetStr(Str.NetNas))
+                    nasDict = QtOwner().owner.nasView.nasDict
+                    if not nasDict:
+                        action = nas.addAction(Str.GetStr(Str.CvSpace))
+                        action.setEnabled(False)
+                    else:
+                        for k, v in nasDict.items():
+                            action = nas.addAction(v.title)
+                            if QtOwner().nasView.IsInUpload(k, bookId):
+                                action.setEnabled(False)
+                            action.triggered.connect(partial(self.NasUploadHandler, title, k, bookId))
+                    menu.addMenu(nas)
+
             else:
                 menu = QMenu(self.tableWidget)
                 menu.addAction(startAction)
@@ -331,6 +346,10 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
             menu.addAction(removeFileAction)
             menu.exec_(QCursor.pos())
         pass
+
+    def NasUploadHandler(self, title, nasId, bookId):
+        QtOwner().nasView.AddNasUpload2(title, nasId, bookId)
+        return
 
     def ClickOpenFilePath(self):
         selected = self.tableWidget.selectedIndexes()
@@ -474,6 +493,9 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
         self.UpdateTableRow()
 
     def DelRecordingAndFile(self):
+        isClear = QMessageBox.information(self, '删除记录', "是否删除记录和文件", QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
+        if isClear != QtWidgets.QMessageBox.Yes:
+            return
         selected = self.tableWidget.selectedIndexes()
         selectRows = set()
         for index in selected:

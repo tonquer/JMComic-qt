@@ -26,6 +26,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
     def __init__(self):
         super(self.__class__, self).__init__()
         QtTaskBase.__init__(self)
+
         self.bookId = ""
         self.token = ""
         self.epsId = 0
@@ -65,7 +66,6 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         self.isLocal = False
         self._cacheBook = None
         self.lastPath = ""
-        self.InitSetting()
         # QtOwner().owner.WindowsSizeChange.connect(self.qtTool.ClearQImage)
 
     @property
@@ -186,16 +186,6 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         if QtOwner().owner.windowState() == Qt.WindowFullScreen:
             self.qtTool.FullScreen(True)
         QtOwner().CloseReadView()
-        self.SaveSetting()
-
-    def SaveSetting(self):
-        # Setting.ScaleCnt.SetValue(self.frame.scaleCnt)
-        # Setting.UpDownScrollSpeed.SetValue(self.qtTool.upDownScrollSpeed.value())
-        return
-
-    def InitSetting(self):
-        # self.qtTool.upDownScrollSpeed.setValue(Setting.UpDownScrollSpeed.value)
-        pass
 
     def Clear(self):
         Setting.TurnSpeed.SetValue(int(self.qtTool.turnSpeed.value() * 1000))
@@ -581,7 +571,6 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
             return
         isCurIndex = index == self.curIndex
         p = self.pictureData.get(index)
-
         if not p or (not p.data) or (not p.cacheImage):
             self.scrollArea.SetPixIem(index, None)
             if isCurIndex:
@@ -597,6 +586,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
             # self.frame.process.hide()
             if config.CanWaifu2x:
                 self.qtTool.modelBox.setEnabled(True)
+
         assert isinstance(p, QtFileData)
         waifu2x = False
         if not p.isWaifu2x:
@@ -626,6 +616,10 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
             self.qtTool.SetData(pSize=p.qSize, dataLen=p.size, state=p.state, waifuState=p.waifuState)
             self.qtTool.UpdateText(p.model)
 
+        if self.frame.scrollArea.IsAlreadLoad(index, waifu2x):
+            # print("already load, {}".format(index))
+            return
+
         if p.isGif and not ReadMode.isScroll(self.stripModel):
             if p.isWaifu2x and p.waifuData:
                 self.scrollArea.SetGifData(index, p.waifuData, p2, True)
@@ -634,6 +628,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         else:
             pixMap = QPixmap(p2)
             pixMap.setDevicePixelRatio(p2.devicePixelRatio())
+            # print("set index 1, {}".format(index))
             self.scrollArea.SetPixIem(index, pixMap, waifu2x)
         # self.graphicsView.setSceneRect(QRectF(QPointF(0, 0), QPointF(pixMap.width(), pixMap.height())))
         # self.frame.ScalePicture()
@@ -827,6 +822,15 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         if self.isLocal:
             info.waifu2xTaskId = self.AddConvertTask(path, info.data, info.model, self.Waifu2xBack, i, noSaveCache=True)
         else:
+            bookInfo = BookMgr().GetBook(self.bookId)
+            if not info.saveParams and bookInfo:
+                epsInfo = bookInfo.pageInfo.epsInfo.get(self.epsId)
+                pitureName = epsInfo.pictureName.get(i)
+                _, _, _, isAni = ToolUtil.GetPictureSize(info.data)
+                if not isAni:
+                    saveParams = (epsInfo.epsId, epsInfo.scrambleId, pitureName)
+                    info.saveParams = saveParams
+
             info.waifu2xTaskId = self.AddConvertTask(path, info.data, info.model, self.Waifu2xBack, i, saveParams=info.saveParams,
                                                      preDownPath=filePath)
         if i == self.curIndex:

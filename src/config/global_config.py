@@ -21,24 +21,59 @@ class GlobalItem(object):
 
 
 class GlobalConfig:
-    Ver = GlobalItem(0)
+    Ver = GlobalItem(9)
 
     # web url
     WebDnsList = GlobalItem([])
-    Url = GlobalItem("https://18comic-palworld.club")
-    UrlList = GlobalItem(["https://18comic-palworld.club", "https://18comic.vip", "https://jmcomic.me", "https://18comic-palworld.vip"])
+    Url = GlobalItem("https://18-comicblade.art")
+    UrlList = GlobalItem(["https://18-comicblade.art","https://18comic.vip","https://jmcomic.me","https://18-comicstellar.club","https://18comic.tw","https://18-comicstellar.me"])
 
     # mobile url
-    Url2 = GlobalItem("https://www.jmapinode.biz")
-    PicUrl2 = GlobalItem("https://cdn-msp.jmapinodeudzn.net")
-    Url2List = GlobalItem(["https://www.jmapinode.biz", "https://www.jmapinode.vip", "https://www.jmapinode3.top",
-                                "https://www.jmapibranch2.cc"])
+
+    # Url2 = GlobalItem("https://www.jmapinode.biz")
+    # PicUrl2 = GlobalItem("https://cdn-msp.jmapinodeudzn.net")
+    Url2List = GlobalItem(["https://cdn-msp2.jmapinodeudzn.net","https://cn-appdata.jmapiproxy2.cc","https://www.jmapinodeudzn.xyz","https://www.jmapinode.xyz"])
+
+    ProxyApiDomain2 = GlobalItem("jm2-api.ggo.icu")
+    ProxyImgDomain2 = GlobalItem("jm2-img.ggo.icu")
+
     PicUrlList = GlobalItem(
         ["https://cdn-msp.jmapinodeudzn.net", "https://cdn-msp2.jmapinodeudzn.net", "https://cdn-msp.jmapiproxy3.cc",
          "https://cdn-msp.jmapiproxy4.cc"])
 
+    CdnApiUrl = GlobalItem("https://www.jmapinodeudzn.xyz")
+    CdnImgUrl = GlobalItem("https://cdn-msp.jmapiproxy3.cc")
+    ProxyApiUrl = GlobalItem("https://www.jmapinodeudzn.xyz")
+    ProxyImgUrl = GlobalItem("https://cdn-msp.jmapiproxy3.cc")
+    HeaderVer = GlobalItem("1.6.8")
+
     def __init__(self):
         pass
+
+    @staticmethod
+    def GetApiUrl():
+        return GlobalConfig.GetApiUrl2(Setting.ProxySelectIndex.value)
+
+    @staticmethod
+    def GetApiUrl2(index):
+        if index == 5:
+            return GlobalConfig.CdnApiUrl.value
+        elif index == 6:
+            return GlobalConfig.ProxyApiUrl.value
+        return GlobalConfig.Url2List.value[index-1]
+
+    @staticmethod
+    def GetImgUrl():
+        return GlobalConfig.GetImgUrl2(Setting.ProxyImgSelectIndex.value)
+
+    @staticmethod
+    def GetImgUrl2(index):
+        if index == 5:
+            return GlobalConfig.CdnImgUrl.value
+        elif index == 6:
+            return GlobalConfig.ProxyImgUrl.value
+        return GlobalConfig.PicUrlList.value[index-1]
+
 
     @staticmethod
     def LoadSetting():

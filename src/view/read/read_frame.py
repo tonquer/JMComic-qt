@@ -6,7 +6,6 @@ from PySide6.QtWidgets import QFrame, QLabel
 
 from component.label.gif_label import GifLabel
 from component.progress_bar.dwater_progress_bar import DWaterProgress
-from config.setting import Setting
 from tools.str import Str
 from view.read.read_enum import ReadMode
 from view.read.read_graphics import ReadGraphicsView
@@ -25,9 +24,7 @@ class ReadFrame(QFrame):
         self.helpLabel = QLabel(self)
         self.helpPixMap = QPixmap()
         self.helpLabel.installEventFilter(self)
-        # self.scaleCnt = Setting.ScaleCnt.value
         self.scaleCnt = 0
-
         self.startPos = QPoint()
         self.endPos = QPoint()
         self.process = DWaterProgress(self)
@@ -53,6 +50,7 @@ class ReadFrame(QFrame):
         self.downloadMaxSize = 1
         self.oldValue = 0
         self.baseValue = 0
+
 
 
     @property

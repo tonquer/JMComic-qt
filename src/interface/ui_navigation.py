@@ -15,11 +15,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QButtonGroup, QFrame, QHBoxLayout,
-    QLabel, QPushButton, QSizePolicy, QSpacerItem,
-    QToolButton, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QButtonGroup, QCommandLinkButton, QFrame,
+    QHBoxLayout, QLabel, QPushButton, QSizePolicy,
+    QSpacerItem, QToolButton, QVBoxLayout, QWidget)
 
-from component.button.switch_button import SwitchButton
 from component.label.head_label import HeadLabel
 from component.scroll_area.smooth_scroll_area import SmoothScrollArea
 import images_rc
@@ -28,7 +27,7 @@ class Ui_Navigation(object):
     def setupUi(self, Navigation):
         if not Navigation.objectName():
             Navigation.setObjectName(u"Navigation")
-        Navigation.resize(290, 578)
+        Navigation.resize(290, 644)
         Navigation.setStyleSheet(u"")
         self.verticalLayout_2 = QVBoxLayout(Navigation)
         self.verticalLayout_2.setSpacing(6)
@@ -129,7 +128,7 @@ class Ui_Navigation(object):
 
         self.horizontalLayout_6.addWidget(self.label_4)
 
-        self.proxyName = QLabel(self.widget)
+        self.proxyName = QCommandLinkButton(self.widget)
         self.proxyName.setObjectName(u"proxyName")
 
         self.horizontalLayout_6.addWidget(self.proxyName)
@@ -144,28 +143,13 @@ class Ui_Navigation(object):
 
         self.horizontalLayout_7.addWidget(self.label_7)
 
-        self.proxyImgName = QLabel(self.widget)
+        self.proxyImgName = QCommandLinkButton(self.widget)
         self.proxyImgName.setObjectName(u"proxyImgName")
 
         self.horizontalLayout_7.addWidget(self.proxyImgName)
 
 
         self.verticalLayout.addLayout(self.horizontalLayout_7)
-
-        self.horizontalLayout_4 = QHBoxLayout()
-        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
-        self.label_5 = QLabel(self.widget)
-        self.label_5.setObjectName(u"label_5")
-
-        self.horizontalLayout_4.addWidget(self.label_5)
-
-        self.offlineButton = SwitchButton(self.widget)
-        self.offlineButton.setObjectName(u"offlineButton")
-
-        self.horizontalLayout_4.addWidget(self.offlineButton)
-
-
-        self.verticalLayout.addLayout(self.horizontalLayout_4)
 
         self.line_4 = QFrame(self.widget)
         self.line_4.setObjectName(u"line_4")
@@ -179,7 +163,7 @@ class Ui_Navigation(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 253, 654))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 253, 746))
         self.verticalLayout_3 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_3.setSpacing(6)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
@@ -385,6 +369,20 @@ class Ui_Navigation(object):
 
         self.verticalLayout_3.addWidget(self.downloadButton)
 
+        self.nasButton = QToolButton(self.scrollAreaWidgetContents)
+        self.buttonGroup.addButton(self.nasButton)
+        self.nasButton.setObjectName(u"nasButton")
+        sizePolicy1.setHeightForWidth(self.nasButton.sizePolicy().hasHeightForWidth())
+        self.nasButton.setSizePolicy(sizePolicy1)
+        self.nasButton.setMinimumSize(QSize(150, 40))
+        self.nasButton.setFocusPolicy(Qt.NoFocus)
+        self.nasButton.setIcon(icon)
+        self.nasButton.setIconSize(QSize(32, 32))
+        self.nasButton.setCheckable(True)
+        self.nasButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+
+        self.verticalLayout_3.addWidget(self.nasButton)
+
         self.localReadButton = QToolButton(self.scrollAreaWidgetContents)
         self.buttonGroup.addButton(self.localReadButton)
         self.localReadButton.setObjectName(u"localReadButton")
@@ -484,7 +482,6 @@ class Ui_Navigation(object):
         self.proxyName.setText("")
         self.label_7.setText(QCoreApplication.translate("Navigation", u"\u56fe\u7247\u5206\u6d41\uff1a", None))
         self.proxyImgName.setText("")
-        self.label_5.setText(QCoreApplication.translate("Navigation", u"\u79bb\u7ebf\u6a21\u5f0f\uff1a", None))
         self.label.setText(QCoreApplication.translate("Navigation", u"\u7528\u6237", None))
         self.collectButton.setText(QCoreApplication.translate("Navigation", u"\u6211\u7684\u6536\u85cf", None))
         self.localCollectButton.setText(QCoreApplication.translate("Navigation", u"\u672c\u5730\u6536\u85cf", None))
@@ -499,6 +496,7 @@ class Ui_Navigation(object):
         self.commentButton.setText(QCoreApplication.translate("Navigation", u"\u8bc4\u8bba", None))
         self.label_3.setText(QCoreApplication.translate("Navigation", u"\u5176\u4ed6", None))
         self.downloadButton.setText(QCoreApplication.translate("Navigation", u"\u4e0b\u8f7d", None))
+        self.nasButton.setText(QCoreApplication.translate("Navigation", u"\u7f51\u7edc\u5b58\u50a8", None))
         self.localReadButton.setText(QCoreApplication.translate("Navigation", u"\u672c\u5730\u6f2b\u753b", None))
         self.waifu2xButton.setText(QCoreApplication.translate("Navigation", u"Waifu2x", None))
         self.helpButton.setText(QCoreApplication.translate("Navigation", u"\u5e2e\u52a9", None))

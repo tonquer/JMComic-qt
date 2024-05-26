@@ -105,6 +105,7 @@
          <item>
           <widget class="AnimationStackWidget" name="subStackWidget">
            <widget class="IndexView" name="indexView"/>
+           <widget class="NasView" name="nasView"/>
            <widget class="WeekView" name="weekView"/>
            <widget class="LocalReadAllView" name="localReadAllView"/>
            <widget class="LocalReadEpsView" name="localReadEpsView"/>
@@ -287,6 +288,12 @@
    <class>WeekView</class>
    <extends>QWidget</extends>
    <header location="global">view.index.week_view.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>NasView</class>
+   <extends>QWidget</extends>
+   <header>view.nas.nas_view.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
