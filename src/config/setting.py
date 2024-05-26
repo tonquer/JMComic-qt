@@ -105,6 +105,7 @@ class Setting:
     IsOpenDohPicture = SettingValue("ProxySetting", 0, False)
     DohAddress = SettingValue("ProxySetting", "https://doh.pub/dns-query", True)
     ApiVersion = SettingValue("ProxySetting", 0, False)
+    LastProxyResult = SettingValue("ProxySetting", {}, False)
 
     ProxyImgSelectIndex = SettingValue("ProxySetting", 1, False)
     PreferCDNIPImg = SettingValue("ProxySetting", "104.18.227.172", False)

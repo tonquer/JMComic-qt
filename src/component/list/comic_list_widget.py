@@ -117,9 +117,9 @@ class ComicListWidget(BaseListWidget):
         widget.picNum = v.picCnt
         widget.url = v.file
         if len(v.eps) > 0:
-            title += "<font color=#d5577c>{}</font>".format("(" + str(len(v.eps)) + "E)")
+            fontColor = "<font color=#d5577c>{}</font>".format("(" + str(len(v.eps)) + "E)")
         else:
-            title += "<font color=#d5577c>{}</font>".format("(" + str(v.picCnt) + "P)")
+            fontColor = "<font color=#d5577c>{}</font>".format("(" + str(v.picCnt) + "P)")
         if v.lastReadTime:
             categories = "{} {}".format(ToolUtil.GetUpdateStrByTick(v.lastReadTime), Str.GetStr(Str.Looked))
 
@@ -133,7 +133,7 @@ class ComicListWidget(BaseListWidget):
             widget.categoryLabel.setText(category)
             widget.categoryLabel.setVisible(True)
 
-        widget.SetTitle(title)
+        widget.SetTitle(title, fontColor)
         item = QListWidgetItem(self)
         item.setFlags(item.flags() & ~Qt.ItemIsSelectable)
         item.setSizeHint(widget.sizeHint())
@@ -160,7 +160,7 @@ class ComicListWidget(BaseListWidget):
         widget.url = url
         widget.index = index
         widget.categoryLabel.setText(categoryStr)
-        widget.SetTitle(title)
+        widget.SetTitle(title, "")
         widget.path = ToolUtil.GetRealPath(_id, "cover")
         widget.starButton.setVisible(False)
         widget.timeLabel.setVisible(False)

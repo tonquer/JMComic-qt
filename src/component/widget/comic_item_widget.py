@@ -68,7 +68,7 @@ class ComicItemWidget(QWidget, Ui_ComicItem):
         self.isWaifu2xLoading = False
         self.isLoadPicture = False
 
-    def SetTitle(self, title):
+    def SetTitle(self, title, fontColor):
         self.title = title
         if Setting.NotCategoryShow.value:
            self.categoryLabel.setVisible(False)
@@ -77,11 +77,11 @@ class ComicItemWidget(QWidget, Ui_ComicItem):
             self.nameLable.setVisible(False)
         elif Setting.TitleLine.value == 1:
             self.nameLable.setWordWrap(False)
-            self.nameLable.setText(title)
+            self.nameLable.setText(title + fontColor)
         elif Setting.TitleLine.value > 3:
-            self.nameLable.setText(title)
+            self.nameLable.setText(title+fontColor)
         else:
-            title2 = self.ElidedLineText()
+            title2 = self.ElidedLineText(fontColor)
             self.nameLable.setText(title2)
 
     def ElidedLineText(self, fontColor):

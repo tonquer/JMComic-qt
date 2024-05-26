@@ -57,6 +57,8 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         self.maxNum = 7
         self.loginProxy.hide()
         self.uaRandom.clicked.connect(self.RandomUa)
+        self.lastResult = {}
+        self.LoadHistory()
 
     def Init(self):
         self.LoadSetting()
@@ -66,6 +68,19 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
             self.checkLabel.setVisible(False)
         else:
             self.checkLabel.setVisible(True)
+
+    def LoadHistory(self):
+        if not Setting.LastProxyResult.value:
+            return
+        try:
+            for k, v in Setting.LastProxyResult.value.items():
+                if hasattr(self, k):
+                    getattr(self, k).setText(str(v))
+        except Exception as es:
+            Log.Error(es)
+
+    def SaveHistory(self):
+        Setting.LastProxyResult.SetValue(dict(self.lastResult))
 
     def ClickButton(self):
         self.SaveSetting()
@@ -246,6 +261,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         i, backNum = v
         data = raw["data"]
         st = raw["st"]
+        objectName = "label_api_" + str(i)
         label = getattr(self, "label_api_" + str(i))
         if float(data) > 0.0:
             self.pingBackNumDict[i][backNum] = int(float(data))
@@ -266,11 +282,14 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
                 else:
                     sumSt = data
             if sumCnt >= 1:
-                label.setText("<font color=#7fb80e>{}</font>".format(str(int(float(sumData / sumCnt))) + "ms"))
+                text = "<font color=#7fb80e>{}</font>".format(str(int(float(sumData / sumCnt))) + "ms")
+                label.setText(text)
             else:
-                label.setText("<font color=#d71345>{}</font>".format(Str.GetStr(int(sumSt))))
+                text = "<font color=#d71345>{}</font>".format(Str.GetStr(int(sumSt)))
+                label.setText(text)
 
             self.speedPingNum += 1
+            self.lastResult[objectName] = text
             self.StartSpeedPing()
             return
 
@@ -278,6 +297,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         if len(self.speedTest) <= self.speedIndex:
             self.UpdateServer()
             self.SetEnabled(True)
+            self.SaveHistory()
             return
 
         address, imgUrl, isHttpProxy, isProxyUrl, dnslist, i = self.speedTest[self.speedIndex]
@@ -324,9 +344,11 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
             data = "<font color=#d71345>{}</font>".format(Str.GetStr(st))
         else:
             data = "<font color=#7fb80e>{}</font>".format(data)
+        objectName = "label_img_" + str(i)
         label = getattr(self, "label_img_" + str(i))
         label.setText(data)
         self.speedIndex += 1
+        self.lastResult[objectName] = data
         self.StartSpeedTest()
         return
 
