@@ -107,7 +107,15 @@ class NasView(QtWidgets.QWidget, Ui_Nas, NasStatus):
 
         self.LoadNasInfo()
         self.tabWidget.setCurrentIndex(0)
+        self.CheckSuc()
         pass
+
+    def CheckSuc(self):
+        for task in self.downloadDict.values():
+            if task.status != task.Success:
+                continue
+            if task.completeNum < task.maxDownloadPic:
+                self.SetNewStatus(task, task.Waiting)
 
     def LoadData(self):
         for task in self.downloadDict.values():
@@ -307,7 +315,7 @@ class NasView(QtWidgets.QWidget, Ui_Nas, NasStatus):
             task = self.downloadDict.get(key)
             if not task:
                 continue
-            if task.status not in [task.Pause, task.Error]:
+            if task.status not in [task.Success, task.Pause, task.Error]:
                 continue
             self.SetNewStatus(task, task.Waiting)
 

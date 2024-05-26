@@ -95,6 +95,7 @@ class TaskUpload(TaskBase, QtTaskBase):
         if not task:
             return
         assert isinstance(task, QtUpTask)
+        Log.Info("task_id:{}, type_id:{}".format(taskId, task.type))
         type = task.type
         if type == task.Check:
             st = self.CheckLink(task)
@@ -161,19 +162,23 @@ class TaskUpload(TaskBase, QtTaskBase):
 
     @classmethod
     def MakeZipFile(cls, srcDirPath, fileName):
-        if not os.path.isdir(srcDirPath):
-            return Str.FileError
-        cacheZipPath = os.path.dirname(fileName)
-        if not os.path.isdir(cacheZipPath):
-            os.mkdir(cacheZipPath)
-        zipFileName = fileName
-        zip_file = zipfile.ZipFile(zipFileName, "w")
-        for item in os.scandir(srcDirPath):
-            if item.is_dir():
-                pass
-            elif item.is_file():
-                arcname = os.path.basename(item.path)
-                zip_file.write(item.path, arcname=arcname, compress_type=zipfile.ZIP_DEFLATED)
+        try:
+            if not os.path.isdir(srcDirPath):
+                return Str.FileError
+            cacheZipPath = os.path.dirname(fileName)
+            if not os.path.isdir(cacheZipPath):
+                os.makedirs(cacheZipPath)
+            zipFileName = fileName
+            zip_file = zipfile.ZipFile(zipFileName, "w")
+            for item in os.scandir(srcDirPath):
+                if item.is_dir():
+                    pass
+                elif item.is_file():
+                    arcname = os.path.basename(item.path)
+                    zip_file.write(item.path, arcname=arcname, compress_type=zipfile.ZIP_DEFLATED)
 
-        zip_file.close()
+            zip_file.close()
+        except Exception as es:
+            Log.Error(es)
+            return Str.CvZipError
         return Str.Ok

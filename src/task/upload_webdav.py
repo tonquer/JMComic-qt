@@ -98,6 +98,7 @@ class WebdavClient(UpLoadBase):
             self.CheckAndCreateDir(remotePath)
             fileName = os.path.basename(localPath)
             self.client.upload(remotePath + "/" + fileName, localPath)
+            os.remove(localPath)
         except Exception as es:
             Log.Error(es)
             return self.GetExceptionSt(es)

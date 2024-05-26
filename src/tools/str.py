@@ -90,6 +90,7 @@ class Str:
     CvLink = 5008             # 连接中
     CvNotNet = 5009           # 没有网络存储
     CvSpace = 5010            # 空
+    CvZipError = 5010         # 打包出错了
 
     CvAuthError = 5101        # 验证失败
     CvFileNotFound = 5102     # 本地文件未找到
@@ -342,6 +343,7 @@ class Str:
         cls.strDict[cls.CvLink] = QCoreApplication.translate("cls.obj",  "连接中", None)
         cls.strDict[cls.CvNotNet] = QCoreApplication.translate("cls.obj",  "没有网络存储", None)
         cls.strDict[cls.CvSpace] = QCoreApplication.translate("cls.obj",  "空", None)
+        cls.strDict[cls.CvZipError] = QCoreApplication.translate("cls.obj",  "打包出错了", None)
         cls.strDict[cls.CvAuthError] = QCoreApplication.translate("cls.obj",  "验证失败", None)
         cls.strDict[cls.CvFileNotFound] = QCoreApplication.translate("cls.obj",  "本地文件未找到", None)
         cls.strDict[cls.CvNotSpace] = QCoreApplication.translate("cls.obj",  "空间不足", None)

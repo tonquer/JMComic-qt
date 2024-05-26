@@ -83,6 +83,7 @@ class SmbClient(UpLoadBase):
             fileName = os.path.basename(localPath)
             with open(localPath, "rb") as local_file:
                 self.client.storeFile(self.service_name, remotePath + "/" + fileName, local_file)
+            os.remove(localPath)
         except Exception as es:
             Log.Error(es)
             return self.GetExceptionSt(es)

@@ -52,7 +52,7 @@ class NasUploadItem(QtTaskBase):
             return  0
         downloadInfo = QtOwner().downloadView.downloadDict.get(self.bookId)
         if not downloadInfo:
-            max(1, len(self.epsIds))
+            return max(1, len(self.epsIds))
         return len(set(downloadInfo.epsIds) | set(self.epsIds))
 
     @property
@@ -67,7 +67,7 @@ class NasUploadItem(QtTaskBase):
     def GetStatusMsg(self):
         if self.statusMsg:
             return Str.GetStr(self.statusMsg)
-        return Str.GetStr(self.status)
+        return ""
 
     def UploadInit(self):
         downloadInfo = QtOwner().downloadView.downloadDict.get(self.bookId)
@@ -121,6 +121,7 @@ class NasUploadItem(QtTaskBase):
             st, epsId = self.GetNextEps()
             if st != Str.Ok:
                 return st, params
+            self.type = 1
             self.curPreUpIndex = epsId
 
         if self.curPreUpIndex not in downloadInfo.epsInfo:
