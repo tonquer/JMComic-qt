@@ -544,9 +544,9 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
                 action = toolMenu.addAction(v.title)
                 if QtOwner().nasView.IsInUpload(k, self.bookId):
                     action.setEnabled(False)
-                action.triggered.connect(partial(self.NasUploadHandler, title, k, self.bookId))
+                action.triggered.connect(partial(self.NasUploadHandler, k, self.bookId))
         toolMenu.exec(QCursor().pos())
 
-    def NasUploadHandler(self, title, nasId, bookId):
-        QtOwner().nasView.AddNasUpload(title, nasId, bookId)
+    def NasUploadHandler(self, nasId, bookId):
+        QtOwner().nasView.AddNasUpload(nasId, bookId)
         return
