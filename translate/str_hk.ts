@@ -26,7 +26,7 @@
     <message>
         <location filename="../src/tools/str.py" line="270"/>
         <source>网络错误</source>
-        <translation type="unfinished"></translation>
+        <translation>網絡錯誤</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="271"/>
@@ -106,58 +106,58 @@
     <message>
         <location filename="../src/tools/str.py" line="286"/>
         <source>连接超时</source>
-        <translation type="unfinished"></translation>
+        <translation>連接超時</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="287"/>
         <source>无法连接</source>
-        <translation type="unfinished"></translation>
+        <translation>無法連接</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="288"/>
         <source>证书错误</source>
-        <translation type="unfinished"></translation>
+        <translation>證書錯誤</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="289"/>
         <source>连接被重置</source>
-        <translation type="unfinished"></translation>
+        <translation>連接被重置</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="290"/>
         <source>无法连接代理</source>
-        <translation type="unfinished"></translation>
+        <translation>無法連接代理</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="291"/>
         <source>下载失败</source>
-        <translation type="unfinished"></translation>
+        <translation>下載失敗</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="292"/>
         <source>离线模式中</source>
-        <translation type="unfinished"></translation>
+        <translation>離線模式中</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="293"/>
         <source>未下载</source>
-        <translation type="unfinished"></translation>
+        <translation>未下載</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="294"/>
         <source>账号已被注册</source>
-        <translation type="unfinished"></translation>
+        <translation>賬號已被註冊</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="295"/>
         <source>未成年禁止注册</source>
-        <translation type="unfinished"></translation>
+        <translation>未成年禁止註冊</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="297"/>
         <location filename="../src/tools/str.py" line="335"/>
         <source>空白章节</source>
-        <translation type="unfinished"></translation>
+        <translation>空白章節</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="298"/>
@@ -291,137 +291,137 @@
     <message>
         <location filename="../src/tools/str.py" line="326"/>
         <source>动图不自动转换</source>
-        <translation type="unfinished"></translation>
+        <translation>動圖不自動轉換</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="327"/>
         <source>未找到该章节</source>
-        <translation type="unfinished"></translation>
+        <translation>未找到該章節</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="328"/>
         <source>超过索引</source>
-        <translation type="unfinished"></translation>
+        <translation>超過索引</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="329"/>
         <source>未找到该图片</source>
-        <translation type="unfinished"></translation>
+        <translation>未找到該圖片</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="330"/>
         <source>不是ZIP文件</source>
-        <translation type="unfinished"></translation>
+        <translation>不是ZIP文件</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="331"/>
         <source>错误的路径</source>
-        <translation type="unfinished"></translation>
+        <translation>錯誤的路徑</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="332"/>
         <source>没有发现图片文件</source>
-        <translation type="unfinished"></translation>
+        <translation>沒有發現圖片文件</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="333"/>
         <source>文件已加密</source>
-        <translation type="unfinished"></translation>
+        <translation>文件已加密</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="336"/>
         <source>网络存储</source>
-        <translation type="unfinished"></translation>
+        <translation>網絡存儲</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="337"/>
         <source>完成</source>
-        <translation type="unfinished"></translation>
+        <translation>完成</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="338"/>
         <source>等待下载</source>
-        <translation type="unfinished"></translation>
+        <translation>等待下載</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="339"/>
         <source>等待Waifu2x</source>
-        <translation type="unfinished"></translation>
+        <translation>等待Waifu2x</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="340"/>
         <source>正在打包</source>
-        <translation type="unfinished"></translation>
+        <translation>正在打包</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="341"/>
         <source>正在上传</source>
-        <translation type="unfinished"></translation>
+        <translation>正在上傳</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="344"/>
         <source>连接中</source>
-        <translation type="unfinished"></translation>
+        <translation>連接中</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="345"/>
         <source>没有网络存储</source>
-        <translation type="unfinished"></translation>
+        <translation>沒有網絡存儲</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="346"/>
         <source>空</source>
-        <translation type="unfinished"></translation>
+        <translation>空</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="347"/>
         <source>打包出错了</source>
-        <translation type="unfinished"></translation>
+        <translation>打包出錯了</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="348"/>
         <source>验证失败</source>
-        <translation type="unfinished"></translation>
+        <translation>驗證失敗</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="349"/>
         <source>本地文件未找到</source>
-        <translation type="unfinished"></translation>
+        <translation>本地文件未找到</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="350"/>
         <source>空间不足</source>
-        <translation type="unfinished"></translation>
+        <translation>空間不足</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="351"/>
         <source>连接失败</source>
-        <translation type="unfinished"></translation>
+        <translation>連接失敗</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="352"/>
         <source>需重新设置存储</source>
-        <translation type="unfinished"></translation>
+        <translation>需重新設置存儲</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="353"/>
         <source>未找到网络存储</source>
-        <translation type="unfinished"></translation>
+        <translation>未找到網絡存儲</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="354"/>
         <source>不支持该方法</source>
-        <translation type="unfinished"></translation>
+        <translation>不支持該方法</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="355"/>
         <source>创建目录失败</source>
-        <translation type="unfinished"></translation>
+        <translation>創建目錄失敗</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="357"/>
         <source>添加上传成功</source>
-        <translation type="unfinished"></translation>
+        <translation>添加上傳成功</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="358"/>
@@ -1011,12 +1011,12 @@
     <message>
         <location filename="../src/tools/str.py" line="476"/>
         <source>全选</source>
-        <translation type="unfinished"></translation>
+        <translation>全選</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="477"/>
         <source>反选</source>
-        <translation type="unfinished"></translation>
+        <translation>反選</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="478"/>
@@ -1026,127 +1026,127 @@
     <message>
         <location filename="../src/tools/str.py" line="479"/>
         <source>登出</source>
-        <translation type="unfinished"></translation>
+        <translation>登出</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="480"/>
         <source>Sock5设置出错</source>
-        <translation type="unfinished"></translation>
+        <translation>Sock5設置出錯</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="481"/>
         <source>开启自动waifu2x</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟自動waifu2x</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="482"/>
         <source>关闭自动waifu2x</source>
-        <translation type="unfinished"></translation>
+        <translation>關閉自動waifu2x</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="483"/>
         <source>开启本张图waifu2x</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟本張圖waifu2x</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="484"/>
         <source>关闭本张图waifu2x</source>
-        <translation type="unfinished"></translation>
+        <translation>關閉本張圖waifu2x</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="485"/>
         <source>右左双页(滚轮正序)</source>
-        <translation type="unfinished"></translation>
+        <translation>右左雙頁(滾輪正序)</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="486"/>
         <source>复制</source>
-        <translation type="unfinished"></translation>
+        <translation>複製</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="487"/>
         <source>复制图片到剪贴板</source>
-        <translation type="unfinished"></translation>
+        <translation>複製圖片到剪貼板</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="488"/>
         <source>保存文件</source>
-        <translation type="unfinished"></translation>
+        <translation>保存文件</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="489"/>
         <source>主界面</source>
-        <translation type="unfinished"></translation>
+        <translation>主界面</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="490"/>
         <source>最小化</source>
-        <translation type="unfinished"></translation>
+        <translation>最小化</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="491"/>
         <source>批量下载</source>
-        <translation type="unfinished"></translation>
+        <translation>批量下載</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="492"/>
         <source>导入单本目录</source>
-        <translation type="unfinished"></translation>
+        <translation>導入單本目錄</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="493"/>
         <source>导入单本Zip</source>
-        <translation type="unfinished"></translation>
+        <translation>導入單本Zip</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="494"/>
         <source>批量导入单本目录</source>
-        <translation type="unfinished"></translation>
+        <translation>批量導入單本目錄</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="495"/>
         <source>批量导入带章节目录</source>
-        <translation type="unfinished"></translation>
+        <translation>批量導入帶章節目錄</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="496"/>
         <source>支持拖拽文件导入</source>
-        <translation type="unfinished"></translation>
+        <translation>支持拖拽文件導入</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="497"/>
         <source>已存在</source>
-        <translation type="unfinished"></translation>
+        <translation>已存在</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="498"/>
         <source>等宽模式</source>
-        <translation type="unfinished"></translation>
+        <translation>等寬模式</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="499"/>
         <source>保存上次路径</source>
-        <translation type="unfinished"></translation>
+        <translation>保存上次路徑</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="500"/>
         <source>导入多章节目录</source>
-        <translation type="unfinished"></translation>
+        <translation>導入多章節目錄</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="501"/>
         <source>导入到本地漫画中</source>
-        <translation type="unfinished"></translation>
+        <translation>導入到本地漫畫中</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="502"/>
         <source>没有可更新章节</source>
-        <translation type="unfinished"></translation>
+        <translation>沒有可更新章節</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="504"/>
         <source>正在看</source>
-        <translation type="unfinished"></translation>
+        <translation>正在看</translation>
     </message>
 </context>
 </TS>

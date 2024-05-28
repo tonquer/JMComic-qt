@@ -6,7 +6,7 @@
     <message>
         <location filename="../ui/ui_book_eps.ui" line="14"/>
         <source>章节下载</source>
-        <translation>Chapter Download</translation>
+        <translation>Download Chapter</translation>
     </message>
     <message>
         <location filename="../ui/ui_book_eps.ui" line="43"/>
@@ -114,7 +114,7 @@
     <message>
         <location filename="../ui/ui_book_info.ui" line="547"/>
         <source>存储</source>
-        <translation type="unfinished"></translation>
+        <translation>Storage</translation>
     </message>
     <message>
         <location filename="../ui/ui_book_info.ui" line="573"/>
@@ -1184,7 +1184,7 @@
         <location filename="../ui/component/ui_login_proxy_widget.ui" line="504"/>
         <location filename="../ui/component/ui_login_proxy_widget.ui" line="514"/>
         <source>US反代分流</source>
-        <translation type="unfinished"></translation>
+        <translation>US Proxy Load Balancing</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_login_proxy_widget.ui" line="542"/>
@@ -1287,52 +1287,52 @@
         <location filename="../ui/ui_nas.ui" line="14"/>
         <location filename="../ui/ui_nas.ui" line="73"/>
         <source>网络存储</source>
-        <translation type="unfinished"></translation>
+        <translation>Network Storage</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas.ui" line="27"/>
         <source>上传</source>
-        <translation type="unfinished"></translation>
+        <translation>Upload</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas.ui" line="34"/>
         <source>id</source>
-        <translation type="unfinished">id</translation>
+        <translation>id</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas.ui" line="39"/>
         <source>时间</source>
-        <translation type="unfinished">Time</translation>
+        <translation>Time</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas.ui" line="44"/>
         <source>标题</source>
-        <translation type="unfinished">Title</translation>
+        <translation>Title</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas.ui" line="49"/>
         <source>存储名</source>
-        <translation type="unfinished"></translation>
+        <translation>Storage Name</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas.ui" line="54"/>
         <source>上传章节</source>
-        <translation type="unfinished"></translation>
+        <translation>Upload Chapter</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas.ui" line="59"/>
         <source>状态</source>
-        <translation type="unfinished"></translation>
+        <translation>Status</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas.ui" line="64"/>
         <source>错误信息</source>
-        <translation type="unfinished"></translation>
+        <translation>Error Information</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas.ui" line="94"/>
         <source>添加</source>
-        <translation type="unfinished"></translation>
+        <translation>Add</translation>
     </message>
 </context>
 <context>
@@ -1340,139 +1340,139 @@
     <message>
         <location filename="../ui/ui_nas_add.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished">Form</translation>
+        <translation>Form</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas_add.ui" line="28"/>
         <source>用户名</source>
-        <translation type="unfinished">Username</translation>
+        <translation>Username</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas_add.ui" line="35"/>
         <source>http://192.168.31.28</source>
-        <translation type="unfinished"></translation>
+        <translation>http://192.168.31.28</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas_add.ui" line="45"/>
         <source>/测试/长篇/</source>
-        <translation type="unfinished"></translation>
+        <translation>/test/long/</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas_add.ui" line="57"/>
         <source>不单独新增目录</source>
-        <translation type="unfinished"></translation>
+        <translation>Do not add directory separately</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas_add.ui" line="70"/>
         <source>每本漫画单独目录</source>
-        <translation type="unfinished"></translation>
+        <translation>Separate directory for each comic</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas_add.ui" line="80"/>
         <source>按添加日期分目录</source>
-        <translation type="unfinished"></translation>
+        <translation>Directory by add date</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas_add.ui" line="93"/>
         <source>WebDav</source>
-        <translation type="unfinished"></translation>
+        <translation>WebDav</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas_add.ui" line="98"/>
         <source>SMB</source>
-        <translation type="unfinished"></translation>
+        <translation>SMB</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas_add.ui" line="112"/>
         <source>其他设置</source>
-        <translation type="unfinished"></translation>
+        <translation>Other Settings</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas_add.ui" line="125"/>
         <source>地址</source>
-        <translation type="unfinished"></translation>
+        <translation>Address</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas_add.ui" line="138"/>
         <source>目录设置</source>
-        <translation type="unfinished"></translation>
+        <translation>Directory Settings</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas_add.ui" line="149"/>
         <source>使用下载中Waifu2x后图片</source>
-        <translation type="unfinished"></translation>
+        <translation>Use images processed by Waifu2x during download</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas_add.ui" line="160"/>
         <location filename="../ui/ui_nas_add.ui" line="235"/>
         <source>test</source>
-        <translation type="unfinished"></translation>
+        <translation>test</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas_add.ui" line="170"/>
         <location filename="../ui/ui_nas_add.ui" line="173"/>
         <source>长篇</source>
-        <translation type="unfinished"></translation>
+        <translation>Long story</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas_add.ui" line="189"/>
         <source>路径</source>
-        <translation type="unfinished"></translation>
+        <translation>Path</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas_add.ui" line="202"/>
         <source>密码</source>
-        <translation type="unfinished">Password</translation>
+        <translation>Password</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas_add.ui" line="215"/>
         <source>协议</source>
-        <translation type="unfinished"></translation>
+        <translation>Protocol</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas_add.ui" line="228"/>
         <source>存储名/别名</source>
-        <translation type="unfinished"></translation>
+        <translation>Storage Name/Alias</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas_add.ui" line="247"/>
         <source>Zip</source>
-        <translation type="unfinished"></translation>
+        <translation>Zip</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas_add.ui" line="265"/>
         <source>打包方式</source>
-        <translation type="unfinished"></translation>
+        <translation>Packaging Method</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas_add.ui" line="278"/>
         <source>端口</source>
-        <translation type="unfinished"></translation>
+        <translation>Port</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas_add.ui" line="285"/>
         <source>5005</source>
-        <translation type="unfinished"></translation>
+        <translation>5005</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas_add.ui" line="318"/>
         <source>确定</source>
-        <translation type="unfinished">Confirm</translation>
+        <translation>Confirm</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas_add.ui" line="321"/>
         <source>Return</source>
-        <translation type="unfinished">Return</translation>
+        <translation>Return</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas_add.ui" line="334"/>
         <source>测试连接</source>
-        <translation type="unfinished"></translation>
+        <translation>Test Connection</translation>
     </message>
     <message>
         <location filename="../ui/ui_nas_add.ui" line="347"/>
         <source>关闭</source>
-        <translation type="unfinished">Close</translation>
+        <translation>Close</translation>
     </message>
 </context>
 <context>
@@ -1480,27 +1480,27 @@
     <message>
         <location filename="../ui/component/ui_nas_item.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished">Form</translation>
+        <translation>Form</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_nas_item.ui" line="28"/>
         <source>测试</source>
-        <translation type="unfinished"></translation>
+        <translation>Test</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_nas_item.ui" line="35"/>
         <source>编辑</source>
-        <translation type="unfinished">Edit</translation>
+        <translation>Edit</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_nas_item.ui" line="42"/>
         <source>删除</source>
-        <translation type="unfinished">Delete</translation>
+        <translation>Delete</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_nas_item.ui" line="60"/>
         <source>waifu2x</source>
-        <translation type="unfinished">waifu2x</translation>
+        <translation>waifu2x</translation>
     </message>
 </context>
 <context>
@@ -1614,7 +1614,7 @@
     <message>
         <location filename="../ui/component/ui_navigation.ui" line="779"/>
         <source>网络存储</source>
-        <translation type="unfinished"></translation>
+        <translation>Network Storage</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_navigation.ui" line="820"/>
@@ -2254,12 +2254,12 @@
     <message>
         <location filename="../ui/ui_setting_new.ui" line="941"/>
         <source>图片浏览设置</source>
-        <translation type="unfinished"></translation>
+        <translation>Image Viewing Settings</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="948"/>
         <source>开启OpenGL加速</source>
-        <translation type="unfinished"></translation>
+        <translation>Enable OpenGL Acceleration</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="980"/>

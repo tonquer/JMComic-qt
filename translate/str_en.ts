@@ -331,7 +331,7 @@
     <message>
         <location filename="../src/tools/str.py" line="336"/>
         <source>网络存储</source>
-        <translation type="unfinished"></translation>
+        <translation>Network storage</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="337"/>
@@ -341,87 +341,87 @@
     <message>
         <location filename="../src/tools/str.py" line="338"/>
         <source>等待下载</source>
-        <translation type="unfinished"></translation>
+        <translation>Waiting for download</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="339"/>
         <source>等待Waifu2x</source>
-        <translation type="unfinished"></translation>
+        <translation>Waiting for Waifu2x</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="340"/>
         <source>正在打包</source>
-        <translation type="unfinished"></translation>
+        <translation>Packaging</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="341"/>
         <source>正在上传</source>
-        <translation type="unfinished"></translation>
+        <translation>Uploading</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="344"/>
         <source>连接中</source>
-        <translation type="unfinished"></translation>
+        <translation>Connecting</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="345"/>
         <source>没有网络存储</source>
-        <translation type="unfinished"></translation>
+        <translation>No network storage</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="346"/>
         <source>空</source>
-        <translation type="unfinished"></translation>
+        <translation>Empty</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="347"/>
         <source>打包出错了</source>
-        <translation type="unfinished"></translation>
+        <translation>Packaging error</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="348"/>
         <source>验证失败</source>
-        <translation type="unfinished"></translation>
+        <translation>Verification failed</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="349"/>
         <source>本地文件未找到</source>
-        <translation type="unfinished"></translation>
+        <translation>Local file not found</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="350"/>
         <source>空间不足</source>
-        <translation type="unfinished"></translation>
+        <translation>Insufficient space</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="351"/>
         <source>连接失败</source>
-        <translation type="unfinished"></translation>
+        <translation>Connection failed</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="352"/>
         <source>需重新设置存储</source>
-        <translation type="unfinished"></translation>
+        <translation>Storage needs to be reset</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="353"/>
         <source>未找到网络存储</source>
-        <translation type="unfinished"></translation>
+        <translation>Network storage not found</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="354"/>
         <source>不支持该方法</source>
-        <translation type="unfinished"></translation>
+        <translation>Method not supported</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="355"/>
         <source>创建目录失败</source>
-        <translation type="unfinished"></translation>
+        <translation>Failed to create directory</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="357"/>
         <source>添加上传成功</source>
-        <translation type="unfinished"></translation>
+        <translation>Upload added successfully</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="358"/>
