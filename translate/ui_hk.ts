@@ -89,48 +89,53 @@
     <message>
         <location filename="../ui/ui_book_info.ui" line="392"/>
         <source>阅读</source>
-        <translation type="unfinished"></translation>
+        <translation>閱讀</translation>
     </message>
     <message>
         <location filename="../ui/ui_book_info.ui" line="427"/>
         <source>收藏</source>
-        <translation type="unfinished">收藏</translation>
+        <translation>收藏</translation>
     </message>
     <message>
         <location filename="../ui/ui_book_info.ui" line="457"/>
         <source>本地</source>
-        <translation type="unfinished"></translation>
+        <translation>本地</translation>
     </message>
     <message>
         <location filename="../ui/ui_book_info.ui" line="489"/>
         <source>评论</source>
-        <translation type="unfinished">評論</translation>
+        <translation>評論</translation>
     </message>
     <message>
         <location filename="../ui/ui_book_info.ui" line="521"/>
         <source>下载</source>
-        <translation type="unfinished">下載</translation>
+        <translation>下載</translation>
     </message>
     <message>
         <location filename="../ui/ui_book_info.ui" line="547"/>
-        <source>清理</source>
-        <translation type="unfinished"></translation>
+        <source>存储</source>
+        <translation>存儲</translation>
     </message>
     <message>
-        <location filename="../ui/ui_book_info.ui" line="579"/>
-        <location filename="../ui/ui_book_info.ui" line="665"/>
+        <location filename="../ui/ui_book_info.ui" line="573"/>
+        <source>清理</source>
+        <translation>清理</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_book_info.ui" line="605"/>
+        <location filename="../ui/ui_book_info.ui" line="691"/>
         <source>开始阅读</source>
         <translation>開始閱讀</translation>
     </message>
     <message>
-        <location filename="../ui/ui_book_info.ui" line="638"/>
+        <location filename="../ui/ui_book_info.ui" line="664"/>
         <source>已下载章节</source>
-        <translation type="unfinished"></translation>
+        <translation>已下載章節</translation>
     </message>
     <message>
-        <location filename="../ui/ui_book_info.ui" line="646"/>
+        <location filename="../ui/ui_book_info.ui" line="672"/>
         <source>可离线阅读已下载的章节：</source>
-        <translation type="unfinished"></translation>
+        <translation>可離線閱讀已下載的章節：</translation>
     </message>
 </context>
 <context>
@@ -143,7 +148,7 @@
     <message>
         <location filename="../ui/ui_category.ui" line="35"/>
         <source>最新</source>
-        <translation type="unfinished">最新</translation>
+        <translation>最新</translation>
     </message>
     <message>
         <location filename="../ui/ui_category.ui" line="40"/>
@@ -168,22 +173,22 @@
     <message>
         <location filename="../ui/ui_category.ui" line="60"/>
         <source>最多图片</source>
-        <translation type="unfinished">最多圖片</translation>
+        <translation>最多圖片</translation>
     </message>
     <message>
         <location filename="../ui/ui_category.ui" line="65"/>
         <source>最多爱心</source>
-        <translation type="unfinished">最多愛心</translation>
+        <translation>最多愛心</translation>
     </message>
     <message>
         <location filename="../ui/ui_category.ui" line="105"/>
         <source>页：0/0</source>
-        <translation type="unfinished">頁：0/0</translation>
+        <translation>頁：0/0</translation>
     </message>
     <message>
         <location filename="../ui/ui_category.ui" line="157"/>
         <source>跳转</source>
-        <translation type="unfinished">跳轉</translation>
+        <translation>跳轉</translation>
     </message>
 </context>
 <context>
@@ -211,17 +216,17 @@
     <message>
         <location filename="../ui/ui_comment.ui" line="24"/>
         <source>所有</source>
-        <translation type="unfinished"></translation>
+        <translation>所有</translation>
     </message>
     <message>
         <location filename="../ui/ui_comment.ui" line="29"/>
         <source>漫画</source>
-        <translation type="unfinished"></translation>
+        <translation>漫畫</translation>
     </message>
     <message>
         <location filename="../ui/ui_comment.ui" line="34"/>
         <source>闲聊</source>
-        <translation type="unfinished"></translation>
+        <translation>閒聊</translation>
     </message>
     <message>
         <location filename="../ui/ui_comment.ui" line="66"/>
@@ -231,17 +236,17 @@
     <message>
         <location filename="../ui/ui_comment.ui" line="69"/>
         <source>Return</source>
-        <translation type="unfinished">Return</translation>
+        <translation>Return</translation>
     </message>
     <message>
         <location filename="../ui/ui_comment.ui" line="89"/>
         <source>TextLabel</source>
-        <translation type="unfinished">TextLabel</translation>
+        <translation>TextLabel</translation>
     </message>
     <message>
         <location filename="../ui/ui_comment.ui" line="99"/>
         <source>跳转</source>
-        <translation type="unfinished">跳轉</translation>
+        <translation>跳轉</translation>
     </message>
 </context>
 <context>
@@ -305,92 +310,92 @@
         <translation>下載</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="37"/>
+        <location filename="../ui/ui_download.ui" line="35"/>
         <source>Webp保存为Png</source>
-        <translation type="unfinished"></translation>
+        <translation>Webp保存為Png</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="44"/>
+        <location filename="../ui/ui_download.ui" line="42"/>
         <source>下载失败后1分钟自动重试</source>
-        <translation type="unfinished"></translation>
+        <translation>下載失敗後1分鐘自動重試</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="51"/>
+        <location filename="../ui/ui_download.ui" line="81"/>
         <source>全部开始下载</source>
         <translation>全部開始下載</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="58"/>
+        <location filename="../ui/ui_download.ui" line="88"/>
         <source>全部暂停下载</source>
         <translation>全部暫停下載</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="65"/>
+        <location filename="../ui/ui_download.ui" line="95"/>
         <source>全部开始转换</source>
         <translation>全部開始轉換</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="72"/>
+        <location filename="../ui/ui_download.ui" line="102"/>
         <source>全部暂停转换</source>
         <translation>全部暫停轉換</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="82"/>
+        <location filename="../ui/ui_download.ui" line="52"/>
         <source>下载自动进行Waifu2x转换</source>
         <translation>下載自動進行Waifu2x轉換</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="95"/>
+        <location filename="../ui/ui_download.ui" line="112"/>
         <source>id</source>
         <translation>id</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="100"/>
+        <location filename="../ui/ui_download.ui" line="117"/>
         <source>时间</source>
-        <translation type="unfinished"></translation>
+        <translation>時間</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="105"/>
+        <location filename="../ui/ui_download.ui" line="122"/>
         <source>标题</source>
         <translation>標題</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="125"/>
+        <location filename="../ui/ui_download.ui" line="142"/>
         <source>下载状态</source>
         <translation>下載狀態</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="110"/>
+        <location filename="../ui/ui_download.ui" line="127"/>
         <source>下载进度</source>
         <translation>下載進度</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="115"/>
+        <location filename="../ui/ui_download.ui" line="132"/>
         <source>下载章节</source>
         <translation>下載章節</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="120"/>
+        <location filename="../ui/ui_download.ui" line="137"/>
         <source>下载速度</source>
         <translation>下載速度</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="130"/>
+        <location filename="../ui/ui_download.ui" line="147"/>
         <source>转换进度</source>
         <translation>轉換進度</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="135"/>
+        <location filename="../ui/ui_download.ui" line="152"/>
         <source>转换章节</source>
         <translation>轉換章節</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="140"/>
+        <location filename="../ui/ui_download.ui" line="157"/>
         <source>转换耗时</source>
         <translation>轉換耗時</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="145"/>
+        <location filename="../ui/ui_download.ui" line="162"/>
         <source>转换状态</source>
         <translation>轉換狀態</translation>
     </message>
@@ -400,53 +405,53 @@
     <message>
         <location filename="../ui/ui_download_all.ui" line="14"/>
         <source>批量下载</source>
-        <translation type="unfinished"></translation>
+        <translation>批量下載</translation>
     </message>
     <message>
         <location filename="../ui/ui_download_all.ui" line="31"/>
         <source>一键全选/反选</source>
-        <translation type="unfinished"></translation>
+        <translation>一鍵全選/反選</translation>
     </message>
     <message>
         <location filename="../ui/ui_download_all.ui" line="34"/>
         <location filename="../ui/ui_download_all.ui" line="66"/>
         <source>Return</source>
-        <translation type="unfinished">Return</translation>
+        <translation>Return</translation>
     </message>
     <message>
         <location filename="../ui/ui_download_all.ui" line="47"/>
         <source>一键全本/单章</source>
-        <translation type="unfinished"></translation>
+        <translation>一鍵全本/單章</translation>
     </message>
     <message>
         <location filename="../ui/ui_download_all.ui" line="63"/>
         <source>开始下载</source>
-        <translation type="unfinished"></translation>
+        <translation>開始下載</translation>
     </message>
     <message>
         <location filename="../ui/ui_download_all.ui" line="76"/>
         <source>选择</source>
-        <translation type="unfinished"></translation>
+        <translation>選擇</translation>
     </message>
     <message>
         <location filename="../ui/ui_download_all.ui" line="81"/>
         <source>下载全本/单章</source>
-        <translation type="unfinished"></translation>
+        <translation>下載全本/單章</translation>
     </message>
     <message>
         <location filename="../ui/ui_download_all.ui" line="86"/>
         <source>图片数</source>
-        <translation type="unfinished"></translation>
+        <translation>圖片數</translation>
     </message>
     <message>
         <location filename="../ui/ui_download_all.ui" line="91"/>
         <source>分类</source>
-        <translation type="unfinished">分類</translation>
+        <translation>分類</translation>
     </message>
     <message>
         <location filename="../ui/ui_download_all.ui" line="96"/>
         <source>名称</source>
-        <translation type="unfinished"></translation>
+        <translation>名稱</translation>
     </message>
 </context>
 <context>
@@ -497,32 +502,32 @@
     <message>
         <location filename="../ui/component/ui_exit.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished">Form</translation>
+        <translation>表單</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_exit.ui" line="23"/>
         <source>退出</source>
-        <translation type="unfinished"></translation>
+        <translation>退出</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_exit.ui" line="36"/>
         <source>最小化到任务栏</source>
-        <translation type="unfinished"></translation>
+        <translation>最小化到任務欄</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_exit.ui" line="49"/>
         <source>不在每次弹出该窗口（可在设置中设置）</source>
-        <translation type="unfinished"></translation>
+        <translation>不再每次彈出該窗口（可在設置中設置）</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_exit.ui" line="70"/>
         <source>确定</source>
-        <translation type="unfinished">確定</translation>
+        <translation>確定</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_exit.ui" line="73"/>
         <source>Return</source>
-        <translation type="unfinished">Return</translation>
+        <translation>Return</translation>
     </message>
 </context>
 <context>
@@ -568,7 +573,7 @@
     <message>
         <location filename="../ui/component/ui_favorite_fold.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished">Form</translation>
+        <translation>表單</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_favorite_fold.ui" line="22"/>
@@ -583,7 +588,7 @@
     <message>
         <location filename="../ui/component/ui_favorite_fold.ui" line="56"/>
         <source>保存</source>
-        <translation type="unfinished">保存</translation>
+        <translation>保存</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_favorite_fold.ui" line="63"/>
@@ -616,7 +621,7 @@
     <message>
         <location filename="../ui/ui_help.ui" line="125"/>
         <source>本地库数量:</source>
-        <translation type="unfinished"></translation>
+        <translation>本地庫數量:</translation>
     </message>
     <message>
         <location filename="../ui/ui_help.ui" line="132"/>
@@ -647,12 +652,12 @@
     <message>
         <location filename="../ui/ui_help.ui" line="260"/>
         <source>本地数据上次更新:</source>
-        <translation type="unfinished"></translation>
+        <translation>本地數據上次更新:</translation>
     </message>
     <message>
         <location filename="../ui/ui_help.ui" line="272"/>
         <source>2021-11-27</source>
-        <translation type="unfinished">2021-11-27</translation>
+        <translation>2021-11-27</translation>
     </message>
     <message>
         <location filename="../ui/ui_help.ui" line="284"/>
@@ -662,22 +667,22 @@
     <message>
         <location filename="../ui/ui_help.ui" line="291"/>
         <source>打开控制台</source>
-        <translation type="unfinished"></translation>
+        <translation>打開控制台</translation>
     </message>
     <message>
         <location filename="../ui/ui_help.ui" line="298"/>
         <source>接受Beta版本更新</source>
-        <translation type="unfinished"></translation>
+        <translation>接受Beta版本更新</translation>
     </message>
     <message>
         <location filename="../ui/ui_help.ui" line="316"/>
         <source>新版本：</source>
-        <translation type="unfinished"></translation>
+        <translation>新版本：</translation>
     </message>
     <message>
         <location filename="../ui/ui_help.ui" line="330"/>
         <source>前往更新</source>
-        <translation type="unfinished"></translation>
+        <translation>前往更新</translation>
     </message>
     <message>
         <location filename="../ui/ui_help.ui" line="157"/>
@@ -695,27 +700,27 @@
     <message>
         <location filename="../ui/component/ui_help_log_widget.ui" line="14"/>
         <source>控制台</source>
-        <translation type="unfinished"></translation>
+        <translation>控制台</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_help_log_widget.ui" line="22"/>
         <source>Warn</source>
-        <translation type="unfinished">Warn</translation>
+        <translation>警告</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_help_log_widget.ui" line="32"/>
         <source>Info</source>
-        <translation type="unfinished">Info</translation>
+        <translation>信息</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_help_log_widget.ui" line="45"/>
         <source>Debug</source>
-        <translation type="unfinished">Debug</translation>
+        <translation>調試</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_help_log_widget.ui" line="86"/>
         <source>运行代码</source>
-        <translation type="unfinished"></translation>
+        <translation>運行代碼</translation>
     </message>
 </context>
 <context>
@@ -723,7 +728,7 @@
     <message>
         <location filename="../ui/ui_history.ui" line="14"/>
         <source>收藏</source>
-        <translation type="unfinished">收藏</translation>
+        <translation>收藏</translation>
     </message>
     <message>
         <location filename="../ui/ui_history.ui" line="68"/>
@@ -733,17 +738,17 @@
     <message>
         <location filename="../ui/ui_history.ui" line="75"/>
         <source>页</source>
-        <translation type="unfinished">頁</translation>
+        <translation>頁</translation>
     </message>
     <message>
         <location filename="../ui/ui_history.ui" line="125"/>
         <source>跳转</source>
-        <translation type="unfinished">跳轉</translation>
+        <translation>跳轉</translation>
     </message>
     <message>
         <location filename="../ui/ui_history.ui" line="128"/>
         <source>Return</source>
-        <translation type="unfinished">Return</translation>
+        <translation>Return</translation>
     </message>
 </context>
 <context>
@@ -761,17 +766,17 @@
     <message>
         <location filename="../ui/ui_index.ui" line="53"/>
         <source>页</source>
-        <translation type="unfinished">頁</translation>
+        <translation>頁</translation>
     </message>
     <message>
         <location filename="../ui/ui_index.ui" line="96"/>
         <source>跳转</source>
-        <translation type="unfinished">跳轉</translation>
+        <translation>跳轉</translation>
     </message>
     <message>
         <location filename="../ui/ui_index.ui" line="99"/>
         <source>Return</source>
-        <translation type="unfinished">Return</translation>
+        <translation>Return</translation>
     </message>
 </context>
 <context>
@@ -792,67 +797,67 @@
     <message>
         <location filename="../ui/ui_local.ui" line="14"/>
         <source>本地漫画</source>
-        <translation type="unfinished"></translation>
+        <translation>本地漫畫</translation>
     </message>
     <message>
         <location filename="../ui/ui_local.ui" line="72"/>
         <source>批量删除</source>
-        <translation type="unfinished"></translation>
+        <translation>批量刪除</translation>
     </message>
     <message>
         <location filename="../ui/ui_local.ui" line="85"/>
         <source>导入</source>
-        <translation type="unfinished"></translation>
+        <translation>導入</translation>
     </message>
     <message>
         <location filename="../ui/ui_local.ui" line="115"/>
         <source>上次阅读时间</source>
-        <translation type="unfinished"></translation>
+        <translation>上次閱讀時間</translation>
     </message>
     <message>
         <location filename="../ui/ui_local.ui" line="120"/>
         <source>添加时间</source>
-        <translation type="unfinished"></translation>
+        <translation>添加時間</translation>
     </message>
     <message>
         <location filename="../ui/ui_local.ui" line="125"/>
         <source>名称</source>
-        <translation type="unfinished"></translation>
+        <translation>名稱</translation>
     </message>
     <message>
         <location filename="../ui/ui_local.ui" line="137"/>
         <source>降序</source>
-        <translation type="unfinished"></translation>
+        <translation>降序</translation>
     </message>
     <message>
         <location filename="../ui/ui_local.ui" line="142"/>
         <source>升序</source>
-        <translation type="unfinished"></translation>
+        <translation>升序</translation>
     </message>
     <message>
         <location filename="../ui/ui_local.ui" line="176"/>
         <source>收藏数：</source>
-        <translation type="unfinished">收藏數：</translation>
+        <translation>收藏數：</translation>
     </message>
     <message>
         <location filename="../ui/ui_local.ui" line="183"/>
         <source>页</source>
-        <translation type="unfinished">頁</translation>
+        <translation>頁</translation>
     </message>
     <message>
         <location filename="../ui/ui_local.ui" line="233"/>
         <source>跳转</source>
-        <translation type="unfinished">跳轉</translation>
+        <translation>跳轉</translation>
     </message>
     <message>
         <location filename="../ui/ui_local.ui" line="236"/>
         <source>Return</source>
-        <translation type="unfinished">Return</translation>
+        <translation>Return</translation>
     </message>
     <message>
         <location filename="../ui/ui_local.ui" line="250"/>
         <source>搜索：</source>
-        <translation type="unfinished">搜索：</translation>
+        <translation>搜索：</translation>
     </message>
 </context>
 <context>
@@ -860,58 +865,58 @@
     <message>
         <location filename="../ui/ui_local_all.ui" line="14"/>
         <source>批量下载</source>
-        <translation type="unfinished"></translation>
+        <translation>批量下載</translation>
     </message>
     <message>
         <location filename="../ui/ui_local_all.ui" line="31"/>
         <source>一键全选/反选</source>
-        <translation type="unfinished"></translation>
+        <translation>一鍵全選/反選</translation>
     </message>
     <message>
         <location filename="../ui/ui_local_all.ui" line="34"/>
         <location filename="../ui/ui_local_all.ui" line="53"/>
         <source>Return</source>
-        <translation type="unfinished">Return</translation>
+        <translation>Return</translation>
     </message>
     <message>
         <location filename="../ui/ui_local_all.ui" line="50"/>
         <source>删除</source>
-        <translation type="unfinished"></translation>
+        <translation>刪除</translation>
     </message>
     <message>
         <location filename="../ui/ui_local_all.ui" line="63"/>
         <source>选择</source>
-        <translation type="unfinished"></translation>
+        <translation>選擇</translation>
     </message>
     <message>
         <location filename="../ui/ui_local_all.ui" line="68"/>
         <source>名称</source>
-        <translation type="unfinished"></translation>
+        <translation>名稱</translation>
     </message>
     <message>
         <location filename="../ui/ui_local_all.ui" line="73"/>
         <source>分类</source>
-        <translation type="unfinished">分類</translation>
+        <translation>分類</translation>
     </message>
     <message>
         <location filename="../ui/ui_local_all.ui" line="78"/>
         <source>图片数</source>
-        <translation type="unfinished"></translation>
+        <translation>圖片數</translation>
     </message>
     <message>
         <location filename="../ui/ui_local_all.ui" line="83"/>
         <source>添加日期</source>
-        <translation type="unfinished"></translation>
+        <translation>添加日期</translation>
     </message>
     <message>
         <location filename="../ui/ui_local_all.ui" line="88"/>
         <source>上次观看时间</source>
-        <translation type="unfinished"></translation>
+        <translation>上次觀看時間</translation>
     </message>
     <message>
         <location filename="../ui/ui_local_all.ui" line="93"/>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation>ID</translation>
     </message>
 </context>
 <context>
@@ -919,12 +924,12 @@
     <message>
         <location filename="../ui/ui_local_eps.ui" line="14"/>
         <source>本地漫画章节</source>
-        <translation type="unfinished"></translation>
+        <translation>本地漫畫章節</translation>
     </message>
     <message>
         <location filename="../ui/ui_local_eps.ui" line="40"/>
         <source>只显示Waifu2x</source>
-        <translation type="unfinished"></translation>
+        <translation>只顯示Waifu2x</translation>
     </message>
 </context>
 <context>
@@ -932,47 +937,47 @@
     <message>
         <location filename="../ui/ui_local_favorite.ui" line="14"/>
         <source>收藏</source>
-        <translation type="unfinished">收藏</translation>
+        <translation>收藏</translation>
     </message>
     <message>
         <location filename="../ui/ui_local_favorite.ui" line="52"/>
         <source>收藏时间</source>
-        <translation type="unfinished">收藏時間</translation>
+        <translation>收藏時間</translation>
     </message>
     <message>
         <location filename="../ui/ui_local_favorite.ui" line="64"/>
         <source>降序</source>
-        <translation type="unfinished"></translation>
+        <translation>降序</translation>
     </message>
     <message>
         <location filename="../ui/ui_local_favorite.ui" line="69"/>
         <source>升序</source>
-        <translation type="unfinished"></translation>
+        <translation>升序</translation>
     </message>
     <message>
         <location filename="../ui/ui_local_favorite.ui" line="103"/>
         <source>收藏数：</source>
-        <translation type="unfinished">收藏數：</translation>
+        <translation>收藏數：</translation>
     </message>
     <message>
         <location filename="../ui/ui_local_favorite.ui" line="110"/>
         <source>页</source>
-        <translation type="unfinished">頁</translation>
+        <translation>頁</translation>
     </message>
     <message>
         <location filename="../ui/ui_local_favorite.ui" line="160"/>
         <source>跳转</source>
-        <translation type="unfinished">跳轉</translation>
+        <translation>跳轉</translation>
     </message>
     <message>
         <location filename="../ui/ui_local_favorite.ui" line="163"/>
         <source>Return</source>
-        <translation type="unfinished">Return</translation>
+        <translation>Return</translation>
     </message>
     <message>
         <location filename="../ui/ui_local_favorite.ui" line="177"/>
         <source>搜索：</source>
-        <translation type="unfinished">搜索：</translation>
+        <translation>搜索：</translation>
     </message>
 </context>
 <context>
@@ -980,27 +985,27 @@
     <message>
         <location filename="../ui/component/ui_local_fold.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished">Form</translation>
+        <translation>表單</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_local_fold.ui" line="22"/>
         <source>分类</source>
-        <translation type="unfinished">分類</translation>
+        <translation>分類</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_local_fold.ui" line="42"/>
         <source>编辑</source>
-        <translation type="unfinished">編輯</translation>
+        <translation>編輯</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_local_fold.ui" line="56"/>
         <source>保存</source>
-        <translation type="unfinished">保存</translation>
+        <translation>保存</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_local_fold.ui" line="63"/>
         <source>取消</source>
-        <translation type="unfinished">取消</translation>
+        <translation>取消</translation>
     </message>
 </context>
 <context>
@@ -1028,7 +1033,7 @@
     <message>
         <location filename="../ui/ui_login.ui" line="112"/>
         <source>关闭</source>
-        <translation type="unfinished">關閉</translation>
+        <translation>關閉</translation>
     </message>
     <message>
         <location filename="../ui/ui_login.ui" line="96"/>
@@ -1060,140 +1065,146 @@
         <translation>代理地址</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="339"/>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="370"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="289"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="409"/>
         <source>分流3</source>
         <translation>分流3</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="259"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="266"/>
         <source>测速</source>
         <translation>測速</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_login_proxy_widget.ui" line="46"/>
         <source>无代理</source>
-        <translation type="unfinished"></translation>
+        <translation>無代理</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_login_proxy_widget.ui" line="66"/>
         <source>HTTP代理</source>
-        <translation type="unfinished"></translation>
+        <translation>HTTP代理</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_login_proxy_widget.ui" line="93"/>
         <source>http://127.0.0.1:10809</source>
-        <translation type="unfinished"></translation>
+        <translation>http://127.0.0.1:10809</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_login_proxy_widget.ui" line="113"/>
         <source>Sock5代理</source>
-        <translation type="unfinished"></translation>
+        <translation>Sock5代理</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_login_proxy_widget.ui" line="137"/>
         <source>127.0.0.1:10808</source>
-        <translation type="unfinished"></translation>
+        <translation>127.0.0.1:10808</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_login_proxy_widget.ui" line="151"/>
         <source>使用系统代理</source>
-        <translation type="unfinished"></translation>
+        <translation>使用系統代理</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_login_proxy_widget.ui" line="169"/>
         <source>未检测到系统代理</source>
-        <translation type="unfinished"></translation>
+        <translation>未檢測到系統代理</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="200"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="207"/>
         <source>启用Https（如果出现连接被重置，建议关闭试试）</source>
-        <translation type="unfinished"></translation>
+        <translation>啟用Https（如果出現連接被重置，建議關閉試試）</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="212"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="219"/>
         <source>使用注册分流（无法注册可尝试开启）</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="227"/>
-        <source>UA设置:</source>
-        <translation type="unfinished"></translation>
+        <translation>使用註冊分流（無法註冊可嘗試開啟）</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_login_proxy_widget.ui" line="234"/>
+        <source>UA设置:</source>
+        <translation>UA設置:</translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="241"/>
         <source>随机生成</source>
-        <translation type="unfinished"></translation>
+        <translation>隨機生成</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="275"/>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="397"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="306"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="396"/>
         <source>所以分流不可使用时，自动解锁</source>
-        <translation type="unfinished"></translation>
+        <translation>所有分流不可使用時，自動解鎖</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="278"/>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="400"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="309"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="399"/>
         <source>分流4</source>
         <translation>分流4</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="288"/>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="312"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="443"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="473"/>
         <source>CDN分流</source>
-        <translation type="unfinished"></translation>
+        <translation>CDN分流</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="322"/>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="487"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="453"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="463"/>
         <source>分流2</source>
         <translation>分流2</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="387"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="346"/>
         <source>Api分流</source>
-        <translation type="unfinished"></translation>
+        <translation>Api分流</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="410"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="386"/>
         <source>延迟</source>
-        <translation type="unfinished"></translation>
+        <translation>延遲</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="420"/>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="433"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="326"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="356"/>
         <source>分流1</source>
         <translation>分流1</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="453"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="419"/>
         <source>图片分流</source>
-        <translation type="unfinished"></translation>
+        <translation>圖片分流</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="463"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="369"/>
         <source>速度</source>
-        <translation type="unfinished"></translation>
+        <translation>速度</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="501"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="504"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="514"/>
+        <source>US反代分流</source>
+        <translation>US反代分流</translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="542"/>
         <source> CDN地址:</source>
-        <translation type="unfinished"></translation>
+        <translation> CDN地址:</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="527"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="568"/>
         <source>CDN地址:</source>
-        <translation type="unfinished"></translation>
+        <translation>CDN地址:</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="554"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="595"/>
         <source>CDN设置请看说明获取</source>
-        <translation type="unfinished"></translation>
+        <translation>CDN設置請看說明獲取</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="561"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="602"/>
         <source>说明</source>
-        <translation type="unfinished"></translation>
+        <translation>說明</translation>
     </message>
 </context>
 <context>
@@ -1201,7 +1212,7 @@
     <message>
         <location filename="../ui/component/ui_login_widget.ui" line="14"/>
         <source>Form</source>
-        <translation>Form</translation>
+        <translation>表單</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_login_widget.ui" line="36"/>
@@ -1221,17 +1232,17 @@
     <message>
         <location filename="../ui/component/ui_login_widget.ui" line="72"/>
         <source>保存密码</source>
-        <translation type="unfinished"></translation>
+        <translation>保存密碼</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_login_widget.ui" line="79"/>
         <source>自动登录</source>
-        <translation type="unfinished"></translation>
+        <translation>自動登錄</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_login_widget.ui" line="86"/>
         <source>自动打卡</source>
-        <translation type="unfinished"></translation>
+        <translation>自動打卡</translation>
     </message>
 </context>
 <context>
@@ -1244,12 +1255,12 @@
     <message>
         <location filename="../ui/ui_main.ui" line="59"/>
         <source>菜单</source>
-        <translation type="unfinished">菜單</translation>
+        <translation>菜單</translation>
     </message>
     <message>
         <location filename="../ui/ui_main.ui" line="66"/>
         <source>&gt;</source>
-        <translation type="unfinished">&gt;</translation>
+        <translation>&gt;</translation>
     </message>
 </context>
 <context>
@@ -1262,19 +1273,241 @@
     <message>
         <location filename="../ui/ui_main_windows.ui" line="77"/>
         <source>菜单</source>
-        <translation type="unfinished">菜單</translation>
+        <translation>菜單</translation>
     </message>
     <message>
         <location filename="../ui/ui_main_windows.ui" line="84"/>
         <source>&gt;</source>
-        <translation type="unfinished">&gt;</translation>
+        <translation>&gt;</translation>
+    </message>
+</context>
+<context>
+    <name>Nas</name>
+    <message>
+        <location filename="../ui/ui_nas.ui" line="14"/>
+        <location filename="../ui/ui_nas.ui" line="73"/>
+        <source>网络存储</source>
+        <translation>網絡存儲</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas.ui" line="27"/>
+        <source>上传</source>
+        <translation>上傳</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas.ui" line="34"/>
+        <source>id</source>
+        <translation>id</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas.ui" line="39"/>
+        <source>时间</source>
+        <translation>時間</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas.ui" line="44"/>
+        <source>标题</source>
+        <translation>標題</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas.ui" line="49"/>
+        <source>存储名</source>
+        <translation>存儲名</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas.ui" line="54"/>
+        <source>上传章节</source>
+        <translation>上傳章節</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas.ui" line="59"/>
+        <source>状态</source>
+        <translation>狀態</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas.ui" line="64"/>
+        <source>错误信息</source>
+        <translation>錯誤信息</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas.ui" line="94"/>
+        <source>添加</source>
+        <translation>添加</translation>
+    </message>
+</context>
+<context>
+    <name>NasAdd</name>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="14"/>
+        <source>Form</source>
+        <translation>表單</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="28"/>
+        <source>用户名</source>
+        <translation>用戶名</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="35"/>
+        <source>http://192.168.31.28</source>
+        <translation>http://192.168.31.28</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="45"/>
+        <source>/测试/长篇/</source>
+        <translation>/測試/長篇/</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="57"/>
+        <source>不单独新增目录</source>
+        <translation>不單獨新增目錄</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="70"/>
+        <source>每本漫画单独目录</source>
+        <translation>每本漫畫單獨目錄</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="80"/>
+        <source>按添加日期分目录</source>
+        <translation>按添加日期分目錄</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="93"/>
+        <source>WebDav</source>
+        <translation>WebDav</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="98"/>
+        <source>SMB</source>
+        <translation>SMB</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="112"/>
+        <source>其他设置</source>
+        <translation>其他設置</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="125"/>
+        <source>地址</source>
+        <translation>地址</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="138"/>
+        <source>目录设置</source>
+        <translation>目錄設置</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="149"/>
+        <source>使用下载中Waifu2x后图片</source>
+        <translation>使用下載中Waifu2x後圖片</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="160"/>
+        <location filename="../ui/ui_nas_add.ui" line="235"/>
+        <source>test</source>
+        <translation>test</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="170"/>
+        <location filename="../ui/ui_nas_add.ui" line="173"/>
+        <source>长篇</source>
+        <translation>長篇</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="189"/>
+        <source>路径</source>
+        <translation>路徑</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="202"/>
+        <source>密码</source>
+        <translation>密碼</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="215"/>
+        <source>协议</source>
+        <translation>協議</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="228"/>
+        <source>存储名/别名</source>
+        <translation>存儲名/別名</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="247"/>
+        <source>Zip</source>
+        <translation>Zip</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="265"/>
+        <source>打包方式</source>
+        <translation>打包方式</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="278"/>
+        <source>端口</source>
+        <translation>端口</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="285"/>
+        <source>5005</source>
+        <translation>5005</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="318"/>
+        <source>确定</source>
+        <translation>確定</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="321"/>
+        <source>Return</source>
+        <translation>Return</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="334"/>
+        <source>测试连接</source>
+        <translation>測試連接</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="347"/>
+        <source>关闭</source>
+        <translation>關閉</translation>
+    </message>
+</context>
+<context>
+    <name>NasItem</name>
+    <message>
+        <location filename="../ui/component/ui_nas_item.ui" line="14"/>
+        <source>Form</source>
+        <translation>表單</translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_nas_item.ui" line="28"/>
+        <source>测试</source>
+        <translation>測試</translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_nas_item.ui" line="35"/>
+        <source>编辑</source>
+        <translation>編輯</translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_nas_item.ui" line="42"/>
+        <source>删除</source>
+        <translation>刪除</translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_nas_item.ui" line="60"/>
+        <source>waifu2x</source>
+        <translation>waifu2x</translation>
     </message>
 </context>
 <context>
     <name>Navigation</name>
     <message>
         <location filename="../ui/component/ui_navigation.ui" line="14"/>
-        <location filename="../ui/component/ui_navigation.ui" line="478"/>
+        <location filename="../ui/component/ui_navigation.ui" line="464"/>
         <source>导航</source>
         <translation>導航</translation>
     </message>
@@ -1286,120 +1519,120 @@
     <message>
         <location filename="../ui/component/ui_navigation.ui" line="91"/>
         <source>打卡</source>
-        <translation type="unfinished"></translation>
+        <translation>打卡</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_navigation.ui" line="120"/>
         <source>J Coins：</source>
-        <translation type="unfinished"></translation>
+        <translation>J Coins：</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_navigation.ui" line="138"/>
         <source>等级:</source>
-        <translation type="unfinished"></translation>
+        <translation>等級:</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_navigation.ui" line="156"/>
         <source>收藏数：</source>
-        <translation type="unfinished">收藏數：</translation>
+        <translation>收藏數：</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_navigation.ui" line="174"/>
         <source>API分流：</source>
-        <translation type="unfinished"></translation>
+        <translation>API分流：</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_navigation.ui" line="192"/>
         <source>图片分流：</source>
-        <translation type="unfinished"></translation>
+        <translation>圖片分流：</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="210"/>
-        <source>离线模式：</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/component/ui_navigation.ui" line="259"/>
+        <location filename="../ui/component/ui_navigation.ui" line="245"/>
         <source>用户</source>
         <translation>用戶</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="281"/>
+        <location filename="../ui/component/ui_navigation.ui" line="267"/>
         <source>我的收藏</source>
         <translation>我的收藏</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="322"/>
+        <location filename="../ui/component/ui_navigation.ui" line="308"/>
         <source>本地收藏</source>
-        <translation type="unfinished"></translation>
+        <translation>本地收藏</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="363"/>
+        <location filename="../ui/component/ui_navigation.ui" line="349"/>
         <source>我的评论</source>
         <translation>我的評論</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="404"/>
+        <location filename="../ui/component/ui_navigation.ui" line="390"/>
         <source>本地记录</source>
-        <translation type="unfinished"></translation>
+        <translation>本地記錄</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="445"/>
+        <location filename="../ui/component/ui_navigation.ui" line="431"/>
         <source>观看记录</source>
         <translation>觀看記錄</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="500"/>
+        <location filename="../ui/component/ui_navigation.ui" line="486"/>
         <source>首页</source>
         <translation>首頁</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="550"/>
+        <location filename="../ui/component/ui_navigation.ui" line="536"/>
         <source>搜索</source>
         <translation>搜索</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="597"/>
+        <location filename="../ui/component/ui_navigation.ui" line="583"/>
         <source>分类与排行</source>
-        <translation type="unfinished"></translation>
+        <translation>分類與排行</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="644"/>
+        <location filename="../ui/component/ui_navigation.ui" line="630"/>
         <source>每周必看</source>
-        <translation type="unfinished"></translation>
+        <translation>每周必看</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="691"/>
+        <location filename="../ui/component/ui_navigation.ui" line="677"/>
         <source>评论</source>
         <translation>評論</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="730"/>
+        <location filename="../ui/component/ui_navigation.ui" line="716"/>
         <source>其他</source>
         <translation>其他</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="752"/>
+        <location filename="../ui/component/ui_navigation.ui" line="738"/>
         <source>下载</source>
-        <translation type="unfinished">下載</translation>
+        <translation>下載</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="793"/>
+        <location filename="../ui/component/ui_navigation.ui" line="779"/>
+        <source>网络存储</source>
+        <translation>網絡存儲</translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_navigation.ui" line="820"/>
         <source>本地漫画</source>
-        <translation type="unfinished"></translation>
+        <translation>本地漫畫</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="834"/>
+        <location filename="../ui/component/ui_navigation.ui" line="861"/>
         <source>Waifu2x</source>
-        <translation type="unfinished">Waifu2x</translation>
+        <translation>Waifu2x</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="899"/>
+        <location filename="../ui/component/ui_navigation.ui" line="926"/>
         <source>帮助</source>
         <translation>幫助</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="943"/>
+        <location filename="../ui/component/ui_navigation.ui" line="970"/>
         <source>设置</source>
         <translation>設置</translation>
     </message>
@@ -1447,7 +1680,7 @@
     <message>
         <location filename="../ui/component/ui_read_tool.ui" line="255"/>
         <source>修改参数</source>
-        <translation type="unfinished"></translation>
+        <translation>修改參數</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_read_tool.ui" line="357"/>
@@ -1535,17 +1768,17 @@
     <message>
         <location filename="../ui/component/ui_read_tool.ui" line="290"/>
         <source>自动Waifu2x</source>
-        <translation type="unfinished"></translation>
+        <translation>自動Waifu2x</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_read_tool.ui" line="300"/>
         <source>本张图开启Waifu2x (F2)</source>
-        <translation type="unfinished"></translation>
+        <translation>本張圖開啟Waifu2x (F2)</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_read_tool.ui" line="395"/>
         <source>优先使用下载转换好的</source>
-        <translation type="unfinished"></translation>
+        <translation>優先使用下載轉換好的</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_read_tool.ui" line="414"/>
@@ -1590,12 +1823,12 @@
     <message>
         <location filename="../ui/component/ui_read_tool.ui" line="476"/>
         <source>右左双页(滚轮正序)</source>
-        <translation type="unfinished"></translation>
+        <translation>右左雙頁(滾輪正序)</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_read_tool.ui" line="481"/>
         <source>等宽模式</source>
-        <translation type="unfinished"></translation>
+        <translation>等寬模式</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_read_tool.ui" line="493"/>
@@ -1663,17 +1896,17 @@
     <message>
         <location filename="../ui/component/ui_register_widget.ui" line="57"/>
         <source>验证码</source>
-        <translation type="unfinished"></translation>
+        <translation>驗證碼</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_register_widget.ui" line="108"/>
         <source>如果无法使用，请自行网页注册</source>
-        <translation type="unfinished"></translation>
+        <translation>如果無法使用，請自行網頁註冊</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_register_widget.ui" line="159"/>
         <source>验证码。。。</source>
-        <translation type="unfinished"></translation>
+        <translation>驗證碼...</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_register_widget.ui" line="180"/>
@@ -1713,7 +1946,7 @@
         <location filename="../ui/ui_search.ui" line="68"/>
         <location filename="../ui/ui_search.ui" line="90"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;搜寻的最佳姿势?&lt;/p&gt;&lt;p&gt;【包含搜寻】&lt;/p&gt;&lt;p&gt;搜寻全彩[空格][+]人妻,仅显示全彩且是人妻的本本&lt;/p&gt;&lt;p&gt;范例:全彩 +人妻&lt;br/&gt;&lt;/p&gt;&lt;p&gt;【排除搜寻】&lt;/p&gt;&lt;p&gt;搜寻全彩[空格][]人妻,显示全彩并排除人妻的本本&lt;/p&gt;&lt;p&gt;范例:全彩 -人妻&lt;br/&gt;&lt;/p&gt;&lt;p&gt;【我都要搜寻】&lt;/p&gt;&lt;p&gt;搜寻全彩[空格]人妻,会显示所有包含全彩及人妻的本本&lt;/p&gt;&lt;p&gt;范例:全彩 人妻&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;搜尋的最佳姿勢?&lt;/p&gt;&lt;p&gt;【包含搜尋】&lt;/p&gt;&lt;p&gt;搜尋全彩[空格][+]人妻,僅顯示全彩且是人妻的本本&lt;/p&gt;&lt;p&gt;範例:全彩 +人妻&lt;br/&gt;&lt;/p&gt;&lt;p&gt;【排除搜尋】&lt;/p&gt;&lt;p&gt;搜尋全彩[空格][]人妻,顯示全彩並排除人妻的本本&lt;/p&gt;&lt;p&gt;範例:全彩 -人妻&lt;br/&gt;&lt;/p&gt;&lt;p&gt;【我都要搜尋】&lt;/p&gt;&lt;p&gt;搜尋全彩[空格]人妻,會顯示所有包含全彩及人妻的本本&lt;/p&gt;&lt;p&gt;範例:全彩 人妻&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../ui/ui_search.ui" line="71"/>
@@ -1723,7 +1956,7 @@
     <message>
         <location filename="../ui/ui_search.ui" line="96"/>
         <source>?</source>
-        <translation type="unfinished"></translation>
+        <translation>?</translation>
     </message>
     <message>
         <location filename="../ui/ui_search.ui" line="146"/>
@@ -1766,25 +1999,25 @@
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="47"/>
-        <location filename="../ui/ui_setting_new.ui" line="1031"/>
+        <location filename="../ui/ui_setting_new.ui" line="1051"/>
         <source>代理</source>
         <translation>代理</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1298"/>
+        <location filename="../ui/ui_setting_new.ui" line="1318"/>
         <source>Waifu2x设置</source>
         <translation>Waifu2x設置</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="61"/>
-        <location filename="../ui/ui_setting_new.ui" line="2281"/>
+        <location filename="../ui/ui_setting_new.ui" line="2301"/>
         <source>下载与缓存</source>
         <translation>下載與緩存</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="14"/>
         <source>设置</source>
-        <translation type="unfinished">設置</translation>
+        <translation>設置</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="29"/>
@@ -1829,12 +2062,12 @@
     <message>
         <location filename="../ui/ui_setting_new.ui" line="181"/>
         <source>触控（重启生效）：</source>
-        <translation type="unfinished"></translation>
+        <translation>觸控（重啟生效）：</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="188"/>
         <source>启用触控优化</source>
-        <translation type="unfinished"></translation>
+        <translation>啟用觸控優化</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="279"/>
@@ -1864,109 +2097,109 @@
     <message>
         <location filename="../ui/ui_setting_new.ui" line="346"/>
         <source>字体（重启生效）：</source>
-        <translation type="unfinished"></translation>
+        <translation>字體（重啟生效）：</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="355"/>
         <source>字体选择：</source>
-        <translation type="unfinished"></translation>
+        <translation>字體選擇：</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="369"/>
         <location filename="../ui/ui_setting_new.ui" line="408"/>
         <location filename="../ui/ui_setting_new.ui" line="502"/>
         <source>默认</source>
-        <translation type="unfinished">默認</translation>
+        <translation>默認</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="394"/>
         <source>字体大小：</source>
-        <translation type="unfinished"></translation>
+        <translation>字體大小：</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="413"/>
         <source>9</source>
-        <translation type="unfinished"></translation>
+        <translation>9</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="418"/>
         <source>12</source>
-        <translation type="unfinished"></translation>
+        <translation>12</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="423"/>
         <source>14</source>
-        <translation type="unfinished"></translation>
+        <translation>14</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="428"/>
         <source>16</source>
-        <translation type="unfinished"></translation>
+        <translation>16</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="433"/>
         <source>18</source>
-        <translation type="unfinished"></translation>
+        <translation>18</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="438"/>
         <source>20</source>
-        <translation type="unfinished"></translation>
+        <translation>20</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="443"/>
         <source>22</source>
-        <translation type="unfinished"></translation>
+        <translation>22</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="448"/>
         <source>24</source>
-        <translation type="unfinished"></translation>
+        <translation>24</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="453"/>
         <source>26</source>
-        <translation type="unfinished"></translation>
+        <translation>26</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="458"/>
         <source>28</source>
-        <translation type="unfinished"></translation>
+        <translation>28</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="463"/>
         <source>30</source>
-        <translation type="unfinished"></translation>
+        <translation>30</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="488"/>
         <source>字体粗细：</source>
-        <translation type="unfinished"></translation>
+        <translation>字體粗細：</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="507"/>
         <source>高亮</source>
-        <translation type="unfinished"></translation>
+        <translation>高亮</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="512"/>
         <source>正常</source>
-        <translation type="unfinished"></translation>
+        <translation>正常</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="517"/>
         <source>半粗体</source>
-        <translation type="unfinished"></translation>
+        <translation>半粗體</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="522"/>
         <source>粗体</source>
-        <translation type="unfinished"></translation>
+        <translation>粗體</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="527"/>
         <source>黑体</source>
-        <translation type="unfinished"></translation>
+        <translation>黑體</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="569"/>
@@ -1986,22 +2219,22 @@
     <message>
         <location filename="../ui/ui_setting_new.ui" line="599"/>
         <source>125%</source>
-        <translation type="unfinished">125%</translation>
+        <translation>125%</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="609"/>
         <source>150%</source>
-        <translation type="unfinished">150%</translation>
+        <translation>150%</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="619"/>
         <source>175%</source>
-        <translation type="unfinished">175%</translation>
+        <translation>175%</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="629"/>
         <source>200%</source>
-        <translation type="unfinished">200%</translation>
+        <translation>200%</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="656"/>
@@ -2019,341 +2252,351 @@
         <translation>分類封面大小：</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="960"/>
+        <location filename="../ui/ui_setting_new.ui" line="941"/>
+        <source>图片浏览设置</source>
+        <translation>圖片瀏覽設置</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_setting_new.ui" line="948"/>
+        <source>开启OpenGL加速</source>
+        <translation>開啟OpenGL加速</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_setting_new.ui" line="980"/>
         <source>日志等级：</source>
         <translation>日誌等級：</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="967"/>
+        <location filename="../ui/ui_setting_new.ui" line="987"/>
         <source>Warn</source>
         <translation>Warn</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="980"/>
+        <location filename="../ui/ui_setting_new.ui" line="1000"/>
         <source>Info</source>
         <translation>Info</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="990"/>
+        <location filename="../ui/ui_setting_new.ui" line="1010"/>
         <source>Debug</source>
         <translation>Debug</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1372"/>
+        <location filename="../ui/ui_setting_new.ui" line="1392"/>
         <source>使用CPU数量（CPU模式生效，需重启）</source>
         <translation>使用CPU數量（CPU模式生效，需重啟）</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1391"/>
-        <location filename="../ui/ui_setting_new.ui" line="1429"/>
+        <location filename="../ui/ui_setting_new.ui" line="1411"/>
+        <location filename="../ui/ui_setting_new.ui" line="1449"/>
         <source>Auto</source>
         <translation>Auto</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1771"/>
+        <location filename="../ui/ui_setting_new.ui" line="1791"/>
         <source>Waifu2x封面模式（开启后所有封面会经过Waifu2x处理）</source>
         <translation>Waifu2x封面模式（開啟後所有封面會經過Waifu2x處理）</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1787"/>
+        <location filename="../ui/ui_setting_new.ui" line="1807"/>
         <source>为了保证速度，封面分辨率小于等于该值时才进行转换（默认400P）</source>
         <translation>為了保證速度，封面分辨率小於等於該值時才進行轉換（默認400P）</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="2043"/>
+        <location filename="../ui/ui_setting_new.ui" line="2063"/>
         <source>waifu2x下载模式（开启后下载完成会经过Waifu2x处理）</source>
         <translation>waifu2x下載模式（開啟後下載完成會經過Waifu2x處理）</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="2373"/>
+        <location filename="../ui/ui_setting_new.ui" line="2393"/>
         <source>下载和缓存路径（缓存文件需自己手动清除）</source>
         <translation>下載和緩存路徑（緩存文件需自己手動清除）</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="2412"/>
+        <location filename="../ui/ui_setting_new.ui" line="2432"/>
         <source>下载</source>
-        <translation type="unfinished">下載</translation>
+        <translation>下載</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="2432"/>
-        <location filename="../ui/ui_setting_new.ui" line="2482"/>
-        <location filename="../ui/ui_setting_new.ui" line="2532"/>
-        <location filename="../ui/ui_setting_new.ui" line="2582"/>
+        <location filename="../ui/ui_setting_new.ui" line="2452"/>
+        <location filename="../ui/ui_setting_new.ui" line="2502"/>
+        <location filename="../ui/ui_setting_new.ui" line="2552"/>
+        <location filename="../ui/ui_setting_new.ui" line="2602"/>
         <source>打开目录</source>
         <translation>打開目錄</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="2462"/>
+        <location filename="../ui/ui_setting_new.ui" line="2482"/>
         <source>缓存</source>
         <translation>緩存</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="2512"/>
+        <location filename="../ui/ui_setting_new.ui" line="2532"/>
         <source>聊天缓存</source>
-        <translation type="unfinished"></translation>
+        <translation>聊天緩存</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="2562"/>
+        <location filename="../ui/ui_setting_new.ui" line="2582"/>
         <source>Waifu2x缓存</source>
         <translation>Waifu2x緩存</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1250"/>
+        <location filename="../ui/ui_setting_new.ui" line="1270"/>
         <source>启用代理</source>
         <translation>啟用代理</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1594"/>
-        <location filename="../ui/ui_setting_new.ui" line="1866"/>
-        <location filename="../ui/ui_setting_new.ui" line="2098"/>
+        <location filename="../ui/ui_setting_new.ui" line="1614"/>
+        <location filename="../ui/ui_setting_new.ui" line="1886"/>
+        <location filename="../ui/ui_setting_new.ui" line="2118"/>
         <source>2</source>
         <translation>2</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1492"/>
+        <location filename="../ui/ui_setting_new.ui" line="1512"/>
         <source>Waifu2x看图模式</source>
         <translation>Waifu2x看圖模式</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="663"/>
         <source>标题栏美化（多屏建议不勾选，win11可不勾选）</source>
-        <translation type="unfinished"></translation>
+        <translation>標題欄美化（多屏建議不勾選，win11可不勾選）</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="687"/>
         <source>关闭设置</source>
-        <translation type="unfinished"></translation>
+        <translation>關閉設置</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="694"/>
         <source>关闭后退出</source>
-        <translation type="unfinished"></translation>
+        <translation>關閉後退出</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="704"/>
         <source>关闭后最小化到托盘</source>
-        <translation type="unfinished"></translation>
+        <translation>關閉後最小化到托盤</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="838"/>
         <source>标题显示行数</source>
-        <translation type="unfinished"></translation>
+        <translation>標題顯示行數</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="848"/>
         <location filename="../ui/ui_setting_new.ui" line="912"/>
         <source>不显示</source>
-        <translation type="unfinished"></translation>
+        <translation>不顯示</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="853"/>
         <source>1行</source>
-        <translation type="unfinished"></translation>
+        <translation>1行</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="858"/>
         <source>2行</source>
-        <translation type="unfinished"></translation>
+        <translation>2行</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="863"/>
         <source>3行</source>
-        <translation type="unfinished"></translation>
+        <translation>3行</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="868"/>
         <source>全部</source>
-        <translation type="unfinished"></translation>
+        <translation>全部</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="897"/>
         <source>分类显示</source>
-        <translation type="unfinished"></translation>
+        <translation>分類顯示</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="907"/>
         <source>显示</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1067"/>
+        <location filename="../ui/ui_setting_new.ui" line="1087"/>
         <source>无代理</source>
-        <translation type="unfinished"></translation>
+        <translation>無代理</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1085"/>
+        <location filename="../ui/ui_setting_new.ui" line="1105"/>
         <source>HTTP代理</source>
-        <translation type="unfinished"></translation>
+        <translation>HTTP代理</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1102"/>
-        <location filename="../ui/ui_setting_new.ui" line="1155"/>
+        <location filename="../ui/ui_setting_new.ui" line="1122"/>
+        <location filename="../ui/ui_setting_new.ui" line="1175"/>
         <source>代理地址</source>
-        <translation type="unfinished">代理地址</translation>
+        <translation>代理地址</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1138"/>
+        <location filename="../ui/ui_setting_new.ui" line="1158"/>
         <source>Sock5代理</source>
-        <translation type="unfinished"></translation>
+        <translation>Sock5代理</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1182"/>
+        <location filename="../ui/ui_setting_new.ui" line="1202"/>
         <source>使用系统代理</source>
-        <translation type="unfinished"></translation>
+        <translation>使用系統代理</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1196"/>
+        <location filename="../ui/ui_setting_new.ui" line="1216"/>
         <source>打开分流设置</source>
-        <translation type="unfinished"></translation>
+        <translation>打開分流設置</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1243"/>
+        <location filename="../ui/ui_setting_new.ui" line="1263"/>
         <source>聊天室：</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/ui_setting_new.ui" line="1419"/>
-        <source>Tile大小，降低可减少显存占用（如出现部分图片无法转换可调低该值）</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/ui_setting_new.ui" line="1434"/>
-        <source>200</source>
-        <translation type="unfinished"></translation>
+        <translation>聊天室：</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="1439"/>
+        <source>Tile大小，降低可减少显存占用（如出现部分图片无法转换可调低该值）</source>
+        <translation>Tile大小，降低可減少顯存佔用（如出現部分圖片無法轉換可調低該值）</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_setting_new.ui" line="1454"/>
+        <source>200</source>
+        <translation>200</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_setting_new.ui" line="1459"/>
         <source>100</source>
-        <translation type="unfinished"></translation>
+        <translation>100</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1444"/>
+        <location filename="../ui/ui_setting_new.ui" line="1464"/>
         <source>32</source>
-        <translation type="unfinished"></translation>
+        <translation>32</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1499"/>
-        <location filename="../ui/ui_setting_new.ui" line="1778"/>
+        <location filename="../ui/ui_setting_new.ui" line="1519"/>
+        <location filename="../ui/ui_setting_new.ui" line="1798"/>
         <source>是否启用</source>
         <translation>是否啟用</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1506"/>
+        <location filename="../ui/ui_setting_new.ui" line="1526"/>
         <source>优先使用下载转换好的缓存</source>
-        <translation type="unfinished"></translation>
+        <translation>優先使用下載轉換好的緩存</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1570"/>
-        <location filename="../ui/ui_setting_new.ui" line="1842"/>
-        <location filename="../ui/ui_setting_new.ui" line="2074"/>
+        <location filename="../ui/ui_setting_new.ui" line="1590"/>
+        <location filename="../ui/ui_setting_new.ui" line="1862"/>
+        <location filename="../ui/ui_setting_new.ui" line="2094"/>
         <source>去噪等级</source>
         <translation>去噪等級</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1650"/>
-        <location filename="../ui/ui_setting_new.ui" line="1922"/>
-        <location filename="../ui/ui_setting_new.ui" line="2154"/>
+        <location filename="../ui/ui_setting_new.ui" line="1670"/>
+        <location filename="../ui/ui_setting_new.ui" line="1942"/>
+        <location filename="../ui/ui_setting_new.ui" line="2174"/>
         <source>自动</source>
         <translation>自動</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1584"/>
-        <location filename="../ui/ui_setting_new.ui" line="1856"/>
-        <location filename="../ui/ui_setting_new.ui" line="2088"/>
+        <location filename="../ui/ui_setting_new.ui" line="1604"/>
+        <location filename="../ui/ui_setting_new.ui" line="1876"/>
+        <location filename="../ui/ui_setting_new.ui" line="2108"/>
         <source>0</source>
         <translation>0</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1060"/>
+        <location filename="../ui/ui_setting_new.ui" line="1080"/>
         <source>Http代理：</source>
         <translation>Http代理：</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1327"/>
+        <location filename="../ui/ui_setting_new.ui" line="1347"/>
         <source>CPU/GPU选择（需重启生效）</source>
         <translation>CPU/GPU選擇（需重啟生效）</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1515"/>
+        <location filename="../ui/ui_setting_new.ui" line="1535"/>
         <source>为了保证速度，图片分辨率小于等于该值时才进行转换（默认4096P）</source>
         <translation>為了保證速度，圖片分辨率小於等於該值時才進行轉換（默認4096P）</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1589"/>
-        <location filename="../ui/ui_setting_new.ui" line="1861"/>
-        <location filename="../ui/ui_setting_new.ui" line="2093"/>
+        <location filename="../ui/ui_setting_new.ui" line="1609"/>
+        <location filename="../ui/ui_setting_new.ui" line="1881"/>
+        <location filename="../ui/ui_setting_new.ui" line="2113"/>
         <source>1</source>
         <translation>1</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1599"/>
-        <location filename="../ui/ui_setting_new.ui" line="1871"/>
-        <location filename="../ui/ui_setting_new.ui" line="2103"/>
+        <location filename="../ui/ui_setting_new.ui" line="1619"/>
+        <location filename="../ui/ui_setting_new.ui" line="1891"/>
+        <location filename="../ui/ui_setting_new.ui" line="2123"/>
         <source>3</source>
         <translation>3</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1636"/>
-        <location filename="../ui/ui_setting_new.ui" line="1908"/>
-        <location filename="../ui/ui_setting_new.ui" line="2140"/>
+        <location filename="../ui/ui_setting_new.ui" line="1656"/>
+        <location filename="../ui/ui_setting_new.ui" line="1928"/>
+        <location filename="../ui/ui_setting_new.ui" line="2160"/>
         <source>模型</source>
         <translation>模型</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1655"/>
-        <location filename="../ui/ui_setting_new.ui" line="1927"/>
-        <location filename="../ui/ui_setting_new.ui" line="2159"/>
+        <location filename="../ui/ui_setting_new.ui" line="1675"/>
+        <location filename="../ui/ui_setting_new.ui" line="1947"/>
+        <location filename="../ui/ui_setting_new.ui" line="2179"/>
         <source>cunet</source>
         <translation>cunet</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1660"/>
-        <location filename="../ui/ui_setting_new.ui" line="1932"/>
-        <location filename="../ui/ui_setting_new.ui" line="2164"/>
+        <location filename="../ui/ui_setting_new.ui" line="1680"/>
+        <location filename="../ui/ui_setting_new.ui" line="1952"/>
+        <location filename="../ui/ui_setting_new.ui" line="2184"/>
         <source>photo</source>
         <translation>photo</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1665"/>
-        <location filename="../ui/ui_setting_new.ui" line="1937"/>
-        <location filename="../ui/ui_setting_new.ui" line="2169"/>
+        <location filename="../ui/ui_setting_new.ui" line="1685"/>
+        <location filename="../ui/ui_setting_new.ui" line="1957"/>
+        <location filename="../ui/ui_setting_new.ui" line="2189"/>
         <source>anime_style_art_rgb</source>
         <translation>anime_style_art_rgb</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1702"/>
-        <location filename="../ui/ui_setting_new.ui" line="1974"/>
-        <location filename="../ui/ui_setting_new.ui" line="2206"/>
+        <location filename="../ui/ui_setting_new.ui" line="1722"/>
+        <location filename="../ui/ui_setting_new.ui" line="1994"/>
+        <location filename="../ui/ui_setting_new.ui" line="2226"/>
         <source>放大倍数</source>
         <translation>放大倍數</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="2050"/>
+        <location filename="../ui/ui_setting_new.ui" line="2070"/>
         <source>下载完后自动转换</source>
         <translation>下載完後自動轉換</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="2308"/>
-        <source>保存路径格式设置（新下载的文件才能生效）</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/ui_setting_new.ui" line="2315"/>
-        <source>作品名（默认）</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../ui/ui_setting_new.ui" line="2328"/>
+        <source>保存路径格式设置（新下载的文件才能生效）</source>
+        <translation>保存路徑格式設置（新下載的文件才能生效）</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_setting_new.ui" line="2335"/>
+        <source>作品名（默认）</source>
+        <translation>作品名（默認）</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_setting_new.ui" line="2348"/>
         <source>[作者名]作品名</source>
-        <translation type="unfinished"></translation>
+        <translation>[作者名]作品名</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="2338"/>
+        <location filename="../ui/ui_setting_new.ui" line="2358"/>
         <source>作者名单独目录（如无作者名将放入default目录）</source>
-        <translation type="unfinished"></translation>
+        <translation>作者名單獨目錄（如無作者名將放入default目錄）</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="2382"/>
+        <location filename="../ui/ui_setting_new.ui" line="2402"/>
         <source>设置目录</source>
         <translation>設置目錄</translation>
     </message>
@@ -2363,167 +2606,167 @@
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished">Form</translation>
+        <translation>表單</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="28"/>
         <source>6</source>
-        <translation type="unfinished"></translation>
+        <translation>6</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="44"/>
         <source>26</source>
-        <translation type="unfinished"></translation>
+        <translation>26</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="60"/>
         <source>11</source>
-        <translation type="unfinished"></translation>
+        <translation>11</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="76"/>
         <source>24</source>
-        <translation type="unfinished"></translation>
+        <translation>24</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="92"/>
         <source>13</source>
-        <translation type="unfinished"></translation>
+        <translation>13</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="108"/>
         <source>14</source>
-        <translation type="unfinished"></translation>
+        <translation>14</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="124"/>
         <source>17</source>
-        <translation type="unfinished"></translation>
+        <translation>17</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="140"/>
         <source>20</source>
-        <translation type="unfinished"></translation>
+        <translation>20</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="156"/>
         <source>1</source>
-        <translation type="unfinished">1</translation>
+        <translation>1</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="172"/>
         <source>5</source>
-        <translation type="unfinished"></translation>
+        <translation>5</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="188"/>
         <source>8</source>
-        <translation type="unfinished"></translation>
+        <translation>8</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="204"/>
         <source>16</source>
-        <translation type="unfinished"></translation>
+        <translation>16</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="220"/>
         <source>18</source>
-        <translation type="unfinished"></translation>
+        <translation>18</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="236"/>
         <source>19</source>
-        <translation type="unfinished"></translation>
+        <translation>19</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="252"/>
         <source>28</source>
-        <translation type="unfinished"></translation>
+        <translation>28</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="268"/>
         <source>21</source>
-        <translation type="unfinished"></translation>
+        <translation>21</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="284"/>
         <source>15</source>
-        <translation type="unfinished"></translation>
+        <translation>15</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="300"/>
         <source>23</source>
-        <translation type="unfinished"></translation>
+        <translation>23</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="316"/>
         <source>9</source>
-        <translation type="unfinished"></translation>
+        <translation>9</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="332"/>
         <source>12</source>
-        <translation type="unfinished"></translation>
+        <translation>12</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="348"/>
         <source>27</source>
-        <translation type="unfinished"></translation>
+        <translation>27</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="364"/>
         <source>22</source>
-        <translation type="unfinished"></translation>
+        <translation>22</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="380"/>
         <source>25</source>
-        <translation type="unfinished"></translation>
+        <translation>25</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="396"/>
         <source>3</source>
-        <translation type="unfinished">3</translation>
+        <translation>3</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="412"/>
         <source>2</source>
-        <translation type="unfinished">2</translation>
+        <translation>2</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="428"/>
         <source>10</source>
-        <translation type="unfinished"></translation>
+        <translation>10</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="444"/>
         <source>4</source>
-        <translation type="unfinished"></translation>
+        <translation>4</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="460"/>
         <source>7</source>
-        <translation type="unfinished"></translation>
+        <translation>7</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="476"/>
         <source>29</source>
-        <translation type="unfinished"></translation>
+        <translation>29</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="492"/>
         <source>30</source>
-        <translation type="unfinished"></translation>
+        <translation>30</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="508"/>
         <source>31</source>
-        <translation type="unfinished"></translation>
+        <translation>31</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_sign_widget.ui" line="520"/>
         <source>关闭</source>
-        <translation type="unfinished">關閉</translation>
+        <translation>關閉</translation>
     </message>
 </context>
 <context>
@@ -2539,12 +2782,12 @@
     <message>
         <location filename="../ui/component/ui_title_bar.ui" line="14"/>
         <source>Form</source>
-        <translation>Form</translation>
+        <translation>表單</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_title_bar.ui" line="82"/>
         <source>JMComic</source>
-        <translation type="unfinished">JMComic</translation>
+        <translation>JMComic</translation>
     </message>
 </context>
 <context>
@@ -2552,22 +2795,22 @@
     <message>
         <location filename="../ui/component/ui_user_manager_widget.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished">Form</translation>
+        <translation>表單</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_user_manager_widget.ui" line="35"/>
         <source>如果你的邮件一直无法接受到验证连接</source>
-        <translation type="unfinished"></translation>
+        <translation>如果你的郵件一直無法接受到驗證連接</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_user_manager_widget.ui" line="42"/>
         <source>请前往官方Discord频道-未收到验证信协助区</source>
-        <translation type="unfinished"></translation>
+        <translation>請前往官方Discord頻道-未收到驗證信協助區</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_user_manager_widget.ui" line="49"/>
         <source>官方Discord</source>
-        <translation type="unfinished"></translation>
+        <translation>官方Discord</translation>
     </message>
     <message>
         <location filename="../ui/component/ui_user_manager_widget.ui" line="63"/>
@@ -2725,7 +2968,7 @@
     <message>
         <location filename="../ui/ui_waifu2x_tool.ui" line="412"/>
         <source>格式</source>
-        <translation type="unfinished"></translation>
+        <translation>格式</translation>
     </message>
     <message>
         <location filename="../ui/ui_waifu2x_tool.ui" line="436"/>
@@ -2763,27 +3006,27 @@
     <message>
         <location filename="../ui/ui_week.ui" line="14"/>
         <source>每周必看</source>
-        <translation type="unfinished"></translation>
+        <translation>每週必看</translation>
     </message>
     <message>
         <location filename="../ui/ui_week.ui" line="32"/>
         <source>每周五 18:00更新</source>
-        <translation type="unfinished"></translation>
+        <translation>每週五 18:00更新</translation>
     </message>
     <message>
         <location filename="../ui/ui_week.ui" line="58"/>
         <source>日漫</source>
-        <translation type="unfinished"></translation>
+        <translation>日漫</translation>
     </message>
     <message>
         <location filename="../ui/ui_week.ui" line="68"/>
         <source>韩漫</source>
-        <translation type="unfinished"></translation>
+        <translation>韓漫</translation>
     </message>
     <message>
         <location filename="../ui/ui_week.ui" line="78"/>
         <source>其他</source>
-        <translation type="unfinished">其他</translation>
+        <translation>其他</translation>
     </message>
 </context>
 </TS>
