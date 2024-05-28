@@ -113,22 +113,27 @@
     </message>
     <message>
         <location filename="../ui/ui_book_info.ui" line="547"/>
+        <source>存储</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_book_info.ui" line="573"/>
         <source>清理</source>
         <translation>Clean</translation>
     </message>
     <message>
-        <location filename="../ui/ui_book_info.ui" line="579"/>
-        <location filename="../ui/ui_book_info.ui" line="665"/>
+        <location filename="../ui/ui_book_info.ui" line="605"/>
+        <location filename="../ui/ui_book_info.ui" line="691"/>
         <source>开始阅读</source>
         <translation>Start Reading</translation>
     </message>
     <message>
-        <location filename="../ui/ui_book_info.ui" line="638"/>
+        <location filename="../ui/ui_book_info.ui" line="664"/>
         <source>已下载章节</source>
         <translation>Downloaded Chapters</translation>
     </message>
     <message>
-        <location filename="../ui/ui_book_info.ui" line="646"/>
+        <location filename="../ui/ui_book_info.ui" line="672"/>
         <source>可离线阅读已下载的章节：</source>
         <translation>Offline Reading of Downloaded Chapters:</translation>
     </message>
@@ -305,92 +310,92 @@
         <translation>Download</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="37"/>
+        <location filename="../ui/ui_download.ui" line="35"/>
         <source>Webp保存为Png</source>
         <translation>Save Webp as Png</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="44"/>
+        <location filename="../ui/ui_download.ui" line="42"/>
         <source>下载失败后1分钟自动重试</source>
         <translation>Automatically retry 1 minute after download fails</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="51"/>
+        <location filename="../ui/ui_download.ui" line="81"/>
         <source>全部开始下载</source>
         <translation>Start All Downloads</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="58"/>
+        <location filename="../ui/ui_download.ui" line="88"/>
         <source>全部暂停下载</source>
         <translation>Pause All Downloads</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="65"/>
+        <location filename="../ui/ui_download.ui" line="95"/>
         <source>全部开始转换</source>
         <translation>Start All Conversions</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="72"/>
+        <location filename="../ui/ui_download.ui" line="102"/>
         <source>全部暂停转换</source>
         <translation>Pause All Conversions</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="82"/>
+        <location filename="../ui/ui_download.ui" line="52"/>
         <source>下载自动进行Waifu2x转换</source>
         <translation>Automatically Convert Downloads with Waifu2x</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="95"/>
+        <location filename="../ui/ui_download.ui" line="112"/>
         <source>id</source>
         <translation>id</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="100"/>
+        <location filename="../ui/ui_download.ui" line="117"/>
         <source>时间</source>
         <translation>Time</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="105"/>
+        <location filename="../ui/ui_download.ui" line="122"/>
         <source>标题</source>
         <translation>Title</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="125"/>
+        <location filename="../ui/ui_download.ui" line="142"/>
         <source>下载状态</source>
         <translation>Download Status</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="110"/>
+        <location filename="../ui/ui_download.ui" line="127"/>
         <source>下载进度</source>
         <translation>Download Progress</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="115"/>
+        <location filename="../ui/ui_download.ui" line="132"/>
         <source>下载章节</source>
         <translation>Download Chapters</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="120"/>
+        <location filename="../ui/ui_download.ui" line="137"/>
         <source>下载速度</source>
         <translation>Download Speed</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="130"/>
+        <location filename="../ui/ui_download.ui" line="147"/>
         <source>转换进度</source>
         <translation>Conversion Progress</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="135"/>
+        <location filename="../ui/ui_download.ui" line="152"/>
         <source>转换章节</source>
         <translation>Conversion Chapters</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="140"/>
+        <location filename="../ui/ui_download.ui" line="157"/>
         <source>转换耗时</source>
         <translation>Conversion Time</translation>
     </message>
     <message>
-        <location filename="../ui/ui_download.ui" line="145"/>
+        <location filename="../ui/ui_download.ui" line="162"/>
         <source>转换状态</source>
         <translation>Conversion Status</translation>
     </message>
@@ -1060,13 +1065,13 @@
         <translation>Proxy Address</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="339"/>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="370"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="289"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="409"/>
         <source>分流3</source>
         <translation>Shunt 3</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="259"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="266"/>
         <source>测速</source>
         <translation>Speed Test</translation>
     </message>
@@ -1106,92 +1111,98 @@
         <translation>No System Proxy Detected</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="200"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="207"/>
         <source>启用Https（如果出现连接被重置，建议关闭试试）</source>
         <translation>Enable HTTPS (If connection resets, try disabling)</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="212"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="219"/>
         <source>使用注册分流（无法注册可尝试开启）</source>
         <translation>Use Registration Shunt (Try enabling if unable to register)</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="227"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="234"/>
         <source>UA设置:</source>
         <translation>UA Settings:</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="234"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="241"/>
         <source>随机生成</source>
         <translation>Generate Randomly</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="275"/>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="397"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="306"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="396"/>
         <source>所以分流不可使用时，自动解锁</source>
         <translation>Automatically unlock when all shunts are unusable</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="278"/>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="400"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="309"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="399"/>
         <source>分流4</source>
         <translation>Shunt 4</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="288"/>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="312"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="443"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="473"/>
         <source>CDN分流</source>
         <translation>CDN Shunt</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="322"/>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="487"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="453"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="463"/>
         <source>分流2</source>
         <translation>Shunt 2</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="387"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="346"/>
         <source>Api分流</source>
         <translation>API Shunt</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="410"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="386"/>
         <source>延迟</source>
         <translation>Latency</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="420"/>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="433"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="326"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="356"/>
         <source>分流1</source>
         <translation>Shunt 1</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="453"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="419"/>
         <source>图片分流</source>
         <translation>Image Shunt</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="463"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="369"/>
         <source>速度</source>
         <translation>Speed</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="501"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="504"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="514"/>
+        <source>US反代分流</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="542"/>
         <source> CDN地址:</source>
         <translation>CDN Address:</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="527"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="568"/>
         <source>CDN地址:</source>
         <translation>CDN Address:</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="554"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="595"/>
         <source>CDN设置请看说明获取</source>
         <translation>For CDN settings, please refer to the instructions</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_login_proxy_widget.ui" line="561"/>
+        <location filename="../ui/component/ui_login_proxy_widget.ui" line="602"/>
         <source>说明</source>
         <translation>Instructions</translation>
     </message>
@@ -1271,10 +1282,232 @@
     </message>
 </context>
 <context>
+    <name>Nas</name>
+    <message>
+        <location filename="../ui/ui_nas.ui" line="14"/>
+        <location filename="../ui/ui_nas.ui" line="73"/>
+        <source>网络存储</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas.ui" line="27"/>
+        <source>上传</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas.ui" line="34"/>
+        <source>id</source>
+        <translation type="unfinished">id</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas.ui" line="39"/>
+        <source>时间</source>
+        <translation type="unfinished">Time</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas.ui" line="44"/>
+        <source>标题</source>
+        <translation type="unfinished">Title</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas.ui" line="49"/>
+        <source>存储名</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas.ui" line="54"/>
+        <source>上传章节</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas.ui" line="59"/>
+        <source>状态</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas.ui" line="64"/>
+        <source>错误信息</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas.ui" line="94"/>
+        <source>添加</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NasAdd</name>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="14"/>
+        <source>Form</source>
+        <translation type="unfinished">Form</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="28"/>
+        <source>用户名</source>
+        <translation type="unfinished">Username</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="35"/>
+        <source>http://192.168.31.28</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="45"/>
+        <source>/测试/长篇/</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="57"/>
+        <source>不单独新增目录</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="70"/>
+        <source>每本漫画单独目录</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="80"/>
+        <source>按添加日期分目录</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="93"/>
+        <source>WebDav</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="98"/>
+        <source>SMB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="112"/>
+        <source>其他设置</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="125"/>
+        <source>地址</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="138"/>
+        <source>目录设置</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="149"/>
+        <source>使用下载中Waifu2x后图片</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="160"/>
+        <location filename="../ui/ui_nas_add.ui" line="235"/>
+        <source>test</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="170"/>
+        <location filename="../ui/ui_nas_add.ui" line="173"/>
+        <source>长篇</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="189"/>
+        <source>路径</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="202"/>
+        <source>密码</source>
+        <translation type="unfinished">Password</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="215"/>
+        <source>协议</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="228"/>
+        <source>存储名/别名</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="247"/>
+        <source>Zip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="265"/>
+        <source>打包方式</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="278"/>
+        <source>端口</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="285"/>
+        <source>5005</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="318"/>
+        <source>确定</source>
+        <translation type="unfinished">Confirm</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="321"/>
+        <source>Return</source>
+        <translation type="unfinished">Return</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="334"/>
+        <source>测试连接</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_nas_add.ui" line="347"/>
+        <source>关闭</source>
+        <translation type="unfinished">Close</translation>
+    </message>
+</context>
+<context>
+    <name>NasItem</name>
+    <message>
+        <location filename="../ui/component/ui_nas_item.ui" line="14"/>
+        <source>Form</source>
+        <translation type="unfinished">Form</translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_nas_item.ui" line="28"/>
+        <source>测试</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_nas_item.ui" line="35"/>
+        <source>编辑</source>
+        <translation type="unfinished">Edit</translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_nas_item.ui" line="42"/>
+        <source>删除</source>
+        <translation type="unfinished">Delete</translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_nas_item.ui" line="60"/>
+        <source>waifu2x</source>
+        <translation type="unfinished">waifu2x</translation>
+    </message>
+</context>
+<context>
     <name>Navigation</name>
     <message>
         <location filename="../ui/component/ui_navigation.ui" line="14"/>
-        <location filename="../ui/component/ui_navigation.ui" line="478"/>
+        <location filename="../ui/component/ui_navigation.ui" line="464"/>
         <source>导航</source>
         <translation>Navigation</translation>
     </message>
@@ -1314,92 +1547,92 @@
         <translation>Image Shunt:</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="210"/>
-        <source>离线模式：</source>
-        <translation>Offline Mode:</translation>
-    </message>
-    <message>
-        <location filename="../ui/component/ui_navigation.ui" line="259"/>
+        <location filename="../ui/component/ui_navigation.ui" line="245"/>
         <source>用户</source>
         <translation>User</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="281"/>
+        <location filename="../ui/component/ui_navigation.ui" line="267"/>
         <source>我的收藏</source>
         <translation>My Favorites</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="322"/>
+        <location filename="../ui/component/ui_navigation.ui" line="308"/>
         <source>本地收藏</source>
         <translation>Local Favorites</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="363"/>
+        <location filename="../ui/component/ui_navigation.ui" line="349"/>
         <source>我的评论</source>
         <translation>My Comments</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="404"/>
+        <location filename="../ui/component/ui_navigation.ui" line="390"/>
         <source>本地记录</source>
         <translation>Local Records</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="445"/>
+        <location filename="../ui/component/ui_navigation.ui" line="431"/>
         <source>观看记录</source>
         <translation>Viewing History</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="500"/>
+        <location filename="../ui/component/ui_navigation.ui" line="486"/>
         <source>首页</source>
         <translation>Home</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="550"/>
+        <location filename="../ui/component/ui_navigation.ui" line="536"/>
         <source>搜索</source>
         <translation>Search</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="597"/>
+        <location filename="../ui/component/ui_navigation.ui" line="583"/>
         <source>分类与排行</source>
         <translation>Categories and Rankings</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="644"/>
+        <location filename="../ui/component/ui_navigation.ui" line="630"/>
         <source>每周必看</source>
         <translation>Must-See Weekly</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="691"/>
+        <location filename="../ui/component/ui_navigation.ui" line="677"/>
         <source>评论</source>
         <translation>Comments</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="730"/>
+        <location filename="../ui/component/ui_navigation.ui" line="716"/>
         <source>其他</source>
         <translation>Others</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="752"/>
+        <location filename="../ui/component/ui_navigation.ui" line="738"/>
         <source>下载</source>
         <translation>Download</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="793"/>
+        <location filename="../ui/component/ui_navigation.ui" line="779"/>
+        <source>网络存储</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/component/ui_navigation.ui" line="820"/>
         <source>本地漫画</source>
         <translation>Local Comics</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="834"/>
+        <location filename="../ui/component/ui_navigation.ui" line="861"/>
         <source>Waifu2x</source>
         <translation>Waifu2x</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="899"/>
+        <location filename="../ui/component/ui_navigation.ui" line="926"/>
         <source>帮助</source>
         <translation>Help</translation>
     </message>
     <message>
-        <location filename="../ui/component/ui_navigation.ui" line="943"/>
+        <location filename="../ui/component/ui_navigation.ui" line="970"/>
         <source>设置</source>
         <translation>Settings</translation>
     </message>
@@ -1766,18 +1999,18 @@
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="47"/>
-        <location filename="../ui/ui_setting_new.ui" line="1031"/>
+        <location filename="../ui/ui_setting_new.ui" line="1051"/>
         <source>代理</source>
         <translation>Proxy</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1298"/>
+        <location filename="../ui/ui_setting_new.ui" line="1318"/>
         <source>Waifu2x设置</source>
         <translation>Waifu2x Settings</translation>
     </message>
     <message>
         <location filename="../ui/ui_setting_new.ui" line="61"/>
-        <location filename="../ui/ui_setting_new.ui" line="2281"/>
+        <location filename="../ui/ui_setting_new.ui" line="2301"/>
         <source>下载与缓存</source>
         <translation>Download and Cache</translation>
     </message>
@@ -2019,98 +2252,108 @@
         <translation>Category cover size:</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="960"/>
+        <location filename="../ui/ui_setting_new.ui" line="941"/>
+        <source>图片浏览设置</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_setting_new.ui" line="948"/>
+        <source>开启OpenGL加速</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_setting_new.ui" line="980"/>
         <source>日志等级：</source>
         <translation>Log level:</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="967"/>
+        <location filename="../ui/ui_setting_new.ui" line="987"/>
         <source>Warn</source>
         <translation>Warn</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="980"/>
+        <location filename="../ui/ui_setting_new.ui" line="1000"/>
         <source>Info</source>
         <translation>Info</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="990"/>
+        <location filename="../ui/ui_setting_new.ui" line="1010"/>
         <source>Debug</source>
         <translation>Debug</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1372"/>
+        <location filename="../ui/ui_setting_new.ui" line="1392"/>
         <source>使用CPU数量（CPU模式生效，需重启）</source>
         <translation>Number of CPUs to use (applies to CPU mode, requires restart)</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1391"/>
-        <location filename="../ui/ui_setting_new.ui" line="1429"/>
+        <location filename="../ui/ui_setting_new.ui" line="1411"/>
+        <location filename="../ui/ui_setting_new.ui" line="1449"/>
         <source>Auto</source>
         <translation>Auto</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1771"/>
+        <location filename="../ui/ui_setting_new.ui" line="1791"/>
         <source>Waifu2x封面模式（开启后所有封面会经过Waifu2x处理）</source>
         <translation>Waifu2x cover mode (all covers will be processed by Waifu2x when enabled)</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1787"/>
+        <location filename="../ui/ui_setting_new.ui" line="1807"/>
         <source>为了保证速度，封面分辨率小于等于该值时才进行转换（默认400P）</source>
         <translation>To ensure speed, covers are only converted when their resolution is less than or equal to this value (default 400P)</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="2043"/>
+        <location filename="../ui/ui_setting_new.ui" line="2063"/>
         <source>waifu2x下载模式（开启后下载完成会经过Waifu2x处理）</source>
         <translation>waifu2x download mode (once enabled, downloads will be processed by Waifu2x)</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="2373"/>
+        <location filename="../ui/ui_setting_new.ui" line="2393"/>
         <source>下载和缓存路径（缓存文件需自己手动清除）</source>
         <translation>Download and cache path (cache files need to be manually cleared)</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="2412"/>
+        <location filename="../ui/ui_setting_new.ui" line="2432"/>
         <source>下载</source>
         <translation>Download</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="2432"/>
-        <location filename="../ui/ui_setting_new.ui" line="2482"/>
-        <location filename="../ui/ui_setting_new.ui" line="2532"/>
-        <location filename="../ui/ui_setting_new.ui" line="2582"/>
+        <location filename="../ui/ui_setting_new.ui" line="2452"/>
+        <location filename="../ui/ui_setting_new.ui" line="2502"/>
+        <location filename="../ui/ui_setting_new.ui" line="2552"/>
+        <location filename="../ui/ui_setting_new.ui" line="2602"/>
         <source>打开目录</source>
         <translation>Open Directory</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="2462"/>
+        <location filename="../ui/ui_setting_new.ui" line="2482"/>
         <source>缓存</source>
         <translation>Cache</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="2512"/>
+        <location filename="../ui/ui_setting_new.ui" line="2532"/>
         <source>聊天缓存</source>
         <translation>Chat Cache</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="2562"/>
+        <location filename="../ui/ui_setting_new.ui" line="2582"/>
         <source>Waifu2x缓存</source>
         <translation>Waifu2x Cache</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1250"/>
+        <location filename="../ui/ui_setting_new.ui" line="1270"/>
         <source>启用代理</source>
         <translation>Enable Proxy</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1594"/>
-        <location filename="../ui/ui_setting_new.ui" line="1866"/>
-        <location filename="../ui/ui_setting_new.ui" line="2098"/>
+        <location filename="../ui/ui_setting_new.ui" line="1614"/>
+        <location filename="../ui/ui_setting_new.ui" line="1886"/>
+        <location filename="../ui/ui_setting_new.ui" line="2118"/>
         <source>2</source>
         <translation>2</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1492"/>
+        <location filename="../ui/ui_setting_new.ui" line="1512"/>
         <source>Waifu2x看图模式</source>
         <translation>Waifu2x Viewing Mode</translation>
     </message>
@@ -2176,184 +2419,184 @@
         <translation>Show</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1067"/>
+        <location filename="../ui/ui_setting_new.ui" line="1087"/>
         <source>无代理</source>
         <translation>No Proxy</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1085"/>
+        <location filename="../ui/ui_setting_new.ui" line="1105"/>
         <source>HTTP代理</source>
         <translation>HTTP Proxy</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1102"/>
-        <location filename="../ui/ui_setting_new.ui" line="1155"/>
+        <location filename="../ui/ui_setting_new.ui" line="1122"/>
+        <location filename="../ui/ui_setting_new.ui" line="1175"/>
         <source>代理地址</source>
         <translation>Proxy Address</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1138"/>
+        <location filename="../ui/ui_setting_new.ui" line="1158"/>
         <source>Sock5代理</source>
         <translation>Socks5 Proxy</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1182"/>
+        <location filename="../ui/ui_setting_new.ui" line="1202"/>
         <source>使用系统代理</source>
         <translation>Use System Proxy</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1196"/>
+        <location filename="../ui/ui_setting_new.ui" line="1216"/>
         <source>打开分流设置</source>
         <translation>Open Bifurcation Settings</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1243"/>
+        <location filename="../ui/ui_setting_new.ui" line="1263"/>
         <source>聊天室：</source>
         <translation>Chat Room:</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1419"/>
+        <location filename="../ui/ui_setting_new.ui" line="1439"/>
         <source>Tile大小，降低可减少显存占用（如出现部分图片无法转换可调低该值）</source>
         <translation>Tile size, reducing can decrease video memory usage (if some images cannot be converted, this value can be reduced)</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1434"/>
+        <location filename="../ui/ui_setting_new.ui" line="1454"/>
         <source>200</source>
         <translation>200</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1439"/>
+        <location filename="../ui/ui_setting_new.ui" line="1459"/>
         <source>100</source>
         <translation>100</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1444"/>
+        <location filename="../ui/ui_setting_new.ui" line="1464"/>
         <source>32</source>
         <translation>32</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1499"/>
-        <location filename="../ui/ui_setting_new.ui" line="1778"/>
+        <location filename="../ui/ui_setting_new.ui" line="1519"/>
+        <location filename="../ui/ui_setting_new.ui" line="1798"/>
         <source>是否启用</source>
         <translation>Enable</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1506"/>
+        <location filename="../ui/ui_setting_new.ui" line="1526"/>
         <source>优先使用下载转换好的缓存</source>
         <translation>Preferentially use downloaded and converted cache</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1570"/>
-        <location filename="../ui/ui_setting_new.ui" line="1842"/>
-        <location filename="../ui/ui_setting_new.ui" line="2074"/>
+        <location filename="../ui/ui_setting_new.ui" line="1590"/>
+        <location filename="../ui/ui_setting_new.ui" line="1862"/>
+        <location filename="../ui/ui_setting_new.ui" line="2094"/>
         <source>去噪等级</source>
         <translation>Noise Reduction Level</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1650"/>
-        <location filename="../ui/ui_setting_new.ui" line="1922"/>
-        <location filename="../ui/ui_setting_new.ui" line="2154"/>
+        <location filename="../ui/ui_setting_new.ui" line="1670"/>
+        <location filename="../ui/ui_setting_new.ui" line="1942"/>
+        <location filename="../ui/ui_setting_new.ui" line="2174"/>
         <source>自动</source>
         <translation>Automatic</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1584"/>
-        <location filename="../ui/ui_setting_new.ui" line="1856"/>
-        <location filename="../ui/ui_setting_new.ui" line="2088"/>
+        <location filename="../ui/ui_setting_new.ui" line="1604"/>
+        <location filename="../ui/ui_setting_new.ui" line="1876"/>
+        <location filename="../ui/ui_setting_new.ui" line="2108"/>
         <source>0</source>
         <translation>0</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1060"/>
+        <location filename="../ui/ui_setting_new.ui" line="1080"/>
         <source>Http代理：</source>
         <translation>HTTP Proxy:</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1327"/>
+        <location filename="../ui/ui_setting_new.ui" line="1347"/>
         <source>CPU/GPU选择（需重启生效）</source>
         <translation>CPU/GPU Selection (requires restart)</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1515"/>
+        <location filename="../ui/ui_setting_new.ui" line="1535"/>
         <source>为了保证速度，图片分辨率小于等于该值时才进行转换（默认4096P）</source>
         <translation>To ensure speed, images are only converted when their resolution is less than or equal to this value (default 4096P)</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1589"/>
-        <location filename="../ui/ui_setting_new.ui" line="1861"/>
-        <location filename="../ui/ui_setting_new.ui" line="2093"/>
+        <location filename="../ui/ui_setting_new.ui" line="1609"/>
+        <location filename="../ui/ui_setting_new.ui" line="1881"/>
+        <location filename="../ui/ui_setting_new.ui" line="2113"/>
         <source>1</source>
         <translation>1</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1599"/>
-        <location filename="../ui/ui_setting_new.ui" line="1871"/>
-        <location filename="../ui/ui_setting_new.ui" line="2103"/>
+        <location filename="../ui/ui_setting_new.ui" line="1619"/>
+        <location filename="../ui/ui_setting_new.ui" line="1891"/>
+        <location filename="../ui/ui_setting_new.ui" line="2123"/>
         <source>3</source>
         <translation>3</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1636"/>
-        <location filename="../ui/ui_setting_new.ui" line="1908"/>
-        <location filename="../ui/ui_setting_new.ui" line="2140"/>
+        <location filename="../ui/ui_setting_new.ui" line="1656"/>
+        <location filename="../ui/ui_setting_new.ui" line="1928"/>
+        <location filename="../ui/ui_setting_new.ui" line="2160"/>
         <source>模型</source>
         <translation>Model</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1655"/>
-        <location filename="../ui/ui_setting_new.ui" line="1927"/>
-        <location filename="../ui/ui_setting_new.ui" line="2159"/>
+        <location filename="../ui/ui_setting_new.ui" line="1675"/>
+        <location filename="../ui/ui_setting_new.ui" line="1947"/>
+        <location filename="../ui/ui_setting_new.ui" line="2179"/>
         <source>cunet</source>
         <translation>cunet</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1660"/>
-        <location filename="../ui/ui_setting_new.ui" line="1932"/>
-        <location filename="../ui/ui_setting_new.ui" line="2164"/>
+        <location filename="../ui/ui_setting_new.ui" line="1680"/>
+        <location filename="../ui/ui_setting_new.ui" line="1952"/>
+        <location filename="../ui/ui_setting_new.ui" line="2184"/>
         <source>photo</source>
         <translation>photo</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1665"/>
-        <location filename="../ui/ui_setting_new.ui" line="1937"/>
-        <location filename="../ui/ui_setting_new.ui" line="2169"/>
+        <location filename="../ui/ui_setting_new.ui" line="1685"/>
+        <location filename="../ui/ui_setting_new.ui" line="1957"/>
+        <location filename="../ui/ui_setting_new.ui" line="2189"/>
         <source>anime_style_art_rgb</source>
         <translation>anime_style_art_rgb</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="1702"/>
-        <location filename="../ui/ui_setting_new.ui" line="1974"/>
-        <location filename="../ui/ui_setting_new.ui" line="2206"/>
+        <location filename="../ui/ui_setting_new.ui" line="1722"/>
+        <location filename="../ui/ui_setting_new.ui" line="1994"/>
+        <location filename="../ui/ui_setting_new.ui" line="2226"/>
         <source>放大倍数</source>
         <translation>Magnification</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="2050"/>
+        <location filename="../ui/ui_setting_new.ui" line="2070"/>
         <source>下载完后自动转换</source>
         <translation>Automatically convert after download</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="2308"/>
+        <location filename="../ui/ui_setting_new.ui" line="2328"/>
         <source>保存路径格式设置（新下载的文件才能生效）</source>
         <translation>Save path format settings (effective for newly downloaded files only)</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="2315"/>
+        <location filename="../ui/ui_setting_new.ui" line="2335"/>
         <source>作品名（默认）</source>
         <translation>Work title (default)</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="2328"/>
+        <location filename="../ui/ui_setting_new.ui" line="2348"/>
         <source>[作者名]作品名</source>
         <translation>[Author Name] Work Title</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="2338"/>
+        <location filename="../ui/ui_setting_new.ui" line="2358"/>
         <source>作者名单独目录（如无作者名将放入default目录）</source>
         <translation>Separate directory for author name (if no author name, will be placed in default directory)</translation>
     </message>
     <message>
-        <location filename="../ui/ui_setting_new.ui" line="2382"/>
+        <location filename="../ui/ui_setting_new.ui" line="2402"/>
         <source>设置目录</source>
         <translation>Set Directory</translation>
     </message>
