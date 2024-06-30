@@ -216,7 +216,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         self.isLocal = False
         self._cacheBook = None
         self.Clear()
-        info = BookMgr().books.get(bookId)
+        info = BookMgr().GetBook(bookId)
         if info:
             self.category = info.baseInfo.tagList[::]
 

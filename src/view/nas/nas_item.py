@@ -210,3 +210,9 @@ class NasInfoItem(QtTaskBase):
 
         self.tick = int(time.time())
         self.dirty = True
+
+    @property
+    def showTitle(self):
+        if self.is_waifu2x:
+            return self.title + "(waifu2x)"
+        return self.title

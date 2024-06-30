@@ -174,7 +174,7 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
     def _NextPage(self):
         epsId = self.readImg.epsId
         bookId = self.readImg.bookId
-        bookInfo = BookMgr().books.get(bookId)
+        bookInfo = BookMgr().GetBook(bookId)
 
         if self.curIndex >= self.maxPic - 1:
             if self.readImg.isLocal:
@@ -188,7 +188,7 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
                 self.OpenNextEps()
             else:
 
-                bookInfo = BookMgr().books.get(bookId)
+                bookInfo = BookMgr().GetBook(bookId)
                 if epsId + 1 < bookInfo.pageInfo.maxEps():
                     QtOwner().ShowMsg(Str.GetStr(Str.AutoSkipNext))
                     self.OpenNextEps()
@@ -347,7 +347,7 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
     def OpenLastEps(self):
         epsId = self.readImg.epsId
         bookId = self.readImg.bookId
-        bookInfo = BookMgr().books.get(bookId)
+        bookInfo = BookMgr().GetBook(bookId)
 
         lasEps = epsId - 1
         if self.readImg.isLocal:
@@ -377,7 +377,7 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
     def OpenNextEps(self):
         epsId = self.readImg.epsId
         bookId = self.readImg.bookId
-        bookInfo = BookMgr().books.get(bookId)
+        bookInfo = BookMgr().GetBook(bookId)
         nextEps = epsId + 1
         if self.readImg.isLocal:
             if nextEps >= len(self.readImg._cacheBook.eps):

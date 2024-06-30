@@ -15,15 +15,15 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QHBoxLayout, QHeaderView, QPushButton,
-    QSizePolicy, QSpacerItem, QTableWidget, QTableWidgetItem,
-    QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QHBoxLayout, QHeaderView, QLabel,
+    QPushButton, QSizePolicy, QSpacerItem, QTableWidget,
+    QTableWidgetItem, QVBoxLayout, QWidget)
 
 class Ui_DownloadSome(object):
     def setupUi(self, DownloadSome):
         if not DownloadSome.objectName():
             DownloadSome.setObjectName(u"DownloadSome")
-        DownloadSome.resize(446, 300)
+        DownloadSome.resize(755, 300)
         self.verticalLayout = QVBoxLayout(DownloadSome)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.horizontalLayout = QHBoxLayout()
@@ -31,6 +31,11 @@ class Ui_DownloadSome(object):
         self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout.addItem(self.horizontalSpacer)
+
+        self.totalLabel = QLabel(DownloadSome)
+        self.totalLabel.setObjectName(u"totalLabel")
+
+        self.horizontalLayout.addWidget(self.totalLabel)
 
         self.inputButton = QPushButton(DownloadSome)
         self.inputButton.setObjectName(u"inputButton")
@@ -47,15 +52,15 @@ class Ui_DownloadSome(object):
 
         self.horizontalLayout.addWidget(self.cleanButton)
 
-        self.downButton = QPushButton(DownloadSome)
-        self.downButton.setObjectName(u"downButton")
-
-        self.horizontalLayout.addWidget(self.downButton)
-
         self.nasButton = QPushButton(DownloadSome)
         self.nasButton.setObjectName(u"nasButton")
 
         self.horizontalLayout.addWidget(self.nasButton)
+
+        self.downButton = QPushButton(DownloadSome)
+        self.downButton.setObjectName(u"downButton")
+
+        self.horizontalLayout.addWidget(self.downButton)
 
 
         self.verticalLayout.addLayout(self.horizontalLayout)
@@ -83,11 +88,12 @@ class Ui_DownloadSome(object):
 
     def retranslateUi(self, DownloadSome):
         DownloadSome.setWindowTitle(QCoreApplication.translate("DownloadSome", u"Form", None))
+        self.totalLabel.setText("")
         self.inputButton.setText(QCoreApplication.translate("DownloadSome", u"\u6279\u91cf\u8f93\u5165JM\u53f7", None))
         self.loadInfoButton.setText(QCoreApplication.translate("DownloadSome", u"\u83b7\u53d6\u4fe1\u606f", None))
         self.cleanButton.setText(QCoreApplication.translate("DownloadSome", u"\u6e05\u7a7a", None))
-        self.downButton.setText(QCoreApplication.translate("DownloadSome", u"\u4e0b\u8f7d", None))
         self.nasButton.setText(QCoreApplication.translate("DownloadSome", u"\u4e0a\u4f20", None))
+        self.downButton.setText(QCoreApplication.translate("DownloadSome", u"\u4e0b\u8f7d", None))
         ___qtablewidgetitem = self.tableWidget.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("DownloadSome", u"JM\u53f7", None));
         ___qtablewidgetitem1 = self.tableWidget.horizontalHeaderItem(1)

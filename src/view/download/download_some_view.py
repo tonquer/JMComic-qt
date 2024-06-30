@@ -1,7 +1,10 @@
 import os
+from functools import partial
 
+from PySide6 import QtWidgets
 from PySide6.QtCore import Signal
-from PySide6.QtWidgets import QFileDialog, QHeaderView, QAbstractItemView, QWidget
+from PySide6.QtGui import QCursor
+from PySide6.QtWidgets import QFileDialog, QHeaderView, QAbstractItemView, QWidget, QMessageBox
 
 from component.dialog.base_mask_dialog import BaseMaskDialog
 from config import config
@@ -59,6 +62,8 @@ class DownloadSomeView(QWidget, Ui_DownloadSome, QtTaskBase):
         self.tableWidget.doubleClicked.connect(self.OpenBookInfo)
         self.tableWidget.horizontalHeader().sectionClicked.connect(self.Sort)
 
+        self.nasButton.clicked.connect(self.ShowMenu)
+
     def SwitchCurrent(self, **kwargs):
         refresh = kwargs.get("refresh")
         pass
@@ -113,6 +118,7 @@ class DownloadSomeView(QWidget, Ui_DownloadSome, QtTaskBase):
         self.SetEnable(False)
         self.loadingBook = []
         self.completeBook = []
+        self.UpdateTotalLabel()
         self.completeNum = 0
         for v in self.allBookInfo.values():
             if v.epsLen <= 0:
@@ -129,17 +135,19 @@ class DownloadSomeView(QWidget, Ui_DownloadSome, QtTaskBase):
         self.allBookInfo.clear()
         self.loadingBook = []
         self.completeBook = []
+        self.UpdateTotalLabel()
         pass
     
     def StartGetBookInfo(self):
         if self.completeNum <= 0:
             self.SetEnable(True)
+            self.UpdateTotalLabel()
             return
         if not self.loadingBook:
             return
 
         bookId = self.loadingBook.pop(0)
-        info = BookMgr().books.get(bookId)
+        info = BookMgr().GetBook(bookId)
         item = self.allBookInfo[bookId]
         if info and info.pageInfo.epsInfo:
             item.st = Str.Success
@@ -160,7 +168,7 @@ class DownloadSomeView(QWidget, Ui_DownloadSome, QtTaskBase):
             self.StartGetBookInfo()
             return
         if st == Status.Ok:
-            info = BookMgr().books.get(bookId)
+            info = BookMgr().GetBook(bookId)
             if not info:
                 item.st = Str.NotFoundBook
                 self.UpdateTable(bookId)
@@ -219,9 +227,73 @@ class DownloadSomeView(QWidget, Ui_DownloadSome, QtTaskBase):
             if info:
                 info.rowCount = i
 
+    def UpdateTotalLabel(self):
+        suc = 0
+        total = 0
+        for v in self.allBookInfo.values():
+            if v.epsLen > 0:
+                suc += 1
+            total += 1
+        self.totalLabel.setText("({}/{})".format(suc, total))
+        return
+
     def Download(self):
+        suc = 0
+        for v in self.allBookInfo.values():
+            if v.epsLen > 0:
+                suc += 1
+        if suc <= 0:
+            return
+        isDownload = QMessageBox.information(self, '下载', "是否下载{}本".format(suc), QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
+        if isDownload != QtWidgets.QMessageBox.Yes:
+            return
+        for v in self.allBookInfo.values():
+            if v.epsLen > 0:
+                bookInfo = BookMgr().GetBook(v.bookId)
+                if not bookInfo:
+                    continue
+                epsIds = list(bookInfo.pageInfo.epsInfo.keys())
+                QtOwner().downloadView.AddDownload(v.bookId, epsIds)
+        QtOwner().ShowMsg(Str.GetStr(Str.AddDownload))
         pass
-    
-    
-    def AddNas(self):
+
+    def ShowMenu(self):
+        toolMenu = QMenu(self.nasButton)
+        toolMenu.clear()
+        nasDict = QtOwner().owner.nasView.nasDict
+        action = toolMenu.addAction(Str.GetStr(Str.NetNas))
+        action.setEnabled(False)
+
+        if not nasDict:
+            action = toolMenu.addAction(Str.GetStr(Str.CvSpace))
+            action.setEnabled(False)
+        else:
+            for k, v in nasDict.items():
+                action = toolMenu.addAction(v.showTitle)
+                action.triggered.connect(partial(self.AddNas, k))
+        toolMenu.exec(QCursor().pos())
+
+    def AddNas(self, nasId):
+        suc = 0
+        for v in self.allBookInfo.values():
+            if v.epsLen > 0:
+                suc += 1
+        if suc <= 0:
+            return
+
+        nasDict = QtOwner().owner.nasView.nasDict
+        nasInfo = nasDict.get(nasId)
+        if not nasInfo:
+            return
+        nasTitle = nasInfo.showTitle
+        isDownload = QMessageBox.information(self, '上传', "是否上传{}本到({})".format(suc, nasTitle), QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
+        if isDownload != QtWidgets.QMessageBox.Yes:
+            return
+        for v in self.allBookInfo.values():
+            if v.epsLen > 0:
+                bookInfo = BookMgr().GetBook(v.bookId)
+                if not bookInfo:
+                    continue
+                QtOwner().nasView.AddNasUploadCache(nasId, v.bookId)
+        QtOwner().ShowMsg(Str.GetStr(Str.CvAddUpload))
         pass

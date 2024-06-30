@@ -256,6 +256,7 @@ class Str:
     ImportLocal = 153      # 导入本地漫画中
     NotUpdateEps = 154      # 没有可更新的章节
     CurRead = 155           # 正在看
+    CopyIdAndTitle = 156    # 复制ID和标题
 
 
     @classmethod
@@ -500,6 +501,7 @@ class Str:
         cls.strDict[cls.ImportLocal] = QCoreApplication.translate("cls.obj", "导入到本地漫画中", None)
         cls.strDict[cls.NotUpdateEps] = QCoreApplication.translate("cls.obj", "没有可更新章节", None)
         cls.strDict[cls.CurRead] = QCoreApplication.translate("cls.obj", "正在看", None)
+        cls.strDict[cls.CopyIdAndTitle] = QCoreApplication.translate("cls.obj", "复制ID和标题", None)
 
     @classmethod
     def GetStr(cls, enumType, defualt=""):

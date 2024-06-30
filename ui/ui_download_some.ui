@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>446</width>
+    <width>755</width>
     <height>300</height>
    </rect>
   </property>
@@ -30,6 +30,13 @@
       </spacer>
      </item>
      <item>
+      <widget class="QLabel" name="totalLabel">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="inputButton">
        <property name="text">
         <string>批量输入JM号</string>
@@ -51,16 +58,16 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="downButton">
+      <widget class="QPushButton" name="nasButton">
        <property name="text">
-        <string>下载</string>
+        <string>上传</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="nasButton">
+      <widget class="QPushButton" name="downButton">
        <property name="text">
-        <string>上传</string>
+        <string>下载</string>
        </property>
       </widget>
      </item>

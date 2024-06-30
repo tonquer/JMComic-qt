@@ -209,7 +209,7 @@
           </widget>
          </item>
          <item>
-          <widget class="WheelComboBox" name="comboBox">
+          <widget class="WheelComboBox" name="apiTimeout">
            <item>
             <property name="text">
              <string>2</string>
@@ -235,7 +235,7 @@
           </widget>
          </item>
          <item>
-          <widget class="WheelComboBox" name="comboBox_2">
+          <widget class="WheelComboBox" name="imgTimeout">
            <item>
             <property name="text">
              <string>2</string>
@@ -748,7 +748,7 @@
  </slots>
  <buttongroups>
   <buttongroup name="radioApiGroup"/>
-  <buttongroup name="radioImgGroup"/>
   <buttongroup name="radioProxyGroup"/>
+  <buttongroup name="radioImgGroup"/>
  </buttongroups>
 </ui>

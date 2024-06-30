@@ -6,7 +6,7 @@ from functools import partial
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt, QTimer, QUrl
 from PySide6.QtGui import QCursor, QDesktopServices, QAction
-from PySide6.QtWidgets import QHeaderView, QAbstractItemView, QMenu, QTableWidgetItem, QMessageBox
+from PySide6.QtWidgets import QHeaderView, QAbstractItemView, QMenu, QTableWidgetItem, QMessageBox, QApplication
 
 from config import config
 from config.setting import Setting
@@ -173,7 +173,7 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
     def AddDownload(self, bookId, downloadIds, isWaifu2x=False):
         if not downloadIds:
             return
-
+        bookId = str(bookId)
         if bookId not in self.downloadDict:
             task = DownloadItem()
             task.bookId = bookId
@@ -269,6 +269,9 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
         removeAction = QAction(Str.GetStr(Str.DeleteRecord), self)
         removeAction.triggered.connect(self.DelRecording)
 
+        copyAction = QAction(Str.GetStr(Str.CopyIdAndTitle), self)
+        copyAction.triggered.connect(self.CopyIdAndTitle)
+
         removeFileAction = QAction(Str.GetStr(Str.DeleteRecordFile), self)
         removeFileAction.triggered.connect(self.DelRecordingAndFile)
 
@@ -329,7 +332,7 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
                         action.setEnabled(False)
                     else:
                         for k, v in nasDict.items():
-                            action = nas.addAction(v.title)
+                            action = nas.addAction(v.showTitle)
                             if QtOwner().nasView.IsInUpload(k, bookId):
                                 action.setEnabled(False)
                             action.triggered.connect(partial(self.NasUploadHandler, title, k, bookId))
@@ -343,6 +346,7 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
                 menu.addAction(pauseConvertAction)
 
             menu.addAction(addLocalAction)
+            menu.addAction(copyAction)
             menu.addAction(removeAction)
             menu.addAction(removeFileAction)
             menu.exec_(QCursor.pos())
@@ -487,11 +491,34 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
             selectRows.add(index.row())
         if not selectRows:
             return
+        isRun = QMessageBox.information(self, '删除', "是否删除记录", QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
+        if isRun != QtWidgets.QMessageBox.Yes:
+            return
+
         for row in sorted(selectRows, reverse=True):
             col = 0
             bookId = self.tableWidget.item(row, col).text()
             self.RemoveRecord(bookId)
         self.UpdateTableRow()
+
+    def CopyIdAndTitle(self):
+        selected = self.tableWidget.selectedIndexes()
+        selectRows = set()
+        for index in selected:
+            selectRows.add(index.row())
+        if not selectRows:
+            return
+        text = ""
+        for row in sorted(selectRows, reverse=True):
+            col = 0
+            bookId = self.tableWidget.item(row, col).text()
+            info = self.downloadDict.get(bookId)
+            text += "JM{}-{}\r\n".format(bookId, info.title)
+        clipboard = QApplication.clipboard()
+        data = text.strip("\r\n")
+        clipboard.setText(data)
+        QtOwner().ShowMsg(Str.GetStr(Str.CopySuc))
+        return
 
     def DelRecordingAndFile(self):
         isClear = QMessageBox.information(self, '删除记录', "是否删除记录和文件", QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)

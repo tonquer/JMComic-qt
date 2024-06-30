@@ -208,12 +208,13 @@ class NasView(QtWidgets.QWidget, Ui_Nas, NasStatus):
         self.listWidget.setItemWidget(item, widget)
 
     def AddNasUpload(self, nasId, bookId):
+        bookId = str(bookId)
         QtOwner().ShowLoading()
         self.AddHttpTask(req.GetBookInfoReq2(bookId), self.OpenEpsInfoBack, (nasId, bookId))
         return True
 
-    def AddNasUpload2(self, title, nasId, bookId):
-
+    def AddNasUpload2(self, title, nasId, bookId, isShowMsg=True):
+        bookId = str(bookId)
         key = "{}-{}".format(nasId, bookId)
         if key not in self.downloadDict:
             task = NasUploadItem()
@@ -226,13 +227,25 @@ class NasView(QtWidgets.QWidget, Ui_Nas, NasStatus):
             task.tableRow = rowCont
             self.tableWidget.insertRow(rowCont)
             self.SetNewStatus(task, task.Waiting)
-            QtOwner().ShowError(Str.GetStr(Str.CvAddUpload))
+            isShowMsg and QtOwner().ShowError(Str.GetStr(Str.CvAddUpload))
         else:
             task = self.downloadDict.get(key)
             if task.status == task.Success:
                 self.SetNewStatus(task, task.Waiting)
 
         return
+
+    def AddNasUploadCache(self, nasId, bookId):
+        bookId = str(bookId)
+        nasInfo = self.nasDict.get(nasId)
+        info = BookMgr().GetBook(bookId)
+        if not info or not nasInfo:
+            return
+        if not info.pageInfo.epsInfo:
+            return
+        epsIds = list(info.pageInfo.epsInfo.keys())
+        QtOwner().downloadView.AddDownload(bookId, epsIds, nasInfo.is_waifu2x)
+        self.AddNasUpload2(info.baseInfo.title, nasId, bookId, False)
 
     def OpenEpsInfoBack(self, raw, v):
         QtOwner().CloseLoading()
@@ -242,7 +255,7 @@ class NasView(QtWidgets.QWidget, Ui_Nas, NasStatus):
         self.listWidget.clear()
         st = raw["st"]
         if st == Status.Ok:
-            info = BookMgr().books.get(bookId)
+            info = BookMgr().GetBook(bookId)
             if not info:
                 QtOwner().ShowError(Str.GetStr(Str.Error))
                 return

@@ -140,7 +140,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         QtOwner().CloseLoading()
         self.ClearTags()
         self.autorList.clear()
-        info = BookMgr().books.get(self.bookId)
+        info = BookMgr().GetBook(self.bookId)
         st = raw["st"]
         self.UpdateDownloadEps()
         if info:
@@ -305,7 +305,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
 
     def UpdateEpsData(self):
         self.epsListWidget.clear()
-        info = BookMgr().books.get(self.bookId)
+        info = BookMgr().GetBook(self.bookId)
         if not info:
             return
         assert isinstance(info, BookInfo)
@@ -541,7 +541,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             action.setEnabled(False)
         else:
             for k, v in nasDict.items():
-                action = toolMenu.addAction(v.title)
+                action = toolMenu.addAction(v.showTitle)
                 if QtOwner().nasView.IsInUpload(k, self.bookId):
                     action.setEnabled(False)
                 action.triggered.connect(partial(self.NasUploadHandler, k, self.bookId))

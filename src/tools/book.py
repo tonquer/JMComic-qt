@@ -163,7 +163,9 @@ class BookMgr(Singleton):
         return Server()
 
     def GetBook(self, bookId) -> BookInfo:
-        return self.books.get(bookId)
+        if not bookId:
+            return
+        return self.books.get(int(bookId))
 
     def UpdateBookInfoList(self, bookList):
         for info in bookList:

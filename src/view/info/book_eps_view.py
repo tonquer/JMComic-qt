@@ -51,7 +51,7 @@ class BookEpsView(QtWidgets.QWidget, Ui_BookEps, QtTaskBase):
 
     def UpdateEpsInfo(self):
         self.listWidget.clear()
-        info = BookMgr().books.get(self.bookId)
+        info = BookMgr().GetBook(self.bookId)
         if not info:
             return
         downloadEpsId = QtOwner().downloadView.GetDownloadEpsId(self.bookId)
