@@ -437,6 +437,7 @@ class MainView(Main, QtTaskBase):
         self.downloadView.Close()
         self.nasView.Close()
         self.searchView.Stop()
+        self.readView.Stop()
         TaskWaifu2x().Stop()
         TaskQImage().Stop()
         # QtReadImgPoolManager().Stop()

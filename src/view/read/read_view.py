@@ -187,6 +187,10 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
             self.qtTool.FullScreen(True)
         QtOwner().CloseReadView()
 
+    def Stop(self):
+        self.frame.process.timer.stop()
+        self.frame.process2.timer.stop()
+
     def Clear(self):
         Setting.TurnSpeed.SetValue(int(self.qtTool.turnSpeed.value() * 1000))
         Setting.ScrollSpeed.SetValue(int(self.qtTool.scrollSpeed.value()))
