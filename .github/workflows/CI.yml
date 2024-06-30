@@ -124,7 +124,7 @@ jobs:
         retention-days: 7
 
   macos:
-    runs-on: macos-11
+    runs-on: macos-12
     env:
       PACKAGENAME: jmcomic_py37_macos
     steps:
