@@ -165,7 +165,7 @@ class BookMgr(Singleton):
     def GetBook(self, bookId) -> BookInfo:
         if not bookId:
             return
-        return self.books.get(int(bookId))
+        return self.books.get(str(bookId))
 
     def UpdateBookInfoList(self, bookList):
         for info in bookList:
@@ -176,6 +176,7 @@ class BookMgr(Singleton):
             self.books[info.baseInfo.id] = info
 
     def UpdateBookInfo(self, bookId, info):
+        bookId = str(bookId)
         book = self.GetBook(bookId)
         assert isinstance(info, BookInfo)
         if not book:
@@ -186,6 +187,7 @@ class BookMgr(Singleton):
         return
 
     def UpdateBookPicture(self, bookId, epsId, aid, minAid, pictureUrl, pictureName):
+        bookId = str(bookId)
         book = self.GetBook(bookId)
         assert isinstance(book, BookInfo)
         if not book:
@@ -200,6 +202,7 @@ class BookMgr(Singleton):
         return
 
     def UpdateBookEps(self, bookId, newEps):
+        bookId = str(bookId)
         book = self.GetBook(bookId)
         assert isinstance(book, BookInfo)
         if not book:
@@ -211,6 +214,7 @@ class BookMgr(Singleton):
         book.pageInfo.epsInfo[newEps.index] = newEps
 
     def UpdateBookEpsScrambleId(self, bookId, epsIndex, scrambleId):
+        bookId = str(bookId)
         book = self.GetBook(bookId)
         assert isinstance(book, BookInfo)
         if not book:
