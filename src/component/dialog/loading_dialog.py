@@ -5,6 +5,7 @@ from PySide6.QtWidgets import QGridLayout
 
 from component.label.gif_group_label import GifGroupLabel
 from component.label.gif_label import GifLabel
+from config.setting import Setting
 
 
 class LoadingDialog(QtWidgets.QDialog):
@@ -31,6 +32,7 @@ class LoadingDialog(QtWidgets.QDialog):
 
     def show(self) -> None:
         self.timer.start()
+        self.closeCnt = 10 * Setting.ApiTimeOut.GetIndexV()
         self.cnt = 0
         super(self.__class__, self).show()
 

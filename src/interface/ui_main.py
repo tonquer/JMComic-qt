@@ -27,6 +27,7 @@ from view.comment.comment_view import CommentView
 from view.comment.my_comment_view import MyCommentView
 from view.comment.sub_comment_view import SubCommentView
 from view.download.download_all_view import DownloadAllView
+from view.download.download_some_view import DownloadSomeView
 from view.download.download_view import DownloadView
 from view.help.help_view import HelpView
 from view.history.history_view import HistoryView
@@ -100,6 +101,9 @@ class Ui_Main(object):
         self.indexView = IndexView()
         self.indexView.setObjectName(u"indexView")
         self.subStackWidget.addWidget(self.indexView)
+        self.downloadSomeView = DownloadSomeView()
+        self.downloadSomeView.setObjectName(u"downloadSomeView")
+        self.subStackWidget.addWidget(self.downloadSomeView)
         self.nasView = NasView()
         self.nasView.setObjectName(u"nasView")
         self.subStackWidget.addWidget(self.nasView)

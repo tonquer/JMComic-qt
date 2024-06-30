@@ -60,6 +60,11 @@ class Ui_Download(object):
 
         self.horizontalLayout.addItem(self.horizontalSpacer)
 
+        self.someDownButton = QPushButton(Download)
+        self.someDownButton.setObjectName(u"someDownButton")
+
+        self.horizontalLayout.addWidget(self.someDownButton)
+
         self.pushButton = QPushButton(Download)
         self.pushButton.setObjectName(u"pushButton")
 
@@ -131,6 +136,7 @@ class Ui_Download(object):
         self.webp2Png.setText(QCoreApplication.translate("Download", u"Webp\u4fdd\u5b58\u4e3aPng", None))
         self.redownloadRadio.setText(QCoreApplication.translate("Download", u"\u4e0b\u8f7d\u5931\u8d25\u540e1\u5206\u949f\u81ea\u52a8\u91cd\u8bd5", None))
         self.radioButton.setText(QCoreApplication.translate("Download", u"\u4e0b\u8f7d\u81ea\u52a8\u8fdb\u884cWaifu2x\u8f6c\u6362", None))
+        self.someDownButton.setText(QCoreApplication.translate("Download", u"\u6279\u91cf\u4e0b\u8f7d", None))
         self.pushButton.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u5f00\u59cb\u4e0b\u8f7d", None))
         self.pushButton_3.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u6682\u505c\u4e0b\u8f7d", None))
         self.pushButton_2.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u5f00\u59cb\u8f6c\u6362", None))

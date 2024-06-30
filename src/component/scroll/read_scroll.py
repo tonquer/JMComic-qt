@@ -35,7 +35,10 @@ class ReadScroll(QScrollBar):
         # self.valueChanged.connect(self.ValueChange)
         self.oldv = 0
         self.changeState = False
+        
+        self.lastSubV = 0
 
+        
     @property
     def stripModel(self):
         return self._owner().qtTool.stripModel
@@ -146,18 +149,18 @@ class ReadScroll(QScrollBar):
         QScrollBar.setValue(self, value)
         self.StartAni(value, value, self.scrollTime)
 
-    def ForceSetValue2(self, value, isAdd):
-        if value == self.value():
-            if isAdd and self.stripModel != ReadMode.RightLeftScroll:
-                self.__value = self.__value + 1
-            else:
-                self.__value = self.__value - 1
+    # def ForceSetValue2(self, value, isAdd):
+    #     if value == self.value():
+    #         if isAdd and self.stripModel != ReadMode.RightLeftScroll:
+    #             self.__value = self.__value + 1
+    #         else:
+    #             self.__value = self.__value - 1
 
-        self.ani.stop()
-        # print("ani stop 3")
-        print("force setV2, {}".format(value))
-        QScrollBar.setValue(self, value)
-        self.StartAni(value, value, self.scrollTime)
+    #     self.ani.stop()
+    #     # print("ani stop 3")
+    #     print("force setV2, {}".format(value))
+    #     QScrollBar.setValue(self, value)
+    #     self.StartAni(value, value, self.scrollTime)
 
     def StartAni(self, start, end, duration):
         self.lastAniEndV = end
@@ -199,9 +202,52 @@ class ReadScroll(QScrollBar):
     #     self.__value = min(self.maximum(), self.__value)
     #     self.setValue(self.__value)
 
-    def SetChangeState(self, state):
-        self.changeState = state
+    # def SetChangeState(self, state):
+    #     self.changeState = state
 
+    # value变化后，重新定位位置信息
+    def SaveLastPosition(self):
+        if not self.isCurReadModel:
+            return
+        
+        if not ReadMode.isScroll(self.stripModel):
+            return
+
+        oldV = self.value()
+        oldMinV = max(1, self.labelSize.get(self.readImg.curIndex, 0))
+        height =  max(1,self.labelSize.get(self.readImg.curIndex-1, 0))
+        subV = (oldV - oldMinV)/height
+        if self.isCurReadModel:
+            print("set lastV, {}, {}".format(oldV, subV))
+        self.lastSubV = subV
+        self.changeState = True
+        return
+    
+    def SaveLastPositionEnd(self):
+        if not self.isCurReadModel:
+            return
+        
+        if not ReadMode.isScroll(self.stripModel):
+            return    
+
+        oldV = self.value()
+        oldMinV = max(1, self.labelSize.get(self.readImg.curIndex, 0))
+        height =  max(1,self.labelSize.get(self.readImg.curIndex-1, 0))
+        newV = int(oldMinV + height*self.lastSubV)
+        if oldV == newV:
+            self.__value = newV
+            self.lastSubV = 0
+            self.changeState = False
+            return
+        self.ani.stop()
+        QScrollBar.setValue(self, newV)
+        if self.isCurReadModel:
+            print("set lastV2, {}, {}".format(oldV, newV))
+        self.__value = newV
+        self.lastSubV = 0
+        self.changeState = False
+        return
+    
     def OnValueChange(self, value):
         if self.changeState:
             return

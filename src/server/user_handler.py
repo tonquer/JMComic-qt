@@ -568,6 +568,11 @@ class GetBookInfoReq2Handler(object):
         try:
             if task.status != Status.Ok:
                 return
+            if task.res.raw.status_code != 200:
+                data["st"] = Status.Error
+                data["message"] = task.res.raw.text
+                Log.Warn("GetBookInfoReq2 error, book_id={}, code={}, msg={}".format(task.req.bookId, task.res.raw.status_code, task.res.raw.text))
+                return
             v = json.loads(task.res.raw.text)
             code = v.get("code")
             data["errorMsg"] = v.get("errorMsg", "")

@@ -76,6 +76,13 @@
         </spacer>
        </item>
        <item>
+        <widget class="QPushButton" name="someDownButton">
+         <property name="text">
+          <string>批量下载</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="pushButton">
          <property name="text">
           <string>全部开始下载</string>

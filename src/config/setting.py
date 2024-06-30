@@ -112,7 +112,9 @@ class Setting:
 
     IsLoginProxy = SettingValue("ProxySetting", 0, False)
     RegisterProsyIndex = SettingValue("ProxySetting", 1, False)
-
+    ApiTimeOut = SettingValue("ProxySetting", 1, False, [2, 5, 7, 10])
+    ImgTimeOut = SettingValue("ProxySetting", 1, False, [2, 5, 7, 10, 15])
+    
     # 下载与缓存
     SavePath = SettingValue("DownloadSetting", "", False)
     SaveNameType = SettingValue("DownloadSetting", 0, False)

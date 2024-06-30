@@ -435,6 +435,7 @@ class MainView(Main, QtTaskBase):
         # TODO 停止所有的定时器以及线程
         self.loadingDialog.close()
         self.downloadView.Close()
+        self.nasView.Close()
         self.searchView.Stop()
         TaskWaifu2x().Stop()
         TaskQImage().Stop()

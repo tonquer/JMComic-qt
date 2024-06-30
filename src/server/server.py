@@ -432,11 +432,9 @@ class Server(Singleton):
     def TestSpeed(self, request, bakParams=""):
         self.__DealHeaders(request, "")
         task = Task(request, bakParams)
-        task.timeout = 2
         self._downloadQueue.put(task)
 
     def TestSpeedPing(self, request, bakParams=""):
         self.__DealHeaders(request, "")
         task = Task(request, bakParams)
-        task.timeout = 2
         self._inQueue.put(task)

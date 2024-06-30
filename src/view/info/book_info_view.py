@@ -115,7 +115,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         bookId = kwargs.get("bookId")
         if bookId:
             self.bookId = str(bookId)
-            self.idLabel.setText(self.bookId)
+            self.idLabel.setText("JM" +str(self.bookId))
             self.OpenBook(self.bookId)
 
         bookName = kwargs.get("bookName")
@@ -160,7 +160,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             self.likeLabel.setText("{}".format(info.baseInfo.likes))
             self.viewLabel.setText("{}".format(info.baseInfo.views))
             self.title.setFont(font)
-            self.idLabel.setText(str(info.baseInfo.id))
+            self.idLabel.setText("JM"+str(info.baseInfo.id))
             self.commentNum = info.pageInfo.commentNum
             self.commentButton.setText("({})".format(info.pageInfo.commentNum))
             self.bookName = info.baseInfo.title
@@ -507,12 +507,12 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             self.close()
         return super(self.__class__, self).keyPressEvent(ev)
 
-    def CopyClickCategoriesItem(self, pos):
-        index = self.categoriesList.indexAt(pos)
-        item = self.categoriesList.itemFromIndex(index)
-        if index.isValid() and item:
-            text = item.text()
-            QtOwner().CopyText(text)
+    # def CopyClickCategoriesItem(self, pos):
+    #     index = self.categoriesList.indexAt(pos)
+    #     item = self.categoriesList.itemFromIndex(index)
+    #     if index.isValid() and item:
+    #         text = item.text()
+    #         QtOwner().CopyText(text)
 
     def CopyClickAutorItem(self, pos):
         index = self.autorList.indexAt(pos)

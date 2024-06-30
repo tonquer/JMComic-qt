@@ -253,6 +253,10 @@ class QtOwner(Singleton):
         arg = {"bookId": bookId, "bookName": bookName}
         self.owner.SwitchWidget(self.owner.bookInfoView, **arg)
 
+    def OpenSomeDownload(self):
+        arg = {}
+        self.owner.SwitchWidget(self.owner.downloadSomeView, **arg)
+
     def OpenLocalBook(self, bookId):
         self.owner.localReadView.OpenLocalBook(bookId)
 

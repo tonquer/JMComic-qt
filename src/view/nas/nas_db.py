@@ -63,7 +63,7 @@ class NasDb(object):
 
     def DelUploadDB(self, nas_id, book_id):
         query = QSqlQuery(self.db)
-        sql = "delete from nas_upload where nas_id='{}', book_id='{}'".format(nas_id, book_id)
+        sql = "delete from nas_upload where nas_id='{}' and book_id='{}'".format(nas_id, book_id)
         suc = query.exec_(sql)
         if not suc:
             Log.Warn(query.lastError().text())

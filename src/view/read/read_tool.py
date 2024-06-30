@@ -178,8 +178,8 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
 
         if self.curIndex >= self.maxPic - 1:
             if self.readImg.isLocal:
-                QtOwner().ShowMsg(Str.GetStr(Str.AutoSkipNext))
                 self.OpenNextEps()
+                QtOwner().ShowMsg(Str.GetStr(Str.AutoSkipNext))
                 return
             elif self.readImg.isOffline:
                 if not QtOwner().downloadView.IsDownloadEpsId(self.readImg.bookId, self.readImg.epsId + 1):
@@ -267,14 +267,14 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
 
     def SetData(self, pSize=None, dataLen=0, state="", waifuSize=None, waifuDataLen=0, waifuState="", waifuTick=0, isInit=False):
         self.UpdateSlider()
-        self.epsLabel.setText(Str.GetStr(Str.Position)+"：{}/{}".format(self.readImg.curIndex + 1, self.readImg.maxPic))
+        self.epsLabel2.setText("{}/{}({})".format(self.readImg.curIndex + 1, self.readImg.maxPic, self.readImg.epsName))
         if pSize or isInit:
             if not pSize:
                 pSize = QSize(0, 0)
-            self.resolutionLabel.setText(Str.GetStr(Str.Resolution)+"：{}x{}".format(str(pSize.width()), str(pSize.height())))
+            self.resolutionLabel2.setText("{}x{}".format(str(pSize.width()), str(pSize.height())))
 
         if dataLen or isInit:
-            self.sizeLabel.setText(Str.GetStr(Str.Size)+": " + ToolUtil.GetDownloadSize(dataLen))
+            self.sizeLabel2.setText(ToolUtil.GetDownloadSize(dataLen))
 
         if waifuSize or isInit:
             if not waifuSize:
@@ -284,7 +284,7 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
             self.waifu2xSize.setText("" + ToolUtil.GetDownloadSize(waifuDataLen))
 
         if state or isInit:
-            self.stateLable.setText(Str.GetStr(Str.State) + ": " + Str.GetStr(state))
+            self.stateLable2.setText(Str.GetStr(state))
 
         if waifuState or isInit:
             if waifuState == QtFileData.WaifuStateStart:

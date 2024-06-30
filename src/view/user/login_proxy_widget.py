@@ -133,6 +133,8 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         self.cdn_img_ip.setText(Setting.PreferCDNIPImg.value)
         self.uaEdit.setText(Setting.UerAgent.value)
         self.loginProxy.setChecked(bool(Setting.IsLoginProxy.value))
+        self.apiTimeout.setCurrentIndex(Setting.ApiTimeOut.value)
+        self.imgTimeout.setCurrentIndex(Setting.ImgTimeOut.value)
 
     def SaveSetting(self):
         Setting.IsHttpProxy.SetValue(int(self.radioProxyGroup.checkedId()))
@@ -144,6 +146,8 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         Setting.PreferCDNIPImg.SetValue(self.cdn_img_ip.text())
         Setting.PreferCDNIP.SetValue(self.cdn_api_ip.text())
         Setting.UerAgent.SetValue(self.uaEdit.text())
+        Setting.ApiTimeOut.SetValue(self.apiTimeout.currentIndex())
+        Setting.ImgTimeOut.SetValue(self.imgTimeout.currentIndex())
         # Setting.DohAddress.SetValue(self.dohEdit.text())
         # Setting.IsOpenDoh.SetValue(int(self.dohBox.isChecked()))
         self.UpdateServer()
@@ -242,15 +246,18 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         else:
             self.SetSock5Proxy(False)
 
-        request.timeout = 2
         Server().UpdateDns(dnslist[0], dnslist[1])
         host = ToolUtil.GetUrlHost(request.url)
         host2 = ToolUtil.GetUrlHost(address)
         request.url = request.url.replace(host, host2)
         self.pingBackNumCnt[i] = 0
         self.pingBackNumDict[i] = [0, 0, 0]
+        
+        request.timeout = 2
         request1 = deepcopy(request)
+        request1.timeout = 2
         request2 = deepcopy(request)
+        request2.timeout = 5
         self.AddHttpTask(lambda x: Server().TestSpeedPing(request, x), self.SpeedTestPingBack, (i, 0))
         self.AddHttpTask(lambda x: Server().TestSpeedPing(request1, x), self.SpeedTestPingBack, (i, 1))
         self.AddHttpTask(lambda x: Server().TestSpeedPing(request2, x), self.SpeedTestPingBack, (i, 2))
@@ -334,6 +341,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         host = ToolUtil.GetUrlHost(request.url)
         host2 = ToolUtil.GetUrlHost(imgUrl)
         request.url = request.url.replace(host, host2)
+        request.timeout = 5
         self.AddHttpTask(lambda x: Server().TestSpeed(request, x), self.SpeedTestBack, i)
         return
 

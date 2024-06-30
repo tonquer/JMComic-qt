@@ -20,6 +20,7 @@ from PySide6.QtWidgets import (QApplication, QButtonGroup, QCheckBox, QCommandLi
     QLineEdit, QPushButton, QRadioButton, QSizePolicy,
     QSpacerItem, QVBoxLayout, QWidget)
 
+from component.box.wheel_combo_box import WheelComboBox
 from component.scroll_area.smooth_scroll_area import SmoothScrollArea
 
 class Ui_LoginProxyWidget(object):
@@ -36,7 +37,7 @@ class Ui_LoginProxyWidget(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 504, 541))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 504, 598))
         self.verticalLayout = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.horizontalLayout_11 = QHBoxLayout()
@@ -146,6 +147,52 @@ class Ui_LoginProxyWidget(object):
         self.line_3.setFrameShadow(QFrame.Sunken)
 
         self.verticalLayout.addWidget(self.line_3)
+
+        self.horizontalLayout_4 = QHBoxLayout()
+        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
+        self.label_12 = QLabel(self.scrollAreaWidgetContents)
+        self.label_12.setObjectName(u"label_12")
+
+        self.horizontalLayout_4.addWidget(self.label_12)
+
+        self.apiTimeout = WheelComboBox(self.scrollAreaWidgetContents)
+        self.apiTimeout.addItem("")
+        self.apiTimeout.addItem("")
+        self.apiTimeout.addItem("")
+        self.apiTimeout.setObjectName(u"apiTimeout")
+
+        self.horizontalLayout_4.addWidget(self.apiTimeout)
+
+        self.label_10 = QLabel(self.scrollAreaWidgetContents)
+        self.label_10.setObjectName(u"label_10")
+
+        self.horizontalLayout_4.addWidget(self.label_10)
+
+        self.imgTimeout = WheelComboBox(self.scrollAreaWidgetContents)
+        self.imgTimeout.addItem("")
+        self.imgTimeout.addItem("")
+        self.imgTimeout.addItem("")
+        self.imgTimeout.addItem("")
+        self.imgTimeout.addItem("")
+        self.imgTimeout.setObjectName(u"imgTimeout")
+
+        self.horizontalLayout_4.addWidget(self.imgTimeout)
+
+        self.horizontalSpacer_4 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_4.addItem(self.horizontalSpacer_4)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout_4)
+
+        self.horizontalLayout_5 = QHBoxLayout()
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_5.addItem(self.horizontalSpacer_3)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout_5)
 
         self.horizontalLayout_9 = QHBoxLayout()
         self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
@@ -441,6 +488,18 @@ class Ui_LoginProxyWidget(object):
         self.proxy_3.setText(QCoreApplication.translate("LoginProxyWidget", u"\u4f7f\u7528\u7cfb\u7edf\u4ee3\u7406", None))
         self.checkLabel.setText(QCoreApplication.translate("LoginProxyWidget", u"\u672a\u68c0\u6d4b\u5230\u7cfb\u7edf\u4ee3\u7406", None))
         self.proxyLabel.setText("")
+        self.label_12.setText(QCoreApplication.translate("LoginProxyWidget", u"API\u8d85\u65f6\u65f6\u95f4  ", None))
+        self.apiTimeout.setItemText(0, QCoreApplication.translate("LoginProxyWidget", u"2", None))
+        self.apiTimeout.setItemText(1, QCoreApplication.translate("LoginProxyWidget", u"5", None))
+        self.apiTimeout.setItemText(2, QCoreApplication.translate("LoginProxyWidget", u"7", None))
+
+        self.label_10.setText(QCoreApplication.translate("LoginProxyWidget", u"\u56fe\u7247\u8d85\u65f6\u65f6\u95f4 ", None))
+        self.imgTimeout.setItemText(0, QCoreApplication.translate("LoginProxyWidget", u"2", None))
+        self.imgTimeout.setItemText(1, QCoreApplication.translate("LoginProxyWidget", u"5", None))
+        self.imgTimeout.setItemText(2, QCoreApplication.translate("LoginProxyWidget", u"7", None))
+        self.imgTimeout.setItemText(3, QCoreApplication.translate("LoginProxyWidget", u"10", None))
+        self.imgTimeout.setItemText(4, QCoreApplication.translate("LoginProxyWidget", u"15", None))
+
         self.httpsBox.setText(QCoreApplication.translate("LoginProxyWidget", u"\u542f\u7528Https\uff08\u5982\u679c\u51fa\u73b0\u8fde\u63a5\u88ab\u91cd\u7f6e\uff0c\u5efa\u8bae\u5173\u95ed\u8bd5\u8bd5\uff09", None))
         self.loginProxy.setText(QCoreApplication.translate("LoginProxyWidget", u"\u4f7f\u7528\u6ce8\u518c\u5206\u6d41\uff08\u65e0\u6cd5\u6ce8\u518c\u53ef\u5c1d\u8bd5\u5f00\u542f\uff09", None))
         self.label_9.setText(QCoreApplication.translate("LoginProxyWidget", u"UA\u8bbe\u7f6e:", None))

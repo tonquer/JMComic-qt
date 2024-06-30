@@ -79,6 +79,7 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
         print(self.width())
         self.tableWidget.setColumnWidth(1, 200)
         self.tableWidget.setColumnWidth(2, 300)
+        self.someDownButton.clicked.connect(QtOwner().OpenSomeDownload)
 
     # 修复下数据
     def RepairData(self, task):

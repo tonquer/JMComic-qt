@@ -41,15 +41,25 @@ class ServerReq(object):
         else:
             self.proxy = {"http": None, "https": None}
 
+        host = ToolUtil.GetUrlHost(url)
+        IsApi = False
+        IsImg = False
+        if "https://" + host in GlobalConfig.Url2List.value :
+            IsApi = True
+            self.timeout = Setting.ApiTimeOut.GetIndexV()
+        
+        if "https://" +host in GlobalConfig.PicUrlList.value:
+            IsImg = True
+            self.timeout = Setting.ImgTimeOut.GetIndexV()
+            
         self.now = int(time.time())
         self.headers = self.GetHeader(url, method)
-        host = ToolUtil.GetUrlHost(url)
-        if "https://" +host in GlobalConfig.Url2List.value and Setting.ProxySelectIndex.value == 6:
+        if IsApi and Setting.ProxySelectIndex.value == 6:
             self.headers.pop("user-agent")
             self.url  += "/"
             self.proxyUrl = GlobalConfig.ProxyApiDomain2.value
 
-        if "https://" +host in GlobalConfig.PicUrlList.value and Setting.ProxySelectIndex.value == 6:
+        if IsImg and Setting.ProxySelectIndex.value == 6:
             self.headers.pop("user-agent")
             self.proxyUrl = GlobalConfig.ProxyImgDomain2.value
 
