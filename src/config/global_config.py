@@ -32,7 +32,7 @@ class GlobalConfig:
 
     # Url2 = GlobalItem("https://www.jmapinode.biz")
     # PicUrl2 = GlobalItem("https://cdn-msp.jmapinodeudzn.net")
-    Url2List = GlobalItem(["https://www.cdn-eldenringproxy.xyz","https://cn-appdata.jmapiproxy2.cc","https://www.jmapinodeudzn.xyz","https://www.jmapinode.xyz"])
+    Url2List = GlobalItem(["https://www.cdnxxx-proxy.xyz","https://www.cdnxxx-proxy.co","https://www.cdnxxx-proxy.vip","https://www.cdnxxx-proxy.org"])
 
     ProxyApiDomain2 = GlobalItem("jm2-api.ggo.icu")
     ProxyImgDomain2 = GlobalItem("jm2-img.ggo.icu")
@@ -41,9 +41,9 @@ class GlobalConfig:
         ["https://cdn-msp.jmapinodeudzn.net", "https://cdn-msp2.jmapinodeudzn.net", "https://cdn-msp.jmapiproxy3.cc",
          "https://cdn-msp.jmapiproxy4.cc"])
 
-    CdnApiUrl = GlobalItem("https://www.jmapinodeudzn.xyz")
+    CdnApiUrl = GlobalItem("https://www.cdnxxx-proxy.vip")
     CdnImgUrl = GlobalItem("https://cdn-msp.jmapiproxy3.cc")
-    ProxyApiUrl = GlobalItem("https://www.jmapinodeudzn.xyz")
+    ProxyApiUrl = GlobalItem("https://www.cdnxxx-proxy.vip")
     ProxyImgUrl = GlobalItem("https://cdn-msp.jmapiproxy3.cc")
     HeaderVer = GlobalItem("1.7.0")
 
