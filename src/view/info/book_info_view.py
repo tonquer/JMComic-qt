@@ -234,6 +234,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
                 # else:
                 #     item.setBackground(QColor(0, 0, 0, 0))
                 item.setSizeHint(label.sizeHint() + QSize(20, 20))
+                item.index = i
                 self.listWidget.setItemWidget(item, label)
         return
     # def LoadingPictureComplete(self, data, status):
