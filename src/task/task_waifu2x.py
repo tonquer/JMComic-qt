@@ -105,17 +105,17 @@ class TaskWaifu2x(TaskBase):
                 if config.CanWaifu2x:
                     if task.saveParams:
                         task.imgData = ToolUtil.SegmentationPicture(task.imgData, task.saveParams[0], task.saveParams[1], task.saveParams[2])
-                    from waifu2x_vulkan import waifu2x_vulkan
+                    from sr_ncnn_vulkan import sr_ncnn_vulkan as sr
                     scale = task.model.get("scale", 0)
                     # mat = task.model.get("format", "jpg")
                     tileSize = Setting.Waifu2xTileSize.GetIndexV()
                     if scale <= 0:
-                        sts = waifu2x_vulkan.add(task.imgData, task.model.get('model', 0), task.taskId, task.model.get("width", 0), task.model.get("high", 0), tileSize=tileSize)
+                        sts = sr.add(task.imgData, task.model.get('model', 0), task.taskId, task.model.get("width", 0), task.model.get("high", 0), tileSize=tileSize)
                     else:
-                        sts = waifu2x_vulkan.add(task.imgData, task.model.get('model', 0), task.taskId, scale, tileSize=tileSize)
+                        sts = sr.add(task.imgData, task.model.get('model', 0), task.taskId, scale, tileSize=tileSize)
 
                     if sts <= 0:
-                        err = waifu2x_vulkan.getLastError()
+                        err = sr.getLastError()
 
                 else:
                     sts = -1
@@ -135,8 +135,8 @@ class TaskWaifu2x(TaskBase):
         if not config.CanWaifu2x:
             time.sleep(100)
             return None
-        from waifu2x_vulkan import waifu2x_vulkan
-        return waifu2x_vulkan.load(0)
+        from sr_ncnn_vulkan import sr_ncnn_vulkan as sr
+        return sr.load(0)
 
     def RunLoad2(self):
         while True:
@@ -244,8 +244,8 @@ class TaskWaifu2x(TaskBase):
                 del self.tasks[taskId]
         Log.Info("cancel wait convert taskId, {}".format(taskIds))
         if config.CanWaifu2x:
-            from waifu2x_vulkan import waifu2x_vulkan
-            waifu2x_vulkan.removeWaitProc(list(taskIds))
+            from sr_ncnn_vulkan import sr_ncnn_vulkan as sr
+            sr.removeWaitProc(list(taskIds))
 
     def Cancel(self, cleanFlag):
         taskIds = self.flagToIds.get(cleanFlag, set())
@@ -259,6 +259,6 @@ class TaskWaifu2x(TaskBase):
         Log.Info("cancel convert taskId, {}".format(removeIds))
         self.flagToIds.pop(cleanFlag)
         if config.CanWaifu2x:
-            from waifu2x_vulkan import waifu2x_vulkan
-            waifu2x_vulkan.remove(removeIds)
+            from sr_ncnn_vulkan import sr_ncnn_vulkan as sr
+            sr.remove(removeIds)
 

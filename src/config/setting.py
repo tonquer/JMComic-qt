@@ -127,19 +127,22 @@ class Setting:
     # 封面 Waifu2x
     CoverIsOpenWaifu = SettingValue("Waifu2xSetting", 0, False)
     CoverMaxNum = SettingValue("Waifu2xSetting", 400, False)
-    CoverLookModel = SettingValue("Waifu2xSetting", 0, False)
-    CoverLookNoise = SettingValue("Waifu2xSetting", 3, False)
+    CoverLookModelName = SettingValue("Waifu2xSetting", "MODEL_WAIFU2X_ANIME_UP2X_DENOISE3X", False)
+    # CoverLookModel = SettingValue("Waifu2xSetting", 0, False)
+    # CoverLookNoise = SettingValue("Waifu2xSetting", 3, False)
     CoverLookScale = SettingValue("Waifu2xSetting", 2.0, False)
 
     IsOpenWaifu = SettingValue("Waifu2xSetting", 0, False)
     LookMaxNum = SettingValue("Waifu2xSetting", 4096, False)
-    LookModel = SettingValue("Waifu2xSetting", 0, False)
-    LookNoise = SettingValue("Waifu2xSetting", 3, False)
+    LookModelName = SettingValue("Waifu2xSetting", "MODEL_WAIFU2X_ANIME_UP2X_DENOISE3X", False)
+    # LookModel = SettingValue("Waifu2xSetting", 0, False)
+    # LookNoise = SettingValue("Waifu2xSetting", 3, False)
     LookScale = SettingValue("Waifu2xSetting", 2.0, False)
 
     DownloadAuto = SettingValue("Waifu2xSetting", 0, False)
-    DownloadModel = SettingValue("Waifu2xSetting", 1, False)
-    DownloadNoise = SettingValue("Waifu2xSetting", 3, False)
+    DownloadModelName = SettingValue("Waifu2xSetting", "MODEL_WAIFU2X_CUNET_UP2X_DENOISE3X", False)
+    # DownloadModel = SettingValue("Waifu2xSetting", 1, False)
+    # DownloadNoise = SettingValue("Waifu2xSetting", 3, False)
     DownloadScale = SettingValue("Waifu2xSetting", 2.0, False)
 
     # 看图设置
@@ -148,7 +151,7 @@ class Setting:
     TurnSpeed = SettingValue("ReadSetting", 5000, False)
     ScrollSpeed = SettingValue("ReadSetting", 400, False)
     PreDownWaifu2x = SettingValue("ReadSetting", 1, False)
-    IsOpenOpenGL = SettingValue("ReadSetting", 1, True)
+    IsOpenOpenGL = SettingValue("ReadSetting", 0, True)
     # UpDownScrollSpeed = SettingValue("ReadSetting", 100, False)
     # ScaleCnt = SettingValue("ReadSetting", 0, False)
 

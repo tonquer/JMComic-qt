@@ -80,6 +80,7 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
         self.tableWidget.setColumnWidth(1, 200)
         self.tableWidget.setColumnWidth(2, 300)
         self.someDownButton.clicked.connect(QtOwner().OpenSomeDownload)
+        self.comboBox.currentIndexChanged.connect(self.CheckHideItem)
 
     # 修复下数据
     def RepairData(self, task):
@@ -211,6 +212,9 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
 
     def UpdateTableItem(self, info):
         assert isinstance(info, DownloadItem)
+        if info.tableRow < 0:
+            return
+
         localTime = time.localtime(info.tick)
         strTime = time.strftime("%Y-%m-%d %H:%M:%S", localTime)
 
@@ -246,7 +250,8 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
         if task in self.convertingList:
             self.convertingList.remove(task)
         self.downloadDict.pop(bookId)
-        self.tableWidget.removeRow(task.tableRow)
+        if task.tableRow >= 0:
+            self.tableWidget.removeRow(task.tableRow)
         self.db.DelDownloadDB(bookId)
 
     def UpdateTableRow(self):
@@ -640,3 +645,24 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
                 reDownload.append(download)
         for download in reDownload:
             self.SetNewStatus(download, DownloadItem.Waiting)
+
+    def CheckHideItem(self):
+        sortId = self.comboBox.currentIndex()
+        count = self.tableWidget.rowCount()
+        for i in range(count):
+            bookId = self.tableWidget.item(i, 0).text()
+            info = self.downloadDict.get(bookId)
+            if info:
+                assert isinstance(info, DownloadItem)
+                if sortId == 0:
+                    self.tableWidget.setRowHidden(i, False)
+                elif sortId == 1:
+                    if info.status == DownloadItem.Success:
+                        self.tableWidget.setRowHidden(i, True)
+                    else:
+                        self.tableWidget.setRowHidden(i, False)
+                elif sortId == 2:
+                    if info.status == DownloadItem.Success:
+                        self.tableWidget.setRowHidden(i, False)
+                    else:
+                        self.tableWidget.setRowHidden(i, True)

@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_local_favorite.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.2.4
+## Created by: Qt User Interface Compiler version 6.5.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -64,6 +64,16 @@ class Ui_LocalFavorite(object):
         self.sortIdCombox.setEnabled(True)
 
         self.horizontalLayout.addWidget(self.sortIdCombox)
+
+        self.importButton = QPushButton(LocalFavorite)
+        self.importButton.setObjectName(u"importButton")
+
+        self.horizontalLayout.addWidget(self.importButton)
+
+        self.allDownButton = QPushButton(LocalFavorite)
+        self.allDownButton.setObjectName(u"allDownButton")
+
+        self.horizontalLayout.addWidget(self.allDownButton)
 
         self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
@@ -160,6 +170,8 @@ class Ui_LocalFavorite(object):
         self.sortIdCombox.setItemText(0, QCoreApplication.translate("LocalFavorite", u"\u964d\u5e8f", None))
         self.sortIdCombox.setItemText(1, QCoreApplication.translate("LocalFavorite", u"\u5347\u5e8f", None))
 
+        self.importButton.setText(QCoreApplication.translate("LocalFavorite", u"\u4ece\u8d26\u53f7\u6536\u85cf\u5bfc\u5165", None))
+        self.allDownButton.setText(QCoreApplication.translate("LocalFavorite", u"\u6279\u91cf\u4e0b\u8f7d", None))
         self.nums.setText(QCoreApplication.translate("LocalFavorite", u"\u6536\u85cf\u6570\uff1a", None))
         self.pages.setText(QCoreApplication.translate("LocalFavorite", u"\u9875", None))
         self.jumpButton.setText(QCoreApplication.translate("LocalFavorite", u"\u8df3\u8f6c", None))

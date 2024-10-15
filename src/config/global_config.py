@@ -21,7 +21,7 @@ class GlobalItem(object):
 
 
 class GlobalConfig:
-    Ver = GlobalItem(9)
+    Ver = GlobalItem(22)
 
     # web url
     WebDnsList = GlobalItem([])
@@ -45,7 +45,7 @@ class GlobalConfig:
     CdnImgUrl = GlobalItem("https://cdn-msp.jmapiproxy3.cc")
     ProxyApiUrl = GlobalItem("https://www.cdnxxx-proxy.vip")
     ProxyImgUrl = GlobalItem("https://cdn-msp.jmapiproxy3.cc")
-    HeaderVer = GlobalItem("1.7.0")
+    HeaderVer = GlobalItem("1.7.1")
 
     def __init__(self):
         pass

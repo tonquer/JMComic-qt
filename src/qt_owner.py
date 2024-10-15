@@ -161,6 +161,13 @@ class QtOwner(Singleton):
         f.close()
         return bytes(data)
 
+    def OpenSrSelectModel(self, curModelName, callBack):
+        from view.setting.setting_sr_select_view import SettingSrSelectView
+        loginView = SettingSrSelectView(QtOwner().owner, curModelName)
+        loginView.show()
+        loginView.Close.connect(callBack)
+        return
+
     def OpenFavoriteFold(self, bookId="", fid="", moveBack=None, foldChangeBack=None):
         from view.user.favorite_fold_view import FavoriteFoldView
         w = FavoriteFoldView(QtOwner().owner, bookId, fid)
@@ -253,8 +260,8 @@ class QtOwner(Singleton):
         arg = {"bookId": bookId, "bookName": bookName}
         self.owner.SwitchWidget(self.owner.bookInfoView, **arg)
 
-    def OpenSomeDownload(self):
-        arg = {}
+    def OpenSomeDownload(self, bookList=None):
+        arg = {"bookList": bookList}
         self.owner.SwitchWidget(self.owner.downloadSomeView, **arg)
 
     def OpenLocalBook(self, bookId):

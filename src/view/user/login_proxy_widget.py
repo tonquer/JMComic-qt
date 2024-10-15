@@ -177,7 +177,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         else:
             Server().UpdateDns(address, imageServer)
         QtOwner().settingView.SetSock5Proxy()
-        Log.Info("update proxy, setId:{}:{}, address:{}, img:{}".format(Setting.ProxySelectIndex.value, Setting.ProxyImgSelectIndex.value, address, imageServer))
+        Log.Warn("update proxy, ver:{}, setId:{}:{}, address:{}, img:{}".format(config.UpdateVersion, Setting.ProxySelectIndex.value, Setting.ProxyImgSelectIndex.value, address, imageServer))
 
     def SpeedTest(self):
         self.speedIndex = 0

@@ -2,7 +2,7 @@ import time
 from datetime import datetime
 
 from PySide6.QtCore import QPropertyAnimation, QRect, QEasingCurve, QFile, QEvent, QSize
-from PySide6.QtGui import QPixmap, Qt, QIcon
+from PySide6.QtGui import QPixmap, Qt, QIcon, QGuiApplication
 from PySide6.QtWidgets import QWidget, QScroller, QScrollerProperties, QCalendarWidget
 
 from config import config
@@ -25,8 +25,25 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
         QtTaskBase.__init__(self)
         self.setupUi(self)
         self.resize(260, 800)
-        if Setting.IsUseTitleBar.value:
-            self.scrollArea.setFixedHeight(350)
+        # if Setting.IsUseTitleBar.value:
+        #     screens = QGuiApplication.screens()
+        #     # print(screens[0].geometry(), screens[1].geometry())
+        #     if Setting.ScreenIndex.value >= len(screens):
+        #         desktop = QGuiApplication.primaryScreen().geometry()
+        #     else:
+        #         desktop = screens[Setting.ScreenIndex.value].geometry()
+        #     height = desktop.height()
+        #     if height <= 720:
+        #         self.scrollArea.setFixedHeight(100)
+        #         self.tailWidget.setMaximumHeight(100)
+        #         self.topWidget.setMaximumHeight(400)
+        #     elif height < 900:
+        #         self.topWidget.setMaximumHeight(100)
+        #         self.scrollArea.setFixedHeight(150)
+        #     elif height <= 1080:
+        #         self.scrollArea.setFixedHeight(250)
+        #     elif height < 1440:
+        #         self.scrollArea.setFixedHeight(350)
         self.__ani = QPropertyAnimation(self, b"geometry")
         self.__connect = None
         self.pictureData = ""
@@ -98,7 +115,7 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
         self.levelLabel.setText("LV" + str(user.level) + "(" + str(user.exp) + "/" + str(user.nex_exp) + ")")
         self.favorite.setText("(" + str(user.favorites) + "/" + str(user.canFavorites) + ")")
         self.coins.setText(str(user.coin))
-        self.titleLabel.setText(str(user.title))
+        self.titleLabel.setText(str("("+user.title+")"))
         self.nameLabel.setText(str(user.name))
         config.LoginUserName = user.name.replace("@", "")
         if user.imgUrl and config.IsLoadingPicture:

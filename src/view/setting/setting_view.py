@@ -15,6 +15,7 @@ from interface.ui_setting_new import Ui_SettingNew
 from qt_owner import QtOwner
 from tools.log import Log
 from tools.str import Str
+from tools.tool import ToolUtil
 from view.tool.doh_dns_view import DohDnsView
 from view.user.login_view import LoginView
 
@@ -61,12 +62,17 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
 
         # comboBox:
         # self.encodeSelect.currentIndexChanged.connect(partial(self.CheckRadioEvent, "LookReadMode"))
-        self.readModel.currentIndexChanged.connect(partial(self.CheckRadioEvent, Setting.LookModel))
-        self.readNoise.currentIndexChanged.connect(partial(self.CheckRadioEvent, Setting.LookNoise))
-        self.coverModel.currentIndexChanged.connect(partial(self.CheckRadioEvent, Setting.CoverLookModel))
-        self.coverNoise.currentIndexChanged.connect(partial(self.CheckRadioEvent, Setting.CoverLookNoise))
-        self.downModel.currentIndexChanged.connect(partial(self.CheckRadioEvent, Setting.DownloadModel))
-        self.downNoise.currentIndexChanged.connect(partial(self.CheckRadioEvent, Setting.DownloadNoise))
+        # self.readModel.currentIndexChanged.connect(partial(self.CheckRadioEvent, Setting.LookModel))
+        # self.readNoise.currentIndexChanged.connect(partial(self.CheckRadioEvent, Setting.LookNoise))
+        # self.coverModel.currentIndexChanged.connect(partial(self.CheckRadioEvent, Setting.CoverLookModel))
+        # self.coverNoise.currentIndexChanged.connect(partial(self.CheckRadioEvent, Setting.CoverLookNoise))
+        # self.downModel.currentIndexChanged.connect(partial(self.CheckRadioEvent, Setting.DownloadModel))
+        # self.downNoise.currentIndexChanged.connect(partial(self.CheckRadioEvent, Setting.DownloadNoise))
+
+        self.readModelName.clicked.connect(partial(self.CheckOpenSrSelect, Setting.LookModelName, self.readModelName))
+        self.coverModelName.clicked.connect(partial(self.CheckOpenSrSelect, Setting.CoverLookModelName, self.coverModelName))
+        self.downModelName.clicked.connect(partial(self.CheckOpenSrSelect, Setting.DownloadModelName, self.downModelName))
+
         self.encodeSelect.currentTextChanged.connect(partial(self.CheckRadioEvent, Setting.SelectEncodeGpu))
         self.threadSelect.currentIndexChanged.connect(partial(self.CheckRadioEvent, Setting.Waifu2xCpuCore))
         self.titleLineBox.currentIndexChanged.connect(partial(self.CheckRadioEvent, Setting.TitleLine))
@@ -159,6 +165,30 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.CheckMsgLabel()
         return
 
+    def CheckOpenSrSelect(self, setItem, button):
+        if button == self.coverModelName:
+            QtOwner().OpenSrSelectModel(setItem.value, self.CheckOpenSrSelectCoverBack)
+        elif button == self.readModelName:
+            QtOwner().OpenSrSelectModel(setItem.value, self.CheckOpenSrSelectReadBack)
+        elif button == self.downModelName:
+            QtOwner().OpenSrSelectModel(setItem.value, self.CheckOpenSrSelectDownBack)
+        pass
+
+    def CheckOpenSrSelectCoverBack(self, modelName):
+        Setting.CoverLookModelName.SetValue(modelName)
+        self.coverModelName.setText(modelName)
+        return modelName
+
+    def CheckOpenSrSelectReadBack(self, modelName):
+        Setting.LookModelName.SetValue(modelName)
+        self.readModelName.setText(modelName)
+        return modelName
+
+    def CheckOpenSrSelectDownBack(self, modelName):
+        Setting.DownloadModelName.SetValue(modelName)
+        self.downModelName.setText(modelName)
+        return modelName
+
     def CheckRadioEvent(self, setItem, value):
         assert isinstance(setItem, SettingValue)
         setItem.SetValue(value)
@@ -235,22 +265,26 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
 
         self.readCheckBox.setChecked(Setting.IsOpenWaifu.value)
         self.preDownWaifu2x.setChecked(Setting.PreDownWaifu2x.value)
-        self.readNoise.setCurrentIndex(Setting.LookNoise.value)
+        # self.readNoise.setCurrentIndex(Setting.LookNoise.value)
         self.readScale.setValue(Setting.LookScale.value)
-        self.readModel.setCurrentIndex(Setting.LookModel.value)
+        # self.readModel.setCurrentIndex(Setting.LookModel.value)
 
         self.categoryBox.setCurrentIndex(Setting.NotCategoryShow.value)
         self.titleLineBox.setCurrentIndex(Setting.TitleLine.value)
         self.tileComboBox.setCurrentIndex(Setting.Waifu2xTileSize.value)
         self.coverCheckBox.setChecked(Setting.CoverIsOpenWaifu.value)
-        self.coverNoise.setCurrentIndex(Setting.CoverLookNoise.value)
+        # self.coverNoise.setCurrentIndex(Setting.CoverLookNoise.value)
         self.coverScale.setValue(Setting.CoverLookScale.value)
-        self.coverModel.setCurrentIndex(Setting.CoverLookModel.value)
+        # self.coverModel.setCurrentIndex(Setting.CoverLookModel.value)
 
         self.downAuto.setChecked(Setting.DownloadAuto.value)
-        self.downNoise.setCurrentIndex(Setting.DownloadNoise.value)
+        # self.downNoise.setCurrentIndex(Setting.DownloadNoise.value)
         self.downScale.setValue(Setting.DownloadScale.value)
-        self.downModel.setCurrentIndex(Setting.DownloadModel.value)
+        # self.downModel.setCurrentIndex(Setting.DownloadModel.value)
+        self.coverModelName.setText(Setting.CoverLookModelName.value)
+        self.readModelName.setText(Setting.LookModelName.value)
+        self.downModelName.setText(Setting.DownloadModelName.value)
+
         self.SetDownloadLabel()
 
     def OpenProxy(self):
@@ -268,6 +302,9 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
     def retranslateUi(self, SettingNew):
         Ui_SettingNew.retranslateUi(self, SettingNew)
         self.SetDownloadLabel()
+        self.coverModelName.setText(Setting.CoverLookModelName.value)
+        self.readModelName.setText(Setting.LookModelName.value)
+        self.downModelName.setText(Setting.DownloadModelName.value)
 
     def SetRadioGroup(self, text, index):
         radio = getattr(self, text+str(index))

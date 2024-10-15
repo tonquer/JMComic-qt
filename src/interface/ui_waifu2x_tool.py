@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_waifu2x_tool.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.2.4
+## Created by: Qt User Interface Compiler version 6.5.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -15,16 +15,18 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QButtonGroup, QCheckBox, QComboBox,
-    QFrame, QGraphicsView, QGridLayout, QHBoxLayout,
-    QLabel, QLineEdit, QPushButton, QRadioButton,
-    QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QButtonGroup, QCheckBox, QFrame,
+    QGraphicsView, QGridLayout, QHBoxLayout, QLabel,
+    QLineEdit, QPushButton, QRadioButton, QSizePolicy,
+    QVBoxLayout, QWidget)
+
+from component.scroll_area.smooth_scroll_area import SmoothScrollArea
 
 class Ui_Waifu2xTool(object):
     def setupUi(self, Waifu2xTool):
         if not Waifu2xTool.objectName():
             Waifu2xTool.setObjectName(u"Waifu2xTool")
-        Waifu2xTool.resize(502, 556)
+        Waifu2xTool.resize(502, 499)
         self.gridLayout = QGridLayout(Waifu2xTool)
         self.gridLayout.setObjectName(u"gridLayout")
         self.graphicsView = QGraphicsView(Waifu2xTool)
@@ -34,30 +36,31 @@ class Ui_Waifu2xTool(object):
 
         self.verticalLayout = QVBoxLayout()
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.line_3 = QFrame(Waifu2xTool)
-        self.line_3.setObjectName(u"line_3")
-        self.line_3.setFrameShape(QFrame.VLine)
-        self.line_3.setFrameShadow(QFrame.Sunken)
-
-        self.verticalLayout.addWidget(self.line_3)
-
+        self.scrollArea = SmoothScrollArea(Waifu2xTool)
+        self.scrollArea.setObjectName(u"scrollArea")
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollAreaWidgetContents = QWidget()
+        self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 229, 477))
+        self.verticalLayout_4 = QVBoxLayout(self.scrollAreaWidgetContents)
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.verticalLayout_2 = QVBoxLayout()
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.line_5 = QFrame(Waifu2xTool)
+        self.line_5 = QFrame(self.scrollAreaWidgetContents)
         self.line_5.setObjectName(u"line_5")
         self.line_5.setFrameShape(QFrame.VLine)
         self.line_5.setFrameShadow(QFrame.Sunken)
 
         self.verticalLayout_2.addWidget(self.line_5)
 
-        self.checkBox = QCheckBox(Waifu2xTool)
+        self.checkBox = QCheckBox(self.scrollAreaWidgetContents)
         self.checkBox.setObjectName(u"checkBox")
         self.checkBox.setMaximumSize(QSize(100, 16777215))
         self.checkBox.setChecked(True)
 
         self.verticalLayout_2.addWidget(self.checkBox)
 
-        self.ttaModel = QCheckBox(Waifu2xTool)
+        self.ttaModel = QCheckBox(self.scrollAreaWidgetContents)
         self.ttaModel.setObjectName(u"ttaModel")
         self.ttaModel.setMaximumSize(QSize(100, 16777215))
 
@@ -65,7 +68,7 @@ class Ui_Waifu2xTool(object):
 
         self.horizontalLayout_3 = QHBoxLayout()
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
-        self.scaleRadio = QRadioButton(Waifu2xTool)
+        self.scaleRadio = QRadioButton(self.scrollAreaWidgetContents)
         self.buttonGroup_2 = QButtonGroup(Waifu2xTool)
         self.buttonGroup_2.setObjectName(u"buttonGroup_2")
         self.buttonGroup_2.addButton(self.scaleRadio)
@@ -75,7 +78,7 @@ class Ui_Waifu2xTool(object):
 
         self.horizontalLayout_3.addWidget(self.scaleRadio)
 
-        self.scaleEdit = QLineEdit(Waifu2xTool)
+        self.scaleEdit = QLineEdit(self.scrollAreaWidgetContents)
         self.scaleEdit.setObjectName(u"scaleEdit")
         self.scaleEdit.setMaximumSize(QSize(160, 16777215))
         self.scaleEdit.setAlignment(Qt.AlignCenter)
@@ -87,14 +90,14 @@ class Ui_Waifu2xTool(object):
 
         self.horizontalLayout_4 = QHBoxLayout()
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
-        self.heighRadio = QRadioButton(Waifu2xTool)
+        self.heighRadio = QRadioButton(self.scrollAreaWidgetContents)
         self.buttonGroup_2.addButton(self.heighRadio)
         self.heighRadio.setObjectName(u"heighRadio")
         self.heighRadio.setMaximumSize(QSize(100, 16777215))
 
         self.horizontalLayout_4.addWidget(self.heighRadio)
 
-        self.widthEdit = QLineEdit(Waifu2xTool)
+        self.widthEdit = QLineEdit(self.scrollAreaWidgetContents)
         self.widthEdit.setObjectName(u"widthEdit")
         self.widthEdit.setEnabled(False)
         self.widthEdit.setMaximumSize(QSize(60, 16777215))
@@ -102,13 +105,13 @@ class Ui_Waifu2xTool(object):
 
         self.horizontalLayout_4.addWidget(self.widthEdit)
 
-        self.label_2 = QLabel(Waifu2xTool)
+        self.label_2 = QLabel(self.scrollAreaWidgetContents)
         self.label_2.setObjectName(u"label_2")
         self.label_2.setMaximumSize(QSize(20, 16777215))
 
         self.horizontalLayout_4.addWidget(self.label_2)
 
-        self.heighEdit = QLineEdit(Waifu2xTool)
+        self.heighEdit = QLineEdit(self.scrollAreaWidgetContents)
         self.heighEdit.setObjectName(u"heighEdit")
         self.heighEdit.setEnabled(False)
         self.heighEdit.setMaximumSize(QSize(60, 16777215))
@@ -119,46 +122,21 @@ class Ui_Waifu2xTool(object):
 
         self.verticalLayout_2.addLayout(self.horizontalLayout_4)
 
-        self.horizontalLayout_5 = QHBoxLayout()
-        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
-        self.label_4 = QLabel(Waifu2xTool)
-        self.label_4.setObjectName(u"label_4")
-        self.label_4.setMaximumSize(QSize(60, 16777215))
-
-        self.horizontalLayout_5.addWidget(self.label_4)
-
-        self.noiseCombox = QComboBox(Waifu2xTool)
-        self.noiseCombox.addItem("")
-        self.noiseCombox.addItem("")
-        self.noiseCombox.addItem("")
-        self.noiseCombox.addItem("")
-        self.noiseCombox.addItem("")
-        self.noiseCombox.setObjectName(u"noiseCombox")
-        self.noiseCombox.setMinimumSize(QSize(160, 0))
-        self.noiseCombox.setMaximumSize(QSize(160, 16777215))
-
-        self.horizontalLayout_5.addWidget(self.noiseCombox)
-
-
-        self.verticalLayout_2.addLayout(self.horizontalLayout_5)
-
         self.horizontalLayout_6 = QHBoxLayout()
         self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
-        self.label_5 = QLabel(Waifu2xTool)
+        self.label_5 = QLabel(self.scrollAreaWidgetContents)
         self.label_5.setObjectName(u"label_5")
         self.label_5.setMaximumSize(QSize(60, 16777215))
 
         self.horizontalLayout_6.addWidget(self.label_5)
 
-        self.comboBox = QComboBox(Waifu2xTool)
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.setObjectName(u"comboBox")
-        self.comboBox.setMinimumSize(QSize(160, 0))
-        self.comboBox.setMaximumSize(QSize(160, 16777215))
+        self.modelName = QPushButton(self.scrollAreaWidgetContents)
+        self.modelName.setObjectName(u"modelName")
+        font = QFont()
+        font.setPointSize(8)
+        self.modelName.setFont(font)
 
-        self.horizontalLayout_6.addWidget(self.comboBox)
+        self.horizontalLayout_6.addWidget(self.modelName)
 
 
         self.verticalLayout_2.addLayout(self.horizontalLayout_6)
@@ -168,40 +146,26 @@ class Ui_Waifu2xTool(object):
 
         self.verticalLayout_2.addLayout(self.horizontalLayout_7)
 
-        self.changeButton = QPushButton(Waifu2xTool)
+        self.changeButton = QPushButton(self.scrollAreaWidgetContents)
         self.changeButton.setObjectName(u"changeButton")
         self.changeButton.setMaximumSize(QSize(100, 16777215))
 
         self.verticalLayout_2.addWidget(self.changeButton, 0, Qt.AlignLeft)
 
 
-        self.verticalLayout.addLayout(self.verticalLayout_2)
-
-        self.line = QFrame(Waifu2xTool)
-        self.line.setObjectName(u"line")
-        self.line.setFrameShape(QFrame.VLine)
-        self.line.setFrameShadow(QFrame.Sunken)
-
-        self.verticalLayout.addWidget(self.line)
-
-        self.line_4 = QFrame(Waifu2xTool)
-        self.line_4.setObjectName(u"line_4")
-        self.line_4.setFrameShape(QFrame.HLine)
-        self.line_4.setFrameShadow(QFrame.Sunken)
-
-        self.verticalLayout.addWidget(self.line_4)
+        self.verticalLayout_4.addLayout(self.verticalLayout_2)
 
         self.verticalLayout_3 = QVBoxLayout()
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.horizontalLayout_8 = QHBoxLayout()
         self.horizontalLayout_8.setObjectName(u"horizontalLayout_8")
-        self.label_8 = QLabel(Waifu2xTool)
+        self.label_8 = QLabel(self.scrollAreaWidgetContents)
         self.label_8.setObjectName(u"label_8")
         self.label_8.setMaximumSize(QSize(60, 16777215))
 
         self.horizontalLayout_8.addWidget(self.label_8)
 
-        self.resolutionLabel = QLabel(Waifu2xTool)
+        self.resolutionLabel = QLabel(self.scrollAreaWidgetContents)
         self.resolutionLabel.setObjectName(u"resolutionLabel")
         self.resolutionLabel.setMaximumSize(QSize(160, 16777215))
 
@@ -212,13 +176,13 @@ class Ui_Waifu2xTool(object):
 
         self.horizontalLayout_9 = QHBoxLayout()
         self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
-        self.label_10 = QLabel(Waifu2xTool)
+        self.label_10 = QLabel(self.scrollAreaWidgetContents)
         self.label_10.setObjectName(u"label_10")
         self.label_10.setMaximumSize(QSize(60, 16777215))
 
         self.horizontalLayout_9.addWidget(self.label_10)
 
-        self.sizeLabel = QLabel(Waifu2xTool)
+        self.sizeLabel = QLabel(self.scrollAreaWidgetContents)
         self.sizeLabel.setObjectName(u"sizeLabel")
         self.sizeLabel.setMaximumSize(QSize(160, 16777215))
 
@@ -229,14 +193,15 @@ class Ui_Waifu2xTool(object):
 
         self.horizontalLayout_11 = QHBoxLayout()
         self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
-        self.label_9 = QLabel(Waifu2xTool)
+        self.label_9 = QLabel(self.scrollAreaWidgetContents)
         self.label_9.setObjectName(u"label_9")
         self.label_9.setMaximumSize(QSize(60, 16777215))
 
         self.horizontalLayout_11.addWidget(self.label_9)
 
-        self.gpuLabel = QLabel(Waifu2xTool)
+        self.gpuLabel = QLabel(self.scrollAreaWidgetContents)
         self.gpuLabel.setObjectName(u"gpuLabel")
+        self.gpuLabel.setMaximumSize(QSize(150, 16777215))
         self.gpuLabel.setWordWrap(True)
 
         self.horizontalLayout_11.addWidget(self.gpuLabel)
@@ -246,13 +211,13 @@ class Ui_Waifu2xTool(object):
 
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.label = QLabel(Waifu2xTool)
+        self.label = QLabel(self.scrollAreaWidgetContents)
         self.label.setObjectName(u"label")
         self.label.setMaximumSize(QSize(60, 16777215))
 
         self.horizontalLayout.addWidget(self.label)
 
-        self.format = QLabel(Waifu2xTool)
+        self.format = QLabel(self.scrollAreaWidgetContents)
         self.format.setObjectName(u"format")
 
         self.horizontalLayout.addWidget(self.format)
@@ -262,13 +227,13 @@ class Ui_Waifu2xTool(object):
 
         self.horizontalLayout_10 = QHBoxLayout()
         self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
-        self.label_6 = QLabel(Waifu2xTool)
+        self.label_6 = QLabel(self.scrollAreaWidgetContents)
         self.label_6.setObjectName(u"label_6")
         self.label_6.setMaximumSize(QSize(60, 16777215))
 
         self.horizontalLayout_10.addWidget(self.label_6)
 
-        self.tickLabel = QLabel(Waifu2xTool)
+        self.tickLabel = QLabel(self.scrollAreaWidgetContents)
         self.tickLabel.setObjectName(u"tickLabel")
         self.tickLabel.setMaximumSize(QSize(160, 16777215))
 
@@ -277,7 +242,7 @@ class Ui_Waifu2xTool(object):
 
         self.verticalLayout_3.addLayout(self.horizontalLayout_10)
 
-        self.oepnButton = QPushButton(Waifu2xTool)
+        self.oepnButton = QPushButton(self.scrollAreaWidgetContents)
         self.oepnButton.setObjectName(u"oepnButton")
         self.oepnButton.setMaximumSize(QSize(100, 16777215))
 
@@ -288,50 +253,36 @@ class Ui_Waifu2xTool(object):
 
         self.verticalLayout_3.addLayout(self.horizontalLayout_2)
 
-        self.pushButton_3 = QPushButton(Waifu2xTool)
+        self.pushButton_3 = QPushButton(self.scrollAreaWidgetContents)
         self.pushButton_3.setObjectName(u"pushButton_3")
         self.pushButton_3.setMaximumSize(QSize(100, 16777215))
 
         self.verticalLayout_3.addWidget(self.pushButton_3, 0, Qt.AlignLeft)
 
-        self.pushButton = QPushButton(Waifu2xTool)
+        self.pushButton = QPushButton(self.scrollAreaWidgetContents)
         self.pushButton.setObjectName(u"pushButton")
         self.pushButton.setMaximumSize(QSize(100, 16777215))
 
         self.verticalLayout_3.addWidget(self.pushButton, 0, Qt.AlignLeft)
 
-        self.saveButton = QPushButton(Waifu2xTool)
+        self.saveButton = QPushButton(self.scrollAreaWidgetContents)
         self.saveButton.setObjectName(u"saveButton")
         self.saveButton.setMaximumSize(QSize(100, 16777215))
 
         self.verticalLayout_3.addWidget(self.saveButton, 0, Qt.AlignLeft)
 
-        self.headButton = QPushButton(Waifu2xTool)
+        self.headButton = QPushButton(self.scrollAreaWidgetContents)
         self.headButton.setObjectName(u"headButton")
         self.headButton.setMaximumSize(QSize(100, 16777215))
 
         self.verticalLayout_3.addWidget(self.headButton, 0, Qt.AlignLeft)
 
 
-        self.verticalLayout.addLayout(self.verticalLayout_3)
+        self.verticalLayout_4.addLayout(self.verticalLayout_3)
 
-        self.line_6 = QFrame(Waifu2xTool)
-        self.line_6.setObjectName(u"line_6")
-        self.line_6.setFrameShape(QFrame.HLine)
-        self.line_6.setFrameShadow(QFrame.Sunken)
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
 
-        self.verticalLayout.addWidget(self.line_6)
-
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-
-        self.verticalLayout.addItem(self.verticalSpacer)
-
-        self.line_2 = QFrame(Waifu2xTool)
-        self.line_2.setObjectName(u"line_2")
-        self.line_2.setFrameShape(QFrame.VLine)
-        self.line_2.setFrameShadow(QFrame.Sunken)
-
-        self.verticalLayout.addWidget(self.line_2)
+        self.verticalLayout.addWidget(self.scrollArea)
 
 
         self.gridLayout.addLayout(self.verticalLayout, 0, 1, 1, 1)
@@ -349,9 +300,7 @@ class Ui_Waifu2xTool(object):
         self.pushButton.clicked.connect(Waifu2xTool.AddScalePic)
         self.scaleEdit.textChanged.connect(Waifu2xTool.CheckScaleRadio)
         self.scaleRadio.clicked.connect(Waifu2xTool.CheckScaleRadio)
-        self.comboBox.currentIndexChanged.connect(Waifu2xTool.ChangeModel)
         self.changeButton.clicked.connect(Waifu2xTool.StartWaifu2x)
-        self.noiseCombox.currentIndexChanged.connect(Waifu2xTool.CheckScaleRadio)
         self.headButton.clicked.connect(Waifu2xTool.SetHead)
 
         QMetaObject.connectSlotsByName(Waifu2xTool)
@@ -368,18 +317,8 @@ class Ui_Waifu2xTool(object):
         self.scaleEdit.setText(QCoreApplication.translate("Waifu2xTool", u"2", None))
         self.heighRadio.setText(QCoreApplication.translate("Waifu2xTool", u"\u56fa\u5b9a\u957f\u5bbd", None))
         self.label_2.setText(QCoreApplication.translate("Waifu2xTool", u"X", None))
-        self.label_4.setText(QCoreApplication.translate("Waifu2xTool", u"\u964d\u566a\uff1a", None))
-        self.noiseCombox.setItemText(0, QCoreApplication.translate("Waifu2xTool", u"3", None))
-        self.noiseCombox.setItemText(1, QCoreApplication.translate("Waifu2xTool", u"2", None))
-        self.noiseCombox.setItemText(2, QCoreApplication.translate("Waifu2xTool", u"1", None))
-        self.noiseCombox.setItemText(3, QCoreApplication.translate("Waifu2xTool", u"0", None))
-        self.noiseCombox.setItemText(4, QCoreApplication.translate("Waifu2xTool", u"-1", None))
-
         self.label_5.setText(QCoreApplication.translate("Waifu2xTool", u"\u6a21\u578b\uff1a", None))
-        self.comboBox.setItemText(0, QCoreApplication.translate("Waifu2xTool", u"cunet", None))
-        self.comboBox.setItemText(1, QCoreApplication.translate("Waifu2xTool", u"photo", None))
-        self.comboBox.setItemText(2, QCoreApplication.translate("Waifu2xTool", u"anime_style_art_rgb", None))
-
+        self.modelName.setText("")
         self.changeButton.setText(QCoreApplication.translate("Waifu2xTool", u"\u8f6c\u6362", None))
         self.label_8.setText(QCoreApplication.translate("Waifu2xTool", u"\u5206\u8fa8\u7387\uff1a", None))
         self.resolutionLabel.setText(QCoreApplication.translate("Waifu2xTool", u"\u65e0\u4fe1\u606f", None))

@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_download.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.2.4
+## Created by: Qt User Interface Compiler version 6.5.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -15,9 +15,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QCheckBox, QGridLayout, QHBoxLayout,
-    QHeaderView, QPushButton, QRadioButton, QSizePolicy,
-    QSpacerItem, QTableWidget, QTableWidgetItem, QWidget)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QGridLayout,
+    QHBoxLayout, QHeaderView, QLabel, QPushButton,
+    QRadioButton, QSizePolicy, QSpacerItem, QTableWidget,
+    QTableWidgetItem, QWidget)
 
 class Ui_Download(object):
     def setupUi(self, Download):
@@ -26,32 +27,6 @@ class Ui_Download(object):
         Download.resize(1002, 510)
         self.gridLayout_2 = QGridLayout(Download)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
-        self.horizontalLayout_3 = QHBoxLayout()
-        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
-        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_3.addItem(self.horizontalSpacer_2)
-
-        self.webp2Png = QCheckBox(Download)
-        self.webp2Png.setObjectName(u"webp2Png")
-
-        self.horizontalLayout_3.addWidget(self.webp2Png)
-
-        self.redownloadRadio = QCheckBox(Download)
-        self.redownloadRadio.setObjectName(u"redownloadRadio")
-
-        self.horizontalLayout_3.addWidget(self.redownloadRadio)
-
-        self.radioButton = QRadioButton(Download)
-        self.radioButton.setObjectName(u"radioButton")
-        self.radioButton.setEnabled(True)
-        self.radioButton.setChecked(True)
-
-        self.horizontalLayout_3.addWidget(self.radioButton)
-
-
-        self.gridLayout_2.addLayout(self.horizontalLayout_3, 0, 0, 1, 1)
-
         self.gridLayout = QGridLayout()
         self.gridLayout.setObjectName(u"gridLayout")
         self.horizontalLayout = QHBoxLayout()
@@ -120,6 +95,54 @@ class Ui_Download(object):
 
         self.gridLayout_2.addLayout(self.gridLayout, 3, 0, 1, 1)
 
+        self.horizontalLayout_3 = QHBoxLayout()
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_3.addItem(self.horizontalSpacer_2)
+
+        self.webp2Png = QCheckBox(Download)
+        self.webp2Png.setObjectName(u"webp2Png")
+
+        self.horizontalLayout_3.addWidget(self.webp2Png)
+
+        self.redownloadRadio = QCheckBox(Download)
+        self.redownloadRadio.setObjectName(u"redownloadRadio")
+
+        self.horizontalLayout_3.addWidget(self.redownloadRadio)
+
+        self.radioButton = QRadioButton(Download)
+        self.radioButton.setObjectName(u"radioButton")
+        self.radioButton.setEnabled(True)
+        self.radioButton.setChecked(True)
+
+        self.horizontalLayout_3.addWidget(self.radioButton)
+
+
+        self.gridLayout_2.addLayout(self.horizontalLayout_3, 0, 0, 1, 1)
+
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.label = QLabel(Download)
+        self.label.setObjectName(u"label")
+
+        self.horizontalLayout_2.addWidget(self.label)
+
+        self.comboBox = QComboBox(Download)
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.setObjectName(u"comboBox")
+
+        self.horizontalLayout_2.addWidget(self.comboBox)
+
+        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_2.addItem(self.horizontalSpacer_3)
+
+
+        self.gridLayout_2.addLayout(self.horizontalLayout_2, 4, 0, 1, 1)
+
 
         self.retranslateUi(Download)
         self.pushButton.clicked.connect(Download.StartAll)
@@ -133,9 +156,6 @@ class Ui_Download(object):
 
     def retranslateUi(self, Download):
         Download.setWindowTitle(QCoreApplication.translate("Download", u"\u4e0b\u8f7d", None))
-        self.webp2Png.setText(QCoreApplication.translate("Download", u"Webp\u4fdd\u5b58\u4e3aPng", None))
-        self.redownloadRadio.setText(QCoreApplication.translate("Download", u"\u4e0b\u8f7d\u5931\u8d25\u540e1\u5206\u949f\u81ea\u52a8\u91cd\u8bd5", None))
-        self.radioButton.setText(QCoreApplication.translate("Download", u"\u4e0b\u8f7d\u81ea\u52a8\u8fdb\u884cWaifu2x\u8f6c\u6362", None))
         self.someDownButton.setText(QCoreApplication.translate("Download", u"\u6279\u91cf\u4e0b\u8f7d", None))
         self.pushButton.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u5f00\u59cb\u4e0b\u8f7d", None))
         self.pushButton_3.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u6682\u505c\u4e0b\u8f7d", None))
@@ -163,5 +183,13 @@ class Ui_Download(object):
         ___qtablewidgetitem9.setText(QCoreApplication.translate("Download", u"\u8f6c\u6362\u8017\u65f6", None));
         ___qtablewidgetitem10 = self.tableWidget.horizontalHeaderItem(10)
         ___qtablewidgetitem10.setText(QCoreApplication.translate("Download", u"\u8f6c\u6362\u72b6\u6001", None));
+        self.webp2Png.setText(QCoreApplication.translate("Download", u"Webp\u4fdd\u5b58\u4e3aPng", None))
+        self.redownloadRadio.setText(QCoreApplication.translate("Download", u"\u4e0b\u8f7d\u5931\u8d25\u540e1\u5206\u949f\u81ea\u52a8\u91cd\u8bd5", None))
+        self.radioButton.setText(QCoreApplication.translate("Download", u"\u4e0b\u8f7d\u81ea\u52a8\u8fdb\u884cWaifu2x\u8f6c\u6362", None))
+        self.label.setText(QCoreApplication.translate("Download", u"\u7b5b\u9009\uff1a", None))
+        self.comboBox.setItemText(0, QCoreApplication.translate("Download", u"\u5168\u90e8", None))
+        self.comboBox.setItemText(1, QCoreApplication.translate("Download", u"\u672a\u5b8c\u6210", None))
+        self.comboBox.setItemText(2, QCoreApplication.translate("Download", u"\u5df2\u5b8c\u6210", None))
+
     # retranslateUi
 

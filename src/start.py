@@ -21,7 +21,7 @@ if sys.platform == 'darwin':
     os.chdir(current_dir)
 
 try:
-    from waifu2x_vulkan import waifu2x_vulkan
+    from sr_ncnn_vulkan import sr_ncnn_vulkan as sr
     config.CanWaifu2x = True
 except Exception as es:
     config.CanWaifu2x = False
@@ -50,7 +50,7 @@ if __name__ == "__main__":
         app = QtWidgets.QApplication(sys.argv)
         showError(traceback.format_exc(), app)
         if config.CanWaifu2x:
-            waifu2x_vulkan.stop()
+            sr.stop()
         sys.exit(-111)
         
     app = QtWidgets.QApplication(sys.argv)  # 建立application对象
@@ -83,7 +83,7 @@ if __name__ == "__main__":
         Log.Error(es)
         showError(traceback.format_exc(), app)
         if config.CanWaifu2x:
-            waifu2x_vulkan.stop()
+            sr.stop()
         sys.exit(-111)
 
     oldHook = sys.excepthook
@@ -98,7 +98,7 @@ if __name__ == "__main__":
     socket.close()
     main.Close()
     if config.CanWaifu2x:
-        waifu2x_vulkan.stop()
+        sr.stop()
     time.sleep(2)
     print(sts)
     sys.exit(sts)

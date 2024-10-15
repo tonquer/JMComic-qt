@@ -66,6 +66,10 @@ class DownloadSomeView(QWidget, Ui_DownloadSome, QtTaskBase):
 
     def SwitchCurrent(self, **kwargs):
         refresh = kwargs.get("refresh")
+        bookList = kwargs.get("bookList")
+        if bookList:
+            self.Clean()
+            self.AddBookInfo(bookList)
         pass
 
     def SetEnable(self, enable):

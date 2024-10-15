@@ -172,9 +172,9 @@ class MainView(Main, QtTaskBase):
         self.downloadView.Init()
         self.nasView.Init()
         if config.CanWaifu2x:
-            from waifu2x_vulkan import waifu2x_vulkan
-            stat = waifu2x_vulkan.init()
-            waifu2x_vulkan.setDebug(True)
+            from sr_ncnn_vulkan import sr_ncnn_vulkan as sr
+            stat = sr.init()
+            sr.setDebug(True)
             if stat < 0:
                 pass
                 # QtOwner().ShowMsg(self.tr("未发现支持VULKAN的GPU, Waiuf2x当前为CPU模式, " + ", code:{}".format(str(stat))))
@@ -184,16 +184,16 @@ class MainView(Main, QtTaskBase):
                 # self.qtReadImg.frame.qtTool.checkBox.setEnabled(False)
 
             IsCanUse = True
-            gpuInfo = waifu2x_vulkan.getGpuInfo()
-            cpuNum = waifu2x_vulkan.getCpuCoreNum()
-            gpuNum = waifu2x_vulkan.getGpuCoreNum()
+            gpuInfo = sr.getGpuInfo()
+            cpuNum = sr.getCpuCoreNum()
+            gpuNum = sr.getGpuCoreNum()
             self.settingView.SetGpuInfos(gpuInfo, cpuNum)
             # if not gpuInfo or (gpuInfo and config.Encode < 0) or (gpuInfo and config.Encode >= len(gpuInfo)):
             #     config.Encode = 0
 
-            sts = waifu2x_vulkan.initSet(config.Encode, config.UseCpuNum)
+            sts = sr.initSet(config.Encode, config.UseCpuNum)
             TaskWaifu2x().Start()
-            version = waifu2x_vulkan.getVersion()
+            version = sr.getVersion()
             config.Waifu2xVersion = version
             self.helpView.waifu2x.setText(config.Waifu2xVersion)
             Log.Warn("Waifu2x init:{}, encode:{}, version:{}, code:{}, cpuNum:{}/{}, gpuNum:{}, gpuList:{}".format(
@@ -214,7 +214,7 @@ class MainView(Main, QtTaskBase):
             self.waifu2xToolView.checkBox.setEnabled(False)
             self.waifu2xToolView.changeButton.setEnabled(False)
             self.waifu2xToolView.changeButton.setEnabled(False)
-            self.waifu2xToolView.comboBox.setEnabled(False)
+            self.waifu2xToolView.modelName.setEnabled(False)
             self.waifu2xToolView.SetStatus(False)
             Setting.IsOpenWaifu.SetValue(0)
 
