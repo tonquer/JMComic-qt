@@ -13,6 +13,7 @@ from config.setting import Setting
 from interface.ui_download import Ui_Download
 from qt_owner import QtOwner
 from task.qt_task import QtTaskBase
+from tools.langconv import Converter
 from tools.log import Log
 from tools.status import Status
 from tools.str import Str
@@ -81,6 +82,8 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
         self.tableWidget.setColumnWidth(2, 300)
         self.someDownButton.clicked.connect(QtOwner().OpenSomeDownload)
         self.comboBox.currentIndexChanged.connect(self.CheckHideItem)
+        self.lineEdit.textChanged.connect(self.SearchTextChange)
+        self.searchText = ""
 
     # 修复下数据
     def RepairData(self, task):
@@ -646,6 +649,10 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
         for download in reDownload:
             self.SetNewStatus(download, DownloadItem.Waiting)
 
+    def SearchTextChange(self, text):
+        self.searchText = Converter('zh-hans').convert(text)
+        self.CheckHideItem()
+
     def CheckHideItem(self):
         sortId = self.comboBox.currentIndex()
         count = self.tableWidget.rowCount()
@@ -654,15 +661,29 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
             info = self.downloadDict.get(bookId)
             if info:
                 assert isinstance(info, DownloadItem)
+                isFind = False
+                if self.searchText:
+                    if self.searchText in str(info.bookId):
+                        isFind = True
+                    if self.searchText in Converter('zh-hans').convert(info.title):
+                        isFind = True
+                    if self.searchText in Converter('zh-hans').convert(info.author):
+                        isFind = True
+                else:
+                    isFind = True
+
                 if sortId == 0:
-                    self.tableWidget.setRowHidden(i, False)
+                    if isFind:
+                        self.tableWidget.setRowHidden(i, False)
+                    else:
+                        self.tableWidget.setRowHidden(i, True)
                 elif sortId == 1:
-                    if info.status == DownloadItem.Success:
+                    if info.status == DownloadItem.Success or not isFind:
                         self.tableWidget.setRowHidden(i, True)
                     else:
                         self.tableWidget.setRowHidden(i, False)
                 elif sortId == 2:
-                    if info.status == DownloadItem.Success:
+                    if info.status == DownloadItem.Success and isFind:
                         self.tableWidget.setRowHidden(i, False)
                     else:
                         self.tableWidget.setRowHidden(i, True)

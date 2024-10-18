@@ -198,8 +198,8 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-660</y>
-        <width>399</width>
+        <y>0</y>
+        <width>393</width>
         <height>746</height>
        </rect>
       </property>
@@ -964,6 +964,9 @@
         <property name="autoRaise">
          <bool>false</bool>
         </property>
+        <attribute name="buttonGroup">
+         <string notr="true">buttonGroup</string>
+        </attribute>
        </widget>
       </item>
      </layout>

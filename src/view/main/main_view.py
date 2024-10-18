@@ -50,6 +50,9 @@ class MainView(Main, QtTaskBase):
         self.setAttribute(Qt.WA_StyledBackground, True)
 
         self.loadingDialog = LoadingDialog(self)
+        self.navigationWidget.helpButton.click()
+        self.subStackWidget.setCurrentIndex(self.subStackWidget.indexOf(self.helpView))
+
         self.__initWidget()
 
         # 窗口切换相关
@@ -60,7 +63,9 @@ class MainView(Main, QtTaskBase):
         self.menuButton.clicked.connect(self.CheckShowMenu)
         self.UpdateTabBar()
 
-        self.subStackWidget.setCurrentIndex(0)
+        # self.subStackWidget.setCurrentIndex(0)
+
+
         self.settingView.LoadSetting()
         GlobalConfig.LoadSetting()
 

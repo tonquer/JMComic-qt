@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>502</width>
-    <height>499</height>
+    <width>705</width>
+    <height>498</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,6 +21,12 @@
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="SmoothScrollArea" name="scrollArea">
+       <property name="maximumSize">
+        <size>
+         <width>300</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="widgetResizable">
         <bool>true</bool>
        </property>
@@ -29,8 +35,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>229</width>
-          <height>477</height>
+          <width>281</width>
+          <height>480</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -59,7 +65,7 @@
              </property>
             </widget>
            </item>
-           <item>
+           <item alignment="Qt::AlignLeft">
             <widget class="QCheckBox" name="ttaModel">
              <property name="maximumSize">
               <size>
@@ -77,7 +83,7 @@
            </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_3">
-             <item>
+             <item alignment="Qt::AlignLeft">
               <widget class="QRadioButton" name="scaleRadio">
                <property name="maximumSize">
                 <size>
@@ -209,9 +215,52 @@
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_7"/>
+            <layout class="QHBoxLayout" name="horizontalLayout_7">
+             <item>
+              <widget class="QLabel" name="label_3">
+               <property name="maximumSize">
+                <size>
+                 <width>60</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>格式：</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="fmtComboBox">
+               <item>
+                <property name="text">
+                 <string>自动</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>JPG</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>PNG</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>BMP</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>WEBP</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+            </layout>
            </item>
-           <item alignment="Qt::AlignLeft">
+           <item alignment="Qt::AlignHCenter">
             <widget class="QPushButton" name="changeButton">
              <property name="maximumSize">
               <size>
@@ -347,7 +396,7 @@
            </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_10">
-             <item>
+             <item alignment="Qt::AlignLeft">
               <widget class="QLabel" name="label_6">
                <property name="maximumSize">
                 <size>
@@ -375,60 +424,65 @@
              </item>
             </layout>
            </item>
-           <item alignment="Qt::AlignLeft">
-            <widget class="QPushButton" name="oepnButton">
-             <property name="maximumSize">
-              <size>
-               <width>100</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>打开图片</string>
-             </property>
-            </widget>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <item>
+              <widget class="QPushButton" name="oepnButton">
+               <property name="maximumSize">
+                <size>
+                 <width>100</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>打开图片</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="saveButton">
+               <property name="maximumSize">
+                <size>
+                 <width>100</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>保存图片</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_2"/>
-           </item>
-           <item alignment="Qt::AlignLeft">
-            <widget class="QPushButton" name="pushButton_3">
-             <property name="maximumSize">
-              <size>
-               <width>100</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>缩小</string>
-             </property>
-            </widget>
-           </item>
-           <item alignment="Qt::AlignLeft">
-            <widget class="QPushButton" name="pushButton">
-             <property name="maximumSize">
-              <size>
-               <width>100</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>放大</string>
-             </property>
-            </widget>
-           </item>
-           <item alignment="Qt::AlignLeft">
-            <widget class="QPushButton" name="saveButton">
-             <property name="maximumSize">
-              <size>
-               <width>100</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>保存图片</string>
-             </property>
-            </widget>
+            <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <item>
+              <widget class="QPushButton" name="pushButton">
+               <property name="maximumSize">
+                <size>
+                 <width>100</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>放大</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_3">
+               <property name="maximumSize">
+                <size>
+                 <width>100</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>缩小</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
            <item alignment="Qt::AlignLeft">
             <widget class="QPushButton" name="headButton">
@@ -444,6 +498,19 @@
             </widget>
            </item>
           </layout>
+         </item>
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </widget>

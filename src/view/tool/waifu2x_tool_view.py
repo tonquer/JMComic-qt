@@ -88,6 +88,7 @@ class Waifu2xToolView(QtWidgets.QWidget, Ui_Waifu2xTool, QtTaskBase):
         self.waifu2xData = ""
         self.backStatus = ""
         self.modelName.clicked.connect(self.OpenSrSelect)
+        self.fmtComboBox.currentIndexChanged.connect(self.CheckStatus)
 
     def retranslateUi(self, SettingNew):
         oldName = self.modelName.toolTip()
@@ -101,12 +102,13 @@ class Waifu2xToolView(QtWidgets.QWidget, Ui_Waifu2xTool, QtTaskBase):
     def OpenSrSelectBack(self, newModName):
         self.modelName.setText(ToolUtil.GetShowModelName(newModName))
         self.modelName.setToolTip(newModName)
+        self.CheckStatus()
 
+    def CheckStatus(self):
         data = self.GetStatus()
         if self.backStatus != data:
             self.changeButton.setText(Str.GetStr(Str.Convert))
             self.changeButton.setEnabled(True)
-        return
 
     def SwitchCurrent(self, **kwargs):
         data = kwargs.get("data")
@@ -308,6 +310,10 @@ class Waifu2xToolView(QtWidgets.QWidget, Ui_Waifu2xTool, QtTaskBase):
         # self.comboBox.setEnabled(False)
         self.changeButton.setEnabled(False)
         self.SetStatus(False)
+        if self.fmtComboBox.currentIndex() == 0:
+            fmt = ""
+        else:
+            fmt = str(self.fmtComboBox.currentText()).lower()
         # self.index = self.modelName.text()
         # self.index = self.comboBox.currentIndex()
         # index = self.comboBox.currentIndex()
@@ -319,6 +325,7 @@ class Waifu2xToolView(QtWidgets.QWidget, Ui_Waifu2xTool, QtTaskBase):
 
         model = {
             "model":  getattr(sr, modelInsence),
+            "format": fmt
         }
         if self.scaleRadio.isChecked():
             model['scale'] = round(float(self.scaleEdit.text()), 1)
@@ -387,7 +394,7 @@ class Waifu2xToolView(QtWidgets.QWidget, Ui_Waifu2xTool, QtTaskBase):
             str(self.heighEdit.text()) + \
             str(int(self.ttaModel.isChecked())) + \
             str(self.widthEdit.text()) + \
-            str(self.modelName.toolTip())
+            str(self.modelName.toolTip()) + str(self.fmtComboBox.currentText())
         return data
 
     def SetStatus(self, status):

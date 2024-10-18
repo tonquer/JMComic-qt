@@ -22,11 +22,12 @@ class GlobalItem(object):
 
 class GlobalConfig:
     Ver = GlobalItem(22)
+    VerTime = GlobalItem("2024-10-15")
 
     # web url
     WebDnsList = GlobalItem([])
     Url = GlobalItem("https://18-comicblade.art")
-    UrlList = GlobalItem(["https://18-comicblade.art","https://18comic.vip","https://jmcomic.me","https://18-comicstellar.club","https://18comic.tw","https://18-comicstellar.me"])
+    UrlList = GlobalItem(["https://18comic-hok.vip","https://18comic.vip","https://jmcomic.me","https://18comic-16promax.club","https://18comic.tw","https://18comic-doa.xyz"])
 
     # mobile url
 
@@ -78,11 +79,18 @@ class GlobalConfig:
     @staticmethod
     def LoadSetting():
         try:
+            newKv = {}
             for k, v in dict(Setting.GlobalConfig.value).items():
                 Log.Debug("load global setting, k={}, v={}".format(k, v))
-                value = getattr(GlobalConfig, k, "")
-                if isinstance(value, GlobalItem) :
-                    value.set_value(v)
+                newKv[k] = v
+            oldV = newKv.get("Ver", 0)
+            if GlobalConfig.Ver.value > oldV:
+                Log.Debug("can not load old config, ver:{}->{}".format(oldV, GlobalConfig.Ver.value))
+            else:
+                for k, v in newKv.items():
+                    value = getattr(GlobalConfig, k, "")
+                    if isinstance(value, GlobalItem):
+                        value.set_value(v)
         except Exception as es:
             Log.Error(es)
         pass

@@ -107,12 +107,12 @@ class TaskWaifu2x(TaskBase):
                         task.imgData = ToolUtil.SegmentationPicture(task.imgData, task.saveParams[0], task.saveParams[1], task.saveParams[2])
                     from sr_ncnn_vulkan import sr_ncnn_vulkan as sr
                     scale = task.model.get("scale", 0)
-                    # mat = task.model.get("format", "jpg")
+                    mat = task.model.get("format", "")
                     tileSize = Setting.Waifu2xTileSize.GetIndexV()
                     if scale <= 0:
-                        sts = sr.add(task.imgData, task.model.get('model', 0), task.taskId, task.model.get("width", 0), task.model.get("high", 0), tileSize=tileSize)
+                        sts = sr.add(task.imgData, task.model.get('model', 0), task.taskId, task.model.get("width", 0), task.model.get("high", 0), format=mat, tileSize=tileSize)
                     else:
-                        sts = sr.add(task.imgData, task.model.get('model', 0), task.taskId, scale, tileSize=tileSize)
+                        sts = sr.add(task.imgData, task.model.get('model', 0), task.taskId, scale, format=mat, tileSize=tileSize)
 
                     if sts <= 0:
                         err = sr.getLastError()

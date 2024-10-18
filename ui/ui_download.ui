@@ -14,60 +14,8 @@
    <string>下载</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
-   <item row="3" column="0">
+   <item row="5" column="0">
     <layout class="QGridLayout" name="gridLayout">
-     <item row="2" column="0">
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QPushButton" name="someDownButton">
-         <property name="text">
-          <string>批量下载</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton">
-         <property name="text">
-          <string>全部开始下载</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_3">
-         <property name="text">
-          <string>全部暂停下载</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_2">
-         <property name="text">
-          <string>全部开始转换</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_4">
-         <property name="text">
-          <string>全部暂停转换</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
      <item row="5" column="0">
       <widget class="QTableWidget" name="tableWidget">
        <column>
@@ -129,7 +77,7 @@
      </item>
     </layout>
    </item>
-   <item row="0" column="0">
+   <item row="2" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <spacer name="horizontalSpacer_2">
@@ -164,7 +112,7 @@
         <bool>true</bool>
        </property>
        <property name="text">
-        <string>下载自动进行Waifu2x转换</string>
+        <string>下载自动进行图片超分</string>
        </property>
        <property name="checked">
         <bool>true</bool>
@@ -173,15 +121,8 @@
      </item>
     </layout>
    </item>
-   <item row="4" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>筛选：</string>
-       </property>
-      </widget>
-     </item>
+   <item row="0" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
      <item>
       <widget class="QComboBox" name="comboBox">
        <item>
@@ -202,7 +143,14 @@
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer_3">
+      <widget class="QLineEdit" name="lineEdit"/>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -213,6 +161,41 @@
         </size>
        </property>
       </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="someDownButton">
+       <property name="text">
+        <string>批量下载</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton">
+       <property name="text">
+        <string>全部开始下载</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_3">
+       <property name="text">
+        <string>全部暂停下载</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_2">
+       <property name="text">
+        <string>全部开始转换</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_4">
+       <property name="text">
+        <string>全部暂停转换</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>

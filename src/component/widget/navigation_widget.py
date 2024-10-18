@@ -107,7 +107,7 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
 
     def LoginSucBack(self):
         self.UpdateProxyName()
-        QtOwner().owner.LoginSucBack()
+        # QtOwner().owner.LoginSucBack()
         if not QtOwner().user.isLogin:
             return
         # self.pushButton.hide()

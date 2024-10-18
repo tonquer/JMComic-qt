@@ -158,7 +158,7 @@ class Ui_Navigation(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, -660, 399, 746))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 393, 746))
         self.verticalLayout_3 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_3.setSpacing(6)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
@@ -433,6 +433,7 @@ class Ui_Navigation(object):
         self.verticalLayout_5.addWidget(self.helpButton)
 
         self.settingButton = QToolButton(self.tailWidget)
+        self.buttonGroup.addButton(self.settingButton)
         self.settingButton.setObjectName(u"settingButton")
         sizePolicy1.setHeightForWidth(self.settingButton.sizePolicy().hasHeightForWidth())
         self.settingButton.setSizePolicy(sizePolicy1)

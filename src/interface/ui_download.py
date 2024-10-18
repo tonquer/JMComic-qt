@@ -16,7 +16,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QGridLayout,
-    QHBoxLayout, QHeaderView, QLabel, QPushButton,
+    QHBoxLayout, QHeaderView, QLineEdit, QPushButton,
     QRadioButton, QSizePolicy, QSpacerItem, QTableWidget,
     QTableWidgetItem, QWidget)
 
@@ -29,6 +29,82 @@ class Ui_Download(object):
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.gridLayout = QGridLayout()
         self.gridLayout.setObjectName(u"gridLayout")
+        self.tableWidget = QTableWidget(Download)
+        if (self.tableWidget.columnCount() < 11):
+            self.tableWidget.setColumnCount(11)
+        __qtablewidgetitem = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(0, __qtablewidgetitem)
+        __qtablewidgetitem1 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(1, __qtablewidgetitem1)
+        __qtablewidgetitem2 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(2, __qtablewidgetitem2)
+        __qtablewidgetitem3 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(3, __qtablewidgetitem3)
+        __qtablewidgetitem4 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(4, __qtablewidgetitem4)
+        __qtablewidgetitem5 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(5, __qtablewidgetitem5)
+        __qtablewidgetitem6 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(6, __qtablewidgetitem6)
+        __qtablewidgetitem7 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(7, __qtablewidgetitem7)
+        __qtablewidgetitem8 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(8, __qtablewidgetitem8)
+        __qtablewidgetitem9 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(9, __qtablewidgetitem9)
+        __qtablewidgetitem10 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(10, __qtablewidgetitem10)
+        self.tableWidget.setObjectName(u"tableWidget")
+
+        self.gridLayout.addWidget(self.tableWidget, 5, 0, 1, 1)
+
+
+        self.gridLayout_2.addLayout(self.gridLayout, 5, 0, 1, 1)
+
+        self.horizontalLayout_3 = QHBoxLayout()
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_3.addItem(self.horizontalSpacer_2)
+
+        self.webp2Png = QCheckBox(Download)
+        self.webp2Png.setObjectName(u"webp2Png")
+
+        self.horizontalLayout_3.addWidget(self.webp2Png)
+
+        self.redownloadRadio = QCheckBox(Download)
+        self.redownloadRadio.setObjectName(u"redownloadRadio")
+
+        self.horizontalLayout_3.addWidget(self.redownloadRadio)
+
+        self.radioButton = QRadioButton(Download)
+        self.radioButton.setObjectName(u"radioButton")
+        self.radioButton.setEnabled(True)
+        self.radioButton.setChecked(True)
+
+        self.horizontalLayout_3.addWidget(self.radioButton)
+
+
+        self.gridLayout_2.addLayout(self.horizontalLayout_3, 2, 0, 1, 1)
+
+        self.horizontalLayout_5 = QHBoxLayout()
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.comboBox = QComboBox(Download)
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.setObjectName(u"comboBox")
+
+        self.horizontalLayout_5.addWidget(self.comboBox)
+
+        self.lineEdit = QLineEdit(Download)
+        self.lineEdit.setObjectName(u"lineEdit")
+
+        self.horizontalLayout_5.addWidget(self.lineEdit)
+
+
+        self.gridLayout_2.addLayout(self.horizontalLayout_5, 0, 0, 1, 1)
+
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
@@ -61,87 +137,7 @@ class Ui_Download(object):
         self.horizontalLayout.addWidget(self.pushButton_4)
 
 
-        self.gridLayout.addLayout(self.horizontalLayout, 2, 0, 1, 1)
-
-        self.tableWidget = QTableWidget(Download)
-        if (self.tableWidget.columnCount() < 11):
-            self.tableWidget.setColumnCount(11)
-        __qtablewidgetitem = QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(0, __qtablewidgetitem)
-        __qtablewidgetitem1 = QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(1, __qtablewidgetitem1)
-        __qtablewidgetitem2 = QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(2, __qtablewidgetitem2)
-        __qtablewidgetitem3 = QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(3, __qtablewidgetitem3)
-        __qtablewidgetitem4 = QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(4, __qtablewidgetitem4)
-        __qtablewidgetitem5 = QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(5, __qtablewidgetitem5)
-        __qtablewidgetitem6 = QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(6, __qtablewidgetitem6)
-        __qtablewidgetitem7 = QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(7, __qtablewidgetitem7)
-        __qtablewidgetitem8 = QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(8, __qtablewidgetitem8)
-        __qtablewidgetitem9 = QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(9, __qtablewidgetitem9)
-        __qtablewidgetitem10 = QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(10, __qtablewidgetitem10)
-        self.tableWidget.setObjectName(u"tableWidget")
-
-        self.gridLayout.addWidget(self.tableWidget, 5, 0, 1, 1)
-
-
-        self.gridLayout_2.addLayout(self.gridLayout, 3, 0, 1, 1)
-
-        self.horizontalLayout_3 = QHBoxLayout()
-        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
-        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_3.addItem(self.horizontalSpacer_2)
-
-        self.webp2Png = QCheckBox(Download)
-        self.webp2Png.setObjectName(u"webp2Png")
-
-        self.horizontalLayout_3.addWidget(self.webp2Png)
-
-        self.redownloadRadio = QCheckBox(Download)
-        self.redownloadRadio.setObjectName(u"redownloadRadio")
-
-        self.horizontalLayout_3.addWidget(self.redownloadRadio)
-
-        self.radioButton = QRadioButton(Download)
-        self.radioButton.setObjectName(u"radioButton")
-        self.radioButton.setEnabled(True)
-        self.radioButton.setChecked(True)
-
-        self.horizontalLayout_3.addWidget(self.radioButton)
-
-
-        self.gridLayout_2.addLayout(self.horizontalLayout_3, 0, 0, 1, 1)
-
-        self.horizontalLayout_2 = QHBoxLayout()
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.label = QLabel(Download)
-        self.label.setObjectName(u"label")
-
-        self.horizontalLayout_2.addWidget(self.label)
-
-        self.comboBox = QComboBox(Download)
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.setObjectName(u"comboBox")
-
-        self.horizontalLayout_2.addWidget(self.comboBox)
-
-        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_2.addItem(self.horizontalSpacer_3)
-
-
-        self.gridLayout_2.addLayout(self.horizontalLayout_2, 4, 0, 1, 1)
+        self.gridLayout_2.addLayout(self.horizontalLayout, 1, 0, 1, 1)
 
 
         self.retranslateUi(Download)
@@ -156,11 +152,6 @@ class Ui_Download(object):
 
     def retranslateUi(self, Download):
         Download.setWindowTitle(QCoreApplication.translate("Download", u"\u4e0b\u8f7d", None))
-        self.someDownButton.setText(QCoreApplication.translate("Download", u"\u6279\u91cf\u4e0b\u8f7d", None))
-        self.pushButton.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u5f00\u59cb\u4e0b\u8f7d", None))
-        self.pushButton_3.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u6682\u505c\u4e0b\u8f7d", None))
-        self.pushButton_2.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u5f00\u59cb\u8f6c\u6362", None))
-        self.pushButton_4.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u6682\u505c\u8f6c\u6362", None))
         ___qtablewidgetitem = self.tableWidget.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("Download", u"id", None));
         ___qtablewidgetitem1 = self.tableWidget.horizontalHeaderItem(1)
@@ -185,11 +176,15 @@ class Ui_Download(object):
         ___qtablewidgetitem10.setText(QCoreApplication.translate("Download", u"\u8f6c\u6362\u72b6\u6001", None));
         self.webp2Png.setText(QCoreApplication.translate("Download", u"Webp\u4fdd\u5b58\u4e3aPng", None))
         self.redownloadRadio.setText(QCoreApplication.translate("Download", u"\u4e0b\u8f7d\u5931\u8d25\u540e1\u5206\u949f\u81ea\u52a8\u91cd\u8bd5", None))
-        self.radioButton.setText(QCoreApplication.translate("Download", u"\u4e0b\u8f7d\u81ea\u52a8\u8fdb\u884cWaifu2x\u8f6c\u6362", None))
-        self.label.setText(QCoreApplication.translate("Download", u"\u7b5b\u9009\uff1a", None))
+        self.radioButton.setText(QCoreApplication.translate("Download", u"\u4e0b\u8f7d\u81ea\u52a8\u8fdb\u884c\u56fe\u7247\u8d85\u5206", None))
         self.comboBox.setItemText(0, QCoreApplication.translate("Download", u"\u5168\u90e8", None))
         self.comboBox.setItemText(1, QCoreApplication.translate("Download", u"\u672a\u5b8c\u6210", None))
         self.comboBox.setItemText(2, QCoreApplication.translate("Download", u"\u5df2\u5b8c\u6210", None))
 
+        self.someDownButton.setText(QCoreApplication.translate("Download", u"\u6279\u91cf\u4e0b\u8f7d", None))
+        self.pushButton.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u5f00\u59cb\u4e0b\u8f7d", None))
+        self.pushButton_3.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u6682\u505c\u4e0b\u8f7d", None))
+        self.pushButton_2.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u5f00\u59cb\u8f6c\u6362", None))
+        self.pushButton_4.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u6682\u505c\u8f6c\u6362", None))
     # retranslateUi
 

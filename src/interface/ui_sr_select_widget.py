@@ -25,6 +25,7 @@ class Ui_SrSelect(object):
         if not SrSelect.objectName():
             SrSelect.setObjectName(u"SrSelect")
         SrSelect.resize(673, 345)
+        SrSelect.setMinimumSize(QSize(500, 0))
         self.verticalLayout = QVBoxLayout(SrSelect)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.label_4 = QLabel(SrSelect)

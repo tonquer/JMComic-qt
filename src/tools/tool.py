@@ -224,7 +224,7 @@ class ToolUtil(object):
     def GetModelByIndex(modelName, scale, mat="jpg"):
         if not config.CanWaifu2x:
             return {}
-        data = {"format": mat, "scale": scale}
+        data = {"scale": scale}
         from sr_ncnn_vulkan import sr_ncnn_vulkan as sr
         data["model"] = getattr(sr, modelName, 0)
         data["model_name"] = modelName
@@ -245,11 +245,11 @@ class ToolUtil(object):
         elif "REALSR" in name:
             return "RealSR"
         elif "REALESRGAN_X4PLUSANIME" in name:
-            return "Realesrgan(X4plusAnime)"
+            return "X4plusAnime"
         elif "REALESRGAN_X4PLUS" in name:
-            return "Realesrgan(X4Plus)"
+            return "X4Plus"
         elif "REALESRGAN_ANIMAVIDEOV3" in name:
-            return "Realesrgan(AnimaVideoV3)"
+            return "AnimaVideoV3"
         return name
 
     @staticmethod

@@ -66,7 +66,7 @@ class SettingSrSelectView(BaseMaskDialog, Ui_SrSelect):
             ("PHOTO_UP2X_DENOISE0X","Waifu2x", "", "200%"),
             ("PHOTO_UP2X_DENOISE1X","Waifu2x", "", "200%"),
             ("PHOTO_UP2X_DENOISE2X","Waifu2x", "", "200%"),
-            ("PHOTO_UP2X_DENOISE3X","Waifu2x", "", "200%"),
+            ("PHOTO_UP2X_DENOISE3X","Waifu2x", "推荐使用", "200%"),
             ("PRO_UP2X","Real-CUGAN", "", "350%"),
             ("PRO_UP2X_CONSERVATIVE","Real-CUGAN", "", "350%"),
             ("PRO_UP2X_DENOISE3X","Real-CUGAN", "推荐使用", "350%"),
@@ -84,11 +84,11 @@ class SettingSrSelectView(BaseMaskDialog, Ui_SrSelect):
             ("SE_UP4X","Real-CUGAN", "", "400%"),
             ("SE_UP4X_CONSERVATIVE","Real-CUGAN", "", "400%"),
             ("SE_UP4X_DENOISE3X","Real-CUGAN", "", "400%"),
-            ("ANIMAVIDEOV3_UP2X","Real-ESRGAN", "推荐使用", "100%"),
-            ("ANIMAVIDEOV3_UP3X","Real-ESRGAN", "", "100%"),
-            ("ANIMAVIDEOV3_UP4X","Real-ESRGAN", "", "100%"),
+            ("ANIMAVIDEOV3_UP2X","Real-ESRGAN", "推荐使用", "200%"),
+            ("ANIMAVIDEOV3_UP3X","Real-ESRGAN", "", "300%"),
+            ("ANIMAVIDEOV3_UP4X","Real-ESRGAN", "", "400%"),
             ("X4PLUS_UP4X","Real-ESRGAN", "", "600%"),
-            ("X4PLUSANIME_UP4X", "Real-ESRGAN", "推荐使用", "200%"),
+            ("X4PLUSANIME_UP4X", "Real-ESRGAN", "", "400%"),
         ]
         for v in AllModelNames:
             rowCont = self.tableWidget.rowCount()
