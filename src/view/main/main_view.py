@@ -73,6 +73,7 @@ class MainView(Main, QtTaskBase):
         self.searchView2.searchWidget.hide()
         self.myTrayIcon = MySystemTrayIcon()
         self.myTrayIcon.show()
+        self.waifu2xToolView.headButton.setVisible(False)
         # self.readView.LoadSetting()
         # QApplication.instance().installEventFilter(self)
         # QtOwner().app.paletteChanged.connect(self.CheckPaletteChanged)

@@ -65,7 +65,7 @@ class FavoriteFoldView(BaseMaskDialog, Ui_FavoriteFold, QtTaskBase):
         self.setupUi(self.widget)
         self.setMinimumSize(400, 500)
         # self.listWidget.setFlow(self.listWidget.LeftToRight)
-        self.listWidget.setSelectionMode(self.listWidget.SingleSelection)
+        self.listWidget.setSelectionMode(self.listWidget.SelectionMode.SingleSelection)
         self.widget.adjustSize()
         self.closeButton.clicked.connect(self.close)
         self.saveButton.clicked.connect(self._MoveBookToFold)
