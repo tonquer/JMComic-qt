@@ -48,10 +48,10 @@ jobs:
       PACKAGENAME: ${{ needs.setup.outputs.PACKAGE_PREFIX }}_macos_universal2
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python 3.7
+    - name: Set up Python 3.10
       uses: actions/setup-python@v5
       with:
-        python-version: 3.7
+        python-version: '3.10'
 
     - name: Install dependencies
       run: |
@@ -67,6 +67,7 @@ jobs:
         pip install *.whl
         cd ..
         pip install -r src/requirements_macos.txt
+        brew install create-dmg
     - name: Build
       run: |
         cd src
@@ -135,6 +136,7 @@ jobs:
         pip install *.whl
         cd ..
         pip install -r src/requirements_macos.txt
+        brew install create-dmg
     - name: Build
       run: |
         cd src
@@ -184,10 +186,10 @@ jobs:
       PACKAGENAME: ${{ needs.setup.outputs.PACKAGE_PREFIX }}_windows_x64
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python 3.10
+    - name: Set up Python 3.7
       uses: actions/setup-python@v5
       with:
-        python-version: '3.10'
+        python-version: 3.7
 
     - name: Install dependencies
       run: |
