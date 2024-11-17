@@ -183,6 +183,49 @@ class QtFileData(object):
         return toScaleW, toScaleH
 
     @staticmethod
+    def GetReadScaleMax(stripModel, scaleCnt, maxWidth, maxHeight):
+        # 提前scaled
+        # 不进行缩放了，因为导致模糊
+        if stripModel == ReadMode.LeftRight:
+            scale = (1 + scaleCnt * 0.1)
+            wight = int(maxWidth * scale)
+            height = maxHeight * scale
+            toScaleW = wight
+            toScaleH = height
+        elif stripModel in [ReadMode.RightLeftDouble, ReadMode.RightLeftDouble2]:
+            scale = (1 + scaleCnt * 0.1)
+            toScaleW =int(maxWidth // 2 * scale)
+            toScaleH = maxHeight * scale
+
+        elif stripModel in [ReadMode.LeftRightDouble]:
+            scale = (1 + scaleCnt * 0.1)
+
+            toScaleW = int(maxWidth // 2 * scale)
+            toScaleH = maxHeight * scale
+        elif stripModel in [ReadMode.LeftRightScroll]:
+            scale = (1 + scaleCnt * 0.1)
+            toScaleW = maxWidth * scale * 10
+            toScaleH = min(maxHeight, maxHeight * scale)
+
+        elif stripModel in [ReadMode.RightLeftScroll]:
+            scale = (1 + scaleCnt * 0.1)
+            toScaleW = maxWidth * scale * 10
+            toScaleH = min(maxHeight, maxHeight * scale)
+
+        elif stripModel in [ReadMode.UpDown]:
+            scale = (1 + scaleCnt * 0.1)
+            toScaleW = min(maxWidth, maxWidth * scale)
+            toScaleH = maxHeight * scale * 10
+        elif stripModel in [ReadMode.Samewight]:
+            scale = (1 + scaleCnt * 0.1)
+            toScaleW = maxWidth * scale
+            toScaleH = maxHeight * scale * 10
+        else:
+            return maxWidth, maxHeight
+
+        return toW, toH
+
+    @staticmethod
     def GetReadToPos(stripModel, maxWidth, maxHeight, toWidth, toHeight, index, curIndex, oldPos):
         if stripModel in [ReadMode.LeftRight, ReadMode.Samewight]:
             return QPoint(maxWidth // 2 - toWidth // 2, max(0, maxHeight // 2 - toHeight // 2))

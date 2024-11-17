@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_read_tool.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.3
+## Created by: Qt User Interface Compiler version 6.2.4
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -40,7 +40,7 @@ class Ui_ReadImg(object):
         self.scrollArea22.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 301, 840))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 301, 841))
         self.verticalLayout_2 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.verticalLayout = QVBoxLayout()
@@ -245,9 +245,6 @@ class Ui_ReadImg(object):
         self.horizontalLayout_8.setObjectName(u"horizontalLayout_8")
         self.modelNameButton = QPushButton(self.scrollAreaWidgetContents)
         self.modelNameButton.setObjectName(u"modelNameButton")
-        font = QFont()
-        font.setPointSize(8)
-        self.modelNameButton.setFont(font)
 
         self.horizontalLayout_8.addWidget(self.modelNameButton)
 

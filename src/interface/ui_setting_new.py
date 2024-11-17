@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_setting_new.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.3
+## Created by: Qt User Interface Compiler version 6.2.4
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -83,7 +83,7 @@ class Ui_SettingNew(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, -919, 661, 2911))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 661, 2794))
         self.scrollAreaWidgetContents.setStyleSheet(u"")
         self.verticalLayout_4 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
@@ -324,67 +324,32 @@ class Ui_SettingNew(object):
 
         self.verticalLayout_16.addWidget(self.label)
 
-        self.mainScaleButton0 = QRadioButton(self.frame_13)
-        self.mainScaleGroup = QButtonGroup(SettingNew)
-        self.mainScaleGroup.setObjectName(u"mainScaleGroup")
-        self.mainScaleGroup.addButton(self.mainScaleButton0)
-        self.mainScaleButton0.setObjectName(u"mainScaleButton0")
-        self.mainScaleButton0.setChecked(True)
+        self.mainScaleBox = QCheckBox(self.frame_13)
+        self.mainScaleBox.setObjectName(u"mainScaleBox")
 
-        self.verticalLayout_16.addWidget(self.mainScaleButton0)
+        self.verticalLayout_16.addWidget(self.mainScaleBox)
 
-        self.mainScaleButton1 = QRadioButton(self.frame_13)
-        self.mainScaleGroup.addButton(self.mainScaleButton1)
-        self.mainScaleButton1.setObjectName(u"mainScaleButton1")
+        self.horizontalLayout_4 = QHBoxLayout()
+        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
+        self.label_13 = QLabel(self.frame_13)
+        self.label_13.setObjectName(u"label_13")
+        self.label_13.setMaximumSize(QSize(150, 16777215))
 
-        self.verticalLayout_16.addWidget(self.mainScaleButton1)
+        self.horizontalLayout_4.addWidget(self.label_13)
 
-        self.mainScaleButton2 = QRadioButton(self.frame_13)
-        self.mainScaleGroup.addButton(self.mainScaleButton2)
-        self.mainScaleButton2.setObjectName(u"mainScaleButton2")
+        self.scaleBox = WheelSpinBox(self.frame_13)
+        self.scaleBox.setObjectName(u"scaleBox")
+        self.scaleBox.setMinimum(50)
+        self.scaleBox.setMaximum(300)
+        self.scaleBox.setValue(100)
 
-        self.verticalLayout_16.addWidget(self.mainScaleButton2)
+        self.horizontalLayout_4.addWidget(self.scaleBox)
 
-        self.mainScaleButton3 = QRadioButton(self.frame_13)
-        self.mainScaleGroup.addButton(self.mainScaleButton3)
-        self.mainScaleButton3.setObjectName(u"mainScaleButton3")
 
-        self.verticalLayout_16.addWidget(self.mainScaleButton3)
-
-        self.mainScaleButton4 = QRadioButton(self.frame_13)
-        self.mainScaleGroup.addButton(self.mainScaleButton4)
-        self.mainScaleButton4.setObjectName(u"mainScaleButton4")
-
-        self.verticalLayout_16.addWidget(self.mainScaleButton4)
-
-        self.mainScaleButton5 = QRadioButton(self.frame_13)
-        self.mainScaleGroup.addButton(self.mainScaleButton5)
-        self.mainScaleButton5.setObjectName(u"mainScaleButton5")
-
-        self.verticalLayout_16.addWidget(self.mainScaleButton5)
+        self.verticalLayout_16.addLayout(self.horizontalLayout_4)
 
 
         self.verticalLayout_4.addWidget(self.frame_13)
-
-        self.frame = QFrame(self.scrollAreaWidgetContents)
-        self.frame.setObjectName(u"frame")
-        self.frame.setFrameShape(QFrame.StyledPanel)
-        self.frame.setFrameShadow(QFrame.Raised)
-        self.verticalLayout_14 = QVBoxLayout(self.frame)
-        self.verticalLayout_14.setObjectName(u"verticalLayout_14")
-        self.label_30 = QLabel(self.frame)
-        self.label_30.setObjectName(u"label_30")
-        self.label_30.setFont(font1)
-
-        self.verticalLayout_14.addWidget(self.label_30)
-
-        self.titleBox = QCheckBox(self.frame)
-        self.titleBox.setObjectName(u"titleBox")
-
-        self.verticalLayout_14.addWidget(self.titleBox)
-
-
-        self.verticalLayout_4.addWidget(self.frame)
 
         self.frame_17 = QFrame(self.scrollAreaWidgetContents)
         self.frame_17.setObjectName(u"frame_17")
@@ -1297,7 +1262,7 @@ class Ui_SettingNew(object):
         self.generalLabel.setText(QCoreApplication.translate("SettingNew", u"\u901a\u7528", None))
         self.label_update.setText(QCoreApplication.translate("SettingNew", u"\u66f4\u65b0\uff1a", None))
         self.checkBox_IsUpdate.setText(QCoreApplication.translate("SettingNew", u"\u542f\u52a8\u65f6\u68c0\u67e5\u66f4\u65b0", None))
-        self.label_37.setText(QCoreApplication.translate("SettingNew", u"\u89e6\u63a7\uff08\u91cd\u542f\u751f\u6548\uff09\uff1a", None))
+        self.label_37.setText(QCoreApplication.translate("SettingNew", u"\u89e6\u63a7\uff08\u91cd\u542f\u751f\u6548\uff09\uff08\u5982\u679c\u51fa\u73b0\u70b9\u51fb\u56fe\u7247\u4f4d\u7f6e\u9519\u4e71\uff0c\u8bf7\u4f7f\u7528100%\u7f29\u653e\uff09\uff1a", None))
         self.grabGestureBox.setText(QCoreApplication.translate("SettingNew", u"\u542f\u7528\u89e6\u63a7\u4f18\u5316", None))
         self.label_6.setText(QCoreApplication.translate("SettingNew", u"\u4e3b\u9898\uff1a", None))
         self.themeButton0.setText(QCoreApplication.translate("SettingNew", u"\u8ddf\u968f\u7cfb\u7edf", None))
@@ -1335,14 +1300,8 @@ class Ui_SettingNew(object):
         self.fontStyle.setItemText(5, QCoreApplication.translate("SettingNew", u"\u9ed1\u4f53", None))
 
         self.label.setText(QCoreApplication.translate("SettingNew", u"\u754c\u9762\u7f29\u653e\u663e\u793a\uff08\u9700\u91cd\u542f\u751f\u6548\uff09\uff1a", None))
-        self.mainScaleButton0.setText(QCoreApplication.translate("SettingNew", u"\u6839\u636e\u7cfb\u7edf\u7f29\u653e", None))
-        self.mainScaleButton1.setText(QCoreApplication.translate("SettingNew", u"100%\uff08\u4e0d\u7f29\u653e\uff09", None))
-        self.mainScaleButton2.setText(QCoreApplication.translate("SettingNew", u"125%", None))
-        self.mainScaleButton3.setText(QCoreApplication.translate("SettingNew", u"150%", None))
-        self.mainScaleButton4.setText(QCoreApplication.translate("SettingNew", u"175%", None))
-        self.mainScaleButton5.setText(QCoreApplication.translate("SettingNew", u"200%", None))
-        self.label_30.setText(QCoreApplication.translate("SettingNew", u"\u6807\u9898\u680f\u8bbe\u7f6e\uff08\u9700\u91cd\u542f\uff09", None))
-        self.titleBox.setText(QCoreApplication.translate("SettingNew", u"\u6807\u9898\u680f\u7f8e\u5316\uff08\u591a\u5c4f\u5efa\u8bae\u4e0d\u52fe\u9009\uff0cwin11\u53ef\u4e0d\u52fe\u9009\uff09", None))
+        self.mainScaleBox.setText(QCoreApplication.translate("SettingNew", u"\u662f\u5426\u4f7f\u7528\u81ea\u5b9a\u4e49\u7f29\u653e\u6bd4\u4f8b", None))
+        self.label_13.setText(QCoreApplication.translate("SettingNew", u"\u7f29\u653e\u6bd4\u4f8b\uff1a", None))
         self.label_38.setText(QCoreApplication.translate("SettingNew", u"\u5173\u95ed\u8bbe\u7f6e", None))
         self.showCloseButton0.setText(QCoreApplication.translate("SettingNew", u"\u5173\u95ed\u540e\u9000\u51fa", None))
         self.showCloseButton1.setText(QCoreApplication.translate("SettingNew", u"\u5173\u95ed\u540e\u6700\u5c0f\u5316\u5230\u6258\u76d8", None))

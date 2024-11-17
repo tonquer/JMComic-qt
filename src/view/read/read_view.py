@@ -320,6 +320,13 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
 
         preLoadList = list(range(self.curIndex, self.curIndex + config.PreLoading))
         preQImage = list(range(self.curIndex, self.curIndex + config.PreLook))
+        preRealQImage = list(range(self.curIndex, self.curIndex + config.PreLook))
+        # if ReadMode.isScroll(self.stripModel):
+        #     preRealQImage = list(range(self.curIndex, self.curIndex + config.PreLook))
+        # elif ReadMode.isDouble(self.stripModel):
+        #     preRealQImage = [self.curIndex, self.curIndex+1]
+        # else:
+        #     preRealQImage = [self.curIndex]
 
         # 预加载上一页
         if len(preLoadList) >= 2 and self.curIndex > 0:
@@ -367,16 +374,17 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
             if p.waifuState == p.WaifuStateStart:
                 break
 
-        for i in preQImage:
+        for i in preRealQImage:
             p = self.pictureData.get(i)
             if not p or not p.data:
                 continue
             assert isinstance(p, QtFileData)
-            if not (p.cacheImage or p.cacheImageTaskId > 0):
-                self.CheckToQImage(i, p, False)
-
+            IsConvert = (p.cacheWaifu2xImageTaskId > 0 or not not p.cacheWaifu2xImage)
             if not (not p.waifuData or p.cacheWaifu2xImage or p.cacheWaifu2xImageTaskId > 0):
-                self.CheckToQImage(i, p, True)
+                IsConvert = self.CheckToQImage(i, p, True)
+
+            if (not IsConvert or not p.isWaifu2x) and not (p.cacheImage or p.cacheImageTaskId > 0):
+                self.CheckToQImage(i, p, False)
 
         for i in set(self.pictureData.keys()) - set(preQImage):
             p = self.pictureData.get(i)
@@ -467,10 +475,12 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
 
     def CheckToQImage(self, index, p, isWaifu2x=False):
         saveParams = None
+
+
         if not (self.isOffline or self.isLocal):
             bookInfo = BookMgr().GetBook(self.bookId)
             if not bookInfo:
-                return
+                return False
             epsInfo = bookInfo.pageInfo.epsInfo.get(self.epsId)
             pitureName = epsInfo.pictureName.get(index)
 
@@ -488,11 +498,14 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
                 p.cacheImage = None
                 p.cacheImageScale = self.frame.scaleCnt
                 p.cacheImageTaskId = self.AddQImageTask(p.data, self.devicePixelRatio(), toW, toH, model, saveParams, self.ConvertQImageBack, index)
+                return True
         else:
             if p.waifuData:
                 p.cacheWaifu2xImage = None
                 p.cacheWaifu2xImageScale = self.frame.scaleCnt
-                p.cacheImageWaifu2xTaskId = self.AddQImageTask(p.waifuData, self.devicePixelRatio(), toW, toH, model, None, self.ConvertQImageWaifu2xBack, index)
+                p.cacheWaifu2xImageTaskId = self.AddQImageTask(p.waifuData, self.devicePixelRatio(), toW, toH, model, None, self.ConvertQImageWaifu2xBack, index)
+                return True
+        return False
 
     def ConvertQImageBack(self, data, index):
         assert isinstance(data, QImage)
@@ -578,7 +591,8 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
             return
         isCurIndex = index == self.curIndex
         p = self.pictureData.get(index)
-        if not p or (not p.data) or (not p.cacheImage):
+        IsHaveWaifu2xData = (not not p and p.isWaifu2x and p.cacheWaifu2xImage)
+        if not IsHaveWaifu2xData and (not p or (not p.data) or (not p.cacheImage)):
             self.scrollArea.SetPixIem(index, None)
             if isCurIndex:
                 if not p or (not p.data):

@@ -5,10 +5,10 @@ import sys
 # macOS 修复
 import time
 import traceback
-
+import signal
 
 from config import config
-from config.setting import Setting
+from config.setting import Setting, SettingValue
 from qt_error import showError, showError2
 from qt_owner import QtOwner
 from tools.log import Log
@@ -29,7 +29,7 @@ except Exception as es:
         config.ErrorMsg = es.msg
 
 from PySide6.QtGui import QFont
-from PySide6 import QtWidgets  # 导入PySide6部件
+from PySide6 import QtWidgets, QtGui  # 导入PySide6部件
 from PySide6.QtNetwork import QLocalSocket, QLocalServer
 # 此处不能删除
 import images_rc
@@ -40,9 +40,11 @@ if __name__ == "__main__":
         Log.Init()
         Setting.Init()
         Setting.InitLoadSetting()
-        indexV = Setting.ScaleLevel.GetIndexV()
-        if indexV and indexV != "Auto":
-            os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "0"
+        os.environ['QT_IMAGEIO_MAXALLOC'] = "10000000000000000000000000000000000000000000000000000000000000000"
+        QtGui.QImageReader.setAllocationLimit(0)
+        if Setting.IsUseScaleFactor.value > 0:
+            indexV = Setting.ScaleFactor.value
+            # os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "0"
             os.environ["QT_SCALE_FACTOR"] = str(indexV / 100)
     
     except Exception as es:
@@ -93,6 +95,8 @@ if __name__ == "__main__":
         showError2(tb, app)
 
     sys.excepthook = excepthook
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
+
     sts = app.exec()
     sys.excepthook = oldHook
     socket.close()

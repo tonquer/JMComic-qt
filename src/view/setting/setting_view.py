@@ -40,18 +40,18 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.themeGroup.buttonClicked.connect(partial(self.ButtonClickEvent, Setting.ThemeIndex))
         self.languageGroup.buttonClicked.connect(partial(self.ButtonClickEvent, Setting.Language))
         self.logGroup.buttonClicked.connect(partial(self.ButtonClickEvent, Setting.LogIndex))
-        self.mainScaleGroup.buttonClicked.connect(partial(self.ButtonClickEvent, Setting.ScaleLevel))
         self.proxyGroup.buttonClicked.connect(partial(self.ButtonClickEvent, Setting.IsHttpProxy))
         self.saveNameGroup.buttonClicked.connect(partial(self.ButtonClickEvent, Setting.SaveNameType))
         self.showCloseButtonGroup.buttonClicked.connect(partial(self.ButtonClickEvent, Setting.ShowCloseType))
 
         # CheckButton:
+        self.mainScaleBox.clicked.connect(partial(self.CheckButtonEvent, Setting.IsUseScaleFactor, self.mainScaleBox))
         self.checkBox_IsUpdate.clicked.connect(partial(self.CheckButtonEvent, Setting.IsUpdate, self.checkBox_IsUpdate))
         self.readCheckBox.clicked.connect(partial(self.CheckButtonEvent, Setting.IsOpenWaifu, self.readCheckBox))
         self.preDownWaifu2x.clicked.connect(partial(self.CheckButtonEvent, Setting.PreDownWaifu2x, self.preDownWaifu2x))
         self.coverCheckBox.clicked.connect(partial(self.CheckButtonEvent, Setting.CoverIsOpenWaifu, self.coverCheckBox))
         self.downAuto.clicked.connect(partial(self.CheckButtonEvent, Setting.DownloadAuto, self.downAuto))
-        self.titleBox.clicked.connect(partial(self.CheckButtonEvent, Setting.IsUseTitleBar, self.titleBox))
+        # self.titleBox.clicked.connect(partial(self.CheckButtonEvent, Setting.IsUseTitleBar, self.titleBox))
         self.openglBox.clicked.connect(partial(self.CheckButtonEvent, Setting.IsOpenOpenGL, self.openglBox))
         self.grabGestureBox.clicked.connect(partial(self.CheckButtonEvent, Setting.IsGrabGesture, self.grabGestureBox))
 
@@ -84,6 +84,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
 
         # spinBox
         # self.preDownNum.valueChanged.connect(partial(self.SpinBoxEvent, "", self.preDownNum))
+        self.scaleBox.valueChanged.connect(partial(self.SpinBoxEvent, Setting.ScaleFactor))
         self.coverSize.valueChanged.connect(partial(self.SpinBoxEvent, Setting.CoverSize))
         self.categorySize.valueChanged.connect(partial(self.SpinBoxEvent, Setting.CategorySize))
         self.readScale.valueChanged.connect(partial(self.SpinBoxEvent, Setting.LookScale))
@@ -235,9 +236,10 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
 
     def InitSetting(self):
         self.checkBox_IsUpdate.setChecked(Setting.IsUpdate.value)
+        self.mainScaleBox.setChecked(Setting.IsUseScaleFactor.value)
         self.SetRadioGroup("themeButton", Setting.ThemeIndex.value)
         self.SetRadioGroup("languageButton", Setting.Language.value)
-        self.SetRadioGroup("mainScaleButton", Setting.ScaleLevel.value)
+        # self.SetRadioGroup("mainScaleButton", Setting.ScaleLevel.value)
         self.SetRadioGroup("proxy", Setting.IsHttpProxy.value)
         self.SetRadioGroup("saveNameButton", Setting.SaveNameType.value)
         self.SetRadioGroup("showCloseButton", Setting.ShowCloseType.value)
@@ -246,7 +248,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.SetRadioGroup("logutton", Setting.LogIndex.value)
         self.httpEdit.setText(Setting.HttpProxy.value)
         self.sockEdit.setText(Setting.Sock5Proxy.value)
-        self.titleBox.setChecked(Setting.IsUseTitleBar.value)
+        # self.titleBox.setChecked(Setting.IsUseTitleBar.value)
         self.openglBox.setChecked(Setting.IsOpenOpenGL.value)
         self.grabGestureBox.setChecked(Setting.IsGrabGesture.value)
         for index in range(self.encodeSelect.count()):
@@ -267,6 +269,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.preDownWaifu2x.setChecked(Setting.PreDownWaifu2x.value)
         # self.readNoise.setCurrentIndex(Setting.LookNoise.value)
         self.readScale.setValue(Setting.LookScale.value)
+        self.scaleBox.setValue(Setting.ScaleFactor.value)
         # self.readModel.setCurrentIndex(Setting.LookModel.value)
 
         self.categoryBox.setCurrentIndex(Setting.NotCategoryShow.value)

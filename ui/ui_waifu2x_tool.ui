@@ -339,7 +339,7 @@
            </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_11">
-             <item>
+             <item alignment="Qt::AlignLeft">
               <widget class="QLabel" name="label_9">
                <property name="maximumSize">
                 <size>
@@ -484,7 +484,7 @@
              </item>
             </layout>
            </item>
-           <item alignment="Qt::AlignLeft">
+           <item alignment="Qt::AlignHCenter">
             <widget class="QPushButton" name="headButton">
              <property name="maximumSize">
               <size>

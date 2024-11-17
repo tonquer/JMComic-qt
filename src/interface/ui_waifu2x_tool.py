@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_waifu2x_tool.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.3
+## Created by: Qt User Interface Compiler version 6.2.4
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -214,7 +214,7 @@ class Ui_Waifu2xTool(object):
         self.label_9.setObjectName(u"label_9")
         self.label_9.setMaximumSize(QSize(60, 16777215))
 
-        self.horizontalLayout_11.addWidget(self.label_9)
+        self.horizontalLayout_11.addWidget(self.label_9, 0, Qt.AlignLeft)
 
         self.gpuLabel = QLabel(self.scrollAreaWidgetContents)
         self.gpuLabel.setObjectName(u"gpuLabel")
@@ -297,7 +297,7 @@ class Ui_Waifu2xTool(object):
         self.headButton.setObjectName(u"headButton")
         self.headButton.setMaximumSize(QSize(100, 16777215))
 
-        self.verticalLayout_3.addWidget(self.headButton, 0, Qt.AlignLeft)
+        self.verticalLayout_3.addWidget(self.headButton, 0, Qt.AlignHCenter)
 
 
         self.verticalLayout_4.addLayout(self.verticalLayout_3)

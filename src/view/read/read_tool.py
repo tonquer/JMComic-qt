@@ -200,7 +200,8 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
             else:
 
                 bookInfo = BookMgr().GetBook(bookId)
-                if epsId + 1 < bookInfo.pageInfo.maxEps():
+                nextEps = bookInfo.pageInfo.nextEps(epsId)
+                if not (nextEps == self.readImg.epsId or nextEps not in bookInfo.pageInfo.epsInfo):
                     QtOwner().ShowMsg(Str.GetStr(Str.AutoSkipNext))
                     self.OpenNextEps()
                 return
@@ -412,7 +413,7 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
                 return
         else:
             nextEps = bookInfo.pageInfo.nextEps(epsId)
-            if nextEps >= bookInfo.pageInfo.maxEps():
+            if nextEps == self.readImg.epsId or nextEps not in bookInfo.pageInfo.epsInfo:
                 QtOwner().ShowMsg(Str.GetStr(Str.AlreadyNextChapter))
                 return
 

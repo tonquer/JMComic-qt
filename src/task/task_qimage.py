@@ -3,7 +3,7 @@ from PySide6.QtCore import Qt
 
 from task.qt_task import TaskBase
 from tools.log import Log
-from tools.tool import ToolUtil
+from tools.tool import ToolUtil, time_me
 
 
 class QtQImageTask(object):
@@ -41,7 +41,6 @@ class TaskQImage(TaskBase):
             if taskId < 0:
                 break
 
-            q = QImage()
             try:
                 info = self.tasks.get(taskId)
                 if not info:
@@ -52,17 +51,23 @@ class TaskQImage(TaskBase):
                 if isinstance(info.saveParams, tuple) and len(info.saveParams) > 1:
                     epsId, scrambleId, pitureName = info.saveParams
                     info.data = ToolUtil.SegmentationPicture(info.data, epsId, scrambleId, pitureName)
-                q.loadFromData(info.data)
-                q.setDevicePixelRatio(info.radio)
-                if info.toW > 0:
-                    newQ = q.scaled(info.toW * info.radio, info.toH * info.radio, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-                else:
-                    newQ = q
+                newQ = self.ConverQImage(info)
 
             except Exception as es:
                 Log.Error(es)
             finally:
                 self.taskObj.imageBack.emit(taskId, newQ)
+
+    @time_me
+    def ConverQImage(self, info):
+        q = QImage()
+        q.loadFromData(info.data)
+        q.setDevicePixelRatio(info.radio)
+        if info.toW > 0:
+            newQ = q.scaled(info.toW * info.radio, info.toH * info.radio, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        else:
+            newQ = q
+        return newQ
 
     def AddQImageTask(self, data, radio, toW, toH, model, saveParams, callBack=None, backParam=None, cleanFlag=None):
         self.taskId += 1

@@ -84,7 +84,10 @@ class Setting:
     TitleLine = SettingValue("GeneraSetting", 2, False)  #
     NotCategoryShow = SettingValue("GeneraSetting", 0, False)  #
     CategorySize = SettingValue("GeneraSetting", 80, False)  #
-    ScaleLevel = SettingValue("GeneraSetting", 0, True, ["Auto", 100, 125, 150, 175, 200])
+    # ScaleLevel = SettingValue("GeneraSetting", 0, True, ["Auto", 100, 125, 150, 175, 200])
+    IsUseScaleFactor = SettingValue("GeneraSetting", 0, True)
+    ScaleFactor = SettingValue("GeneraSetting", 100, True)
+
     IsUseTitleBar = SettingValue("GeneraSetting", 1, True)
 
     FontName = SettingValue("GeneraSetting", "", True)
