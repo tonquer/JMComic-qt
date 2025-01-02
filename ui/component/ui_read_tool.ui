@@ -43,7 +43,7 @@
         <x>0</x>
         <y>0</y>
         <width>301</width>
-        <height>841</height>
+        <height>851</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -507,7 +507,7 @@
             <string notr="true">color: #ee2a24</string>
            </property>
            <property name="text">
-            <string>自动滚动/翻页</string>
+            <string>自动滚动/翻页(F5)</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
