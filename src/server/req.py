@@ -228,6 +228,13 @@ class DownloadBookReq(ServerReq):
         super(self.__class__, self).__init__(self.url, {}, method)
         self.headers = dict()
         self.headers["Accept-Encoding"] ="None"
+        if Setting.UerAgent.value:
+            ua = Setting.UerAgent.value
+        else:
+            ua = "Mozilla/5.0 (Linux; Android 7.1.2; DT1901A Build/N2G47O; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/86.0.4240.198 Mobile Safari/537.36"
+
+        self.headers["Accept-Encoding"] ="None"
+        self.headers["user-agent"] = ua
 
 
 # 注册前，需要获取cookie
