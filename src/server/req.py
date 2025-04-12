@@ -9,6 +9,7 @@ from config.setting import Setting
 from tools.str import Str
 from tools.tool import ToolUtil
 import platform
+import urllib
 
 
 class ServerReq(object):
@@ -36,7 +37,9 @@ class ServerReq(object):
         if Setting.IsHttpProxy.value == 1:
             self.proxy = {"http": Setting.HttpProxy.value, "https": Setting.HttpProxy.value}
         elif Setting.IsHttpProxy.value == 3:
-            self.proxy = {}
+            proxy = urllib.request.getproxies()
+            if isinstance(proxy, dict) and proxy.get("http"):
+                self.proxy = {"http": proxy.get("http"), "https": proxy.get("http")}
         else:
             self.proxy = {"http": None, "https": None}
 
