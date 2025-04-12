@@ -9,18 +9,12 @@ from PySide6.QtGui import QCursor, QDesktopServices, QAction
 from PySide6.QtWidgets import QHeaderView, QAbstractItemView, QMenu, QTableWidgetItem, QListWidgetItem, QMessageBox
 
 from component.widget.nas_item_widget import NasItemWidget
-from config import config
 from config.setting import Setting
-from interface.ui_download import Ui_Download
 from interface.ui_nas import Ui_Nas
 from qt_owner import QtOwner
-from server import req
-from task.qt_task import QtTaskBase
 from tools.book import BookMgr
-from tools.log import Log
-from tools.status import Status
 from tools.str import Str
-from tools.tool import ToolUtil
+from server import req, Status
 from view.nas.nas_add_view import NasAddView
 from view.nas.nas_db import NasDb
 from view.nas.nas_item import NasInfoItem, NasUploadItem
@@ -48,7 +42,7 @@ class NasView(QtWidgets.QWidget, Ui_Nas, NasStatus):
         # self.InitSetting()
 
         # self.tableWidget.customContextMenuRequested.connect(self.SelectMenu)
-        # self.tableWidget.doubleClicked.connect(self.OpenBookInfo)
+        self.tableWidget.doubleClicked.connect(self.OpenBookInfo)
         # self.tableWidget.horizontalHeader().sectionClicked.connect(self.Sort)
         self.order = {}
         self.db = NasDb()
@@ -196,9 +190,15 @@ class NasView(QtWidgets.QWidget, Ui_Nas, NasStatus):
         index = self.listWidget.count()
         widget = NasItemWidget()
         widget.title.setText(v.title)
-        widget.address.setText(v.address + ":" + str(v.port))
+        if v.type == 2:
+            widget.address.setText("")
+        elif v.type == 0:
+            widget.address.setText("webdav:/" + v.address + ":" + str(v.port))
+        elif v.type == 1:
+            widget.address.setText("smb:/" + v.address + ":" + str(v.port))
         widget.waifu2x.setEnabled(bool(v.is_waifu2x))
         widget.user.setText(v.user)
+        widget.compress.setText(v.GetCompressName())
         widget.editButton.clicked.connect(partial(self.OpenNasInfo, v.nasId))
         widget.delButton.clicked.connect(partial(self.DelNasInfo, v.nasId))
         item = QListWidgetItem(self.listWidget)
@@ -211,6 +211,8 @@ class NasView(QtWidgets.QWidget, Ui_Nas, NasStatus):
         bookId = str(bookId)
         QtOwner().ShowLoading()
         self.AddHttpTask(req.GetBookInfoReq2(bookId), self.OpenEpsInfoBack, (nasId, bookId))
+        # self.AddHttpTask(req.GetComicsBookReq(bookId), self.OpenEpsInfoBack, (nasId, bookId))
+        # self.AddNasUploadCache(nasId, bookId)
         return True
 
     def AddNasUpload2(self, title, nasId, bookId, isShowMsg=True):
@@ -238,14 +240,17 @@ class NasView(QtWidgets.QWidget, Ui_Nas, NasStatus):
     def AddNasUploadCache(self, nasId, bookId):
         bookId = str(bookId)
         nasInfo = self.nasDict.get(nasId)
+        QtOwner().CloseLoading()
         info = BookMgr().GetBook(bookId)
         if not info or not nasInfo:
+            QtOwner().ShowError(Str.GetStr(Str.NotFoundBook))
             return
-        if not info.pageInfo.epsInfo:
+        if info.epsCount <= 0:
+            QtOwner().ShowError(Str.GetStr(Str.SpaceEps))
             return
-        epsIds = list(info.pageInfo.epsInfo.keys())
+        epsIds = list(range(info.epsCount))
         QtOwner().downloadView.AddDownload(bookId, epsIds, nasInfo.is_waifu2x)
-        self.AddNasUpload2(info.baseInfo.title, nasId, bookId, False)
+        self.AddNasUpload2(info.title, nasId, bookId, True)
 
     def OpenEpsInfoBack(self, raw, v):
         QtOwner().CloseLoading()
@@ -303,7 +308,7 @@ class NasView(QtWidgets.QWidget, Ui_Nas, NasStatus):
                 assert isinstance(task, NasUploadItem)
                 if task.status in [task.Success, task.Pause, task.Error]:
                     menu.addAction(startAction)
-                elif task.status in [task.Uploading, task.Waiting, task.WaitWaifu2x]:
+                elif task.status in [task.WaitXmlInfo, task.Uploading, task.Waiting, task.WaitWaifu2x]:
                     menu.addAction(pauseAction)
 
             else:
@@ -392,3 +397,20 @@ class NasView(QtWidgets.QWidget, Ui_Nas, NasStatus):
 
     def Init(self):
         self.timer.start()
+
+    def OpenBookInfo(self):
+        selected = self.tableWidget.selectedIndexes()
+        selectRows = set()
+        for index in selected:
+            selectRows.add(index.row())
+        if len(selectRows) > 1:
+            return
+        if len(selectRows) <= 0:
+            return
+        row = list(selectRows)[0]
+        col = 0
+        key = self.tableWidget.item(row, col).text()
+        info = self.downloadDict.get(key)
+        if not info:
+            return
+        QtOwner().OpenBookInfo(info.bookId)

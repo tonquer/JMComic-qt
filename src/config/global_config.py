@@ -33,7 +33,10 @@ class GlobalConfig:
 
     # Url2 = GlobalItem("https://www.jmapinode.biz")
     # PicUrl2 = GlobalItem("https://cdn-msp.jmapinodeudzn.net")
-    Url2List = GlobalItem(["https://www.cdnxxx-proxy.xyz","https://www.cdnxxx-proxy.co","https://www.cdnxxx-proxy.vip","https://www.cdnxxx-proxy.org"])
+    Url2List = GlobalItem(["https://www.jmapiproxyxxx.vip",
+                           "https://www.cdnblackmyth.vip",
+                           "https://www.cdnblackmyth.xyz",
+                           "https://www.jmapiproxyxxx.me"])
 
     ProxyApiDomain2 = GlobalItem("jm2-api.ggo.icu")
     ProxyImgDomain2 = GlobalItem("jm2-img.ggo.icu")
@@ -46,7 +49,7 @@ class GlobalConfig:
     CdnImgUrl = GlobalItem("https://cdn-msp.jmapiproxy3.cc")
     ProxyApiUrl = GlobalItem("https://www.cdnxxx-proxy.vip")
     ProxyImgUrl = GlobalItem("https://cdn-msp.jmapiproxy3.cc")
-    HeaderVer = GlobalItem("1.7.1")
+    HeaderVer = GlobalItem("1.7.5")
 
     def __init__(self):
         pass

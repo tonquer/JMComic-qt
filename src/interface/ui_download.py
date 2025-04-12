@@ -77,6 +77,11 @@ class Ui_Download(object):
 
         self.horizontalLayout_3.addWidget(self.redownloadRadio)
 
+        self.skipPic = QCheckBox(Download)
+        self.skipPic.setObjectName(u"skipPic")
+
+        self.horizontalLayout_3.addWidget(self.skipPic)
+
         self.radioButton = QRadioButton(Download)
         self.radioButton.setObjectName(u"radioButton")
         self.radioButton.setEnabled(True)
@@ -176,6 +181,7 @@ class Ui_Download(object):
         ___qtablewidgetitem10.setText(QCoreApplication.translate("Download", u"\u8f6c\u6362\u72b6\u6001", None));
         self.webp2Png.setText(QCoreApplication.translate("Download", u"Webp\u4fdd\u5b58\u4e3aPng", None))
         self.redownloadRadio.setText(QCoreApplication.translate("Download", u"\u4e0b\u8f7d\u5931\u8d25\u540e1\u5206\u949f\u81ea\u52a8\u91cd\u8bd5", None))
+        self.skipPic.setText(QCoreApplication.translate("Download", u"\u8d85\u5206\u8df3\u8fc7\u635f\u574f\u56fe\u7247", None))
         self.radioButton.setText(QCoreApplication.translate("Download", u"\u4e0b\u8f7d\u81ea\u52a8\u8fdb\u884c\u56fe\u7247\u8d85\u5206", None))
         self.comboBox.setItemText(0, QCoreApplication.translate("Download", u"\u5168\u90e8", None))
         self.comboBox.setItemText(1, QCoreApplication.translate("Download", u"\u672a\u5b8c\u6210", None))

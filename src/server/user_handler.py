@@ -4,7 +4,7 @@ import pickle
 import re
 import time
 
-import requests
+from curl_cffi import requests
 
 from config import config
 from config.global_config import GlobalConfig
@@ -226,19 +226,18 @@ class LoginReq2Handler(object):
                 return
             user = ToolUtil.ParseLogin2(task.req.ParseData(v.get("data")))
 
-            from requests import Response
-            assert isinstance(task.res.raw, Response)
-            cookies = requests.utils.dict_from_cookiejar(task.res.raw.cookies)
+            assert isinstance(task.res.raw, requests.Response)
+            # cookies = task.res.raw.cookies
 
-            ipcountry = cookies.get("ipcountry", "")
-            ipm5 = cookies.get("ipm5", "")
-            AVS = cookies.get("AVS", "")
-            shunt = cookies.get("shunt", "")
+            # ipcountry = cookies.get("ipcountry", "")
+            # ipm5 = cookies.get("ipm5", "")
+            # AVS = cookies.get("AVS", "")
+            # shunt = cookies.get("shunt", "")
             # config.ipcountry = ipcountry if ipcountry else config.ipcountry
             # config.ipm5 = ipm5 if ipm5 else config.ipm5
             # config.AVS = AVS if AVS else config.AVS
             # config.shunt = shunt if shunt else config.shunt
-            Log.Info("Login suc, cookies:{}".format(cookies))
+            Log.Info("Login suc, cookies:{}".format(task.res.raw.cookies))
             st = Status.Ok
             data["st"] = st
             data["user"] = user
@@ -287,9 +286,8 @@ class GetIndexInfoReq2Handler(object):
             if code != 200:
                 data["st"] = Status.Error
                 return
-            from requests import Response
-            assert isinstance(task.res.raw, Response)
-            cookies = requests.utils.dict_from_cookiejar(task.res.raw.cookies)
+            assert isinstance(task.res.raw, requests.Response)
+            cookies = task.res.raw.cookies
             Log.Info("latest suc, cookies:{}".format(cookies))
             bookInfo = ToolUtil.ParseIndex2(task.req.ParseData(v.get("data")))
 
@@ -728,6 +726,7 @@ class GetHistoryReq2Handler(object):
 @handler(req.GetBlogForumReq2)
 @handler(req.SignDailyReq2)
 @handler(req.GetDailyReq2)
+@handler(req.GetBuyComicsReq2)
 class GetReqRawDataHandler(object):
     def __call__(self, task):
         data = {"st": task.status}
@@ -741,6 +740,7 @@ class GetReqRawDataHandler(object):
             if code != 200:
                 data["st"] = Status.Error
                 return
+
             data2 = json.loads(task.req.ParseData(v.get("data")))
             data["st"] = Status.Ok
             data["data"] = data2

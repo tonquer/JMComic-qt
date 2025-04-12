@@ -112,11 +112,11 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.msgLabel.setVisible(False)
 
         if Setting.IsGrabGesture.value:
-            QScroller.grabGesture(self.scrollArea, QScroller.LeftMouseButtonGesture)
+            QScroller.grabGesture(self.scrollArea, QScroller.ScrollerGestureType.LeftMouseButtonGesture)
             propertiesOne = QScroller.scroller(self).scrollerProperties()
-            propertiesOne.setScrollMetric(QScrollerProperties.MousePressEventDelay, 0)
-            propertiesOne.setScrollMetric(QScrollerProperties.VerticalOvershootPolicy, QScrollerProperties.OvershootAlwaysOff)
-            propertiesOne.setScrollMetric(QScrollerProperties.HorizontalOvershootPolicy, QScrollerProperties.OvershootAlwaysOff)
+            propertiesOne.setScrollMetric(QScrollerProperties.ScrollMetric.MousePressEventDelay, 0)
+            propertiesOne.setScrollMetric(QScrollerProperties.ScrollMetric.VerticalOvershootPolicy, QScrollerProperties.OvershootPolicy.OvershootAlwaysOff)
+            propertiesOne.setScrollMetric(QScrollerProperties.ScrollMetric.HorizontalOvershootPolicy, QScrollerProperties.OvershootPolicy.OvershootAlwaysOff)
             QScroller.scroller(self.scrollArea).setScrollerProperties(propertiesOne)
 
         # self.dohButton.clicked.connect(self.OpenDohView)

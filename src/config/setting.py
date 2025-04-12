@@ -176,6 +176,7 @@ class Setting:
     # IpbMemberId = SettingValue("Other", "", False)
     # IpbPassHash = SettingValue("Other", "", False)
     # Igneous = SettingValue("Other", "", False)
+    IsSkipPic = SettingValue("Other", 0, False)
 
     @staticmethod
     def InitLoadSetting():

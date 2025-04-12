@@ -24,6 +24,7 @@ class QConvertTask(object):
         self.loadPath = ""  #
         self.preDownPath = ""  #
         self.saveParams = ""  #
+        self.noSaveCache = False
         self.cachePath = ""  #
         self.savePath = ""  #
         self.imgData = b""
@@ -88,7 +89,7 @@ class TaskWaifu2x(TaskBase):
                 if task.loadPath:
                     data = ToolUtil.LoadCachePicture(task.loadPath)
                     if data:
-                        w, h, mat, _ = ToolUtil.GetPictureSize(data)
+                        w, h, mat,_ = ToolUtil.GetPictureSize(data)
                         model = ToolUtil.GetDownloadScaleModel(w, h, mat)
                         task.model = model
                         task.imgData = data
@@ -105,6 +106,7 @@ class TaskWaifu2x(TaskBase):
                 if config.CanWaifu2x:
                     if task.saveParams:
                         task.imgData = ToolUtil.SegmentationPicture(task.imgData, task.saveParams[0], task.saveParams[1], task.saveParams[2])
+
                     from sr_ncnn_vulkan import sr_ncnn_vulkan as sr
                     scale = task.model.get("scale", 0)
                     mat = task.model.get("format", "")
@@ -155,22 +157,26 @@ class TaskWaifu2x(TaskBase):
                 lenData = len(data)
             if lenData <= 0:
                 info.status = Status.FileFormatError
-                Log.Warn("convert error, taskId: {}, dataLen:{}, sts:{} tick:{}".format(str(taskId), lenData,
+                Log.Warn("convert error, taskId: {}, dataLen:{}, sts:{} tick:{}, skip:{}".format(str(taskId), lenData,
                                                                                           str(format),
-                                                                                          str(tick)))
+                                                                                          str(tick), str(Setting.IsSkipPic.value)))
+                if info.savePath and Setting.IsSkipPic.value:
+                    info.status = Status.Ok
+                    data = info.imgData
+
             assert isinstance(info, QConvertTask)
             info.saveData = data
             info.tick = tick
             try:
-                # w, h, mat, _ = ToolUtil.GetPictureSize(data)
-                for path in [info.cachePath, info.savePath]:
-                    if path and not os.path.isdir(os.path.dirname(path)):
-                        os.makedirs(os.path.dirname(path))
+                if not info.noSaveCache:
+                    for path in [info.cachePath, info.savePath]:
+                        if path and not os.path.isdir(os.path.dirname(path)):
+                            os.makedirs(os.path.dirname(path))
 
-                    if path and data:
-                        path = path + "." + format
-                        with open(path, "wb+") as f:
-                            f.write(data)
+                        if path and data:
+                            path = path + "." + format
+                            with open(path, "wb+") as f:
+                                f.write(data)
             except Exception as es:
                 info.status = Status.SaveError
                 Log.Error(es)
@@ -178,7 +184,7 @@ class TaskWaifu2x(TaskBase):
             self.taskObj.convertBack.emit(taskId)
             t1.Refresh("RunLoad")
 
-    def AddConvertTaskByData(self, path, imgData, model, callBack, backParam=None, preDownPath=None, noSaveCache=False, saveParams=None, cleanFlag=None):
+    def AddConvertTaskByData(self, path, imgData, model, callBack, backParam=None, preDownPath=None, noSaveCache=False, cleanFlag=None):
         info = QConvertTask()
         info.callBack = callBack
         info.backParam = backParam
@@ -188,13 +194,9 @@ class TaskWaifu2x(TaskBase):
         info.imgData = imgData
         info.model = model
         info.preDownPath = preDownPath
-        info.saveParams = saveParams
+        info.noSaveCache = noSaveCache
         if not noSaveCache and path and Setting.SavePath.value:
-            a = crc32(json.dumps(model).encode("utf-8"))
-            if Setting.SavePath.value:
-                path2 = os.path.join(os.path.join(Setting.SavePath.value, config.CachePathDir), config.Waifu2xPath)
-                path = os.path.join(path2, path)
-                info.cachePath = path + "-{}".format(a)
+            info.cachePath = os.path.join(os.path.join(Setting.SavePath.value, config.CachePathDir), os.path.join("waifu2x", path))
 
         if cleanFlag:
             info.cleanFlag = cleanFlag

@@ -588,6 +588,25 @@ QScrollArea {background-color:transparent;}</string>
                 </widget>
                </item>
                <item>
+                <widget class="QPushButton" name="buyButton">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>购买</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
                 <widget class="QPushButton" name="startRead">
                  <property name="minimumSize">
                   <size>

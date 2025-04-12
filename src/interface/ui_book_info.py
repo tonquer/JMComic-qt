@@ -350,6 +350,13 @@ class Ui_BookInfo(object):
 
         self.horizontalLayout_2.addWidget(self.clearButton)
 
+        self.buyButton = QPushButton(self.tab)
+        self.buyButton.setObjectName(u"buyButton")
+        self.buyButton.setMinimumSize(QSize(0, 40))
+        self.buyButton.setMaximumSize(QSize(16777215, 40))
+
+        self.horizontalLayout_2.addWidget(self.buyButton)
+
         self.startRead = QPushButton(self.tab)
         self.startRead.setObjectName(u"startRead")
         self.startRead.setMinimumSize(QSize(0, 40))
@@ -488,6 +495,7 @@ class Ui_BookInfo(object):
         self.downloadButton.setText(QCoreApplication.translate("BookInfo", u"\u4e0b\u8f7d", None))
         self.uploadButton.setText(QCoreApplication.translate("BookInfo", u"\u5b58\u50a8", None))
         self.clearButton.setText(QCoreApplication.translate("BookInfo", u"\u6e05\u7406", None))
+        self.buyButton.setText(QCoreApplication.translate("BookInfo", u"\u8d2d\u4e70", None))
         self.startRead.setText(QCoreApplication.translate("BookInfo", u"\u5f00\u59cb\u9605\u8bfb", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("BookInfo", u"\u9605\u8bfb", None))
         self.label_9.setText(QCoreApplication.translate("BookInfo", u"\u53ef\u79bb\u7ebf\u9605\u8bfb\u5df2\u4e0b\u8f7d\u7684\u7ae0\u8282\uff1a", None))

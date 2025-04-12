@@ -2,14 +2,7 @@ import json
 import pickle
 import threading
 from queue import Queue
-
-# import cloudscraper
-import requests
-
 from curl_cffi import requests as requests2, CurlOpt
-
-import urllib3
-from urllib3.util.ssl_ import is_ipaddress
 
 import server.req as req
 import server.res as res
@@ -21,32 +14,20 @@ from tools.log import Log
 from tools.singleton import Singleton
 from tools.status import Status
 from tools.tool import ToolUtil
+import socket
 
-urllib3.disable_warnings()
-
-
-from urllib3.util import connection
-_orig_create_connection = connection.create_connection
 
 host_table = {}
-
-
-def _dns_resolver(host):
+_orig_getaddrinfo = socket.getaddrinfo
+def getaddrinfo2(host, port, *args, **kwargs):
     if host in host_table:
         address = host_table[host]
         Log.Info("dns parse, host:{}->{}".format(host, address))
-        return address
     else:
-        return host
-
-
-def patched_create_connection(address, *args, **kwargs):
-    host, port = address
-    hostname = _dns_resolver(host)
-    return _orig_create_connection((hostname, port), *args, **kwargs)
-
-
-connection.create_connection = patched_create_connection
+        address = host
+    results = _orig_getaddrinfo(address, port, *args, **kwargs)
+    return results
+socket.getaddrinfo = getaddrinfo2
 
 
 def handler(request):
@@ -97,7 +78,7 @@ class Server(Singleton):
     def __init__(self) -> None:
         Singleton.__init__(self)
         self.handler = {}
-        self.session = requests.session()
+        self.session = NewSession()
         self.session2 = NewSession()
         # self.session2 = cloudscraper.session()
         self.address = ""
@@ -155,14 +136,14 @@ class Server(Singleton):
     def UpdateDns(self, address, imageAddress, loginProxy=""):
         for domain in GlobalConfig.Url2List.value:
             domain = ToolUtil.GetUrlHost(domain)
-            if is_ipaddress(address):
+            if ToolUtil.IsipAddress(address):
                 host_table[domain] = address
             elif not address and domain in host_table:
                 host_table.pop(domain)
 
         for domain in GlobalConfig.PicUrlList.value:
             domain = ToolUtil.GetUrlHost(domain)
-            if is_ipaddress(imageAddress):
+            if ToolUtil.IsipAddress(imageAddress):
                 host_table[domain] = imageAddress
             elif not imageAddress and domain in host_table:
                 host_table.pop(domain)
@@ -174,7 +155,7 @@ class Server(Singleton):
                 host_table.pop(domain)
 
         # 换一个，清空pool
-        self.session = requests.session()
+        # self.session = requests.session()
         return
 
     def ClearDns(self):
@@ -232,24 +213,10 @@ class Server(Singleton):
             Log.Info("response-> backId:{}, {}, st:{}, {}".format(task.backParam, task.req.__class__.__name__, task.status, task.res))
         try:
             self.handler.get(task.req.__class__.__name__)(task)
-            if isinstance(task.res.raw, requests.Response):
-                task.res.raw.close()
+            # if isinstance(task.res.raw, requests2.Response):
+            #     task.res.raw.close()
         except Exception as es:
-            if isinstance(es, requests.exceptions.ConnectTimeout):
-                task.status = Status.ConnectErr
-            elif isinstance(es, requests.exceptions.ReadTimeout):
-                task.status = Status.TimeOut
-            elif isinstance(es, requests.exceptions.SSLError):
-                if "WSAECONNRESET" in es.__repr__():
-                    task.status = Status.ResetErr
-                else:
-                    task.status = Status.SSLErr
-            elif isinstance(es, requests.exceptions.ProxyError):
-                task.status = Status.ProxyError
-            elif isinstance(es, ConnectionResetError):
-                task.status = Status.ResetErr
-            else:
-                task.status = Status.NetError
+            task.status = Status.NetError
             # Log.Error(es)
             Log.Warn(task.req.url + " " + es.__repr__())
             Log.Debug(es)
@@ -383,43 +350,13 @@ class Server(Singleton):
                 Log.Info("request reset:{} -> backId:{}, {}".format(task.req.resetCnt, task.bakParam, task.req))
 
             history = []
-            for i in range(10):
-                r = self.session.get(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout,
-                                     verify=False, allow_redirects=False, stream=True)
-                if r.status_code == 302 or r.status_code == 301:
-                    next = r.headers.get('Location')
-                    if ToolUtil.GetUrlHost(next) == "":
-                        next = "https://" + ToolUtil.GetUrlHost(request.url) + next
-                    request.url = next
-                    if not request.isReset:
-                        Log.Info("request 301 -> backId:{}, {}".format(task.bakParam, task.req))
-                    else:
-                        Log.Info("request 301 reset:{} -> backId:{}, {}".format(task.req.resetCnt, task.bakParam, task.req))
-
-                    history.append(r)
-                    self.__DealHeaders(request, "")
-                else:
-                    break
-            r.history = history
+            r = self.session.get(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout,
+                                 verify=False, stream=True)
             # task.res = res.BaseRes(r)
             # print(r.elapsed.total_seconds())
             task.res = r
         except Exception as es:
-            if isinstance(es, requests.exceptions.ConnectTimeout):
-                task.status = Status.ConnectErr
-            elif isinstance(es, requests.exceptions.ReadTimeout):
-                task.status = Status.TimeOut
-            elif isinstance(es, requests.exceptions.SSLError):
-                if "WSAECONNRESET" in es.__repr__():
-                    task.status = Status.ResetErr
-                else:
-                    task.status = Status.SSLErr
-            elif isinstance(es, requests.exceptions.ProxyError):
-                task.status = Status.ProxyError
-            elif isinstance(es, ConnectionResetError):
-                task.status = Status.ResetErr
-            else:
-                task.status = Status.NetError
+            task.status = Status.NetError
             Log.Warn(task.req.url + " " + es.__repr__())
             if (task.req.resetCnt > 0):
                 task.req.isReset = True

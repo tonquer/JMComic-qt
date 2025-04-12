@@ -86,6 +86,8 @@ class BookBaseInfo(object):
         self.updateDate = ""
         self.coverUrl = ""
         self.tagStr = ""
+        self.price = 0
+        self.purchased = False
 
     @property
     def id(self):

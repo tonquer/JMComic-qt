@@ -57,8 +57,11 @@ class HelpView(QWidget, Ui_Help, QtTaskBase):
     def retranslateUi(self, Help):
         Ui_Help.retranslateUi(self, Help)
         self.upTimeLabel.setText(config.VersionTime)
+        if config.CanWaifu2x:
+            self.waifu2x.setText(config.Waifu2xVersion)
+        else:
+            self.waifu2x.setText("")
         self.version.setText(config.RealVersion)
-        self.waifu2x.setText(config.Waifu2xVersion)
         self.configVer.setText("{}({})".format(GlobalConfig.Ver.value, GlobalConfig.VerTime.value))
 
     def Init(self):

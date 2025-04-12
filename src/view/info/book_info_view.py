@@ -72,7 +72,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.listWidget.setResizeMode(QListWidget.Adjust)
         self.listWidget.clicked.connect(self.OpenReadImg2)
         if Setting.IsGrabGesture.value:
-            QScroller.grabGesture(self.epsListWidget, QScroller.LeftMouseButtonGesture)
+            QScroller.grabGesture(self.epsListWidget, QScroller.ScrollerGestureType.LeftMouseButtonGesture)
         # QScroller.grabGesture(self.epsListWidget, QScroller.LeftMouseButtonGesture)
         # self.epsListWidget.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
         # self.epsListWidget.verticalScrollBar().setStyleSheet(QssDataMgr().GetData('qt_list_scrollbar'))
@@ -86,6 +86,9 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.readOffline.clicked.connect(self.StartRead2)
         self.flowLayout = FlowLayout(self.tagList)
         self.uploadButton.clicked.connect(self.ShowMenu)
+        self.buyButton.setVisible(False)
+        self.buyButton.clicked.connect(self.DoBuyBook)
+
         # self.toolMenu = QMenu(self.uploadButton)
         # self.uploadButton.setMenu(self.toolMenu)
 
@@ -134,6 +137,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.Clear()
         self.show()
         QtOwner().ShowLoading()
+        self.buyButton.setVisible(False)
         self.AddHttpTask(req.GetBookInfoReq2(self.bookId), self.OpenBookBack)
 
     def OpenBookBack(self, raw):
@@ -188,6 +192,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             self.UpdateEpsData()
             self.lastEpsId = -1
             self.LoadHistory()
+            self.UpdateBuyButtong(info)
         else:
             if QtOwner().isOfflineModel:
                 self.path = ToolUtil.GetRealPath(self.bookId, "cover")
@@ -197,6 +202,27 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
 
         # if st == Status.UnderReviewBook:
         #     QtOwner().ShowError(Str.GetStr(st))
+
+        return
+
+    def UpdateBuyButtong(self, info):
+        self.buyButton.setVisible(False)
+        if info.baseInfo.price > 0 and not info.baseInfo.purchased:
+            self.buyButton.setVisible(True)
+            self.buyButton.setText(f"{info.baseInfo.price}Jcoin购买")
+
+    def DoBuyBook(self):
+        QtOwner().ShowLoading()
+        self.AddHttpTask(req.GetBuyComicsReq2(self.bookId), callBack=self.DoBuyBookBack)
+
+    def DoBuyBookBack(self, raw):
+        QtOwner().CloseLoading()
+        st = raw["st"]
+        data = raw.get("data", {})
+        if data.get("status") == "ok":
+            self.buyButton.setVisible(False)
+        if data.get("msg"):
+            QtOwner().ShowMsg(data.get("msg"))
 
         return
 

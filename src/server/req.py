@@ -8,7 +8,6 @@ from config.global_config import GlobalConfig
 from config.setting import Setting
 from tools.str import Str
 from tools.tool import ToolUtil
-from Cryptodome.Cipher import AES
 import platform
 
 
@@ -746,6 +745,15 @@ class GetHistoryReq2(ServerReq):
         data["page"] = page
         super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
 
+
+# Jcoin购买
+class GetBuyComicsReq2(ServerReq):
+    def __init__(self, bookId=""):
+        url = GlobalConfig.GetApiUrl() + "/coin_buy_comics"
+        method = "POST"
+        data = dict()
+        data["id"] = bookId
+        super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
 
 # 获取周推荐分类
 class GetWeekCategoriesReq2(ServerReq):

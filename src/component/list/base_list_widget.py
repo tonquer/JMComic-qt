@@ -24,13 +24,13 @@ class BaseListWidget(QListWidget, QtTaskBase):
         self.parentId = -1
         self.vScrollBar = None
         if Setting.IsGrabGesture.value:
-            QScroller.grabGesture(self, QScroller.LeftMouseButtonGesture)
+            QScroller.grabGesture(self, QScroller.ScrollerGestureType.LeftMouseButtonGesture)
             propertiesOne = QScroller.scroller(self).scrollerProperties()
-            print(propertiesOne.scrollMetric(propertiesOne.MousePressEventDelay))
-            propertiesOne.setScrollMetric(QScrollerProperties.MousePressEventDelay, 1)
-            propertiesOne.setScrollMetric(QScrollerProperties.VerticalOvershootPolicy, QScrollerProperties.OvershootAlwaysOff)
-            propertiesOne.setScrollMetric(QScrollerProperties.HorizontalOvershootPolicy, QScrollerProperties.OvershootAlwaysOff)
-            propertiesOne.setScrollMetric(QScrollerProperties.AcceleratingFlickMaximumTime , 0)
+            print(propertiesOne.scrollMetric(QScrollerProperties.ScrollMetric.MousePressEventDelay))
+            propertiesOne.setScrollMetric(QScrollerProperties.ScrollMetric.MousePressEventDelay, 1)
+            propertiesOne.setScrollMetric(QScrollerProperties.ScrollMetric.VerticalOvershootPolicy, QScrollerProperties.OvershootPolicy.OvershootAlwaysOff)
+            propertiesOne.setScrollMetric(QScrollerProperties.ScrollMetric.HorizontalOvershootPolicy, QScrollerProperties.OvershootPolicy.OvershootAlwaysOff)
+            propertiesOne.setScrollMetric(QScrollerProperties.ScrollMetric.AcceleratingFlickMaximumTime , 0)
             QScroller.scroller(self).setScrollerProperties(propertiesOne)
             self.verticalScrollBar().valueChanged.connect(self.ValueChange)
         else:
@@ -61,7 +61,7 @@ class BaseListWidget(QListWidget, QtTaskBase):
                 self.LoadCallBack()
 
             if Setting.IsGrabGesture.value:
-                QScroller.grabGesture(self, QScroller.LeftMouseButtonGesture)
+                QScroller.grabGesture(self, QScroller.ScrollerGestureType.LeftMouseButtonGesture)
 
     # def event(self, e) -> bool:
     #     print(e)

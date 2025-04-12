@@ -65,11 +65,11 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
         self.proxyImgName.clicked.connect(self.OpenProxy)
         self.proxyName.clicked.connect(self.OpenProxy)
         if Setting.IsGrabGesture.value:
-            QScroller.grabGesture(self.scrollArea, QScroller.LeftMouseButtonGesture)
+            QScroller.grabGesture(self.scrollArea, QScroller.ScrollerGestureType.LeftMouseButtonGesture)
             propertiesOne = QScroller.scroller(self).scrollerProperties()
-            propertiesOne.setScrollMetric(QScrollerProperties.MousePressEventDelay, 0)
-            propertiesOne.setScrollMetric(QScrollerProperties.VerticalOvershootPolicy, QScrollerProperties.OvershootAlwaysOff)
-            propertiesOne.setScrollMetric(QScrollerProperties.HorizontalOvershootPolicy, QScrollerProperties.OvershootAlwaysOff)
+            propertiesOne.setScrollMetric(QScrollerProperties.ScrollMetric.MousePressEventDelay, 0)
+            propertiesOne.setScrollMetric(QScrollerProperties.ScrollMetric.VerticalOvershootPolicy, QScrollerProperties.OvershootPolicy.OvershootAlwaysOff)
+            propertiesOne.setScrollMetric(QScrollerProperties.ScrollMetric.HorizontalOvershootPolicy, QScrollerProperties.OvershootPolicy.OvershootAlwaysOff)
             QScroller.scroller(self.scrollArea).setScrollerProperties(propertiesOne)
 
     def OpenProxy(self):
@@ -155,6 +155,8 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
             self.signButton.setText(Str.GetStr(Str.AlreadySign))
             curDate = datetime.today().day
             self.signMap[curDate] = True
+        else:
+            self.AddHttpTask(req.GetDailyReq2(QtOwner().user.uid), self.GetSignDailyBack)
         QtOwner().ShowError(msg if msg else Str.GetStr(st))
 
     def UpdateProxyName(self):
