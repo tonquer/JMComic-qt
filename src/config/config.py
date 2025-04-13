@@ -23,8 +23,8 @@ UpdateUrl2Back = "https://hub.ggo.icu/tonquer/JMComic-qt/"
 UpdateUrl3Back = "https://hub.fastgit.xyz/tonquer/JMComic-qt"
 
 UpdateVersion = "v1.2.7"
-RealVersion = "v1.2.7"
-VersionTime = "2025-04-12"
+RealVersion = "v1.2.7.1"
+VersionTime = "2025-04-13"
 
 Waifu2xVersion = "1.2.0"
 LoginUserName = ""

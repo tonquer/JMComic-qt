@@ -184,7 +184,7 @@ class TaskWaifu2x(TaskBase):
             self.taskObj.convertBack.emit(taskId)
             t1.Refresh("RunLoad")
 
-    def AddConvertTaskByData(self, path, imgData, model, callBack, backParam=None, preDownPath=None, noSaveCache=False, cleanFlag=None):
+    def AddConvertTaskByData(self, path, imgData, model, callBack, backParam=None, preDownPath=None, noSaveCache=False, saveParams=None, cleanFlag=None):
         info = QConvertTask()
         info.callBack = callBack
         info.backParam = backParam
@@ -195,8 +195,13 @@ class TaskWaifu2x(TaskBase):
         info.model = model
         info.preDownPath = preDownPath
         info.noSaveCache = noSaveCache
+        info.saveParams = saveParams
         if not noSaveCache and path and Setting.SavePath.value:
-            info.cachePath = os.path.join(os.path.join(Setting.SavePath.value, config.CachePathDir), os.path.join("waifu2x", path))
+            a = crc32(json.dumps(model).encode("utf-8"))
+            if Setting.SavePath.value:
+                path2 = os.path.join(os.path.join(Setting.SavePath.value, config.CachePathDir), config.Waifu2xPath)
+                path = os.path.join(path2, path)
+                info.cachePath = path + "-{}".format(a)
 
         if cleanFlag:
             info.cleanFlag = cleanFlag
