@@ -321,7 +321,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
             return
 
         request = req.SpeedTestReq()
-        request.isUseHttps = self.httpsBox.isChecked()
+        # request.isUseHttps = self.httpsBox.isChecked()
         if self.radioProxyGroup.checkedId() == 1:
             request.proxy = {"http": httpProxy, "https": httpProxy}
         elif self.radioProxyGroup.checkedId() == 3:

@@ -22,7 +22,7 @@ class ServerReq(object):
         self.isParseRes = False
         self.timeout = 5
         self.isUseHttps = True
-        self.isUseHttps = bool(Setting.IsUseHttps.value)
+        # self.isUseHttps = bool(Setting.IsUseHttps.value)
         self.proxyUrl = ""
         self.extend = {}
         self.cookies = {}
