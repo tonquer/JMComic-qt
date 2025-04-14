@@ -832,79 +832,84 @@ class DownloadBookHandler(object):
 
                     now = time.time()
                     isAlreadySend = False
-                try:
-                    for chunk in r.iter_bytes(chunk_size=1024):
-                            cur = time.time()
-                            tick = cur - now
-                            getSize += len(chunk)
-                            data += chunk
-                            if tick >= 0.1:
-                                isAlreadySend = True
-                                if backData.bakParam and fileSize - getSize > 0:
-                                    TaskBase.taskObj.downloadBack.emit(backData.bakParam, fileSize - getSize, b"")
-                                now = cur
-                    if not isAlreadySend:
-                        if backData.bakParam:
-                            TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, getSize, b"")
-
-                except Exception as es:
-                    Log.Error(es)
-                    if backData.req.resetCnt > 0:
-                        backData.req.isReset = True
-                        Server().ReDownload(backData)
-                        return
-
-                # Log.Info("size:{}, url:{}".format(ToolUtil.GetDownloadSize(fileSize), backData.req.url))
-                _, _, mat, isAni = ToolUtil.GetPictureSize(data)
-                if not data:
-                    if backData.bakParam:
-                        from server.req import ServerReq
-                        ServerReq.SPACE_PIC.add(backData.req.url)
-                        TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, -Str.SpacePic, b"")
-                    return
-
-                if config.IsUseCache and len(data) > 0:
                     try:
-                        for path in [backData.req.cachePath]:
-                            filePath = path
-                            if not path:
-                                continue
-                            fileDir = os.path.dirname(filePath)
-                            if not os.path.isdir(fileDir):
-                                os.makedirs(fileDir)
+                        addSize = 0
+                        for chunk in r.iter_bytes(chunk_size=1024):
+                                cur = time.time()
+                                tick = cur - now
+                                addSize += len(chunk)
+                                data += chunk
+                                if tick >= 0.1:
+                                    isAlreadySend = True
+                                    if backData.bakParam and fileSize - addSize > 0:
+                                        TaskBase.taskObj.downloadBack.emit(backData.bakParam, addSize, max(1, addSize, fileSize - getSize), b"")
+                                        addSize = 0
+                                    now = cur
 
-                            with open(filePath+"."+mat, "wb+") as f:
-                                f.write(data)
-                            Log.Debug("add download cache, cachePath:{}".format(filePath))
+                                getSize += len(chunk)
 
-                        for path in [backData.req.savePath]:
-                            filePath = path
-                            if not path:
-                                continue
-                            fileDir = os.path.dirname(filePath)
-                            if not os.path.isdir(fileDir):
-                                os.makedirs(fileDir)
-                            saveParam = backData.req.saveParam
-                            Log.Debug("add download cache, cachePath:{}".format(filePath))
-                            if not isAni:
-                                if mat == "webp" and Setting.WebpToPng.value > 0:
-                                    ToolUtil.SegmentationPictureToDisk(data, saveParam[0], saveParam[1], saveParam[2], filePath+".png", "png")
-                                    continue
-                                else:
-                                    data2 = ToolUtil.SegmentationPicture(data, saveParam[0], saveParam[1], saveParam[2])
-                            else:
-                                data2 = data
+                        if not isAlreadySend:
+                            if backData.bakParam:
+                                TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, getSize, b"")
 
-                            with open(filePath+"."+mat, "wb+") as f:
-                                f.write(data2)
                     except Exception as es:
                         Log.Error(es)
-                        # 保存失败了
-                        if backData.bakParam:
-                            TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, -2, b"")
+                        if backData.req.resetCnt > 0:
+                            backData.req.isReset = True
+                            Server().ReDownload(backData)
+                            return
 
-                if backData.bakParam:
-                    TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, 0, data)
+                    # Log.Info("size:{}, url:{}".format(ToolUtil.GetDownloadSize(fileSize), backData.req.url))
+                    _, _, mat, isAni = ToolUtil.GetPictureSize(data)
+                    if not data:
+                        if backData.bakParam:
+                            from server.req import ServerReq
+                            ServerReq.SPACE_PIC.add(backData.req.url)
+                            TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, -Str.SpacePic, b"")
+                        return
+
+                    if config.IsUseCache and len(data) > 0:
+                        try:
+                            for path in [backData.req.cachePath]:
+                                filePath = path
+                                if not path:
+                                    continue
+                                fileDir = os.path.dirname(filePath)
+                                if not os.path.isdir(fileDir):
+                                    os.makedirs(fileDir)
+
+                                with open(filePath+"."+mat, "wb+") as f:
+                                    f.write(data)
+                                Log.Debug("add download cache, cachePath:{}".format(filePath))
+
+                            for path in [backData.req.savePath]:
+                                filePath = path
+                                if not path:
+                                    continue
+                                fileDir = os.path.dirname(filePath)
+                                if not os.path.isdir(fileDir):
+                                    os.makedirs(fileDir)
+                                saveParam = backData.req.saveParam
+                                Log.Debug("add download cache, cachePath:{}".format(filePath))
+                                if not isAni:
+                                    if mat == "webp" and Setting.WebpToPng.value > 0:
+                                        ToolUtil.SegmentationPictureToDisk(data, saveParam[0], saveParam[1], saveParam[2], filePath+".png", "png")
+                                        continue
+                                    else:
+                                        data2 = ToolUtil.SegmentationPicture(data, saveParam[0], saveParam[1], saveParam[2])
+                                else:
+                                    data2 = data
+
+                                with open(filePath+"."+mat, "wb+") as f:
+                                    f.write(data2)
+                        except Exception as es:
+                            Log.Error(es)
+                            # 保存失败了
+                            if backData.bakParam:
+                                TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, -2, b"")
+
+                    if backData.bakParam:
+                        TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, 0, data)
 
             except Exception as es:
                 backData.status = Status.DownloadFail

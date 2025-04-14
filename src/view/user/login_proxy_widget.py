@@ -176,7 +176,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
             Server().UpdateDns(address, imageServer)
         else:
             Server().UpdateDns(address, imageServer)
-        Server().UpdateProxy2()
+        Server().UpdateProxy()
         # QtOwner().settingView.SetSock5Proxy()
         Log.Warn("update proxy, ver:{}, setId:{}:{}, address:{}, img:{}".format(config.UpdateVersion, Setting.ProxySelectIndex.value, Setting.ProxyImgSelectIndex.value, address, imageServer))
 

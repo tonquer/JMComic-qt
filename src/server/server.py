@@ -410,8 +410,8 @@ class Server(Singleton):
                 self.ReDownload(task)
                 return
         self.handler.get(task.req.__class__.__name__)(task)
-        if task.res:
-            task.res.close()
+        # if task.res:
+        #     task.res.close()
 
     def TestSpeed(self, request, bakParams=""):
         self.__DealHeaders(request, "")
