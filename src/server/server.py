@@ -97,19 +97,26 @@ class Server(Singleton):
         self.downloadSession = []
 
         for i in range(self.threadNum):
-            self.threadSession.append(httpx.Client(http2=True, verify=False, trust_env=False))
+            self.threadSession.append(self.GetNewSession())
             thread = threading.Thread(target=self.Run, args=[i])
             thread.setName("HTTP-"+str(i))
             thread.setDaemon(True)
             thread.start()
 
         for i in range(self.downloadNum):
-            self.downloadSession.append(httpx.Client(http2=True, verify=False, trust_env=False))
+            self.downloadSession.append(self.GetNewSession())
             thread = threading.Thread(target=self.RunDownload, args=[i])
             thread.setName("Download-" + str(i))
             thread.setDaemon(True)
             thread.start()
 
+    def GetNewSession(self, proxy=None):
+        try:
+            return httpx.Client(http2=True, verify=False, trust_env=False, proxy=proxy)
+        except Exception as es:
+            Log.Error(es)
+            return httpx.Client(http2=True, verify=False, trust_env=False)
+    
     def Run(self, index):
         while True:
             task = self._inQueue.get(True)
@@ -191,13 +198,17 @@ class Server(Singleton):
         elif httpProxyIndex == 1 and httpProxy:
             proxy = httpProxy
             trustEnv = False
+            if "http" not in httpProxy:
+                proxy = "http://" + proxy
+                
         # 系统代理
         elif httpProxyIndex == 3:
             proxy = None
             proxyDict = urllib.request.getproxies()
             if isinstance(proxyDict, dict) and proxyDict.get("http"):
                 proxy = proxyDict.get("http")
-
+                if "http" not in httpProxy:
+                    proxy = "http://" + proxy
             trustEnv = False
         # 其他
         else:
@@ -207,11 +218,11 @@ class Server(Singleton):
 
         self.threadSession = []
         for i in range(self.threadNum):
-            self.threadSession.append(httpx.Client(http2=True, verify=False, trust_env=trustEnv, proxy=proxy))
+            self.threadSession.append(self.GetNewSession(proxy))
 
         self.downloadSession = []
         for i in range(self.downloadNum):
-            self.downloadSession.append(httpx.Client(http2=True, verify=False, trust_env=trustEnv, proxy=proxy))
+            self.downloadSession.append(self.GetNewSession(proxy))
         return
     
     def __DealHeaders(self, request, token):
