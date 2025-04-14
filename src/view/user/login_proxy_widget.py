@@ -176,7 +176,8 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
             Server().UpdateDns(address, imageServer)
         else:
             Server().UpdateDns(address, imageServer)
-        QtOwner().settingView.SetSock5Proxy()
+        Server().UpdateProxy2()
+        # QtOwner().settingView.SetSock5Proxy()
         Log.Warn("update proxy, ver:{}, setId:{}:{}, address:{}, img:{}".format(config.UpdateVersion, Setting.ProxySelectIndex.value, Setting.ProxyImgSelectIndex.value, address, imageServer))
 
     def SpeedTest(self):
@@ -241,12 +242,14 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         else:
             request.proxyUrl = ""
 
-        if self.radioProxyGroup.checkedId() == 2:
-            self.SetSock5Proxy(True)
-        else:
-            self.SetSock5Proxy(False)
+        # if self.radioProxyGroup.checkedId() == 2:
+        #     self.SetSock5Proxy(True)
+        # else:
+        #     self.SetSock5Proxy(False)
 
         Server().UpdateDns(dnslist[0], dnslist[1])
+        Server().UpdateProxy2(self.radioProxyGroup.checkedId(), self.httpLine.text(), self.sockEdit.text())
+        
         host = ToolUtil.GetUrlHost(request.url)
         host2 = ToolUtil.GetUrlHost(address)
         request.url = request.url.replace(host, host2)
@@ -333,11 +336,13 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         else:
             request.proxyUrl = ""
 
-        if self.radioProxyGroup.checkedId() == 2:
-            self.SetSock5Proxy(True)
-        else:
-            self.SetSock5Proxy(False)
+        # if self.radioProxyGroup.checkedId() == 2:
+        #     self.SetSock5Proxy(True)
+        # else:
+        #     self.SetSock5Proxy(False)
         Server().UpdateDns(dnslist[0], dnslist[1])
+        Server().UpdateProxy2(self.radioProxyGroup.checkedId(), self.httpLine.text(), self.sockEdit.text())
+        
         host = ToolUtil.GetUrlHost(request.url)
         host2 = ToolUtil.GetUrlHost(imgUrl)
         request.url = request.url.replace(host, host2)
@@ -363,19 +368,19 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
     def OpenUrl(self):
         QtOwner().owner.helpView.OpenProxyUrl()
 
-    def SetSock5Proxy(self, isProxy):
-        import socket
-        import socks
-        if not QtOwner().backSock:
-            QtOwner().backSock = socket.socket
-        if isProxy:
-            data = self.sockEdit.text().replace("http://", "").replace("https://", "").replace("sock5://", "")
-            data = data.split(":")
-            if len(data) == 2:
-                host = data[0]
-                port = data[1]
-                socks.set_default_proxy(socks.SOCKS5, host, int(port))
-                socket.socket = socks.socksocket
-        else:
-            socks.set_default_proxy()
-            socket.socket = QtOwner().backSock
+    # def SetSock5Proxy(self, isProxy):
+    #     import socket
+    #     import socks
+    #     if not QtOwner().backSock:
+    #         QtOwner().backSock = socket.socket
+    #     if isProxy:
+    #         data = self.sockEdit.text().replace("http://", "").replace("https://", "").replace("sock5://", "")
+    #         data = data.split(":")
+    #         if len(data) == 2:
+    #             host = data[0]
+    #             port = data[1]
+    #             socks.set_default_proxy(socks.SOCKS5, host, int(port))
+    #             socket.socket = socks.socksocket
+    #     else:
+    #         socks.set_default_proxy()
+    #         socket.socket = QtOwner().backSock

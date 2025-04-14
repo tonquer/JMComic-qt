@@ -4,7 +4,6 @@ import pickle
 import re
 import time
 
-from curl_cffi import requests
 
 from config import config
 from config.global_config import GlobalConfig
@@ -226,7 +225,10 @@ class LoginReq2Handler(object):
                 return
             user = ToolUtil.ParseLogin2(task.req.ParseData(v.get("data")))
 
-            assert isinstance(task.res.raw, requests.Response)
+            cookie_dict = {}
+            for cookie in task.res.raw.cookies.jar:
+                cookie_dict[cookie.name] = cookie.value
+
             # cookies = task.res.raw.cookies
 
             # ipcountry = cookies.get("ipcountry", "")
@@ -237,8 +239,9 @@ class LoginReq2Handler(object):
             # config.ipm5 = ipm5 if ipm5 else config.ipm5
             # config.AVS = AVS if AVS else config.AVS
             # config.shunt = shunt if shunt else config.shunt
-            Log.Info("Login suc, cookies:{}".format(task.res.raw.cookies))
+            Log.Info("Login suc, user_id:{}, cookies:{}".format(user.uid, cookie_dict))
             st = Status.Ok
+            user.cookie = cookie_dict
             data["st"] = st
             data["user"] = user
         except Exception as es:
@@ -286,7 +289,6 @@ class GetIndexInfoReq2Handler(object):
             if code != 200:
                 data["st"] = Status.Error
                 return
-            assert isinstance(task.res.raw, requests.Response)
             cookies = task.res.raw.cookies
             Log.Info("latest suc, cookies:{}".format(cookies))
             bookInfo = ToolUtil.ParseIndex2(task.req.ParseData(v.get("data")))
@@ -818,36 +820,29 @@ class DownloadBookHandler(object):
             if backData.bakParam:
                 TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, -backData.status, b"")
         else:
-            r = backData.res
+
+            request = backData.req
+            index = backData.index
             try:
-                if r.status_code != 200:
-                    if backData.bakParam:
-                        TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, -Status.Error, b"")
-                    return
+                with Server().downloadSession[index].stream("GET", request.url, follow_redirects=True, headers=request.headers,
+                                    timeout=backData.timeout, extensions=request.extend) as r:
+                    fileSize = int(r.headers.get('Content-Length', 0))
+                    getSize = 0
+                    data = b""
 
-                fileSize = int(r.headers.get('Content-Length', 0))
-                getSize = 0
-                data = b""
-
-                addSize = 0
-                now = time.time()
-                isAlreadySend = False
-                # 网速快，太卡了，优化成最多100ms一次
+                    now = time.time()
+                    isAlreadySend = False
                 try:
-                    for chunk in r.iter_content(chunk_size=4096):
-                        cur = time.time()
-                        tick = cur - now
-                        addSize += len(chunk)
-                        if tick >= 0.1:
-                            isAlreadySend = True
-                            if backData.bakParam and addSize > 0:
-                                TaskBase.taskObj.downloadBack.emit(backData.bakParam, addSize,
-                                                                   max(1, fileSize - getSize), b"")
-                                addSize = 0
-                            now = cur
-
-                        getSize += len(chunk)
-                        data += chunk
+                    for chunk in r.iter_bytes(chunk_size=1024):
+                            cur = time.time()
+                            tick = cur - now
+                            getSize += len(chunk)
+                            data += chunk
+                            if tick >= 0.1:
+                                isAlreadySend = True
+                                if backData.bakParam and fileSize - getSize > 0:
+                                    TaskBase.taskObj.downloadBack.emit(backData.bakParam, fileSize - getSize, b"")
+                                now = cur
                     if not isAlreadySend:
                         if backData.bakParam:
                             TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, getSize, b"")
@@ -959,23 +954,26 @@ class SpeedTestHandler(object):
             if backData.bakParam:
                 TaskBase.taskObj.taskBack.emit(backData.bakParam, pickle.dumps(data))
         else:
-            r = backData.res
+            request = backData.req
+            index = backData.index
             try:
-                if r.status_code != 200:
-                    data["st"] = Status.Error
-                    if backData.bakParam:
-                        data["st"] = Status.Error
-                        TaskBase.taskObj.taskBack.emit(backData.bakParam, pickle.dumps(data))
-                    return
+                with Server().downloadSession[index].stream("GET", request.url, follow_redirects=True, headers=request.headers,
+                                    timeout=backData.timeout, extensions=request.extend) as r:
 
-                fileSize = int(r.headers.get('Content-Length', 0))
-                getSize = 0
-                now = time.time()
-                for chunk in r.iter_content(chunk_size=1024):
-                    getSize += len(chunk)
-                    consume = time.time() - now
-                    if consume >= 3.0:
-                        break
+                    fileSize = int(r.headers.get('Content-Length', 0))
+                    getSize = 0
+                    now = time.time()
+                    # 网速快，太卡了，优化成最多100ms一次
+                    try:
+                        for chunk in r.iter_bytes(chunk_size=1024):
+                            getSize += len(chunk)
+                            consume = time.time() - now
+                            if consume >= 3.0:
+                                break
+
+                    except Exception as es:
+                        Log.Error(es)
+
                 consume = time.time() - now
                 downloadSize = getSize / consume
                 speed = ToolUtil.GetDownloadSize(downloadSize)

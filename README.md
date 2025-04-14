@@ -1,7 +1,7 @@
 # 禁漫天堂
 
 [![GitHub](https://img.shields.io/github/license/tonquer/JMComic-qt)](https://raw.githubusercontent.com/tonquer/picacg-windows/master/LICENSE.txt)
-![Relese](https://img.shields.io/badge/Python-3.7.9%2B-brightgreen)
+![Relese](https://img.shields.io/badge/Python-3.9.13%2B-brightgreen)
 [![Relese](https://img.shields.io/github/v/release/tonquer/JMComic-qt)](https://github.com/tonquer/JMComic-qt/releases)
 [![Relese](https://img.shields.io/github/downloads/tonquer/JMComic-qt/total.svg)](https://github.com/tonquer/JMComic-qt/releases)
 
@@ -63,7 +63,9 @@
  
 ## 感谢以下项目
   ### 禁漫
-   [![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=Sexypanda8888&repo=18comic-)](https://github.com/Sexypanda8888/18comic-)  
-  ### waifu2x功能
-   [![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=nihui&repo=waifu2x-ncnn-vulkan)](https://github.com/nagadomi/waifu2x-ncnn-vulkan)  
+   [![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=hect0x7&repo=JMComic-Crawler-Python)](https://github.com/hect0x7/JMComic-Crawler-Python)  
+  ### 超分功能
+   [![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=nihui&repo=waifu2x-ncnn-vulkan)](https://github.com/nihui/waifu2x-ncnn-vulkan)  
+   [![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=xinntao&repo=Real-ESRGAN)](https://github.com/xinntao/Real-ESRGAN) 
+   [![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=nihui&repo=realcugan-ncnn-vulkan)](https://github.com/nihui/realcugan-ncnn-vulkan) 
    [![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=tonquer&repo=waifu2x-vulkan)](https://github.com/tonquer/waifu2x-vulkan)  

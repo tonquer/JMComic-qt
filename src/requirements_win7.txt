@@ -10,3 +10,6 @@ jmcomic>=2.4.3
 webdavclient3
 tqdm
 pysmb
+httpx
+httpx[http2]
+httpx[socks]

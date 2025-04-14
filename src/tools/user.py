@@ -15,6 +15,7 @@ class User:
         self.coin = 0
         self.gender = ""
         self.userAttr = {}
+        self.cookie = {}
 
     def Logout(self):
         self.isLogin = False

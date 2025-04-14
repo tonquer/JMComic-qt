@@ -1,7 +1,7 @@
 
 
 ProjectName = "JMComic"
-ThreadNum = 10                 # 线程
+ThreadNum = 5                  # 线程
 DownloadThreadNum = 5          # 下载线程
 ConvertThreadNum = 3           # 转换线程
 ChatSavePath = "chat"
@@ -22,9 +22,9 @@ UpdateUrlBack = "https://github.com/tonquer/JMComic-qt/"
 UpdateUrl2Back = "https://hub.ggo.icu/tonquer/JMComic-qt/"
 UpdateUrl3Back = "https://hub.fastgit.xyz/tonquer/JMComic-qt"
 
-UpdateVersion = "v1.2.7"
-RealVersion = "v1.2.7.1"
-VersionTime = "2025-04-13"
+UpdateVersion = "v1.2.8"
+RealVersion = "v1.2.8"
+VersionTime = "2025-04-14"
 
 Waifu2xVersion = "1.2.0"
 LoginUserName = ""

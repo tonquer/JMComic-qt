@@ -154,7 +154,8 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
             elif setItem == Setting.Language:
                 self.SetLanguage()
             elif setItem == Setting.IsHttpProxy:
-                self.SetSock5Proxy()
+                from server.server import Server
+                Server().UpdateProxy()
             QtOwner().ShowMsgOne(Str.GetStr(Str.SaveSuc))
         self.CheckMsgLabel()
         return
@@ -195,7 +196,8 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         setItem.SetValue(value)
         QtOwner().ShowMsgOne(Str.GetStr(Str.SaveSuc))
         if setItem == Setting.IsHttpProxy:
-            self.SetSock5Proxy()
+            from server.server import Server
+            Server().UpdateProxy()
         self.CheckMsgLabel()
         return
 
@@ -205,6 +207,8 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         setItem.SetValue(value)
         QtOwner().ShowMsgOne(Str.GetStr(Str.SaveSuc))
         self.CheckMsgLabel()
+        from server.server import Server
+        Server().UpdateProxy()
         return
 
     def SpinBoxEvent(self, setItem, value):
@@ -228,7 +232,8 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.InitSetting()
         self.SetTheme()
         self.SetLanguage()
-        self.SetSock5Proxy()
+        from server.server import Server
+        Server().UpdateProxy()
         return
 
     def ExitSaveSetting(self, mainQsize):
@@ -314,28 +319,28 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         if radio:
             radio.setChecked(True)
 
-    def SetSock5Proxy(self):
-        try:
-            import socket
-            import socks
-            if not QtOwner().backSock:
-                QtOwner().backSock = socket.socket
-            if Setting.IsHttpProxy.value == 2 and Setting.Sock5Proxy.value:
-                data = Setting.Sock5Proxy.value.replace("http://", "").replace("https://", "").replace("sock5://", "").replace("socks5://", "")
-                data = data.split(":")
-                if len(data) == 2:
-                    host = data[0]
-                    port = data[1]
-                    socks.set_default_proxy(socks.SOCKS5, host, int(port))
-                    socket.socket = socks.socksocket
-                else:
-                    QtOwner().ShowMsg(Str.GetStr(Str.Sock5Error))
-            else:
-                socks.set_default_proxy()
-                socket.socket = QtOwner().backSock
-        except Exception as es:
-            Log.Error(es)
-            QtOwner().ShowMsg(Str.GetStr(Str.Sock5Error))
+    # def SetSock5Proxy(self):
+    #     try:
+    #         import socket
+    #         import socks
+    #         if not QtOwner().backSock:
+    #             QtOwner().backSock = socket.socket
+    #         if Setting.IsHttpProxy.value == 2 and Setting.Sock5Proxy.value:
+    #             data = Setting.Sock5Proxy.value.replace("http://", "").replace("https://", "").replace("sock5://", "").replace("socks5://", "")
+    #             data = data.split(":")
+    #             if len(data) == 2:
+    #                 host = data[0]
+    #                 port = data[1]
+    #                 socks.set_default_proxy(socks.SOCKS5, host, int(port))
+    #                 socket.socket = socks.socksocket
+    #             else:
+    #                 QtOwner().ShowMsg(Str.GetStr(Str.Sock5Error))
+    #         else:
+    #             socks.set_default_proxy()
+    #             socket.socket = QtOwner().backSock
+    #     except Exception as es:
+    #         Log.Error(es)
+    #         QtOwner().ShowMsg(Str.GetStr(Str.Sock5Error))
 
     def SetLanguage(self):
         language = Setting.Language.value

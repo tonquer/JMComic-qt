@@ -15,10 +15,13 @@ from tools.singleton import Singleton
 from tools.status import Status
 from tools.tool import ToolUtil
 import socket
+import httpx
+import urllib
 
 
 host_table = {}
 _orig_getaddrinfo = socket.getaddrinfo
+# 如果使用代理，無法使用自定義dns
 def getaddrinfo2(host, port, *args, **kwargs):
     if host in host_table:
         address = host_table[host]
@@ -90,27 +93,31 @@ class Server(Singleton):
         self.threadHandler = 0
         self.threadNum = config.ThreadNum
         self.downloadNum = config.DownloadThreadNum
+        self.threadSession = []
+        self.downloadSession = []
 
         for i in range(self.threadNum):
-            thread = threading.Thread(target=self.Run)
+            self.threadSession.append(httpx.Client(http2=True, verify=False, trust_env=False))
+            thread = threading.Thread(target=self.Run, args=[i])
             thread.setName("HTTP-"+str(i))
             thread.setDaemon(True)
             thread.start()
 
         for i in range(self.downloadNum):
-            thread = threading.Thread(target=self.RunDownload)
+            self.downloadSession.append(httpx.Client(http2=True, verify=False, trust_env=False))
+            thread = threading.Thread(target=self.RunDownload, args=[i])
             thread.setName("Download-" + str(i))
             thread.setDaemon(True)
             thread.start()
 
-    def Run(self):
+    def Run(self, index):
         while True:
             task = self._inQueue.get(True)
             self._inQueue.task_done()
             try:
                 if task == "":
                     break
-                self._Send(task)
+                self._Send(task, index)
             except Exception as es:
                 Log.Error(es)
         pass
@@ -121,14 +128,14 @@ class Server(Singleton):
         for i in range(self.downloadNum):
             self._downloadQueue.put("")
 
-    def RunDownload(self):
+    def RunDownload(self, index):
         while True:
             task = self._downloadQueue.get(True)
             self._downloadQueue.task_done()
             try:
                 if task == "":
                     break
-                self._Download(task)
+                self._Download(task, index)
             except Exception as es:
                 Log.Error(es)
         pass
@@ -161,6 +168,52 @@ class Server(Singleton):
     def ClearDns(self):
         host_table.clear()
 
+    def UpdateProxy(self):
+        from config.setting import Setting
+        self.UpdateProxy2(Setting.IsHttpProxy.value, Setting.HttpProxy.value, Setting.Sock5Proxy.value)
+
+    def UpdateProxy2(self, httpProxyIndex, httpProxy, sock5Proxy):
+        from tools.str import Str
+        # sock5代理
+        if httpProxyIndex == 2 and sock5Proxy:
+            data = sock5Proxy.replace("http://", "").replace("https://", "").replace("sock5://",
+                                                                                                   "").replace(
+                "socks5://", "")
+            trustEnv = False
+            data = data.split(":")
+            if len(data) == 2:
+                host = data[0]
+                port = data[1]
+                proxy = f"socks5://{host}:{port}"
+            else:
+                return Str.Sock5Error
+        # http代理
+        elif httpProxyIndex == 1 and httpProxy:
+            proxy = httpProxy
+            trustEnv = False
+        # 系统代理
+        elif httpProxyIndex == 3:
+            proxy = None
+            proxyDict = urllib.request.getproxies()
+            if isinstance(proxyDict, dict) and proxyDict.get("http"):
+                proxy = proxyDict.get("http")
+
+            trustEnv = False
+        # 其他
+        else:
+            trustEnv = False
+            proxy = None
+        Log.Warn(f"update proxy, index:{httpProxyIndex}, proxy:{proxy}, env:{trustEnv}")
+
+        self.threadSession = []
+        for i in range(self.threadNum):
+            self.threadSession.append(httpx.Client(http2=True, verify=False, trust_env=trustEnv, proxy=proxy))
+
+        self.downloadSession = []
+        for i in range(self.downloadNum):
+            self.downloadSession.append(httpx.Client(http2=True, verify=False, trust_env=trustEnv, proxy=proxy))
+        return
+    
     def __DealHeaders(self, request, token):
 
         if not request.isUseHttps:
@@ -170,20 +223,20 @@ class Server(Singleton):
             host = ToolUtil.GetUrlHost(request.url)
             request.url = request.url.replace(host, request.proxyUrl+"/"+host)
 
-    def Send(self, request, token="", backParam="", isASync=True):
+    def Send(self, request, token="", backParam="", isASync=True, index=0):
         self.__DealHeaders(request, token)
         if isinstance(request, req.SpeedTestReq):
             if isASync:
                 return self._downloadQueue.put(Task(request, backParam))
             else:
-                return self._Download(Task(request, backParam))
+                return self._Download(Task(request, backParam), index)
         else:
             if isASync:
                 return self._inQueue.put(Task(request, backParam))
             else:
-                return self._Send(Task(request, backParam))
+                return self._Send(Task(request, backParam), index)
 
-    def _Send(self, task):
+    def _Send(self, task, index):
         try:
             Log.Info("request-> backId:{}, {}".format(task.bakParam, task.req))
             if QtOwner().isOfflineModel:
@@ -193,22 +246,21 @@ class Server(Singleton):
                 return
 
             if task.req.method.lower() == "post":
-                self.Post(task)
+                self.Post(task, index)
             elif task.req.method.lower() == "post2":
                 self.Post2(task)
             elif task.req.method.lower() == "get":
-                self.Get(task)
+                self.Get(task, index)
             elif task.req.method.lower() == "get2":
                 self.Get2(task)
             elif task.req.method.lower() == "put":
-                self.Put(task)
+                self.Put(task, index)
             else:
                 return
         except Exception as es:
             task.status = Status.NetError
-            # Log.Error(es)
-            Log.Warn(task.req.url + " " + es.__repr__())
-            Log.Debug(es)
+            Log.Warn(f"error:{task.req.url}")
+            Log.Error(es)
         finally:
             Log.Info("response-> backId:{}, {}, st:{}, {}".format(task.backParam, task.req.__class__.__name__, task.status, task.res))
         try:
@@ -223,21 +275,19 @@ class Server(Singleton):
         finally:
             return task.res
 
-    def Post(self, task):
+    def Post(self, task, index=0):
         request = task.req
         if request.params == None:
             request.params = {}
 
         if request.headers == None:
             request.headers = {}
-
+        session = self.threadSession[index]
         task.res = res.BaseRes("", False)
         if task.req.cookies:
-            r = self.session.post(request.url, proxies=request.proxy, headers=request.headers, data=request.params,
-                                  timeout=task.timeout, verify=False, cookies=task.req.cookies)
+            r = session.post(request.url, follow_redirects=True, headers=request.headers, timeout=task.timeout, extensions=request.extend, cookies=task.req.cookies, data=request.params)
         else:
-            r = self.session.post(request.url, proxies=request.proxy, headers=request.headers, data=request.params,
-                                  timeout=task.timeout, verify=False)
+            r = session.post(request.url, follow_redirects=True, headers=request.headers, timeout=task.timeout, extensions=request.extend, data=request.params)
         task.res = res.BaseRes(r, request.isParseRes)
         return task
 
@@ -259,7 +309,7 @@ class Server(Singleton):
         task.res = res.BaseRes(r, request.isParseRes)
         return task
 
-    def Put(self, task):
+    def Put(self, task, index=0):
         request = task.req
         if request.params == None:
             request.params = {}
@@ -268,11 +318,12 @@ class Server(Singleton):
             request.headers = {}
 
         task.res = res.BaseRes("", False)
-        r = self.session.put(request.url, proxies=request.proxy, headers=request.headers, data=request.params, timeout=60, verify=False)
+        session = self.threadSession[index]
+        r = session.put(request.url, follow_redirects=True, headers=request.headers, data=request.params, timeout=15, extensions=request.extend)
         task.res = res.BaseRes(r, request.isParseRes)
         return task
 
-    def Get(self, task):
+    def Get(self, task, index=0):
         request = task.req
         if request.params == None:
             request.params = {}
@@ -281,12 +332,11 @@ class Server(Singleton):
             request.headers = {}
 
         task.res = res.BaseRes("", False)
+        session = self.threadSession[index]
         if task.req.cookies:
-            r = self.session.get(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout,
-                                 verify=False, cookies=task.req.cookies)
+            r = session.get(request.url, follow_redirects=True, headers=request.headers, timeout=task.timeout, extensions=request.extend, cookies=task.req.cookies)
         else:
-            r = self.session.get(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout,
-                                 verify=False)
+            r = session.get(request.url, follow_redirects=True, headers=request.headers, timeout=task.timeout, extensions=request.extend)
         task.res = res.BaseRes(r, request.isParseRes)
         return task
 
@@ -312,14 +362,14 @@ class Server(Singleton):
         if isASync:
             self._downloadQueue.put(task)
         else:
-            self._Download(task)
+            self._Download(task, 0)
 
     def ReDownload(self, task):
         task.res = ""
         task.status = Status.Ok
         self._downloadQueue.put(task)
 
-    def _Download(self, task):
+    def _Download(self, task, index):
         try:
             task.req.resetCnt -= 1
             if not task.req.isReload:
@@ -348,13 +398,10 @@ class Server(Singleton):
                 Log.Info("request-> backId:{}, {}".format(task.bakParam, task.req))
             else:
                 Log.Info("request reset:{} -> backId:{}, {}".format(task.req.resetCnt, task.bakParam, task.req))
-
-            history = []
-            r = self.session.get(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout,
-                                 verify=False, stream=True)
             # task.res = res.BaseRes(r)
             # print(r.elapsed.total_seconds())
-            task.res = r
+            task.res = None
+            task.index = index
         except Exception as es:
             task.status = Status.NetError
             Log.Warn(task.req.url + " " + es.__repr__())

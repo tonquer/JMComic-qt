@@ -22,6 +22,10 @@ class QtOwner(Singleton):
         self.isOfflineModel = False
         self.closeType = 1   # 1普通， 2关闭弹窗触发， 3任务栏触发
 
+    @property
+    def cookie(self):
+        return self.user.cookie
+    
     def SetLogin(self):
         self.user.isLogin = True
 

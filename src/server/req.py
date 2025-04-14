@@ -24,6 +24,7 @@ class ServerReq(object):
         self.isUseHttps = True
         self.isUseHttps = bool(Setting.IsUseHttps.value)
         self.proxyUrl = ""
+        self.extend = {}
         self.cookies = {}
         # if Setting.ProxySelectIndex.value == 5:
         #     host = ToolUtil.GetUrlHost(url)
@@ -64,15 +65,17 @@ class ServerReq(object):
         if IsImg and Setting.ProxySelectIndex.value == 6:
             self.headers.pop("user-agent")
             self.proxyUrl = GlobalConfig.ProxyImgDomain2.value
-
-        if config.ipcountry:
-            self.cookies["ipcountry"] = config.ipcountry
-        if config.ipm5:
-            self.cookies["ipm5"] = config.ipm5
-        if config.AVS:
-            self.cookies["AVS"] = config.AVS
-        if config.shunt:
-            self.cookies["shunt"] = config.shunt
+            
+        from qt_owner import QtOwner
+        self.cookies = QtOwner().cookie
+        # if config.ipcountry:
+        #     self.cookies["ipcountry"] = config.ipcountry
+        # if config.ipm5:
+        #     self.cookies["ipm5"] = config.ipm5
+        # if config.AVS:
+        #     self.cookies["AVS"] = config.AVS
+        # if config.shunt:
+        #     self.cookies["shunt"] = config.shunt
 
     def __str__(self):
         if Setting.LogIndex.value == 0:
@@ -172,7 +175,7 @@ class CheckUpdateReq(ServerReq):
     def __init__(self, isPre=False):
         method = "GET"
         data = dict()
-        data["version"] = config.UpdateVersion
+        data["version"] = config.RealVersion
         data["platform"] = platform.platform()
         if not isPre:
             url = config.AppUrl + "/version.txt?"
@@ -181,6 +184,7 @@ class CheckUpdateReq(ServerReq):
         url += ToolUtil.DictToUrl(data)
         super(self.__class__, self).__init__(url, {}, method)
         self.isParseRes = False
+        self.headers["user-agent"] = config.RealVersion
         self.useImgProxy = False
 
 
@@ -189,7 +193,7 @@ class CheckUpdateInfoReq(ServerReq):
     def __init__(self, newVersion):
         method = "GET"
         data = dict()
-        data["version"] = config.UpdateVersion
+        data["version"] = config.RealVersion
         data["platform"] = platform.platform()
         url = config.AppUrl + "/{}.txt?".format(newVersion)
         url += ToolUtil.DictToUrl(data)
@@ -203,7 +207,7 @@ class CheckUpdateConfigReq(ServerReq):
     def __init__(self):
         method = "GET"
         data = dict()
-        data["version"] = config.UpdateVersion
+        data["version"] = config.RealVersion
         data["platform"] = platform.platform()
         url = config.AppUrl + "/config.txt?"
         url += ToolUtil.DictToUrl(data)
