@@ -248,9 +248,9 @@ class NasView(QtWidgets.QWidget, Ui_Nas, NasStatus):
         if info.epsCount <= 0:
             QtOwner().ShowError(Str.GetStr(Str.SpaceEps))
             return
-        epsIds = list(range(info.epsCount))
+        epsIds = list(info.pageInfo.epsInfo.keys())
         QtOwner().downloadView.AddDownload(bookId, epsIds, nasInfo.is_waifu2x)
-        self.AddNasUpload2(info.title, nasId, bookId, True)
+        self.AddNasUpload2(info.title, nasId, bookId, False)
 
     def OpenEpsInfoBack(self, raw, v):
         QtOwner().CloseLoading()

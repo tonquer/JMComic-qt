@@ -148,10 +148,19 @@ class BookPageInfo(object):
         self.des = o.des
         self.epsInfo.update(o.epsInfo)
 
+
 class BookInfo(object):
     def __init__(self):
         self.baseInfo = BookBaseInfo()
         self.pageInfo = BookPageInfo()
+
+    @property
+    def epsCount(self):
+        return len(self.pageInfo.epsInfo)
+
+    @property
+    def title(self):
+        return self.baseInfo.title
 
 
 # 书的管理器
