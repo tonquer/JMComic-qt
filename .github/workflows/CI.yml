@@ -116,7 +116,7 @@ jobs:
         retention-days: 7
 
   ubuntu:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     env:
       PACKAGENAME: jmcomic_py39_linux
     steps:
