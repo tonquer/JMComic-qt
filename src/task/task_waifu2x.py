@@ -7,6 +7,7 @@ from zlib import crc32
 from config import config
 from config.setting import Setting
 from task.qt_task import TaskBase
+from task.task_multi import TaskMulti
 from tools.log import Log
 from tools.status import Status
 from tools.str import Str
@@ -105,7 +106,7 @@ class TaskWaifu2x(TaskBase):
                 err = ""
                 if config.CanWaifu2x:
                     if task.saveParams:
-                        task.imgData = ToolUtil.SegmentationPicture(task.imgData, task.saveParams[0], task.saveParams[1], task.saveParams[2])
+                        task.imgData = TaskMulti().GetJmPicResultsResult(task.imgData, task.saveParams[0], task.saveParams[1], task.saveParams[2])
 
                     from sr_ncnn_vulkan import sr_ncnn_vulkan as sr
                     scale = task.model.get("scale", 0)

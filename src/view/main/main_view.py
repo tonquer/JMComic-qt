@@ -15,6 +15,7 @@ from qt_owner import QtOwner
 from server import req, GlobalConfig
 from server.server import Server
 from task.qt_task import QtTaskBase
+from task.task_multi import TaskMulti
 from task.task_qimage import TaskQImage
 from task.task_waifu2x import TaskWaifu2x
 from tools.log import Log
@@ -199,6 +200,8 @@ class MainView(Main, QtTaskBase):
 
             sts = sr.initSet(config.Encode, config.UseCpuNum)
             TaskWaifu2x().Start()
+            TaskMulti().Start()
+
             version = sr.getVersion()
             config.Waifu2xVersion = version
             self.helpView.waifu2x.setText(config.Waifu2xVersion)
@@ -448,6 +451,7 @@ class MainView(Main, QtTaskBase):
         self.readView.Stop()
         TaskWaifu2x().Stop()
         TaskQImage().Stop()
+        TaskMulti().Stop()
         # QtReadImgPoolManager().Stop()
         # TaskDownload().Stop()
         Server().Stop()

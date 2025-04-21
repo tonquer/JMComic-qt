@@ -13,6 +13,7 @@ from qt_owner import QtOwner
 from server import req, Status, Log
 from task.qt_task import QtTaskBase
 from task.task_local import LocalData
+from task.task_multi import TaskMulti
 from tools.book import BookMgr
 from tools.str import Str
 from tools.tool import time_me, ToolUtil
@@ -995,7 +996,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
             data = info.data
             if not (self.isLocal or self.isOffline) and info.saveParams:
                 epsId, scrambleId, pitureName = info.saveParams
-                data = ToolUtil.SegmentationPicture(info.data, epsId, scrambleId, pitureName)
+                data = TaskMulti().GetJmPicResultsResult(info.data, epsId, scrambleId, pitureName)
         p = QImage()
         p.loadFromData(data)
 

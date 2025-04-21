@@ -10,6 +10,7 @@ from config.global_config import GlobalConfig
 from config.setting import Setting
 from task.qt_task import TaskBase
 from server import req
+from task.task_multi import TaskMulti
 from tools.status import Status
 from tools.log import Log
 from tools.str import Str
@@ -893,10 +894,10 @@ class DownloadBookHandler(object):
                                 Log.Debug("add download cache, cachePath:{}".format(filePath))
                                 if not isAni:
                                     if mat == "webp" and Setting.WebpToPng.value > 0:
-                                        ToolUtil.SegmentationPictureToDisk(data, saveParam[0], saveParam[1], saveParam[2], filePath+".png", "png")
+                                        TaskMulti().SaveJmPicResultsResult(data, saveParam[0], saveParam[1], saveParam[2], filePath+".png", "png")
                                         continue
                                     else:
-                                        data2 = ToolUtil.SegmentationPicture(data, saveParam[0], saveParam[1], saveParam[2])
+                                        data2 = TaskMulti().GetJmPicResultsResult(data, saveParam[0], saveParam[1], saveParam[2])
                                 else:
                                     data2 = data
 

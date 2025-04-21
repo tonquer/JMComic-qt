@@ -2,6 +2,7 @@ from PySide6.QtGui import QImage
 from PySide6.QtCore import Qt
 
 from task.qt_task import TaskBase
+from task.task_multi import TaskMulti
 from tools.log import Log
 from tools.tool import ToolUtil, time_me
 
@@ -50,7 +51,7 @@ class TaskQImage(TaskBase):
                     return
                 if isinstance(info.saveParams, tuple) and len(info.saveParams) > 1:
                     epsId, scrambleId, pitureName = info.saveParams
-                    info.data = ToolUtil.SegmentationPicture(info.data, epsId, scrambleId, pitureName)
+                    info.data = TaskMulti().GetJmPicResultsResult(info.data, epsId, scrambleId, pitureName)
                 newQ = self.ConverQImage(info)
 
             except Exception as es:

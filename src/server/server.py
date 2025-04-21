@@ -92,7 +92,9 @@ class Server(Singleton):
         self._downloadQueue = Queue()
         self.threadHandler = 0
         self.threadNum = config.ThreadNum
-        self.downloadNum = config.DownloadThreadNum
+
+        from config.setting import Setting
+        self.downloadNum = Setting.MultiNum.value
         self.threadSession = []
         self.downloadSession = []
 
