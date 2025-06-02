@@ -37,6 +37,20 @@ class SmbClient(UpLoadBase):
                 result = self.client.connect(self.address, self.port, timeout=5)
             else:
                 result = self.client.connect(self.address, timeout=5)
+            self.isLink = True
+            if not result:
+                return Str.CvAuthError
+        except Exception as es:
+            Log.Error(es)
+            return self.GetExceptionSt(es)
+        return Str.Ok
+
+    def TestConnect(self):
+        try:
+            if self.port:
+                result = self.client.connect(self.address, self.port, timeout=5)
+            else:
+                result = self.client.connect(self.address, timeout=5)
             self.client.listPath(self.service_name, "/")
             self.isLink = True
             if not result:
