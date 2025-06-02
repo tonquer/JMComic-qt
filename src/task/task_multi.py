@@ -1,5 +1,5 @@
 from multiprocessing import Process, Queue
-
+import  multiprocessing
 from config.setting import Setting
 from task.qt_task import TaskBase
 from tools.tool import ToolUtil

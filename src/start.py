@@ -9,8 +9,6 @@ import signal
 
 from config import config
 from config.setting import Setting, SettingValue
-from qt_error import showError, showError2
-from qt_owner import QtOwner
 from tools.log import Log
 from tools.str import Str
 
@@ -20,23 +18,31 @@ if sys.platform == 'darwin':
     current_dir = os.path.abspath(os.path.dirname(current_path) + os.path.sep + '.')
     os.chdir(current_dir)
 
-try:
-    from sr_ncnn_vulkan import sr_ncnn_vulkan as sr
-    config.CanWaifu2x = True
-except Exception as es:
-    config.CanWaifu2x = False
-    if hasattr(es, "msg"):
-        config.ErrorMsg = es.msg
-
-from PySide6.QtGui import QFont
-from PySide6 import QtWidgets, QtGui  # 导入PySide6部件
-from PySide6.QtNetwork import QLocalSocket, QLocalServer
-# 此处不能删除
-import images_rc
-
 
 if __name__ == "__main__":
+    import multiprocessing
+    multiprocessing.freeze_support()
+
     try:
+        from sr_ncnn_vulkan import sr_ncnn_vulkan as sr
+
+        config.CanWaifu2x = True
+    except Exception as es:
+        config.CanWaifu2x = False
+        if hasattr(es, "msg"):
+            config.ErrorMsg = es.msg
+
+    try:
+
+        from qt_error import showError, showError2
+        from qt_owner import QtOwner
+
+        from PySide6.QtGui import QFont
+        from PySide6 import QtWidgets, QtGui  # 导入PySide6部件
+        from PySide6.QtNetwork import QLocalSocket, QLocalServer
+        # 此处不能删除
+        import images_rc
+
         Log.Init()
         Setting.Init()
         Setting.InitLoadSetting()

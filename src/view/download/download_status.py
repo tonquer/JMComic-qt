@@ -1,4 +1,5 @@
 from config import config
+from config.setting import Setting
 from task.qt_task import QtTaskBase
 from tools.log import Log
 from tools.status import Status
@@ -131,7 +132,7 @@ class DownloadStatus(QtTaskBase):
             self.db.AddDownloadEpsDB(info)
 
     def TimeOutHandler(self):
-        downloadNum = config.DownloadThreadNum
+        downloadNum = Setting.MultiNum.value
         addNum = downloadNum - len(self.downloadingList)
         if addNum > 0:
             for task in list(self.downloadList):
