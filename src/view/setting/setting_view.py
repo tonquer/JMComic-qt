@@ -92,6 +92,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.downScale.valueChanged.connect(partial(self.SpinBoxEvent, Setting.DownloadScale))
         self.lookMaxBox.valueChanged.connect(partial(self.SpinBoxEvent, Setting.LookMaxNum))
         self.coverMaxBox.valueChanged.connect(partial(self.SpinBoxEvent, Setting.CoverMaxNum))
+        self.threadSpin.valueChanged.connect(partial(self.SpinBoxEvent, Setting.MultiNum))
 
         self.generalButton.clicked.connect(partial(self.MoveToLabel, self.generalLabel))
         # self.readButton.clicked.connect(partial(self.MoveToLabel, self.readLabel))
@@ -288,6 +289,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.downAuto.setChecked(Setting.DownloadAuto.value)
         # self.downNoise.setCurrentIndex(Setting.DownloadNoise.value)
         self.downScale.setValue(Setting.DownloadScale.value)
+        self.threadSpin.setValue(Setting.MultiNum.value)
         # self.downModel.setCurrentIndex(Setting.DownloadModel.value)
         self.coverModelName.setText(Setting.CoverLookModelName.value)
         self.readModelName.setText(Setting.LookModelName.value)

@@ -97,7 +97,7 @@ class Setting:
     IsNotShowCloseTip = SettingValue("GeneraSetting", 0, False)
     ShowCloseType = SettingValue("GeneraSetting", 0, False)
 
-    MultiNum = SettingValue("GeneraSetting", 10, True)
+    MultiNum = SettingValue("GeneraSetting", 8, True)
 
     # 代理设置
     IsHttpProxy = SettingValue("ProxySetting", 0, False, ["", "Http", "Sock5", "system"])

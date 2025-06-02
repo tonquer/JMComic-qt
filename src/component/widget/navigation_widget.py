@@ -62,6 +62,7 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
         self.signMap = {}
         self.signButton.clicked.connect(self.OpenSign)
         self.isDailySign = False
+        self.resetDailySign = 10
         self.proxyImgName.clicked.connect(self.OpenProxy)
         self.proxyName.clicked.connect(self.OpenProxy)
         if Setting.IsGrabGesture.value:
@@ -138,13 +139,15 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
                     self.signMap[signDate] = v2.get('signed')
                     if signDate == curDate:
                         self.isDailySign = v2.get('signed')
-        if self.isDailySign:
-            self.signButton.setText(Str.GetStr(Str.AlreadySign))
-        else:
-            self.signButton.setText(Str.GetStr(Str.Sign))
-            if Setting.AutoSign.value:
-                QtOwner().ShowMsg("已自动打卡")
-                self.signButton.click()
+
+            if self.isDailySign:
+                self.signButton.setText(Str.GetStr(Str.AlreadySign))
+            else:
+                self.signButton.setText(Str.GetStr(Str.Sign))
+                if Setting.AutoSign.value and self.resetDailySign > 0:
+                    QtOwner().ShowMsg("已自动打卡")
+                    self.resetDailySign -= 1
+                    self.signButton.click()
         pass
 
     def GetSignBack(self, raw):

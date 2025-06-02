@@ -95,9 +95,9 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>0</y>
+          <y>-2082</y>
           <width>661</width>
-          <height>2794</height>
+          <height>2871</height>
          </rect>
         </property>
         <property name="styleSheet">
@@ -2042,6 +2042,67 @@
           </widget>
          </item>
          <item>
+          <widget class="QFrame" name="frame">
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_14">
+            <item>
+             <widget class="QLabel" name="label_17">
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>JM图片解密进程数量（对应下载线程数量，需重启）</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_8">
+              <item>
+               <widget class="WheelSpinBox" name="threadSpin">
+                <property name="minimumSize">
+                 <size>
+                  <width>60</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="minimum">
+                 <number>2</number>
+                </property>
+                <property name="maximum">
+                 <number>40</number>
+                </property>
+                <property name="value">
+                 <number>8</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
           <widget class="QFrame" name="frame_11">
            <property name="font">
             <font>
@@ -2331,12 +2392,11 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="saveNameGroup"/>
-  <buttongroup name="mainScaleGroup"/>
-  <buttongroup name="showCloseButtonGroup"/>
   <buttongroup name="proxyGroup"/>
   <buttongroup name="themeGroup"/>
-  <buttongroup name="languageGroup"/>
+  <buttongroup name="showCloseButtonGroup"/>
+  <buttongroup name="saveNameGroup"/>
   <buttongroup name="logGroup"/>
+  <buttongroup name="languageGroup"/>
  </buttongroups>
 </ui>

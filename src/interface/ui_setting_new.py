@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_setting_new.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.2.4
+## Created by: Qt User Interface Compiler version 6.5.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -83,7 +83,7 @@ class Ui_SettingNew(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 661, 2794))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, -2082, 661, 2871))
         self.scrollAreaWidgetContents.setStyleSheet(u"")
         self.verticalLayout_4 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
@@ -1105,6 +1105,42 @@ class Ui_SettingNew(object):
 
         self.verticalLayout_4.addWidget(self.frame_15)
 
+        self.frame = QFrame(self.scrollAreaWidgetContents)
+        self.frame.setObjectName(u"frame")
+        self.frame.setFrameShape(QFrame.StyledPanel)
+        self.frame.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_14 = QVBoxLayout(self.frame)
+        self.verticalLayout_14.setObjectName(u"verticalLayout_14")
+        self.label_17 = QLabel(self.frame)
+        self.label_17.setObjectName(u"label_17")
+        font3 = QFont()
+        font3.setPointSize(12)
+        font3.setBold(False)
+        self.label_17.setFont(font3)
+
+        self.verticalLayout_14.addWidget(self.label_17)
+
+        self.horizontalLayout_8 = QHBoxLayout()
+        self.horizontalLayout_8.setObjectName(u"horizontalLayout_8")
+        self.threadSpin = WheelSpinBox(self.frame)
+        self.threadSpin.setObjectName(u"threadSpin")
+        self.threadSpin.setMinimumSize(QSize(60, 0))
+        self.threadSpin.setMinimum(2)
+        self.threadSpin.setMaximum(40)
+        self.threadSpin.setValue(8)
+
+        self.horizontalLayout_8.addWidget(self.threadSpin)
+
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_8.addItem(self.horizontalSpacer_2)
+
+
+        self.verticalLayout_14.addLayout(self.horizontalLayout_8)
+
+
+        self.verticalLayout_4.addWidget(self.frame)
+
         self.frame_11 = QFrame(self.scrollAreaWidgetContents)
         self.frame_11.setObjectName(u"frame_11")
         self.frame_11.setFont(font1)
@@ -1369,6 +1405,7 @@ class Ui_SettingNew(object):
         self.saveNameButton0.setText(QCoreApplication.translate("SettingNew", u"\u4f5c\u54c1\u540d\uff08\u9ed8\u8ba4\uff09", None))
         self.saveNameButton1.setText(QCoreApplication.translate("SettingNew", u"[\u4f5c\u8005\u540d]\u4f5c\u54c1\u540d", None))
         self.saveNameButton2.setText(QCoreApplication.translate("SettingNew", u"\u4f5c\u8005\u540d\u5355\u72ec\u76ee\u5f55\uff08\u5982\u65e0\u4f5c\u8005\u540d\u5c06\u653e\u5165default\u76ee\u5f55\uff09", None))
+        self.label_17.setText(QCoreApplication.translate("SettingNew", u"JM\u56fe\u7247\u89e3\u5bc6\u8fdb\u7a0b\u6570\u91cf\uff08\u5bf9\u5e94\u4e0b\u8f7d\u7ebf\u7a0b\u6570\u91cf\uff0c\u9700\u91cd\u542f\uff09", None))
         self.label_21.setText(QCoreApplication.translate("SettingNew", u"\u4e0b\u8f7d\u548c\u7f13\u5b58\u8def\u5f84\uff08\u7f13\u5b58\u6587\u4ef6\u9700\u81ea\u5df1\u624b\u52a8\u6e05\u9664\uff09", None))
         self.setDirButton.setText(QCoreApplication.translate("SettingNew", u"\u8bbe\u7f6e\u76ee\u5f55", None))
         self.label_3.setText(QCoreApplication.translate("SettingNew", u"\u4e0b\u8f7d", None))
