@@ -22,6 +22,8 @@ class SmbClient(UpLoadBase):
         self.port = nasInfo.port
         self.password = nasInfo.passwd
         self.username = nasInfo.user
+        self.path = nasInfo.path
+
         datas = nasInfo.path.strip("/").split("/")
 
         self.service_name = datas[0]
@@ -35,6 +37,7 @@ class SmbClient(UpLoadBase):
                 result = self.client.connect(self.address, self.port, timeout=5)
             else:
                 result = self.client.connect(self.address, timeout=5)
+            self.client.listPath(self.service_name, "/")
             self.isLink = True
             if not result:
                 return Str.CvAuthError
