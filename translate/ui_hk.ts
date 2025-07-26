@@ -1133,7 +1133,7 @@
     <message>
         <location filename="../ui/component/ui_login_proxy_widget.ui" line="306"/>
         <location filename="../ui/component/ui_login_proxy_widget.ui" line="396"/>
-        <source>所以分流不可使用时，自动解锁</source>
+        <source>所有分流不可使用时，自动解锁</source>
         <translation>所有分流不可使用時，自動解鎖</translation>
     </message>
     <message>
