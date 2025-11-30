@@ -10,13 +10,18 @@ from delocate import fuse
 cwd = "."
 class Universal2Bundler:
 
-    def build(self, dest_dir, package):
+    def build(self, dest_dir, package, version=None):
         with tempfile.TemporaryDirectory() as tmp_dir:
 
             amd64_binary = "macosx_10_10_x86_64"
             arm64_binary = "macosx_11_0_arm64"
-            subprocess.check_call(['python', '-m', 'pip', 'download', '--only-binary=:all:','--no-deps','--platform', amd64_binary, package, '-d', tmp_dir])
-            subprocess.check_call(['python', '-m', 'pip', 'download', '--only-binary=:all:','--no-deps','--platform', arm64_binary, package, '-d', tmp_dir])
+            if version:
+                subprocess.check_call(['python', '-m', 'pip', 'download', '--only-binary=:all:','--no-deps','--platform', amd64_binary, package+"=="+version, '-d', tmp_dir])
+                subprocess.check_call(['python', '-m', 'pip', 'download', '--only-binary=:all:','--no-deps','--platform', arm64_binary, package+"=="+version, '-d', tmp_dir])
+            else:
+                subprocess.check_call(['python', '-m', 'pip', 'download', '--only-binary=:all:','--no-deps','--platform', amd64_binary, package, '-d', tmp_dir])
+                subprocess.check_call(['python', '-m', 'pip', 'download', '--only-binary=:all:','--no-deps','--platform', arm64_binary, package, '-d', tmp_dir])
+
             universal_wheels = glob.glob("{0}/*".format(tmp_dir))
 
             wheel = parse_wheel_filename(universal_wheels[0])
@@ -26,8 +31,12 @@ class Universal2Bundler:
 # python3 -m pip download --only-binary=:all: --platform macosx_10_10_x86_64 Pillow
 # python3 -m pip download --only-binary=:all: --platform macosx_11_0_arm64 Pillow
 name = sys.argv[1]
+if len(sys.argv) >2:
+    version = sys.argv[2]
+else:
+    version = ""
 bundler = Universal2Bundler()
 #bundler.build(cwd, "pillow")
 #bundler.build(cwd, "cffi")
 #bundler.build(cwd, "curl_cffi")
-bundler.build(cwd, name)
+bundler.build(cwd, name, version)

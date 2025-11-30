@@ -68,4 +68,4 @@
    [![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=nihui&repo=waifu2x-ncnn-vulkan)](https://github.com/nihui/waifu2x-ncnn-vulkan)  
    [![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=xinntao&repo=Real-ESRGAN)](https://github.com/xinntao/Real-ESRGAN) 
    [![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=nihui&repo=realcugan-ncnn-vulkan)](https://github.com/nihui/realcugan-ncnn-vulkan) 
-   [![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=tonquer&repo=waifu2x-vulkan)](https://github.com/tonquer/waifu2x-vulkan)  
+   [![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=tonquer&repo=sr-vulkan)](https://github.com/tonquer/sr-vulkan)  
