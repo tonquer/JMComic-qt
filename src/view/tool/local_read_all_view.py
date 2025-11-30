@@ -68,6 +68,7 @@ class LocalReadAllView(QtWidgets.QWidget, Ui_LocalAll, QtTaskBase):
         return
 
     def SwitchCurrent(self, **kwargs):
+        self.update()
         self.InitBooks()
 
     def InitBooks(self):

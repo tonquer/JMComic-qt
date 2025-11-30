@@ -1,3 +1,4 @@
+import sys
 from functools import partial
 
 from PySide6.QtCore import Qt, QEvent, QPoint, Signal
@@ -74,10 +75,33 @@ class MainView(Main, QtTaskBase):
         self.searchView2.searchWidget.hide()
         self.myTrayIcon = MySystemTrayIcon()
         self.myTrayIcon.show()
+        self.totalStackWidget.currentChanged.connect(self.SwitchReadView)
         self.waifu2xToolView.headButton.setVisible(False)
         # self.readView.LoadSetting()
         # QApplication.instance().installEventFilter(self)
         # QtOwner().app.paletteChanged.connect(self.CheckPaletteChanged)
+
+    @property
+    def isMaxSize(self):
+        return QtOwner().isMaxSize
+
+    @isMaxSize.setter
+    def isMaxSize(self, v):
+        QtOwner().isMaxSize = v
+
+    def BackOldSize(self):
+        self.isMaxSize = self.isMaximized()
+        return
+
+    def SwitchReadView(self, i):
+        ## 备份原来的大小
+        if i == 0:
+            # windows
+            if not sys.platform == "darwin":
+                if self.isMaxSize and self.windowState != Qt.WindowState.WindowMaximized:
+                    self.showMaximized()
+            # Macos只有全屏和非全屏
+        return
 
     def changeEvent(self, event):
         if event.type() == QEvent.WindowStateChange:
@@ -129,6 +153,7 @@ class MainView(Main, QtTaskBase):
         self.navigationWidget.localCollectButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.localFavoriteView)))
         self.navigationWidget.weekButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.weekView)))
         self.navigationWidget.nasButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.nasView)))
+        self.navigationWidget.batchSrButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.batchSrView)))
 
     def RetranslateUi(self):
         #main folder
@@ -179,7 +204,7 @@ class MainView(Main, QtTaskBase):
         self.downloadView.Init()
         self.nasView.Init()
         if config.CanWaifu2x:
-            from sr_ncnn_vulkan import sr_ncnn_vulkan as sr
+            from sr_vulkan import sr_vulkan as sr
             stat = sr.init()
             sr.setDebug(True)
             if stat < 0:
@@ -449,6 +474,7 @@ class MainView(Main, QtTaskBase):
         self.nasView.Close()
         self.searchView.Stop()
         self.readView.Stop()
+        self.batchSrView.Stop()
         TaskWaifu2x().Stop()
         TaskQImage().Stop()
         TaskMulti().Stop()

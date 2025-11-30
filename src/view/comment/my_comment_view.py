@@ -12,6 +12,7 @@ class MyCommentView(CommentWidget):
         self.commentLine.hide()
 
     def SwitchCurrent(self, **kwargs):
+        self.update()
         refresh = kwargs.get("refresh")
         if not refresh:
             return

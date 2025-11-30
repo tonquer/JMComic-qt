@@ -298,6 +298,7 @@ class GetIndexInfoReq2Handler(object):
             data["bookInfo"] = bookInfo
         except Exception as es:
             data["st"] = Status.ParseError
+            Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
             Log.Error(es)
         finally:
             if task.backParam:
@@ -324,6 +325,7 @@ class GetIndexInfoReq2Handler(object):
             data["bookList"] = bookInfo
         except Exception as es:
             data["st"] = Status.ParseError
+            Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
             Log.Error(es)
         finally:
             if task.backParam:
@@ -349,6 +351,7 @@ class GetFavoritesReq2Handler(object):
             data["favorite"] = f
         except Exception as es:
             data["st"] = Status.ParseError
+            Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
             Log.Error(es)
         finally:
             if task.backParam:
@@ -377,6 +380,7 @@ class ParseMsgReq2Handler(object):
             data["message"] = msg
         except Exception as es:
             data["st"] = Status.ParseError
+            Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
             Log.Error(es)
         finally:
             if task.backParam:
@@ -462,6 +466,7 @@ class GetSearchReq2Handler(object):
             data["bookList"] = bookList
         except Exception as es:
             data["st"] = Status.ParseError
+            Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
             Log.Error(es)
         finally:
             if task.backParam:
@@ -489,6 +494,7 @@ class GetSearchReq2Handler(object):
             data["categoryTitle"] = categoryTitle
         except Exception as es:
             data["st"] = Status.ParseError
+            Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
             Log.Error(es)
         finally:
             if task.backParam:
@@ -516,6 +522,7 @@ class GetSearchCategoryReq2Handler(object):
             data["bookList"] = bookList
         except Exception as es:
             data["st"] = Status.ParseError
+            Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
             Log.Error(es)
         finally:
             if task.backParam:
@@ -589,6 +596,7 @@ class GetBookInfoReq2Handler(object):
             data["bookInfo"] = info
         except Exception as es:
             data["st"] = Status.ParseError
+            Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
             Log.Error(es)
         finally:
             if task.backParam:
@@ -636,6 +644,7 @@ class GetBookEpsInfoReq2Handler(object):
             data["epsInfo"] = epsInfo
         except Exception as es:
             data["st"] = Status.ParseError
+            Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
             Log.Error(es)
         finally:
             if task.backParam:
@@ -665,6 +674,7 @@ class GetCommentReq2Handler(object):
             data["total"] = total
         except Exception as es:
             data["st"] = Status.ParseError
+            Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
             Log.Error(es)
         finally:
             if task.backParam:
@@ -690,6 +700,7 @@ class SendCommentReq2Handler(object):
             data["message"] = msg
         except Exception as es:
             data["st"] = Status.ParseError
+            Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
             Log.Error(es)
         finally:
             if task.backParam:
@@ -716,6 +727,7 @@ class GetHistoryReq2Handler(object):
             data["bookList"] = bookList
         except Exception as es:
             data["st"] = Status.ParseError
+            Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
             Log.Error(es)
         finally:
             if task.backParam:
@@ -749,6 +761,7 @@ class GetReqRawDataHandler(object):
             data["data"] = data2
         except Exception as es:
             data["st"] = Status.ParseError
+            Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
             Log.Error(es)
         finally:
             if task.backParam:
@@ -858,6 +871,19 @@ class DownloadBookHandler(object):
                         if backData.req.resetCnt > 0:
                             backData.req.isReset = True
                             Server().ReDownload(backData)
+                            return
+
+                    # 异常图片
+                    if len(data) < 20:
+                        Log.Warn(f"download_error_picture, url:{backData.req.url}, data:{data}")
+                        if backData.req.resetCnt > 0:
+                            backData.req.isReset = True
+                            Server().ReDownload(backData)
+                            return
+                        else:
+                            backData.status = Status.DownloadBusy
+                            if backData.bakParam:
+                                TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, -backData.status, b"")
                             return
 
                     # Log.Info("size:{}, url:{}".format(ToolUtil.GetDownloadSize(fileSize), backData.req.url))

@@ -45,6 +45,7 @@ class Str:
     AccountAlready = 1029    # "账号已被注册"
     NotAdult = 1030          # "未成年禁止注册"
     SpaceEps = 1031          # "空白章节"
+    DownloadBusy = 1032      # "下载繁忙"
 
     Success = 2001         # "下载完成"
     Reading = 2002         # "获取信息"
@@ -103,6 +104,9 @@ class Str:
     CvMkdirFail = 5108         # 创建目录失败
     CvAddUpload = 5109         # 添加上传成功
     DirNotFound = 5110         # 目录不存在
+
+    SrNotFoundDir = 5201        # 不存在输入目录
+    SrNotExportDIr = 5202        # 未设置导出目录
 
     LoadingPicture = 1     # "图片加载中..."
     LoadingFail = 2        # "图片加载失败"
@@ -296,6 +300,7 @@ class Str:
         cls.strDict[cls.AccountAlready] = QCoreApplication.translate("cls.obj", "账号已被注册", None)
         cls.strDict[cls.NotAdult] = QCoreApplication.translate("cls.obj", "未成年禁止注册", None)
         cls.strDict[cls.SpaceEps] = QCoreApplication.translate("cls.obj", "空白章节", None)
+        cls.strDict[cls.DownloadBusy] = QCoreApplication.translate("cls.obj", "下载繁忙", None)
 
         cls.strDict[cls.LoadingPicture] = QCoreApplication.translate("cls.obj",  "图片加载中...", None)
         cls.strDict[cls.LoadingFail] = QCoreApplication.translate("cls.obj",  "图片加载失败", None)
@@ -358,7 +363,6 @@ class Str:
         cls.strDict[cls.CvMkdirFail] = QCoreApplication.translate("cls.obj",  "创建目录失败", None)
         cls.strDict[cls.CvAddUpload] = QCoreApplication.translate("cls.obj",  "添加上传成功", None)
         cls.strDict[cls.DirNotFound] = QCoreApplication.translate("cls.obj",  "目录不存在", None)
-
 
         cls.strDict[cls.Menu] = QCoreApplication.translate("cls.obj",  "菜单", None)
         cls.strDict[cls.FullSwitch] = QCoreApplication.translate("cls.obj",  "全屏切换", None)

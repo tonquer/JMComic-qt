@@ -43,6 +43,7 @@ class SearchView(QWidget, Ui_Search, QtTaskBase):
         self.lineEdit.SaveCacheWord()
 
     def SwitchCurrent(self, **kwargs):
+        self.update()
         text = kwargs.get("text")
 
         if text and (re.match('JM\d+', text) or re.match('jm\d+', text)):

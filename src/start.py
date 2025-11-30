@@ -18,13 +18,22 @@ if sys.platform == 'darwin':
     current_dir = os.path.abspath(os.path.dirname(current_path) + os.path.sep + '.')
     os.chdir(current_dir)
 
+try:
+    import sr_vulkan_model_waifu2x
+    print("import sr_vulkan_model_waifu2x, {}".format(sr_vulkan_model_waifu2x))
+    import sr_vulkan_model_realcugan
+    print("import sr_vulkan_model_waifu2x, {}".format(sr_vulkan_model_realcugan))
+    import sr_vulkan_model_realesrgan
+    print("import sr_vulkan_model_waifu2x, {}".format(sr_vulkan_model_realesrgan))
+except Exception as es:
+    pass
 
 if __name__ == "__main__":
     import multiprocessing
     multiprocessing.freeze_support()
 
     try:
-        from sr_ncnn_vulkan import sr_ncnn_vulkan as sr
+        from sr_vulkan import sr_vulkan as sr
 
         config.CanWaifu2x = True
     except Exception as es:

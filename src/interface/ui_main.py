@@ -40,6 +40,7 @@ from view.nas.nas_view import NasView
 from view.read.read_view import ReadView
 from view.search.search_view import SearchView
 from view.setting.setting_view import SettingView
+from view.tool.batch_sr_tool_view import BatchSrToolView
 from view.tool.local_read_all_view import LocalReadAllView
 from view.tool.local_read_eps_view import LocalReadEpsView
 from view.tool.local_read_view import LocalReadView
@@ -101,6 +102,9 @@ class Ui_Main(object):
         self.indexView = IndexView()
         self.indexView.setObjectName(u"indexView")
         self.subStackWidget.addWidget(self.indexView)
+        self.batchSrView = BatchSrToolView()
+        self.batchSrView.setObjectName(u"batchSrView")
+        self.subStackWidget.addWidget(self.batchSrView)
         self.downloadSomeView = DownloadSomeView()
         self.downloadSomeView.setObjectName(u"downloadSomeView")
         self.subStackWidget.addWidget(self.downloadSomeView)

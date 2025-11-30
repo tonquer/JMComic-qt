@@ -18,6 +18,7 @@ class RemoteHistoryView(QWidget, Ui_History, QtTaskBase):
         self.bookList.LoadCallBack = self.LoadNextPage
 
     def SwitchCurrent(self, **kwargs):
+        self.update()
         refresh = kwargs.get("refresh")
         if not config.LoginUserName:
             QtOwner().ShowError(Str.GetStr(Str.NotLogin))

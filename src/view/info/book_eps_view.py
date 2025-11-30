@@ -30,6 +30,7 @@ class BookEpsView(QtWidgets.QWidget, Ui_BookEps, QtTaskBase):
         self.downloadButton.clicked.connect(self.StartDownload)
 
     def SwitchCurrent(self, **kwargs):
+        self.update()
         bookId = kwargs.get("bookId")
         if bookId:
             self.OpenEpsInfo(bookId)

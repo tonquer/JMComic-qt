@@ -26,6 +26,7 @@ class IndexView(QWidget, Ui_Index, QtTaskBase):
         self.jumpButton.clicked.connect(self.JumpPage)
 
     def SwitchCurrent(self, **kwargs):
+        self.update()
         refresh = kwargs.get("refresh")
         if refresh and not self.isInit:
             self.Init()

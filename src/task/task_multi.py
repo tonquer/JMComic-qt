@@ -12,18 +12,23 @@ def consumer(num, queue, finishQue):
         item = queue.get()
         if item is None:
             break  # 结束信号
-        (taskType, args) = item
-        if taskType == TaskMulti.MultiTaskSegment:
-            result = ToolUtil.SegmentationPicture(*args)
-        elif taskType == TaskMulti.MultiTaskSegmentToDisk:
-            result = ToolUtil.SegmentationPictureToDisk(*args)
-        else:
-            result = None
-        finishQue.put(result)
-        print(f"finish consumer multiprocess, index:{num}")
+        try:
+            (taskType, args) = item
+            if taskType == TaskMulti.MultiTaskSegment:
+                result = ToolUtil.SegmentationPicture(*args)
+            elif taskType == TaskMulti.MultiTaskSegmentToDisk:
+                result = ToolUtil.SegmentationPictureToDisk(*args)
+            else:
+                result = None
+            finishQue.put(result)
+        except Exception as es:
+            print("error, es:{}".format(es))
+            finishQue.put(None)
+
+        # print(f"finish consumer multiprocess, index:{num}")
 
 
-        # 多进程
+# 多进程
 class TaskMulti(TaskBase):
     MultiTaskSegment = 1
     MultiTaskSegmentToDisk = 2

@@ -115,6 +115,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.epsListWidget.clear()
 
     def SwitchCurrent(self, **kwargs):
+        self.update()
         bookId = kwargs.get("bookId")
         if bookId:
             self.bookId = str(bookId)

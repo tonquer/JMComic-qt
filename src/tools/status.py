@@ -21,6 +21,7 @@ class Status(object):
     ProxyError = Str.ProxyError
     DownloadFail = Str.DownloadFail
     OfflineModel = Str.OfflineModel
+    DownloadBusy = Str.DownloadBusy
 
     UnderReviewBook = Str.UnderReviewBook
     SaveError = Str.SaveError

@@ -38,8 +38,8 @@ class GlobalConfig:
                            "https://www.cdnblackmyth.xyz",
                            "https://www.jmapiproxyxxx.me"])
 
-    ProxyApiDomain2 = GlobalItem("jm2-api.ggo.icu")
-    ProxyImgDomain2 = GlobalItem("jm2-img.ggo.icu")
+    ProxyApiDomain2 = GlobalItem("jm2-api.jpacg.cc")
+    ProxyImgDomain2 = GlobalItem("jm2-img.jpacg.cc")
 
     PicUrlList = GlobalItem(
         ["https://cdn-msp.jmapinodeudzn.net", "https://cdn-msp2.jmapinodeudzn.net", "https://cdn-msp.jmapiproxy3.cc",

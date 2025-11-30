@@ -1,3 +1,4 @@
+import sys
 import weakref
 
 from PySide6 import QtWidgets
@@ -356,7 +357,7 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
             self.modelNameButton.setToolTip(Setting.LookModelName.value)
         else:
             scale = model.get('scale', 0)
-            modelName = model.get('model_name', 0)
+            modelName = model.get('model_name', "")
             self.scaleLabel.setText(str(scale))
             self.modelNameButton.setText(ToolUtil.GetShowModelName(modelName))
             self.modelNameButton.setToolTip(modelName)
@@ -450,16 +451,22 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
 
     def FullScreen(self, isClear=False):
         if QtOwner().owner.windowState() == Qt.WindowFullScreen:
-
-            if self.isMaxFull:
-                QtOwner().owner.showMaximized()
+            if not sys.platform == "darwin":
+                if QtOwner().isMaxSize:
+                    QtOwner().owner.showMaximized()
+                else:
+                    QtOwner().owner.showNormal()
             else:
-                QtOwner().owner.showNormal()
+                pass
+                # QtOwner().owner.showNormal()
             self.fullButton.setText(Str.GetStr(Str.FullScreen))
             if not isClear:
                 Setting.LookReadFull.SetValue(0)
         else:
-            self.isMaxFull = self.window().isMaximized()
+            QtOwner().owner.BackOldSize()
+            # self.isMaxFull = self.window().isMaximized()
+            if QtOwner().isMaxSize:
+                QtOwner().owner.showNormal()
             QtOwner().owner.showFullScreen()
             self.fullButton.setText(Str.GetStr(Str.ExitFullScreen))
             Setting.LookReadFull.SetValue(1)

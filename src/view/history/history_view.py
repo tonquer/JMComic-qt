@@ -60,6 +60,7 @@ class HistoryView(QtWidgets.QWidget, Ui_History):
         self.bookList.DelCallBack = self.DelCallBack
 
     def SwitchCurrent(self, **kwargs):
+        self.update()
         self.bookList.clear()
         self.bookList.page = 1
         self.bookList.pages = len(self.history) // self.pageNums + 1

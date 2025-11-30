@@ -217,6 +217,7 @@ class LocalReadView(QWidget, Ui_Local, QtTaskBase):
 
     def SwitchCurrent(self, **kwargs):
         refresh = kwargs.get("refresh")
+        self.update()
         if refresh:
             self.Init()
         return

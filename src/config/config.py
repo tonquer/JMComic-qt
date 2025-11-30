@@ -16,17 +16,17 @@ PreLook = 4                    # 预显示
 
 IsLoadingPicture = True
 
-AppUrl = "https://app.ggo.icu/JMComic"
+AppUrl = "https://app.jpacg.cc/JMComic"
 
 UpdateUrlBack = "https://github.com/tonquer/JMComic-qt/"
-UpdateUrl2Back = "https://hub.ggo.icu/tonquer/JMComic-qt/"
+UpdateUrl2Back = "https://hub.jpacg.cc/tonquer/JMComic-qt/"
 UpdateUrl3Back = "https://hub.fastgit.xyz/tonquer/JMComic-qt"
 
-UpdateVersion = "v1.2.9"
-RealVersion = "v1.2.9"
-VersionTime = "2025-06-02"
+UpdateVersion = "v1.3.0"
+RealVersion = "v1.3.0"
+VersionTime = "2025-11-30"
 
-Waifu2xVersion = "1.2.0"
+Waifu2xVersion = "2.0.1"
 LoginUserName = ""
 
 
@@ -44,12 +44,12 @@ IsTips = 1
 
 # 代理与分流相关
 ProxyUrl1 = "https://github.com/tonquer/picacg-qt/discussions/48"
-ProxyUrl2 = "https://hub.ggo.icu/tonquer/picacg-qt/discussions/48"
+ProxyUrl2 = "https://hub.jpacg.cc/tonquer/picacg-qt/discussions/48"
 ProxyUrl3 = "https://hub.fastgit.xyz/tonquer/picacg-qt/discussions/48"
 
 # ISSUES
 Issues1 = "https://github.com/tonquer/JMComic-qt/issues"
-Issues2 = "https://hub.ggo.icu/tonquer/JMComic-qt/issues"
+Issues2 = "https://hub.jpacg.cc/tonquer/JMComic-qt/issues"
 Issues3 = "https://hub.fastgit.xyz/tonquer/JMComic-qt/issues"
 
 # cookie

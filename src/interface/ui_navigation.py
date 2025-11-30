@@ -406,6 +406,20 @@ class Ui_Navigation(object):
 
         self.verticalLayout_3.addWidget(self.waifu2xButton)
 
+        self.batchSrButton = QToolButton(self.scrollAreaWidgetContents)
+        self.buttonGroup.addButton(self.batchSrButton)
+        self.batchSrButton.setObjectName(u"batchSrButton")
+        sizePolicy1.setHeightForWidth(self.batchSrButton.sizePolicy().hasHeightForWidth())
+        self.batchSrButton.setSizePolicy(sizePolicy1)
+        self.batchSrButton.setMinimumSize(QSize(150, 40))
+        self.batchSrButton.setFocusPolicy(Qt.NoFocus)
+        self.batchSrButton.setIcon(icon)
+        self.batchSrButton.setIconSize(QSize(32, 32))
+        self.batchSrButton.setCheckable(True)
+        self.batchSrButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+
+        self.verticalLayout_3.addWidget(self.batchSrButton)
+
         self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
         self.verticalLayout_3.addItem(self.verticalSpacer)
@@ -490,6 +504,7 @@ class Ui_Navigation(object):
         self.nasButton.setText(QCoreApplication.translate("Navigation", u"\u7f51\u7edc\u5b58\u50a8", None))
         self.localReadButton.setText(QCoreApplication.translate("Navigation", u"\u672c\u5730\u6f2b\u753b", None))
         self.waifu2xButton.setText(QCoreApplication.translate("Navigation", u"\u56fe\u7247\u8d85\u5206", None))
+        self.batchSrButton.setText(QCoreApplication.translate("Navigation", u"\u6279\u91cf\u8d85\u5206", None))
         self.helpButton.setText(QCoreApplication.translate("Navigation", u"\u5e2e\u52a9", None))
         self.settingButton.setText(QCoreApplication.translate("Navigation", u"\u8bbe\u7f6e", None))
     # retranslateUi

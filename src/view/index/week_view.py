@@ -31,6 +31,7 @@ class WeekView(QWidget, Ui_Week, QtTaskBase):
         }
 
     def SwitchCurrent(self, **kwargs):
+        self.update()
         refresh = kwargs.get("refresh")
         if refresh and not self.isInit:
             self.Init()

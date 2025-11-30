@@ -33,6 +33,11 @@ class CategoryView(QWidget, Ui_Category, QtTaskBase):
         refresh = kwargs.get("refresh")
         if refresh and not self.isInit:
             self.Init()
+        else:
+            # 由于会出现列表图片错位问题，暂时只能切换tab解决
+            index = self.tabWidget.currentIndex()
+            self.tabWidget.setCurrentIndex(0)
+            self.tabWidget.setCurrentIndex(index)
         pass
 
     def Init(self):

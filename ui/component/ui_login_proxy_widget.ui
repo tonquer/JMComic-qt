@@ -399,7 +399,7 @@
          <item row="5" column="0">
           <widget class="QRadioButton" name="radioButton_4">
            <property name="toolTip">
-            <string>所有分流不可使用时，自动解锁</string>
+            <string>所以分流不可使用时，自动解锁</string>
            </property>
            <property name="text">
             <string>分流4</string>
@@ -489,7 +489,7 @@
          <item row="5" column="2">
           <widget class="QRadioButton" name="radio_img_4">
            <property name="toolTip">
-            <string>所有分流不可使用时，自动解锁</string>
+            <string>所以分流不可使用时，自动解锁</string>
            </property>
            <property name="text">
             <string>分流4</string>

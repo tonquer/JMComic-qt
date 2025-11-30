@@ -348,7 +348,7 @@ class Waifu2xToolView(QtWidgets.QWidget, Ui_Waifu2xTool, QtTaskBase):
             return
         if not config.CanWaifu2x:
             return
-        from sr_ncnn_vulkan import sr_ncnn_vulkan as sr
+        from sr_vulkan import sr_vulkan as sr
         self.modelName.setEnabled(False)
         # self.comboBox.setEnabled(False)
         self.changeButton.setEnabled(False)

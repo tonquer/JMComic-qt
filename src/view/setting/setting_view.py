@@ -224,6 +224,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         view.show()
 
     def SwitchCurrent(self, **kwargs):
+        self.update()
         refresh = kwargs.get("refresh")
         if refresh:
             self.InitSetting()

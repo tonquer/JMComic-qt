@@ -32,6 +32,7 @@ class QConvertTask(object):
         self.saveData = b""
 
         self.model = {
+            "isForce":0,
             "model": 1,
             "scale": 2,
             "toH": 100,
@@ -92,7 +93,8 @@ class TaskWaifu2x(TaskBase):
                     if data:
                         w, h, mat,_ = ToolUtil.GetPictureSize(data)
                         model = ToolUtil.GetDownloadScaleModel(w, h, mat)
-                        task.model = model
+                        if not task.model.get("isForce"):
+                            task.model = model
                         task.imgData = data
 
                 if not task.imgData:
@@ -108,7 +110,7 @@ class TaskWaifu2x(TaskBase):
                     if task.saveParams:
                         task.imgData = TaskMulti().GetJmPicResultsResult(task.imgData, task.saveParams[0], task.saveParams[1], task.saveParams[2])
 
-                    from sr_ncnn_vulkan import sr_ncnn_vulkan as sr
+                    from sr_vulkan import sr_vulkan as sr
                     scale = task.model.get("scale", 0)
                     mat = task.model.get("format", "")
                     tileSize = Setting.Waifu2xTileSize.GetIndexV()
@@ -138,7 +140,7 @@ class TaskWaifu2x(TaskBase):
         if not config.CanWaifu2x:
             time.sleep(100)
             return None
-        from sr_ncnn_vulkan import sr_ncnn_vulkan as sr
+        from sr_vulkan import sr_vulkan as sr
         return sr.load(0)
 
     def RunLoad2(self):
@@ -174,8 +176,14 @@ class TaskWaifu2x(TaskBase):
                         if path and not os.path.isdir(os.path.dirname(path)):
                             os.makedirs(os.path.dirname(path))
 
+                        formatList = [".jpg", ".png", ".gif", ".webp", ".bmp", ".apng"]
                         if path and data:
-                            path = path + "." + format
+                            if path[-4:] in formatList:
+                                pass
+                            elif path[-5:] in formatList:
+                                pass
+                            else:
+                                path = path + "." + format
                             with open(path, "wb+") as f:
                                 f.write(data)
             except Exception as es:
@@ -229,6 +237,24 @@ class TaskWaifu2x(TaskBase):
         self._inQueue.put(self.taskId)
         return self.taskId
 
+    def AddConvertTaskByPathSetModel(self, loadPath, savePath, callBack, backParam=None, model=None, cleanFlag=None):
+        info = QConvertTask()
+        info.loadPath = loadPath
+        info.savePath = savePath
+        info.callBack = callBack
+        info.backParam = backParam
+        info.model = model
+        self.taskId += 1
+        self.tasks[self.taskId] = info
+        info.taskId = self.taskId
+        if cleanFlag:
+            info.cleanFlag = cleanFlag
+            taskIds = self.flagToIds.setdefault(cleanFlag, set())
+            taskIds.add(self.taskId)
+        Log.Debug("add convert info, loadPath:{}, savePath:{}".format(info.loadPath, info.savePath))
+        self._inQueue.put(self.taskId)
+        return self.taskId
+
     def HandlerTask(self, taskId, isCallBack=True):
         try:
             info = self.tasks.get(taskId)
@@ -252,7 +278,7 @@ class TaskWaifu2x(TaskBase):
                 del self.tasks[taskId]
         Log.Info("cancel wait convert taskId, {}".format(taskIds))
         if config.CanWaifu2x:
-            from sr_ncnn_vulkan import sr_ncnn_vulkan as sr
+            from sr_vulkan import sr_vulkan as sr
             sr.removeWaitProc(list(taskIds))
 
     def Cancel(self, cleanFlag):
@@ -267,6 +293,6 @@ class TaskWaifu2x(TaskBase):
         Log.Info("cancel convert taskId, {}".format(removeIds))
         self.flagToIds.pop(cleanFlag)
         if config.CanWaifu2x:
-            from sr_ncnn_vulkan import sr_ncnn_vulkan as sr
+            from sr_vulkan import sr_vulkan as sr
             sr.remove(removeIds)
 

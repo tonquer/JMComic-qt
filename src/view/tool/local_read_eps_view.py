@@ -64,6 +64,7 @@ class LocalReadEpsView(QWidget, Ui_LocalEps, QtTaskBase):
         pass
 
     def SwitchCurrent(self, **kwargs):
+        self.update()
         bookId = kwargs.get("bookId")
         if not bookId:
             return

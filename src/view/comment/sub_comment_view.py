@@ -17,15 +17,16 @@ class SubCommentView(QtWidgets.QWidget, Ui_SubComment, QtTaskBase):
         self.commentList.SendCommentBack = self.SendCommentBack
 
     def SwitchCurrent(self, **kwargs):
+        self.update()
         bookId = kwargs.get("bookId")
         if not bookId:
             return
-
         commentList = kwargs.get("commentList")
         self.bookId = bookId
         self.commentList.ClearCommentList()
         for index, info in enumerate(commentList):
             self.commentList.listWidget.AddUserItem(info, "")
+
         pass
 
     def SetWidget(self, widget):

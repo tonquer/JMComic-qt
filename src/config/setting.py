@@ -160,6 +160,15 @@ class Setting:
     # UpDownScrollSpeed = SettingValue("ReadSetting", 100, False)
     # ScaleCnt = SettingValue("ReadSetting", 0, False)
 
+    # 批量超分
+    BatchSrImportDir = SettingValue("BatchSrTool", "", False)
+    BatchSrExportDir = SettingValue("BatchSrTool", "", False)
+    BatchSrState = SettingValue("BatchSrTool", "", False)
+    BatchSrFmt = SettingValue("BatchSrTool", "", False)
+
+    BatchSrModelName = SettingValue("BatchSrTool", "MODEL_WAIFU2X_CUNET_UP2X_DENOISE3X", False)
+    BatchSrScale = SettingValue("BatchSrTool", 2.0, False)
+
     # Other
     UserId = SettingValue("Other", "", False)
     Password = SettingValue("Other", "", False)

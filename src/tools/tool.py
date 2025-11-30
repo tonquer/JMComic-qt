@@ -225,7 +225,7 @@ class ToolUtil(object):
         if not config.CanWaifu2x:
             return {}
         data = {"scale": scale}
-        from sr_ncnn_vulkan import sr_ncnn_vulkan as sr
+        from sr_vulkan import sr_vulkan as sr
         data["model"] = getattr(sr, modelName, 0)
         data["model_name"] = modelName
         return data
@@ -255,20 +255,29 @@ class ToolUtil(object):
     @staticmethod
     def GetCanSaveName(name):
         # 限制文件夹名称为255/3的长度
-        return str(re.sub('[\\\/:*?"<>|\0\t\r\n]', '', name).rstrip(".").strip(" "))[:254//3-1]
+        return str(re.sub('[\\\/:*?"<>|\0\t\r\n]', '', name).rstrip(".").strip(" "))[:254//3-1].rstrip(".").strip(" ")
 
     @staticmethod
     def LoadCachePicture(filePath):
         try:
             c = CTime()
-            for mat in [".jpg", ".png", ".gif", ".webp", ".bmp", ".apng"]:
-                path = filePath + mat
+            formatList = [".jpg", ".png", ".gif", ".webp", ".bmp", ".apng"]
+            for mat in formatList:
+                if filePath[-4:] in formatList:
+                    path = filePath
+                elif filePath[-5:] in formatList:
+                    path = filePath
+                else:
+                    path = filePath + mat
                 if not os.path.isfile(path):
                     continue
 
                 with open(path, "rb") as f:
                     data = f.read()
                     c.Refresh("LoadCache", path)
+                    if len(data) < 20:
+                        Log.Debug(f"load_fail_picture, {path}")
+                        continue
                     return data
 
         except Exception as es:
@@ -944,7 +953,7 @@ class ToolUtil(object):
         srcImg = Image.open(src)
         if num <= 1:
             srcImg.save(path, toFormat)
-            return
+            return True
 
         size = (width, height) = srcImg.size
         desImg = Image.new(srcImg.mode, size)
@@ -976,6 +985,7 @@ class ToolUtil(object):
         # value = des.getvalue()
         # desImg.close()
         # des.close()
+        return True
 
     @staticmethod
     def IsSameName(name1, name2):

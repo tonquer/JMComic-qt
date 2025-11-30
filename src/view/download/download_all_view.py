@@ -73,6 +73,7 @@ class DownloadAllView(QtWidgets.QWidget, Ui_DownloadAll, QtTaskBase):
 
     def SwitchCurrent(self, **kwargs):
         books = kwargs.get("books")
+        self.update()
         if books is None:
             return
         self.InitBooks(books)

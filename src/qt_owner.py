@@ -21,6 +21,7 @@ class QtOwner(Singleton):
         self.user = User()
         self.isOfflineModel = False
         self.closeType = 1   # 1普通， 2关闭弹窗触发， 3任务栏触发
+        self.isMaxSize = 0
 
     @property
     def cookie(self):
@@ -217,7 +218,7 @@ class QtOwner(Singleton):
 
     def OpenSearch(self, text):
         arg = {"text": text}
-        if text.isdigit() and len(text) == 6:
+        if text.isdigit() and len(text) <= 7:
             return self.OpenBookInfo(int(text))
         self.owner.SwitchWidget(self.owner.searchView, **arg)
 
@@ -244,10 +245,12 @@ class QtOwner(Singleton):
         self.owner.searchView.lineEdit.Search()
 
     def OpenReadView(self, bookId, index, pageIndex, isOffline=False):
+        self.owner.BackOldSize()
         self.owner.totalStackWidget.setCurrentIndex(1)
         self.owner.readView.OpenPage(bookId, index, pageIndex=pageIndex, isOffline=isOffline)
 
     def OpenLocalReadView(self, v, epsId=0):
+        self.owner.BackOldSize()
         self.owner.totalStackWidget.setCurrentIndex(1)
         self.owner.readView.OpenLocalPage(v, epsId)
 
