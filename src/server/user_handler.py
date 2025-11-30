@@ -298,6 +298,7 @@ class GetIndexInfoReq2Handler(object):
             data["bookInfo"] = bookInfo
         except Exception as es:
             data["st"] = Status.ParseError
+            data["errorMsg"] = task.res.GetText()
             Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
             Log.Error(es)
         finally:
@@ -325,6 +326,7 @@ class GetIndexInfoReq2Handler(object):
             data["bookList"] = bookInfo
         except Exception as es:
             data["st"] = Status.ParseError
+            data["errorMsg"] = task.res.GetText()
             Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
             Log.Error(es)
         finally:
@@ -351,6 +353,7 @@ class GetFavoritesReq2Handler(object):
             data["favorite"] = f
         except Exception as es:
             data["st"] = Status.ParseError
+            data["errorMsg"] = task.res.GetText()
             Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
             Log.Error(es)
         finally:
@@ -380,6 +383,7 @@ class ParseMsgReq2Handler(object):
             data["message"] = msg
         except Exception as es:
             data["st"] = Status.ParseError
+            data["errorMsg"] = task.res.GetText()
             Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
             Log.Error(es)
         finally:
@@ -466,6 +470,7 @@ class GetSearchReq2Handler(object):
             data["bookList"] = bookList
         except Exception as es:
             data["st"] = Status.ParseError
+            data["errorMsg"] = task.res.GetText()
             Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
             Log.Error(es)
         finally:
@@ -494,6 +499,7 @@ class GetSearchReq2Handler(object):
             data["categoryTitle"] = categoryTitle
         except Exception as es:
             data["st"] = Status.ParseError
+            data["errorMsg"] = task.res.GetText()
             Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
             Log.Error(es)
         finally:
@@ -522,6 +528,7 @@ class GetSearchCategoryReq2Handler(object):
             data["bookList"] = bookList
         except Exception as es:
             data["st"] = Status.ParseError
+            data["errorMsg"] = task.res.GetText()
             Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
             Log.Error(es)
         finally:
@@ -596,6 +603,7 @@ class GetBookInfoReq2Handler(object):
             data["bookInfo"] = info
         except Exception as es:
             data["st"] = Status.ParseError
+            data["errorMsg"] = task.res.GetText()
             Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
             Log.Error(es)
         finally:
@@ -644,6 +652,7 @@ class GetBookEpsInfoReq2Handler(object):
             data["epsInfo"] = epsInfo
         except Exception as es:
             data["st"] = Status.ParseError
+            data["errorMsg"] = task.res.GetText()
             Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
             Log.Error(es)
         finally:
@@ -674,6 +683,7 @@ class GetCommentReq2Handler(object):
             data["total"] = total
         except Exception as es:
             data["st"] = Status.ParseError
+            data["errorMsg"] = task.res.GetText()
             Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
             Log.Error(es)
         finally:
@@ -700,6 +710,7 @@ class SendCommentReq2Handler(object):
             data["message"] = msg
         except Exception as es:
             data["st"] = Status.ParseError
+            data["errorMsg"] = task.res.GetText()
             Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
             Log.Error(es)
         finally:
@@ -727,6 +738,7 @@ class GetHistoryReq2Handler(object):
             data["bookList"] = bookList
         except Exception as es:
             data["st"] = Status.ParseError
+            data["errorMsg"] = task.res.GetText()
             Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
             Log.Error(es)
         finally:
@@ -761,6 +773,7 @@ class GetReqRawDataHandler(object):
             data["data"] = data2
         except Exception as es:
             data["st"] = Status.ParseError
+            data["errorMsg"] = task.res.GetText()
             Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
             Log.Error(es)
         finally:
