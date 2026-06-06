@@ -62,7 +62,7 @@ jobs:
         pip install sr-vulkan-model-realcugan
         pip install sr-vulkan-model-realesrgan
         cd script
-        pip install delocate wheel_filename
+        pip install delocate wheel_filename==1.4.2
         python build_universal2.py pillow
         python build_universal2.py cffi 1.17.1
         python build_universal2.py curl_cffi
