@@ -26,12 +26,12 @@
     <message>
         <location filename="../src/tools/str.py" line="276"/>
         <source>网络错误</source>
-        <translation>Network Error</translation>
+        <translation>Network error</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="277"/>
         <source>用户名密码错误</source>
-        <translation>Username or password incorrect</translation>
+        <translation>Incorrect username or password</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="278"/>
@@ -46,27 +46,27 @@
     <message>
         <location filename="../src/tools/str.py" line="280"/>
         <source>未找到书籍</source>
-        <translation>Book not found</translation>
+        <translation>Comic not found</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="281"/>
         <source>解析出错了</source>
-        <translation>Parsing error</translation>
+        <translation>Parse error</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="282"/>
         <source>需要谷歌验证</source>
-        <translation>Google verification needed</translation>
+        <translation>Google verification required</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="283"/>
         <source>头像设置出错了, 请尽量选择500kb以下的图片</source>
-        <translation>Error setting avatar, please try to choose an image less than 500kb</translation>
+        <translation>Failed to set avatar. Use an image smaller than 500 KB.</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="284"/>
         <source>本子审核中</source>
-        <translation>Manga under review</translation>
+        <translation>Comic under review</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="285"/>
@@ -76,7 +76,7 @@
     <message>
         <location filename="../src/tools/str.py" line="286"/>
         <source>保存出错</source>
-        <translation>Error saving</translation>
+        <translation>Save failed</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="287"/>
@@ -86,7 +86,7 @@
     <message>
         <location filename="../src/tools/str.py" line="288"/>
         <source>Add错误</source>
-        <translation>Add error</translation>
+        <translation>Add failed</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="289"/>
@@ -101,12 +101,12 @@
     <message>
         <location filename="../src/tools/str.py" line="291"/>
         <source>文件损坏</source>
-        <translation>File corrupted</translation>
+        <translation>File is corrupted</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="292"/>
         <source>连接超时</source>
-        <translation>Connection timeout</translation>
+        <translation>Connection timed out</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="293"/>
@@ -136,7 +136,7 @@
     <message>
         <location filename="../src/tools/str.py" line="298"/>
         <source>离线模式中</source>
-        <translation>In offline mode</translation>
+        <translation>Offline mode</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="299"/>
@@ -151,7 +151,7 @@
     <message>
         <location filename="../src/tools/str.py" line="301"/>
         <source>未成年禁止注册</source>
-        <translation>Registration prohibited for minors</translation>
+        <translation>Registration is not allowed for minors</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="302"/>
@@ -162,32 +162,32 @@
     <message>
         <location filename="../src/tools/str.py" line="303"/>
         <source>下载繁忙</source>
-        <translation>Download queue busy</translation>
+        <translation>Download queue is busy</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="305"/>
         <source>图片加载中...</source>
-        <translation>Image loading...</translation>
+        <translation>Loading image...</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="306"/>
         <source>图片加载失败</source>
-        <translation>Image loading failed</translation>
+        <translation>Failed to load image</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="307"/>
         <source>使用Cookie登录</source>
-        <translation>Login with Cookie</translation>
+        <translation>Log in with cookie</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="308"/>
         <source>使用账号登录</source>
-        <translation>Login with account</translation>
+        <translation>Log in with account</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="309"/>
         <source>不能为空</source>
-        <translation>Cannot be empty</translation>
+        <translation>Required field</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="310"/>
@@ -203,17 +203,17 @@
     <message>
         <location filename="../src/tools/str.py" line="312"/>
         <source>获取信息</source>
-        <translation>Fetching information</translation>
+        <translation>Fetching info</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="313"/>
         <source>获取分页</source>
-        <translation>Fetching pagination</translation>
+        <translation>Fetching page list</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="314"/>
         <source>获取下载地址</source>
-        <translation>Fetching download address</translation>
+        <translation>Fetching download URL</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="315"/>
@@ -241,7 +241,7 @@
         <location filename="../src/tools/str.py" line="319"/>
         <location filename="../src/tools/str.py" line="349"/>
         <source>出错了</source>
-        <translation>Error occurred</translation>
+        <translation>Error</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="320"/>
@@ -256,7 +256,7 @@
     <message>
         <location filename="../src/tools/str.py" line="322"/>
         <source>转换成功</source>
-        <translation>Conversion successful</translation>
+        <translation>Conversion complete</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="324"/>
@@ -266,7 +266,7 @@
     <message>
         <location filename="../src/tools/str.py" line="325"/>
         <source>重新下载</source>
-        <translation>Redownload</translation>
+        <translation>Download again</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="327"/>
@@ -291,12 +291,12 @@
     <message>
         <location filename="../src/tools/str.py" line="331"/>
         <source>超过设置分辨率</source>
-        <translation>Exceeds set resolution</translation>
+        <translation>Above configured resolution</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="332"/>
         <source>动图不自动转换</source>
-        <translation>GIFs do not convert automatically</translation>
+        <translation>Animated images are not converted automatically</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="334"/>
@@ -306,7 +306,7 @@
     <message>
         <location filename="../src/tools/str.py" line="335"/>
         <source>超过索引</source>
-        <translation>Index out of bounds</translation>
+        <translation>Index out of range</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="336"/>
@@ -321,7 +321,7 @@
     <message>
         <location filename="../src/tools/str.py" line="338"/>
         <source>错误的路径</source>
-        <translation>Incorrect path</translation>
+        <translation>Invalid path</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="339"/>
@@ -336,37 +336,37 @@
     <message>
         <location filename="../src/tools/str.py" line="343"/>
         <source>网络存储</source>
-        <translation>Network storage</translation>
+        <translation>Network Storage</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="344"/>
         <source>完成</source>
-        <translation>Completed</translation>
+        <translation>Complete</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="345"/>
         <source>等待下载</source>
-        <translation>Waiting for download</translation>
+        <translation>Waiting to download</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="346"/>
         <source>等待图片超分</source>
-        <translation>Waiting for image super resolution</translation>
+        <translation>Waiting for super resolution</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="395"/>
         <source>图片超分当前为CPU模式，看图模式下不推荐开启</source>
-        <translation>Image super resolution is currently in CPU mode; enabling it in reader mode is not recommended</translation>
+        <translation>Super resolution is currently in CPU mode; enabling it in reader mode is not recommended</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="448"/>
         <source>图片超分</source>
-        <translation>Image Super Resolution</translation>
+        <translation>Super Resolution</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="464"/>
         <source>取消图片超分</source>
-        <translation>Cancel Image Super Resolution</translation>
+        <translation>Cancel Super Resolution</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="490"/>
@@ -421,7 +421,7 @@
     <message>
         <location filename="../src/tools/str.py" line="354"/>
         <source>打包出错了</source>
-        <translation>Packaging error</translation>
+        <translation>Packaging failed</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="355"/>
@@ -441,7 +441,7 @@
     <message>
         <location filename="../src/tools/str.py" line="358"/>
         <source>空间不足</source>
-        <translation>Insufficient space</translation>
+        <translation>Not enough space</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="359"/>
@@ -451,7 +451,7 @@
     <message>
         <location filename="../src/tools/str.py" line="360"/>
         <source>需重新设置存储</source>
-        <translation>Storage needs to be reset</translation>
+        <translation>Storage must be configured again</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="361"/>
@@ -466,17 +466,17 @@
     <message>
         <location filename="../src/tools/str.py" line="363"/>
         <source>创建目录失败</source>
-        <translation>Failed to create directory</translation>
+        <translation>Failed to create folder</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="364"/>
         <source>添加上传成功</source>
-        <translation>Upload added successfully</translation>
+        <translation>Upload added</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="365"/>
         <source>目录不存在</source>
-        <translation>Directory does not exist</translation>
+        <translation>Folder does not exist</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="367"/>
@@ -496,7 +496,7 @@
     <message>
         <location filename="../src/tools/str.py" line="370"/>
         <source>上下滚动</source>
-        <translation>Scroll Vertically</translation>
+        <translation>Vertical Scroll</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="371"/>
@@ -506,22 +506,22 @@
     <message>
         <location filename="../src/tools/str.py" line="372"/>
         <source>左右双页</source>
-        <translation>Left-Right Double Page</translation>
+        <translation>Two-Page Spread (Left to Right)</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="373"/>
         <source>右左双页</source>
-        <translation>Right-Left Double Page</translation>
+        <translation>Two-Page Spread (Right to Left)</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="374"/>
         <source>左右滚动</source>
-        <translation>Scroll Left-Right</translation>
+        <translation>Horizontal Scroll (Left to Right)</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="375"/>
         <source>右左滚动</source>
-        <translation>Scroll Right-Left</translation>
+        <translation>Horizontal Scroll (Right to Left)</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="376"/>
@@ -531,7 +531,7 @@
     <message>
         <location filename="../src/tools/str.py" line="377"/>
         <source>切页</source>
-        <translation>Page Turning</translation>
+        <translation>Page Turn</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="378"/>
@@ -551,7 +551,7 @@
     <message>
         <location filename="../src/tools/str.py" line="381"/>
         <source>自动滚动/翻页</source>
-        <translation>Auto Scroll/Page Turn</translation>
+        <translation>Auto Scroll / Page Turn</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="382"/>
@@ -571,7 +571,7 @@
     <message>
         <location filename="../src/tools/str.py" line="385"/>
         <source>页</source>
-        <translation>Page</translation>
+        <translation>.</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="386"/>
@@ -586,12 +586,12 @@
     <message>
         <location filename="../src/tools/str.py" line="388"/>
         <source>自动跳转到上一章</source>
-        <translation>Automatically jump to the previous chapter</translation>
+        <translation>Automatically jumping to previous chapter</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="389"/>
         <source>自动跳转到下一章</source>
-        <translation>Automatically jump to the next chapter</translation>
+        <translation>Automatically jumping to next chapter</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="390"/>
@@ -616,42 +616,42 @@
     <message>
         <location filename="../src/tools/str.py" line="394"/>
         <source>下载未完成</source>
-        <translation>Download incomplete</translation>
+        <translation>Download is not complete</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="396"/>
         <source>自动滚动/翻页已停止</source>
-        <translation>Auto scroll/page turn has stopped</translation>
+        <translation>Auto scroll / page turn stopped</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="397"/>
         <source>上一页</source>
-        <translation>Previous page</translation>
+        <translation>Previous Page</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="398"/>
         <source>下一页</source>
-        <translation>Next page</translation>
+        <translation>Next Page</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="399"/>
         <source>上滑</source>
-        <translation>Swipe up</translation>
+        <translation>Scroll Up</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="400"/>
         <source>下滑</source>
-        <translation>Swipe down</translation>
+        <translation>Scroll Down</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="402"/>
         <source>无代理</source>
-        <translation>No proxy</translation>
+        <translation>No Proxy</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="403"/>
         <source>保存成功</source>
-        <translation>Save successful</translation>
+        <translation>Saved successfully</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="404"/>
@@ -666,12 +666,12 @@
     <message>
         <location filename="../src/tools/str.py" line="406"/>
         <source>测速</source>
-        <translation>Speed test</translation>
+        <translation>Speed Test</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="407"/>
         <source>密码太短</source>
-        <translation>Password too short</translation>
+        <translation>Password is too short</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="408"/>
@@ -681,12 +681,12 @@
     <message>
         <location filename="../src/tools/str.py" line="409"/>
         <source>完结</source>
-        <translation>Finished</translation>
+        <translation>Completed</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="410"/>
         <source>选择文件夹</source>
-        <translation>Select folder</translation>
+        <translation>Select Folder</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="411"/>
@@ -701,12 +701,12 @@
     <message>
         <location filename="../src/tools/str.py" line="413"/>
         <source>置顶</source>
-        <translation>Pin to top</translation>
+        <translation>Pin</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="414"/>
         <source>第</source>
-        <translation>Number</translation>
+        <translation>No.</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="415"/>
@@ -741,12 +741,12 @@
     <message>
         <location filename="../src/tools/str.py" line="421"/>
         <source>正在加载收藏分页</source>
-        <translation>Loading favorites pagination</translation>
+        <translation>Loading favorites pages</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="422"/>
         <source>更新完成</source>
-        <translation>Update completed</translation>
+        <translation>Update complete</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="423"/>
@@ -766,22 +766,22 @@
     <message>
         <location filename="../src/tools/str.py" line="426"/>
         <source>已经是第一章</source>
-        <translation>Already the first chapter</translation>
+        <translation>Already on the first chapter</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="427"/>
         <source>已经最后一章</source>
-        <translation>Already the last chapter</translation>
+        <translation>Already on the last chapter</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="428"/>
         <source>章节加载失败</source>
-        <translation>Chapter loading failed</translation>
+        <translation>Failed to load chapter</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="429"/>
         <source>添加收藏成功</source>
-        <translation>Successfully added to favorites</translation>
+        <translation>Added to favorites</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="430"/>
@@ -791,12 +791,12 @@
     <message>
         <location filename="../src/tools/str.py" line="431"/>
         <source>复制成功</source>
-        <translation>Copy successful</translation>
+        <translation>Copied</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="432"/>
         <source>头像上传中......</source>
-        <translation>Uploading avatar......</translation>
+        <translation>Uploading avatar...</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="433"/>
@@ -811,7 +811,7 @@
     <message>
         <location filename="../src/tools/str.py" line="435"/>
         <source>打卡</source>
-        <translation>Check in</translation>
+        <translation>Check In</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="436"/>
@@ -826,22 +826,22 @@
     <message>
         <location filename="../src/tools/str.py" line="438"/>
         <source>打开目录</source>
-        <translation>Open directory</translation>
+        <translation>Open Folder</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="439"/>
         <source>删除记录</source>
-        <translation>Delete record</translation>
+        <translation>Delete Record</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="440"/>
         <source>删除记录和文件 </source>
-        <translation>Delete records and files</translation>
+        <translation>Delete Record and Files</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="441"/>
         <source>选择下载章节</source>
-        <translation>Select download chapter</translation>
+        <translation>Select Chapters to Download</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="442"/>
@@ -851,12 +851,12 @@
     <message>
         <location filename="../src/tools/str.py" line="443"/>
         <source>开始转换</source>
-        <translation>Start conversion</translation>
+        <translation>Start Conversion</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="444"/>
         <source>暂停转换</source>
-        <translation>Pause conversion</translation>
+        <translation>Pause Conversion</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="445"/>
@@ -866,17 +866,17 @@
     <message>
         <location filename="../src/tools/str.py" line="446"/>
         <source>查看封面</source>
-        <translation>View cover</translation>
+        <translation>View Cover</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="447"/>
         <source>重下封面</source>
-        <translation>Redownload cover</translation>
+        <translation>Download Cover Again</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="449"/>
         <source>复制标题</source>
-        <translation>Copy title</translation>
+        <translation>Copy Title</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="450"/>
@@ -891,52 +891,52 @@
     <message>
         <location filename="../src/tools/str.py" line="452"/>
         <source>当前版本</source>
-        <translation>Current version</translation>
+        <translation>Current Version</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="453"/>
         <source>检查到更新，是否前往更新</source>
-        <translation>Update available, proceed to update?</translation>
+        <translation>Update available. Open update page?</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="454"/>
         <source>复制Android下载地址</source>
-        <translation>Copy Android download address</translation>
+        <translation>Copy Android download URL</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="455"/>
         <source>复制IOS下载地址</source>
-        <translation>Copy iOS download address</translation>
+        <translation>Copy iOS download URL</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="456"/>
         <source>请设置目录</source>
-        <translation>Please set the directory</translation>
+        <translation>Please set a folder</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="457"/>
         <source>添加下载成功</source>
-        <translation>Successfully added download</translation>
+        <translation>Added to downloads</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="458"/>
         <source>观看第1章</source>
-        <translation>Watch Chapter 1</translation>
+        <translation>Read Chapter 1</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="459"/>
         <source>上次看到第</source>
-        <translation>Last seen at chapter</translation>
+        <translation>Last read: Ch. </translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="460"/>
         <source>章</source>
-        <translation>Chapter</translation>
+        <translation>, p. </translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="461"/>
         <source>看过</source>
-        <translation>Watched</translation>
+        <translation>Read</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="462"/>
@@ -951,12 +951,12 @@
     <message>
         <location filename="../src/tools/str.py" line="465"/>
         <source>需要重启保存</source>
-        <translation>Need to restart to save</translation>
+        <translation>Restart required to save</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="466"/>
         <source>检查更新</source>
-        <translation>Check for updates</translation>
+        <translation>Check for Updates</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="467"/>
@@ -966,7 +966,7 @@
     <message>
         <location filename="../src/tools/str.py" line="468"/>
         <source>有更新</source>
-        <translation>There is an update</translation>
+        <translation>Update available</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="469"/>
@@ -976,22 +976,22 @@
     <message>
         <location filename="../src/tools/str.py" line="470"/>
         <source>最近更新</source>
-        <translation>Recently updated</translation>
+        <translation>Recently Updated</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="471"/>
         <source>留言板</source>
-        <translation>Message board</translation>
+        <translation>Message Board</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="472"/>
         <source>排行版</source>
-        <translation>Ranking</translation>
+        <translation>Rankings</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="473"/>
         <source>随机本子</source>
-        <translation>Random manga</translation>
+        <translation>Random Comics</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="474"/>
@@ -1011,7 +1011,7 @@
     <message>
         <location filename="../src/tools/str.py" line="477"/>
         <source>分类</source>
-        <translation>Category</translation>
+        <translation>Categories</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="478"/>
@@ -1026,17 +1026,17 @@
     <message>
         <location filename="../src/tools/str.py" line="480"/>
         <source>表里切换</source>
-        <translation>Toggle inside and out</translation>
+        <translation>Switch Site</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="481"/>
         <source>删除收藏成功</source>
-        <translation>Successfully removed from favorites</translation>
+        <translation>Removed from favorites</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="482"/>
         <source>所有评论</source>
-        <translation>All comments</translation>
+        <translation>All Comments</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="483"/>
@@ -1061,22 +1061,22 @@
     <message>
         <location filename="../src/tools/str.py" line="487"/>
         <source>我的评论</source>
-        <translation>My comments</translation>
+        <translation>My Comments</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="488"/>
         <source>登出</source>
-        <translation>Log out</translation>
+        <translation>Log Out</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="489"/>
         <source>Sock5设置出错</source>
-        <translation>Sock5 settings error</translation>
+        <translation>SOCKS5 settings error</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="494"/>
         <source>右左双页(滚轮正序)</source>
-        <translation>Right to left double page (wheel forward)</translation>
+        <translation>Two-Page Spread (Right to Left, Normal Wheel Order)</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="495"/>
@@ -1086,17 +1086,17 @@
     <message>
         <location filename="../src/tools/str.py" line="496"/>
         <source>复制图片到剪贴板</source>
-        <translation>Copy image to clipboard</translation>
+        <translation>Copy Image to Clipboard</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="497"/>
         <source>保存文件</source>
-        <translation>Save file</translation>
+        <translation>Save File</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="498"/>
         <source>主界面</source>
-        <translation>Main interface</translation>
+        <translation>Main Window</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="499"/>
@@ -1106,32 +1106,32 @@
     <message>
         <location filename="../src/tools/str.py" line="500"/>
         <source>批量下载</source>
-        <translation>Batch download</translation>
+        <translation>Batch Download</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="501"/>
         <source>导入单本目录</source>
-        <translation>Import a single directory</translation>
+        <translation>Import Single-Comic Folder</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="502"/>
         <source>导入单本Zip</source>
-        <translation>Import a single Zip</translation>
+        <translation>Import Single-Comic ZIP</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="503"/>
         <source>批量导入单本目录</source>
-        <translation>Batch import single directories</translation>
+        <translation>Batch Import Single-Comic Folders</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="504"/>
         <source>批量导入带章节目录</source>
-        <translation>Batch import directories with chapters</translation>
+        <translation>Batch Import Chapter Folders</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="505"/>
         <source>支持拖拽文件导入</source>
-        <translation>Support for drag and drop file import</translation>
+        <translation>Supports drag-and-drop file import</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="506"/>
@@ -1141,22 +1141,22 @@
     <message>
         <location filename="../src/tools/str.py" line="507"/>
         <source>等宽模式</source>
-        <translation>Equal width mode</translation>
+        <translation>Equal-Width Mode</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="508"/>
         <source>保存上次路径</source>
-        <translation>Save last path</translation>
+        <translation>Remember Last Path</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="509"/>
         <source>导入多章节目录</source>
-        <translation>Import multi-chapter directories</translation>
+        <translation>Import Multi-Chapter Folder</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="510"/>
         <source>导入到本地漫画中</source>
-        <translation>Import into local comics</translation>
+        <translation>Import to Local Comics</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="511"/>
@@ -1166,7 +1166,7 @@
     <message>
         <location filename="../src/tools/str.py" line="512"/>
         <source>正在看</source>
-        <translation>Currently watching</translation>
+        <translation>Currently Reading</translation>
     </message>
 </context>
 </TS>
