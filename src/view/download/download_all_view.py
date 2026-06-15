@@ -7,6 +7,7 @@ from qt_owner import QtOwner
 from server import req, Status
 from task.qt_task import QtTaskBase
 from tools.book import BookMgr
+from tools.str import Str
 from view.download.download_all_item import DownloadAllItem
 
 
@@ -139,7 +140,7 @@ class DownloadAllView(QtWidgets.QWidget, Ui_DownloadAll, QtTaskBase):
         if not self.waitTask:
             self.msgLabel.setText("")
             return
-        self.msgLabel.setText("{}个任务等待处理".format(str(len(self.waitTask))))
+        self.msgLabel.setText(Str.GetStr(Str.TasksWaiting).format(str(len(self.waitTask))))
         v = self.waitTask.pop(len(self.waitTask)-1)
         assert isinstance(v, DownloadAllItem)
         if v.isAllChip:

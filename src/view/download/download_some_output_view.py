@@ -29,6 +29,12 @@ class DownloadSomeOutputView(BaseMaskDialog, Ui_DownloadSomeOutput, QtTaskBase):
         self.closeButton.clicked.connect(self.close)
         self.switchButton.clicked.connect(self.Switch)
         self.mode = 0
+
+    def retranslateUi(self, DownloadSomeOutput):
+        Ui_DownloadSomeOutput.retranslateUi(self, DownloadSomeOutput)
+        self.label.setText(Str.GetStr(Str.ExportedJmIds))
+        self.closeButton.setText(Str.GetStr(Str.Close))
+        self.switchButton.setText(Str.GetStr(Str.Switch))
     
     def Switch(self):
         self.mode = (self.mode + 1) % 4

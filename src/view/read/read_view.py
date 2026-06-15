@@ -112,7 +112,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
                 action.triggered.connect(self.qtTool.curWaifu2x.click)
 
         menu2 = popMenu.addMenu(Str.GetStr(Str.ReadMode))
-        action = menu2.addAction("切换双页对齐(F10)")
+        action = menu2.addAction(Str.GetStr(Str.ToggleDoublePageAlign) + "(F10)")
         action.triggered.connect(self.ChangeDoublePage)
 
         def AddReadMode(name, value):

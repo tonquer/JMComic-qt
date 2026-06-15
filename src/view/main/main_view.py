@@ -168,6 +168,7 @@ class MainView(Main, QtTaskBase):
         #download folder
         self.downloadAllView.retranslateUi(self.downloadAllView)
         self.downloadView.retranslateUi(self.downloadView)
+        self.downloadSomeView.retranslateUi(self.downloadSomeView)
         #help folder
         self.helpView.retranslateUi(self.helpView)
         #history folder
@@ -187,6 +188,7 @@ class MainView(Main, QtTaskBase):
         self.settingView.retranslateUi(self.settingView)
         #tool folder
         self.waifu2xToolView.retranslateUi(self.waifu2xToolView)
+        self.batchSrView.retranslateUi(self.batchSrView)
         #user folder
         self.favoriteView.retranslateUi(self.favoriteView)
         self.localFavoriteView.retranslateUi(self.localFavoriteView)

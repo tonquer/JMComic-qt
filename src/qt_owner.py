@@ -228,9 +228,9 @@ class QtOwner(Singleton):
 
     def OpenSearch2Author(self, text):
         arg = {"text": text}
-        title = "作者: {}".format(ToolUtil.GetStrMaxLen(text))
+        title = Str.GetStr(Str.AuthorPrefix).format(ToolUtil.GetStrMaxLen(text))
         self.owner.searchView2.searchTab.setText(title)
-        self.owner.searchView2.setWindowTitle("作者: {}".format(ToolUtil.GetStrMaxLen(text)))
+        self.owner.searchView2.setWindowTitle(title)
         self.owner.SwitchWidget(self.owner.searchView2, **arg)
 
     def OpenSearch2Tag(self, text):

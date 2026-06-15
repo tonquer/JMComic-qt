@@ -2,6 +2,8 @@ from PySide6.QtCore import QRect, Signal
 from PySide6.QtGui import QPen, QColor, QBrush, Qt, QPainter, QFont
 from PySide6.QtWidgets import QWidget
 
+from tools.str import Str
+
 
 class SwitchButton(QWidget):
     """自定义Switch按钮"""
@@ -60,7 +62,7 @@ class SwitchButton(QWidget):
             # 绘制文本
             painter.setPen(QPen(QColor('#ffffff')))
             painter.setBrush(Qt.NoBrush)
-            painter.drawText(QRect(18, 4, 50, 20), Qt.AlignLeft, '开')
+            painter.drawText(QRect(18, 4, 50, 20), Qt.AlignLeft, Str.GetStr(Str.SwitchOn))
         # 开关为关的状态
         else:
             # 绘制背景
@@ -77,4 +79,4 @@ class SwitchButton(QWidget):
 
             # 绘制文本
             painter.setBrush(Qt.NoBrush)
-            painter.drawText(QRect(38, 4, 50, 20), Qt.AlignLeft, '关')
+            painter.drawText(QRect(38, 4, 50, 20), Qt.AlignLeft, Str.GetStr(Str.SwitchOff))

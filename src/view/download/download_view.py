@@ -502,7 +502,7 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
             selectRows.add(index.row())
         if not selectRows:
             return
-        isRun = QMessageBox.information(self, '删除', "是否删除记录", QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
+        isRun = QMessageBox.information(self, Str.GetStr(Str.Delete), Str.GetStr(Str.ConfirmDeleteRecord), QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
         if isRun != QtWidgets.QMessageBox.Yes:
             return
 
@@ -532,7 +532,7 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
         return
 
     def DelRecordingAndFile(self):
-        isClear = QMessageBox.information(self, '删除记录', "是否删除记录和文件", QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
+        isClear = QMessageBox.information(self, Str.GetStr(Str.DeleteRecord), Str.GetStr(Str.ConfirmDeleteRecordAndFile), QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
         if isClear != QtWidgets.QMessageBox.Yes:
             return
         selected = self.tableWidget.selectedIndexes()

@@ -235,7 +235,7 @@ class LocalReadView(QWidget, Ui_Local, QtTaskBase):
                 self.allBookInfos[v.id] = v
                 addNum += 1
                 self.bookList.AddBookByLocal(v)
-        QtOwner().ShowMsg("已添加{}本到书架, {}本存在已忽略".format(addNum, alreadyNum))
+        QtOwner().ShowMsg(Str.GetStr(Str.AddedBooksToShelf).format(addNum, alreadyNum))
         return
 
     def LoadingPicture(self, index):
@@ -371,7 +371,7 @@ class LocalReadView(QWidget, Ui_Local, QtTaskBase):
                     category = ""
                 self.bookList.AddBookByLocal(v, category)
                 self.AddDataToDB(v.id)
-        QtOwner().ShowMsg("已添加{}本到书架, {}本存在已忽略".format(addNum, alreadyNum))
+        QtOwner().ShowMsg(Str.GetStr(Str.AddedBooksToShelf).format(addNum, alreadyNum))
         self.lineEdit.setText("")
         self.isCurRead = False
         self.sortIdCombox.setCurrentIndex(0)

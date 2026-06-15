@@ -139,7 +139,7 @@ class NasView(QtWidgets.QWidget, Ui_Nas, NasStatus):
         if nasId not in self.nasDict:
             return
         nasInfo = self.nasDict[nasId]
-        isClear = QMessageBox.information(self, '删除网络存储', "是否删除网络存储， {}".format(nasInfo.title), QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
+        isClear = QMessageBox.information(self, Str.GetStr(Str.DeleteNas), Str.GetStr(Str.ConfirmDeleteNas).format(nasInfo.title), QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
         if isClear != QtWidgets.QMessageBox.Yes:
             return
 
@@ -356,7 +356,7 @@ class NasView(QtWidgets.QWidget, Ui_Nas, NasStatus):
         return
 
     def DelRecording(self):
-        isClear = QMessageBox.information(self, '删除记录', "是否删除记录", QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
+        isClear = QMessageBox.information(self, Str.GetStr(Str.DeleteRecord), Str.GetStr(Str.ConfirmDeleteRecord), QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
         if isClear != QtWidgets.QMessageBox.Yes:
             return
         selected = self.tableWidget.selectedIndexes()
