@@ -73,6 +73,7 @@ jobs:
         brew install create-dmg
     - name: Build
       run: |
+        python script/build_qrc.py
         cd src
         cp ../res/icon/Icon.icns ./
         pyinstaller --target-architecture=universal2 --clean --onedir --name JMComic \
@@ -141,6 +142,7 @@ jobs:
         brew install create-dmg
     - name: Build
       run: |
+        python script/build_qrc.py
         cd src
         cp ../res/icon/Icon.icns ./
         pyinstaller --target-architecture=universal2 --clean --onedir --name JMComic \
@@ -203,6 +205,7 @@ jobs:
         Remove-Item "upx.zip"
     - name: Build
       run: |
+        python script/build_qrc.py
         cd src
         cp ..\res\icon\icon.ico .\
         pyinstaller --hidden-import=_cffi_backend --collect-data curl_cffi --add-data "..\lib\win\*;." -F -w -i icon.ico start.py  --upx-dir "D:\upx-5.0.1-win64"
@@ -245,6 +248,7 @@ jobs:
         Remove-Item "upx.zip"
     - name: Build
       run: |
+        python script/build_qrc.py
         cd src
         cp ..\res\icon\icon.ico .\
         pyinstaller --hidden-import=_cffi_backend --collect-data curl_cffi --add-data "..\lib\win\*;."  -F -w -i icon.ico start.py  --upx-dir "D:\upx-5.0.1-win64"
@@ -291,6 +295,7 @@ jobs:
         Remove-Item "upx.zip"
     - name: Build
       run: |
+        python script/build_qrc.py
         cd src
         cp ..\res\icon\icon.ico .\
         pyinstaller --hidden-import=_cffi_backend --collect-data curl_cffi --add-data "..\lib\win\*;." -F -w -i icon.ico start.py  --upx-dir "D:\upx-5.0.1-win64"
@@ -333,6 +338,7 @@ jobs:
         Remove-Item "upx.zip"
     - name: Build
       run: |
+        python script/build_qrc.py
         cd src
         cp ..\res\icon\icon.ico .\
         pyinstaller --hidden-import=_cffi_backend --collect-data curl_cffi --add-data "..\lib\win\*;."  -F -w -i icon.ico start.py  --upx-dir "D:\upx-5.0.1-win64"
@@ -376,6 +382,7 @@ jobs:
         pip install -r src/requirements_nosr.txt
     - name: Build
       run: |
+        python script/build_qrc.py
         cd src
         pyinstaller --hidden-import=_cffi_backend --collect-data curl_cffi --add-data "../lib/linux/*:." -w start.py
         cd dist

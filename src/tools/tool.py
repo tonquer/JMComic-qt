@@ -95,14 +95,15 @@ class ToolUtil(object):
         hour = (now - tick) // 3600
         minute = (now - tick) // 60
         second = (now - tick)
+        from tools.str import Str
         if day > 0:
-            return "{}天前".format(day)
+            return "{}".format(day) + Str.GetStr(Str.DayAgo)
         elif hour > 0:
-            return "{}小时前".format(hour)
+            return "{}".format(hour) + Str.GetStr(Str.HourAgo)
         elif minute > 0:
-            return "{}分钟前".format(minute)
+            return "{}".format(minute) + Str.GetStr(Str.MinuteAgo)
         else:
-            return "{}秒前".format(second)
+            return "{}".format(second) + Str.GetStr(Str.SecondAgo)
 
     @staticmethod
     def GetUpdateStrByTick(tick):
@@ -561,16 +562,18 @@ class ToolUtil(object):
             for v in series:
                 epsInfo = BookEps()
                 epsInfo.index = int(v.get("sort")) - 1
+                from tools.str import Str
                 if v.get("name"):
-                    epsInfo.title = "第{}话_{}".format(epsInfo.index+1, v.get("name"))
+                    epsInfo.title = Str.GetStr(Str.EpisodeTitleWithName).format(epsInfo.index+1, v.get("name"))
                 else:
-                    epsInfo.title = "第{}话".format(epsInfo.index+1)
+                    epsInfo.title = Str.GetStr(Str.EpisodeTitle).format(epsInfo.index+1)
                 epsInfo.epsId = v.get('id')
                 epsInfo.epsName = v.get("name")
                 b.pageInfo.epsInfo[epsInfo.index] = epsInfo
         else:
+            from tools.str import Str
             epsInfo = BookEps()
-            epsInfo.title = "第1话"
+            epsInfo.title = Str.GetStr(Str.EpisodeTitle).format(1)
             epsInfo.epsUrl = "/photo/{}".format(bookId)
             epsInfo.epsId = bookId
             b.pageInfo.epsInfo[0] = epsInfo

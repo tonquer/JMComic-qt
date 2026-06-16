@@ -37,7 +37,7 @@ class FavoriteView(QtWidgets.QWidget, Ui_Favorite, QtTaskBase):
         self.bookList.MoveCallBack = self.MoveCallBack
         self.bookList.DelCallBack = self.DelCallBack
         self.resetCnt = 5
-        self.folderBox.addItem("全部")
+        self.folderBox.addItem(Str.GetStr(Str.All))
         self.sortCombox.currentIndexChanged.connect(self.RefreshDataFocus)
         self.folderBox.currentIndexChanged.connect(self.RefreshDataFocus)
         self.folderDict = {}
@@ -149,7 +149,7 @@ class FavoriteView(QtWidgets.QWidget, Ui_Favorite, QtTaskBase):
     def ClearFolder(self):
         self.folderBox.currentIndexChanged.disconnect()
         self.folderBox.clear()
-        self.folderBox.addItem("全部")
+        self.folderBox.addItem(Str.GetStr(Str.All))
         self.folderBox.setCurrentIndex(0)
         self.folderBox.currentIndexChanged.connect(self.RefreshDataFocus)
         return

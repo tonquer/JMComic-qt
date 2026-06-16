@@ -277,7 +277,7 @@ class DownloadSomeView(QWidget, Ui_DownloadSome, QtTaskBase):
                 suc += 1
         if suc <= 0:
             return
-        isDownload = QMessageBox.information(self, '下载', "是否下载{}本".format(suc), QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
+        isDownload = QMessageBox.information(self, Str.GetStr(Str.Download), Str.GetStr(Str.ConfirmDownloadBooks).format(suc), QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
         if isDownload != QtWidgets.QMessageBox.Yes:
             return
         for v in self.allBookInfo.values():
@@ -319,7 +319,7 @@ class DownloadSomeView(QWidget, Ui_DownloadSome, QtTaskBase):
         if not nasInfo:
             return
         nasTitle = nasInfo.showTitle
-        isDownload = QMessageBox.information(self, '上传', "是否上传{}本到({})".format(suc, nasTitle), QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
+        isDownload = QMessageBox.information(self, Str.GetStr(Str.Upload), Str.GetStr(Str.ConfirmUploadBooksTo).format(suc, nasTitle), QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
         if isDownload != QtWidgets.QMessageBox.Yes:
             return
         for v in self.allBookInfo.values():

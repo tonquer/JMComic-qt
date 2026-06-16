@@ -210,7 +210,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.buyButton.setVisible(False)
         if info.baseInfo.price > 0 and not info.baseInfo.purchased:
             self.buyButton.setVisible(True)
-            self.buyButton.setText(f"{info.baseInfo.price}Jcoin购买")
+            self.buyButton.setText(Str.GetStr(Str.BuyWithJcoin).format(info.baseInfo.price))
 
     def DoBuyBook(self):
         QtOwner().ShowLoading()
@@ -241,8 +241,8 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
 
                 item = QListWidgetItem(self.listWidget)
                 if not epsInfo:
-                    label = QLabel(str(i + 1) + "-" + "未下载")
-                    item.setToolTip("未下载")
+                    label = QLabel(str(i + 1) + "-" + Str.GetStr(Str.NotDownload))
+                    item.setToolTip(Str.GetStr(Str.NotDownload))
                 else:
                     assert isinstance(epsInfo, DownloadEpsItem)
                     label = QLabel(str(i + 1) + "-" + epsInfo.epsTitle)
@@ -397,7 +397,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         waifuPath = os.path.join(os.path.join(Setting.SavePath.value, config.CachePathDir),
                                  "waifu2x/book/{}".format(self.bookId))
 
-        isClear = QMessageBox.information(self, '清除缓存', "是否清除本书所有缓存\n{}\n{}".format(path, waifuPath), QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
+        isClear = QMessageBox.information(self, Str.GetStr(Str.ClearCache), Str.GetStr(Str.ConfirmClearBookCache).format(path, waifuPath), QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
         if isClear == QtWidgets.QMessageBox.Yes:
             if not Setting.SavePath.value:
                 return

@@ -161,7 +161,7 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
             else:
                 self.signButton.setText(Str.GetStr(Str.Sign))
                 if Setting.AutoSign.value and self.resetDailySign > 0:
-                    QtOwner().ShowMsg("已自动打卡")
+                    QtOwner().ShowMsg(Str.GetStr(Str.AutoCheckInDone))
                     self.resetDailySign -= 1
                     self.signButton.click()
         pass
@@ -182,20 +182,20 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
         if Setting.ProxySelectIndex.value == 5:
             self.proxyName.setText("CDN_{}".format(str(Setting.PreferCDNIP.value)))
         elif Setting.ProxySelectIndex.value == 6:
-            self.proxyName.setText("US反代分流")
+            self.proxyName.setText(Str.GetStr(Str.UsProxyRoute))
         elif Setting.ProxySelectIndex.value == 7:
-            self.proxyName.setText("自定义域名")
+            self.proxyName.setText(Str.GetStr(Str.CustomDomain))
         else:
-            self.proxyName.setText("分流{}".format(str(Setting.ProxySelectIndex.value)))
+            self.proxyName.setText(Str.GetStr(Str.Route).format(Setting.ProxySelectIndex.value))
 
         if Setting.ProxyImgSelectIndex.value == 5:
             self.proxyImgName.setText("CDN_{}".format(str(Setting.PreferCDNIPImg.value)))
         elif Setting.ProxyImgSelectIndex.value == 6:
-            self.proxyImgName.setText("US反代分流")
+            self.proxyImgName.setText(Str.GetStr(Str.UsProxyRoute))
         elif Setting.ProxyImgSelectIndex.value == 7:
-            self.proxyImgName.setText("自定义域名")
+            self.proxyImgName.setText(Str.GetStr(Str.CustomDomain))
         else:
-            self.proxyImgName.setText("分流{}".format(str(Setting.ProxyImgSelectIndex.value)))
+            self.proxyImgName.setText(Str.GetStr(Str.Route).format(Setting.ProxyImgSelectIndex.value))
 
     # def UpdateUserBack(self, raw):
     #     st = raw["st"]
