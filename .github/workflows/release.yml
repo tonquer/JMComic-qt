@@ -298,6 +298,7 @@ jobs:
     runs-on: windows-latest
     env:
       PACKAGENAME: ${{ needs.setup.outputs.PACKAGE_PREFIX }}_windows7_x64
+      EXE_NAME: start.exe
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python 3.8
@@ -355,6 +356,7 @@ jobs:
     runs-on: windows-latest
     env:
       PACKAGENAME: ${{ needs.setup.outputs.PACKAGE_PREFIX }}_windows7_x64_nosr
+      EXE_NAME: start.exe
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python 3.8
