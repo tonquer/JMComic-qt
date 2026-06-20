@@ -12,7 +12,7 @@ IsUseCache = True              # 是否使用cache
 CachePathDir = "cache"         # cache目录
 # CacheExpired = 24 * 60 * 60  # cache过期时间24小时
 PreLoading = 10                # 预加载5页
-PreLook = 4                    # 预显示
+PreLook = 5                    # 预显示
 
 IsLoadingPicture = True
 
@@ -21,12 +21,10 @@ AppUrl2 = "https://app2.jpacg.cc/JMComic"
 AppUrl3 = "https://app3.jpacg.cc/JMComic"
 
 UpdateUrlBack = "https://github.com/tonquer/JMComic-qt/"
-UpdateUrl2Back = "https://hub.jpacg.cc/tonquer/JMComic-qt/"
-UpdateUrl3Back = "https://hub.fastgit.xyz/tonquer/JMComic-qt"
 
 UpdateVersion = "v1.3.1"
 RealVersion = "v1.3.1"
-VersionTime = "2026-1-10"
+VersionTime = "2026-6-20"
 
 Waifu2xVersion = "2.0.1"
 LoginUserName = ""
@@ -46,13 +44,9 @@ IsTips = 1
 
 # 代理与分流相关
 ProxyUrl1 = "https://github.com/tonquer/picacg-qt/discussions/48"
-ProxyUrl2 = "https://hub.jpacg.cc/tonquer/picacg-qt/discussions/48"
-ProxyUrl3 = "https://hub.fastgit.xyz/tonquer/picacg-qt/discussions/48"
 
 # ISSUES
 Issues1 = "https://github.com/tonquer/JMComic-qt/issues"
-Issues2 = "https://hub.jpacg.cc/tonquer/JMComic-qt/issues"
-Issues3 = "https://hub.fastgit.xyz/tonquer/JMComic-qt/issues"
 
 # cookie
 ipcountry = ""

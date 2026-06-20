@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>批量下载</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -81,7 +81,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QTableWidget" name="tableWidget">
+    <widget class="BaseTableWidget" name="tableWidget">
      <column>
       <property name="text">
        <string>JM号</string>
@@ -106,6 +106,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>BaseTableWidget</class>
+   <extends>QTableWidget</extends>
+   <header location="global">component.tab.base_table_widget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

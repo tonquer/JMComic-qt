@@ -13,3 +13,4 @@ pysmb
 httpx
 httpx[http2]
 httpx[socks]
+smbprotocol

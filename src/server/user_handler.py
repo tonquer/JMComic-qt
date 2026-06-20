@@ -857,12 +857,22 @@ class DownloadBookHandler(object):
 
             request = backData.req
             index = backData.index
+            isFail = False
             try:
                 with Server().downloadSession[index].stream("GET", request.url, follow_redirects=True, headers=request.headers,
                                     timeout=backData.timeout, extensions=request.extend) as r:
-                    fileSize = int(r.headers.get('Content-Length', 0))
+                    # fileSize = int(r.headers.get('Content-Length', 0))
                     getSize = 0
                     data = b""
+
+                    if r.status_code == 404 or r.status_code == 403 :
+                        if backData.bakParam:
+                            TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, -Status.Error, b"")
+                        return
+                    elif r.status_code != 200:
+                        if backData.bakParam:
+                            TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, -Status.Error, b"")
+                        return
 
                     now = time.time()
                     isAlreadySend = False
@@ -874,29 +884,31 @@ class DownloadBookHandler(object):
                                 addSize += len(chunk)
                                 data += chunk
                                 if tick >= 0.1:
-                                    isAlreadySend = True
-                                    if backData.bakParam and fileSize - addSize > 0:
-                                        TaskBase.taskObj.downloadBack.emit(backData.bakParam, addSize, max(1, addSize, fileSize - getSize), b"")
+                                    if backData.bakParam :
+                                        isAlreadySend = True
+                                        TaskBase.taskObj.downloadBack.emit(backData.bakParam, addSize, 1, b"")
                                         addSize = 0
                                     now = cur
 
                                 getSize += len(chunk)
 
-                        if not isAlreadySend:
-                            if backData.bakParam:
-                                TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, getSize, b"")
+                        if backData.bakParam:
+                            TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, getSize, b"")
 
                     except Exception as es:
+                        isFail = True
                         Log.Error(es)
-                        if backData.req.resetCnt > 0:
-                            backData.req.isReset = True
-                            Server().ReDownload(backData)
-                            return
+                        # if backData.req.resetCnt >= 0:
+                        #     backData.req.isReset = True
+                        #     Server().ReDownload(backData)
+                        #     return
 
                     # 异常图片
-                    if len(data) < 20:
-                        Log.Warn(f"download_error_picture, url:{backData.req.url}, data:{data}")
-                        if backData.req.resetCnt > 0:
+                    if len(data) < 20 or isFail:
+                        Log.Warn(f"download_error_picture, url:{backData.req.url}, data:{len(data)}, is_fail:{isFail}")
+                        ## 尝试切换图片地址
+                        backData.req.ResetToSwitchNextUrl()
+                        if backData.req.resetCnt >= 0:
                             backData.req.isReset = True
                             Server().ReDownload(backData)
                             return
@@ -997,6 +1009,27 @@ class SpeedTestPingHandler(object):
             data["data"] = "0"
             TaskBase.taskObj.taskBack.emit(task.bakParam, pickle.dumps(data))
 
+
+@handler(req.GetJmServerReq)
+class GetJmServerHandler(object):
+    def __call__(self, task):
+        data = {"st": task.status}
+        try:
+            if task.status != Status.Ok:
+                return
+            from jmcomic import JmCryptoTool
+            raw = JmCryptoTool.decode_resp_data(task.res.raw.content, '', 'diosfjckwpqpdfjkvnqQjsik')
+            v = json.loads(raw)
+            data["st"] = Status.Ok
+            data["data"] = v
+        except Exception as es:
+            data["st"] = Status.ParseError
+            data["errorMsg"] = task.res.GetText()
+            Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
+            Log.Error(es)
+        finally:
+            if task.backParam:
+                TaskBase.taskObj.taskBack.emit(task.backParam, pickle.dumps(data))
 
 @handler(req.SpeedTestReq)
 class SpeedTestHandler(object):

@@ -195,10 +195,11 @@ class ReadGraphicsView(QGraphicsView, SmoothScroll):
                 if self.verticalScrollBar().value() <= 5:
                     self.parent().qtTool.LastPage()
                     return
+
         if e.angleDelta().y() < 0:
-            value = int(self.qtTool.scrollSpeed.value())
+            value = int(self.qtTool.GetScrollValue())
         else:
-            value = - int(self.qtTool.scrollSpeed.value())
+            value = - int(self.qtTool.GetScrollValue())
 
         if ReadMode.isUpDown(self.initReadMode):
             self.vScrollBar.scrollValue(value)

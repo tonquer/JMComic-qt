@@ -189,12 +189,12 @@ class QtFileData(object):
             return QPoint(maxWidth // 2 - toWidth // 2, max(0, maxHeight // 2 - toHeight // 2))
         elif stripModel in [ReadMode.RightLeftDouble, ReadMode.RightLeftDouble2]:
             if index == curIndex:
-                return QPoint(math.trunc(maxWidth / 2), max(0, maxHeight / 2 - toHeight / 2))
+                return QPoint(math.trunc((maxWidth-2) / 2), max(0, maxHeight / 2 - toHeight / 2))
             else:
                 return QPoint(math.ceil(maxWidth / 2 - toWidth), max(0, maxHeight // 2 - toHeight // 2))
         elif stripModel in [ReadMode.LeftRightDouble]:
             if index != curIndex:
-                return QPoint(math.trunc(maxWidth / 2), max(0, maxHeight // 2 - toHeight // 2))
+                return QPoint(math.trunc((maxWidth-2) / 2), max(0, maxHeight // 2 - toHeight // 2))
             else:
                 return QPoint(math.ceil(maxWidth / 2 - toWidth), max(0, maxHeight // 2 - toHeight // 2))
         elif stripModel in [ReadMode.LeftRightScroll]:

@@ -115,7 +115,7 @@ class Setting:
     ProxyImgSelectIndex = SettingValue("ProxySetting", 1, False)
     PreferCDNIPImg = SettingValue("ProxySetting", "104.18.227.172", False)
 
-    HostApiDomain = SettingValue("ProxySetting", "www.cdn-mspjmapiproxy.xyz", False)
+    HostApiDomain = SettingValue("ProxySetting", "www.cdnutc.me", False)
     HostImgDomain = SettingValue("ProxySetting", "cdn-msp.jmapinodeudzn.net", False)
 
     IsLoginProxy = SettingValue("ProxySetting", 0, False)
@@ -156,8 +156,10 @@ class Setting:
     # 看图设置
     LookReadMode = SettingValue("ReadSetting", 1, False)
     LookReadFull = SettingValue("ReadSetting", 0, False)
+    ScrollSpeed = SettingValue("ReadSetting", 200, False)
     TurnSpeed = SettingValue("ReadSetting", 5000, False)
-    ScrollSpeed = SettingValue("ReadSetting", 400, False)
+    ScrollInitSpeed = SettingValue("ReadSetting", 400, False)
+    ScrollTime = SettingValue("ReadSetting", 100, False)
     PreDownWaifu2x = SettingValue("ReadSetting", 1, False)
     IsOpenOpenGL = SettingValue("ReadSetting", 0, True)
     # UpDownScrollSpeed = SettingValue("ReadSetting", 100, False)

@@ -274,6 +274,13 @@ QScrollArea {background-color:transparent;}</string>
                  </property>
                 </widget>
                </item>
+               <item row="3" column="2">
+                <widget class="QPushButton" name="configButton">
+                 <property name="text">
+                  <string>更新配置</string>
+                 </property>
+                </widget>
+               </item>
               </layout>
              </widget>
             </item>

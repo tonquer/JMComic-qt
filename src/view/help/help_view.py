@@ -36,10 +36,11 @@ class HelpView(QWidget, Ui_Help, QtTaskBase):
         self.logButton.clicked.connect(self.OpenLogDir)
 
         self.verCheck.clicked.connect(self.InitUpdate)
+        self.configButton.clicked.connect(self.InitUpdateConfig)
         #
         # self.updateUrl = [config.UpdateUrl, config.UpdateUrl2, config.UpdateUrl3]
         # self.updatePreUrl = [config.UpdateUrlApi, config.UpdateUrl2Api, config.UpdateUrl3Api]
-        self.updateBackUrl = [config.UpdateUrlBack, config.UpdateUrl2Back, config.UpdateUrl3Back]
+        self.updateBackUrl = [config.UpdateUrlBack]
         self.checkUpdateIndex = 0
         self.helpLogWidget = HelpLogWidget()
         if Setting.IsShowCmd.value:
@@ -54,6 +55,7 @@ class HelpView(QWidget, Ui_Help, QtTaskBase):
         self.preCheckBox.clicked.connect(self.SwitchCheckPre)
         self.configVer.setText("{}({})".format(GlobalConfig.Ver.value, GlobalConfig.VerTime.value))
         self.dnsCheck = ThreadPrintDns()
+        self.isCheckDns = False
         self.configUrlList = [config.AppUrl, config.AppUrl2, config.AppUrl3]
         self.configUrlIndex = 0
         self.updateUrlIndex = 0
@@ -77,12 +79,14 @@ class HelpView(QWidget, Ui_Help, QtTaskBase):
 
     def InitUpdateConfig(self):
         self.configUrlIndex = 0
+        self.UpdateText(self.configButton, Str.CheckUp, "#7fb80e", False)
         self.AddHttpTask(req.CheckUpdateConfigReq(self.configUrlList[self.configUrlIndex]), self.InitUpdateConfigBack)
 
     def InitUpdateConfigBack(self, raw):
         try:
             st = raw.get("st")
             if st != Str.Ok:
+                self.UpdateText(self.configButton, st, "#d71345", True)
                 self.configUrlIndex += 1
                 if self.configUrlIndex >= len(self.configUrlList):
                     self.StartCheckDns()
@@ -91,6 +95,7 @@ class HelpView(QWidget, Ui_Help, QtTaskBase):
                 return
             self.StartCheckDns()
             data = raw.get("data")
+            self.UpdateText(self.configButton, Str.AlreadyUpdate, "#ff4081", True)
             if not data:
                 return
             GlobalConfig.UpdateSetting(data)
@@ -99,6 +104,8 @@ class HelpView(QWidget, Ui_Help, QtTaskBase):
             Log.Error(es)
 
     def StartCheckDns(self):
+        if self.isCheckDns:
+            return
         self.dnsCheck.hostList.append(config.AppUrl)
         self.dnsCheck.hostList.append(config.AppUrl2)
         self.dnsCheck.hostList.append(config.AppUrl3)
@@ -106,6 +113,7 @@ class HelpView(QWidget, Ui_Help, QtTaskBase):
         self.dnsCheck.hostList.extend(GlobalConfig.Url2List.value)
         self.dnsCheck.hostList.extend(GlobalConfig.PicUrlList.value)
         self.dnsCheck.start()
+        self.isCheckDns = True
 
     def InitUpdate(self):
         self.checkUpdateIndex = 0
@@ -165,12 +173,12 @@ class HelpView(QWidget, Ui_Help, QtTaskBase):
         return
 
     def OpenUrl(self):
-        UrlList = [config.Issues1, config.Issues2, config.Issues3]
+        UrlList = [config.Issues1]
         url = UrlList[0] if self.checkUpdateIndex >= len(UrlList) else UrlList[self.checkUpdateIndex]
         QDesktopServices.openUrl(QUrl(url))
 
     def OpenProxyUrl(self):
-        UrlList = [config.ProxyUrl1, config.ProxyUrl2, config.ProxyUrl3]
+        UrlList = [config.ProxyUrl1]
         url = UrlList[0] if self.checkUpdateIndex >= len(UrlList) else UrlList[self.checkUpdateIndex]
         QDesktopServices.openUrl(QUrl(url))
 

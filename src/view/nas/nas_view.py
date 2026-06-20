@@ -196,6 +196,8 @@ class NasView(QtWidgets.QWidget, Ui_Nas, NasStatus):
             widget.address.setText("webdav:/" + v.address + ":" + str(v.port))
         elif v.type == 1:
             widget.address.setText("smb:/" + v.address + ":" + str(v.port))
+        elif v.type == 3:
+            widget.address.setText("smb3:/" + v.address + ":" + str(v.port))
         widget.waifu2x.setEnabled(bool(v.is_waifu2x))
         widget.user.setText(v.user)
         widget.compress.setText(v.GetCompressName())

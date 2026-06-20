@@ -6,6 +6,7 @@ import time
 from config import config
 from config.global_config import GlobalConfig
 from config.setting import Setting
+from tools.log import Log
 from tools.str import Str
 from tools.tool import ToolUtil
 import platform
@@ -17,6 +18,8 @@ class ServerReq(object):
 
     def __init__(self, url, params=None, method="POST") -> None:
         self.url = url
+        self.resetUrl = []
+        self.resetIndex = 0
         self.params = params
         self.method = method
         self.isParseRes = False
@@ -76,6 +79,33 @@ class ServerReq(object):
         #     self.cookies["AVS"] = config.AVS
         # if config.shunt:
         #     self.cookies["shunt"] = config.shunt
+
+    def ResetToSwitchNextUrl(self):
+        if not self.resetUrl:
+            return False
+        if self.resetIndex >= len(self.resetUrl):
+            return False
+        url = self.resetUrl[self.resetIndex]
+        self.resetIndex += 1
+        Log.Info("request switch url:{}->{}".format(self.url, url))
+        self.url = url
+        return True
+        host = ToolUtil.GetUrlHost(self.url)
+        if host in self.resetUrlHost:
+            index = self.resetUrlHost.index(host)
+            if index >= len(self.resetUrlHost)-1:
+                return False
+            newHost = self.resetUrlHost[index+1]
+            host = ToolUtil.GetUrlHost(self.url)
+            self.url = self.url.replace(host, newHost)
+            Log.Info("request 404 switch:{}->{}".format(host, newHost))
+            return True
+        else:
+            newUrl = self.resetUrl[0]
+            host = ToolUtil.GetUrlHost(self.url)
+            self.url = self.url.replace(host, newHost)
+            Log.Info("request 404 switch:{}->{}".format(host, newHost))
+            return True
 
     def __str__(self):
         if Setting.LogIndex.value == 0:
@@ -223,7 +253,6 @@ class DownloadBookReq(ServerReq):
         self.url = url
         if self.url in ServerReq.SPACE_PIC:
             self.url += "?v={}".format(int(time.time()))
-
         self.loadPath = loadPath
         self.cachePath = cachePath
         self.savePath = savePath
@@ -232,6 +261,10 @@ class DownloadBookReq(ServerReq):
         self.resetCnt = resetCnt
         self.isReset = False
         super(self.__class__, self).__init__(self.url, {}, method)
+
+        if "_3x4" in self.url:
+            self.resetUrl.append(self.url.replace("_3x4", ""))
+
         self.headers = dict()
         self.headers["Accept-Encoding"] ="None"
         if Setting.UerAgent.value:
@@ -930,3 +963,11 @@ class SpeedTestReq(ServerReq):
         self.isReload = False
         self.resetCnt = 2
         self.isReset = False
+
+
+class GetJmServerReq(ServerReq):
+    def __init__(self):
+        url = GlobalConfig.JMServerUrl.value
+        method = "GET"
+        super(self.__class__, self).__init__(url, {}, method)
+        self.timeout = 5

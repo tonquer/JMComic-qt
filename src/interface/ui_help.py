@@ -165,6 +165,11 @@ class Ui_Help(object):
 
         self.gridLayout.addWidget(self.label_10, 3, 0, 1, 1)
 
+        self.configButton = QPushButton(self.widget_2)
+        self.configButton.setObjectName(u"configButton")
+
+        self.gridLayout.addWidget(self.configButton, 3, 2, 1, 1)
+
 
         self.verticalLayout_2.addWidget(self.widget_2)
 
@@ -240,6 +245,7 @@ class Ui_Help(object):
         self.waifu2x.setText(QCoreApplication.translate("Help", u"v1.0.8", None))
         self.openCmd.setText(QCoreApplication.translate("Help", u"\u6253\u5f00\u63a7\u5236\u53f0", None))
         self.label_10.setText(QCoreApplication.translate("Help", u"\u914d\u7f6e\u7248\u672c", None))
+        self.configButton.setText(QCoreApplication.translate("Help", u"\u66f4\u65b0\u914d\u7f6e", None))
         self.label_8.setText(QCoreApplication.translate("Help", u"\u65b0\u7248\u672c\uff1a", None))
         self.updateLabel.setText("")
         self.updateButton.setText(QCoreApplication.translate("Help", u"\u524d\u5f80\u66f4\u65b0", None))

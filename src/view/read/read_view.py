@@ -62,6 +62,8 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         self.qtTool.ChangeReadMode2(Setting.LookReadMode.value)
         self.qtTool.turnSpeed.setValue(Setting.TurnSpeed.value / 1000)
         self.qtTool.scrollSpeed.setValue(Setting.ScrollSpeed.value)
+        self.qtTool.scrollInitSpeed.setValue(Setting.ScrollInitSpeed.value)
+        self.qtTool.scrollTime.setValue(Setting.ScrollTime.value)
         self.pageIndex = -1
         self.isOffline = False
         self.isLocal = False
@@ -200,6 +202,8 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
     def Clear(self):
         Setting.TurnSpeed.SetValue(int(self.qtTool.turnSpeed.value() * 1000))
         Setting.ScrollSpeed.SetValue(int(self.qtTool.scrollSpeed.value()))
+        Setting.ScrollInitSpeed.SetValue(int(self.qtTool.scrollInitSpeed.value()))
+        Setting.ScrollTime.SetValue(int(self.qtTool.scrollTime.value()))
         self.qtTool.UpdateText("")
         self.frame.UpdateProcessBar(None)
         self.frame.UpdateProcessBar2(None)
@@ -312,45 +316,37 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
                 return
             p.isWaifu2x = isWaifu2x
 
-    def CheckLoadPicture(self):
-        # i = 0
-        newDict = {}
-        needUp = False
-        removeTaskIds = []
 
+    def CheckLoadPicture(self):
         if not self.maxPic:
             return
 
-        preLoadList = list(range(self.curIndex, self.curIndex + config.PreLoading))
-        preQImage = list(range(self.curIndex, self.curIndex + config.PreLook))
-        preRealQImage = list(range(self.curIndex, self.curIndex + config.PreLook))
-        # if ReadMode.isScroll(self.stripModel):
-        #     preRealQImage = list(range(self.curIndex, self.curIndex + config.PreLook))
-        # elif ReadMode.isDouble(self.stripModel):
-        #     preRealQImage = [self.curIndex, self.curIndex+1]
-        # else:
-        #     preRealQImage = [self.curIndex]
+        # 预下载
+        preLoadList = list(range(max(0, self.curIndex-4), self.curIndex + config.PreLoading))
+        # 预转换QImage
+        preQImage = list(range(max(0, self.curIndex-2), self.curIndex + config.PreLook))
+        preRealQImage = list(range(max(0, self.curIndex-2), self.curIndex + config.PreLook))
 
-        # 预加载上一页
-        if len(preLoadList) >= 2 and self.curIndex > 0:
-            preLoadList.insert(2, self.curIndex - 1)
+        preLoadList.sort(key=lambda a:(abs(a-self.curIndex), self.curIndex-a))
+        preQImage.sort(key=lambda a:(abs(a-self.curIndex), self.curIndex-a))
+        preRealQImage.sort(key=lambda a:(abs(a-self.curIndex), self.curIndex-a))
 
-        for i, p in self.pictureData.items():
-            if i in preLoadList:
-                newDict[i] = p
-            else:
-                needUp = True
-                if p.waifu2xTaskId > 0:
-                    removeTaskIds.append(p.waifu2xTaskId)
+        removeKeys = set(self.pictureData.keys()) - set(preLoadList)
 
-        if needUp:
-            self.pictureData.clear()
-            self.pictureData = newDict
+        removeTaskIds = []
+        # 移除非下载的页
+        for key in removeKeys:
+            p = self.pictureData[key]
+            self.pictureData.pop(key, None)
+            if p.waifu2xTaskId > 0:
+                removeTaskIds.append(p.waifu2xTaskId)
+        if removeTaskIds:
             self.ClearWaitConvertIds(removeTaskIds)
 
         if not self.bookId:
             return
 
+        # 添加下载的页
         for i in preLoadList:
             if i >= self.maxPic or i < 0:
                 continue
@@ -362,6 +358,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
             elif p.state == p.Downloading or p.state == p.DownloadReset:
                 break
 
+        # 添加超分的任务
         for i in preLoadList:
             if i >= self.maxPic or i < 0:
                 continue
@@ -377,6 +374,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
             if p.waifuState == p.WaifuStateStart:
                 break
 
+        # 添加转换到QImage任务
         for i in preRealQImage:
             p = self.pictureData.get(i)
             if not p or not p.data:
@@ -389,6 +387,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
             if (not IsConvert or not p.isWaifu2x) and not (p.cacheImage or p.cacheImageTaskId > 0):
                 self.CheckToQImage(i, p, False)
 
+        # 删除多余的QImage
         for i in set(self.pictureData.keys()) - set(preQImage):
             p = self.pictureData.get(i)
             if not p:

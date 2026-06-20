@@ -32,8 +32,10 @@ class LocalFavoriteView(QtWidgets.QWidget, Ui_LocalFavorite, QtTaskBase):
         self.reupdateBookIds = set()
         self.maxSortId = 0
         self.bookList.isDelMenu = True
+        self.bookList.isMoveMenu = True
         self.bookList.LoadCallBack = self.LoadNextPage
         self.bookList.DelCallBack = self.DelCallBack
+        self.bookList.MoveCallBack = self.MoveCallBack
         self.resetCnt = 5
         self.sortIdCombox.currentIndexChanged.connect(self.RefreshDataFocus)
         self.sortKeyCombox.currentIndexChanged.connect(self.RefreshDataFocus)
@@ -43,20 +45,38 @@ class LocalFavoriteView(QtWidgets.QWidget, Ui_LocalFavorite, QtTaskBase):
         self.lineEdit.textChanged.connect(self.SearchTextChange)
         self.searchText = ""
         self.db = LocalFavoriteDb()
-        bookList = self.db.SearchFavorite(-1, 0, 0, "")
+        bookList = self.db.SearchFavorite(-1, 0, 0, 0, "")
         self.allBookIds = set(bookList.keys())
         self.allDownButton.clicked.connect(self.OpenSomeBook)
         self.importButton.clicked.connect(self.ImportFavorite)
         self.loadPage = 1
         self.maxPage = 1
+        self.loadFidNum = 0
+        self.loadFid = []
+        self.folderDict = self.db.LoadFold()
+        self.fidBookList = self.db.LoadBookFold()
+        self.folderBox.currentIndexChanged.connect(self.RefreshDataFocus)
+
+    def GetFidByName(self, name):
+        for k, v in self.folderDict.items():
+            if v == name:
+                return k
+        return 0
 
     def OpenSomeBook(self):
-        QtOwner().OpenSomeDownload(list(self.allBookIds))
+        name = self.folderBox.currentText()
+        fid = self.GetFidByName(name)
+        if fid > 0:
+            books = list(self.fidBookList.get(fid, []))
+        else:
+            books = list(self.allBookIds)
+        QtOwner().OpenSomeDownload(books)
         return
 
     def SwitchCurrent(self, **kwargs):
         refresh = kwargs.get("refresh")
         if refresh or self.bookList.count() <= 0:
+            self.InitFolder()
             self.RefreshDataFocus()
 
     def ImportFavorite(self):
@@ -68,10 +88,13 @@ class LocalFavoriteView(QtWidgets.QWidget, Ui_LocalFavorite, QtTaskBase):
         fid = ""
         self.loadPage = 1
         self.maxPage = 1
-        self.AddHttpTask(req.GetFavoritesReq2(self.loadPage, sort, fid), self.ImportFavoriteBack, self.loadPage)
+        self.loadFidNum = 0
+        self.loadFid = []
+        self.AddHttpTask(req.GetFavoritesReq2(self.loadPage, sort, fid), self.ImportFavoriteBack, (self.loadPage, ""))
         return
 
-    def ImportFavoriteBack(self, raw, page):
+    def ImportFavoriteBack(self, raw, v):
+        (page, fidName) = v
         try:
             st = raw["st"]
             if st == Status.Ok:
@@ -81,23 +104,42 @@ class LocalFavoriteView(QtWidgets.QWidget, Ui_LocalFavorite, QtTaskBase):
                 bookList = f.bookList
                 if page == 1:
                     self.maxPage = (total - 1) // max(1, count) + 1
+                    if not self.loadFid:
+                        self.loadFid = [(k, v) for k,v in f.fold.items()]
+                        self.loadFid.insert(0, ("", ""))
+                        for name, _ in self.loadFid:
+                            self.AddFidByName(name)
+
                 for book in bookList:
-                    self.AddFavorites(book)
+                    self.AddFavoritesAndFidName(book, fidName)
             else:
                 QtOwner().CloseLoading()
                 QtOwner().CheckShowMsg(raw)
         except Exception as es:
             Log.Error(es)
         finally:
-            if self.loadPage >= self.maxPage:
+            self.ImportNextFidFavorite()
+
+    def ImportNextFidFavorite(self):
+        if self.loadPage >= self.maxPage:
+            if self.loadFidNum >= len(self.loadFid)-1:
                 QtOwner().CloseLoading()
                 QtOwner().ShowMsg(Str.GetStr(Str.Ok))
                 self.RefreshData()
+                return
             else:
                 sort = "mr"
-                fid = ""
-                self.loadPage += 1
-                self.AddHttpTask(req.GetFavoritesReq2(self.loadPage, sort, fid), self.ImportFavoriteBack, self.loadPage)
+                self.loadPage = 1
+                self.maxPage = 1
+                self.loadFidNum += 1
+                name, fid = self.loadFid[self.loadFidNum]
+                self.AddHttpTask(req.GetFavoritesReq2(self.loadPage, sort, fid), self.ImportFavoriteBack, (self.loadPage, name))
+                return
+        else:
+            sort = "mr"
+            self.loadPage += 1
+            name, fid = self.loadFid[self.loadFidNum]
+            self.AddHttpTask(req.GetFavoritesReq2(self.loadPage, sort, fid), self.ImportFavoriteBack, (self.loadPage, name))
 
     def SearchTextChange(self, text):
         self.searchText = text
@@ -107,7 +149,9 @@ class LocalFavoriteView(QtWidgets.QWidget, Ui_LocalFavorite, QtTaskBase):
     def LoadBookList(self):
         sortId = self.sortIdCombox.currentIndex()
         sortKey = self.sortKeyCombox.currentIndex()
-        bookList = self.db.SearchFavorite(self.bookList.page, sortKey, sortId, self.searchText)
+        name = self.folderBox.currentText()
+        fid = self.GetFidByName(name)
+        bookList = self.db.SearchFavorite(self.bookList.page, sortKey, sortId, fid, self.searchText)
         self.SearchLocalBack(bookList.values())
 
     def SearchTextChangeBack(self, bookList):
@@ -147,9 +191,54 @@ class LocalFavoriteView(QtWidgets.QWidget, Ui_LocalFavorite, QtTaskBase):
         self.db.AddBookToDB(bookInfo)
         self.allBookIds.add(str(bookInfo.baseInfo.id))
 
+    def AddFavoritesAndFidName(self, bookInfo, fidName):
+        self.db.AddBookToDB(bookInfo)
+        self.allBookIds.add(str(bookInfo.baseInfo.id))
+        fid = self.GetFidByName(fidName)
+        self.db.AddBookFavoriteFid(str(bookInfo.baseInfo.id), fid)
+        self.fidBookList = self.db.LoadBookFold()
+
     def DelFavorites(self, bookId):
         self.db.DelFavoriteDB(bookId)
         self.allBookIds.discard(str(bookId))
+        self.fidBookList = self.db.LoadBookFold()
+
+    def AddFidByName(self, name):
+        if not name:
+            return False
+        fid = 0
+        for k, v in self.folderDict.items():
+            if v == name:
+                fid = k
+                break
+        if (fid > 0):
+            return False
+        isSuc = self.db.AddFavoriteFid(name)
+        self.folderDict = self.db.LoadFold()
+        self.fidBookList = self.db.LoadBookFold()
+        self.InitFolder()
+        return isSuc
+
+    def DelFidByName(self, name):
+        fid = 0
+        for k, v in self.folderDict.items():
+            if v == name:
+                fid = k
+                break
+        if not fid:
+            return False
+        isSuc = self.db.DelFavoriteFid(fid)
+        self.folderDict = self.db.LoadFold()
+        self.fidBookList = self.db.LoadBookFold()
+        self.InitFolder()
+        return isSuc
+
+    def UpdateBookFid(self, bookId, fids):
+        isSuc = self.db.UpdateBookFavoriteFid(bookId, fids)
+        self.folderDict = self.db.LoadFold()
+        self.fidBookList = self.db.LoadBookFold()
+
+        return isSuc
 
     def LoadNextPage(self):
         self.bookList.page += 1
@@ -172,4 +261,31 @@ class LocalFavoriteView(QtWidgets.QWidget, Ui_LocalFavorite, QtTaskBase):
         for info in bookList:
             self.bookList.AddBookItemByBook(info, isShowHistory=True)
         self.UpdatePageNum()
+        return
+
+    def InitFolder(self):
+        self.ClearFolder()
+        items = list(self.folderDict.values())
+        self.folderBox.addItems(items)
+        return
+
+    def ClearFolder(self):
+        self.folderBox.currentIndexChanged.disconnect()
+        self.folderBox.clear()
+        self.folderBox.addItem(Str.GetStr(Str.All))
+        self.folderBox.setCurrentIndex(0)
+        self.folderBox.currentIndexChanged.connect(self.RefreshDataFocus)
+        return
+
+
+    def MoveCallBack(self, bookId):
+        QtOwner().OpenLocalFavoriteFold(bookId, self.MoveOkBack, self.FoldChangeBack)
+        return
+
+    def MoveOkBack(self):
+        self.RefreshDataFocus()
+        return
+
+    def FoldChangeBack(self):
+        self.RefreshDataFocus()
         return

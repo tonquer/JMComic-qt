@@ -21,27 +21,30 @@ class GlobalItem(object):
 
 
 class GlobalConfig:
-    Ver = GlobalItem(65)
-    VerTime = GlobalItem("2026-1-7")
+    Ver = GlobalItem(70)
+    VerTime = GlobalItem("2026-6-20")
 
     # web url
     WebDnsList = GlobalItem([])
+    JmFbUrl = GlobalItem("https://jmcomicog.net")
+
     Url = GlobalItem("https://18-comicblade.art")
-    UrlList = GlobalItem(["https://18comic-hok.vip",
+    UrlList = GlobalItem(["https://comic18j-yodo.net",
                           "https://18comic.vip",
                           "https://jmcomic.me",
-                          "https://18comic-16promax.club",
                           "https://18comic.tw",
-                          "https://18comic-doa.xyz"])
+                          "https://jmcomic-zzz.org",
+                          "https://comic18j-robo.net",
+                          "https://comic18j-lodo.net"])
 
     # mobile url
 
     # Url2 = GlobalItem("https://www.jmapinode.biz")
     # PicUrl2 = GlobalItem("https://cdn-msp.jmapinodeudzn.net")
-    Url2List = GlobalItem(["https://www.cdnhth.club",
+    Url2List = GlobalItem(["https://www.cdnhjk.net",
                            "https://www.cdngwc.cc",
-                           "https://www.cdnhth.net",
-                           "https://www.cdnbea.net"])
+                           "https://www.cdngwc.net",
+                           "https://www.cdngwc.club"])
 
     ProxyApiDomain2 = GlobalItem("jm2-api.jpacg.cc")
     ProxyImgDomain2 = GlobalItem("jm2-img.jpacg.cc")
@@ -63,16 +66,16 @@ class GlobalConfig:
         "cdn-msp3.jmapiproxy3.cc",
     ])
 
-    ApiAutoUrl = GlobalItem([
-        "www.cdn-mspjmapiproxy.xyz",
-    ])
+    # ApiAutoUrl = GlobalItem([
+    #     "www.cdn-mspjmapiproxy.xyz",
+    # ])
 
-    CdnApiUrl = GlobalItem("https://www.cdnhth.club")
+    CdnApiUrl = GlobalItem("https://www.cdnhjk.net")
     CdnImgUrl = GlobalItem("https://cdn-msp.jmapiproxy3.cc")
-    ProxyApiUrl = GlobalItem("https://www.cdnhth.club")
+    ProxyApiUrl = GlobalItem("https://www.cdnhjk.net")
     ProxyImgUrl = GlobalItem("https://cdn-msp.jmapiproxy3.cc")
-    HeaderVer = GlobalItem("2.0.14")
-
+    HeaderVer = GlobalItem("2.0.26")
+    JMServerUrl = GlobalItem("https://rup4a04-c01.tos-ap-southeast-1.bytepluses.com/newsvr-2025.txt")
     def __init__(self):
         pass
 

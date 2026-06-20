@@ -24,12 +24,13 @@ class Ui_NasAdd(object):
     def setupUi(self, NasAdd):
         if not NasAdd.objectName():
             NasAdd.setObjectName(u"NasAdd")
-        NasAdd.resize(897, 515)
+        NasAdd.resize(897, 519)
         self.verticalLayout = QVBoxLayout(NasAdd)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.gridLayout_2 = QGridLayout()
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.comboBox = QComboBox(NasAdd)
+        self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
@@ -268,6 +269,7 @@ class Ui_NasAdd(object):
         self.comboBox.setItemText(0, QCoreApplication.translate("NasAdd", u"WebDav", None))
         self.comboBox.setItemText(1, QCoreApplication.translate("NasAdd", u"SMB", None))
         self.comboBox.setItemText(2, QCoreApplication.translate("NasAdd", u"\u672c\u5730\u8def\u5f84", None))
+        self.comboBox.setItemText(3, QCoreApplication.translate("NasAdd", u"SMBv3", None))
 
         self.pathEdit.setText(QCoreApplication.translate("NasAdd", u"/\u6d4b\u8bd5/\u957f\u7bc7/", None))
         self.pathEdit.setPlaceholderText("")

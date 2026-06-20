@@ -35,12 +35,12 @@ class LocalClient(UpLoadBase):
         try:
             isDir = os.path.isdir(self.path)
             if isDir:
-                return Status.Ok
+                return Status.Ok, ""
             else:
-                return Str.DirNotFound
+                return Str.DirNotFound, ""
         except Exception as es:
             Log.Error(es)
-            return Str.Error
+            return Str.Error, ""
 
     def DisConnect(self):
         try:

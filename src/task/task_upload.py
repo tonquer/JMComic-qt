@@ -105,14 +105,15 @@ class TaskUpload(TaskBase, QtTaskBase):
         assert isinstance(task, QtUpTask)
         Log.Info("task_id:{}, type_id:{}".format(taskId, task.type))
         type = task.type
+        msg = ""
         if type == task.Check:
-            st = self.CheckLink(task)
+            st, msg = self.CheckLink(task)
         elif type == task.MakeZip:
             st = self.MakeZip(task)
         elif type == task.Upload:
             st = self.UpData(task)
 
-        self.taskObj.uploadBack.emit(taskId, st)
+        self.taskObj.uploadBack.emit(taskId, st, msg)
 
     def CheckLink(self, task):
         from qt_owner import QtOwner
@@ -122,10 +123,13 @@ class TaskUpload(TaskBase, QtTaskBase):
         from task.upload_webdav import WebdavClient
         from task.upload_smb import SmbClient
         from task.upload_local import LocalClient
+        from task.upload_smbv3 import SmbV3Client
         if task.nasInfo.type == 0:
             client = WebdavClient()
         elif task.nasInfo.type == 2:
             client = LocalClient()
+        elif task.nasInfo.type == 3:
+            client = SmbV3Client()
         else:
             client = SmbClient()
 
@@ -145,16 +149,19 @@ class TaskUpload(TaskBase, QtTaskBase):
         from task.upload_webdav import WebdavClient
         from task.upload_smb import SmbClient
         from task.upload_local import LocalClient
+        from task.upload_smbv3 import SmbV3Client
         if task.nasInfo.type == 0:
             client = WebdavClient()
         elif task.nasInfo.type == 2:
             client = LocalClient()
+        elif task.nasInfo.type == 3:
+            client = SmbV3Client()
         else:
             client = SmbClient()
         client.Init(nasInfo)
         return client.Upload(task.desFile, task.upDirPath)
 
-    def HandlerTask(self, taskId, st):
+    def HandlerTask(self, taskId, st, msg):
         try:
             info = self.tasks.get(taskId)
             if not info:
@@ -166,9 +173,9 @@ class TaskUpload(TaskBase, QtTaskBase):
                 taskIds.discard(info.taskId)
             if info.callBack:
                 if info.backParam is None:
-                    info.callBack(st)
+                    info.callBack(st, msg)
                 else:
-                    info.callBack(st, info.backParam)
+                    info.callBack(st, info.backParam, msg)
                 del info.callBack
             del self.tasks[taskId]
         except Exception as es:

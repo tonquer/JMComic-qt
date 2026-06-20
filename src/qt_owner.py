@@ -84,7 +84,7 @@ class QtOwner(Singleton):
     def OpenProxy(self):
         from view.user.login_view import LoginView
         loginView = LoginView(QtOwner().owner, False)
-        loginView.tabWidget.setCurrentIndex(3)
+        loginView.tabWidget.setCurrentIndex(0)
         loginView.tabWidget.removeTab(0)
         loginView.tabWidget.removeTab(0)
         loginView.tabWidget.removeTab(0)
@@ -176,6 +176,15 @@ class QtOwner(Singleton):
     def OpenFavoriteFold(self, bookId="", fid="", moveBack=None, foldChangeBack=None):
         from view.user.favorite_fold_view import FavoriteFoldView
         w = FavoriteFoldView(QtOwner().owner, bookId, fid)
+        w.show()
+        if moveBack:
+            w.MoveOkBack.connect(moveBack)
+        if foldChangeBack:
+            w.FoldChange.connect(foldChangeBack)
+
+    def OpenLocalFavoriteFold(self, bookId="", moveBack=None, foldChangeBack=None):
+        from view.user.local_favorite_fold_view import LocalFavoriteFoldView
+        w = LocalFavoriteFoldView(QtOwner().owner, bookId)
         w.show()
         if moveBack:
             w.MoveOkBack.connect(moveBack)

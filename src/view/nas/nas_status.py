@@ -130,7 +130,7 @@ class NasStatus(QtTaskBase):
             return
         self.StartItemDownload(task)
 
-    def UploadStCallBack(self, st, taskId):
+    def UploadStCallBack(self, st, taskId, msg):
         task = self.downloadDict.get(taskId)
         if not task:
             return

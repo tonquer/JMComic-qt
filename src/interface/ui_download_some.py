@@ -16,8 +16,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QHBoxLayout, QHeaderView, QLabel,
-    QPushButton, QSizePolicy, QSpacerItem, QTableWidget,
-    QTableWidgetItem, QVBoxLayout, QWidget)
+    QPushButton, QSizePolicy, QSpacerItem, QTableWidgetItem,
+    QVBoxLayout, QWidget)
+
+from component.tab.base_table_widget import BaseTableWidget
 
 class Ui_DownloadSome(object):
     def setupUi(self, DownloadSome):
@@ -70,7 +72,7 @@ class Ui_DownloadSome(object):
 
         self.verticalLayout.addLayout(self.horizontalLayout)
 
-        self.tableWidget = QTableWidget(DownloadSome)
+        self.tableWidget = BaseTableWidget(DownloadSome)
         if (self.tableWidget.columnCount() < 4):
             self.tableWidget.setColumnCount(4)
         __qtablewidgetitem = QTableWidgetItem()
@@ -92,7 +94,7 @@ class Ui_DownloadSome(object):
     # setupUi
 
     def retranslateUi(self, DownloadSome):
-        DownloadSome.setWindowTitle(QCoreApplication.translate("DownloadSome", u"Form", None))
+        DownloadSome.setWindowTitle(QCoreApplication.translate("DownloadSome", u"\u6279\u91cf\u4e0b\u8f7d", None))
         self.totalLabel.setText("")
         self.inputButton.setText(QCoreApplication.translate("DownloadSome", u"\u6279\u91cf\u8f93\u5165JM\u53f7", None))
         self.outputButton.setText(QCoreApplication.translate("DownloadSome", u"\u6279\u91cf\u5bfc\u51faJM\u53f7", None))

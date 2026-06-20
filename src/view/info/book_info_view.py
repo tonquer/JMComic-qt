@@ -378,18 +378,6 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         QtOwner().ShowLoading()
         self.AddHttpTask(req.AddAndDelFavoritesReq2(self.bookId), self.AddFavoriteBack)
 
-    def AddLocalFavorite(self):
-        if QtOwner().localFavoriteView.IsHave(self.bookId):
-            QtOwner().localFavoriteView.DelFavorites(self.bookId)
-            QtOwner().ShowMsg(Str.GetStr(Str.DelFavoriteSuc))
-            self.UpdateFavoriteIcon()
-        else:
-            bookInfo = BookMgr().GetBook(self.bookId)
-            if bookInfo:
-                QtOwner().localFavoriteView.AddFavorites(bookInfo)
-                QtOwner().ShowMsg(Str.GetStr(Str.AddFavoriteSuc))
-                self.UpdateFavoriteIcon()
-
     def ClearCache(self):
 
         path = os.path.join(os.path.join(Setting.SavePath.value, config.CachePathDir),
@@ -428,6 +416,19 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             if self.isFavorite:
                 QtOwner().OpenFavoriteFold(self.bookId)
         QtOwner().CheckShowMsg(raw)
+
+    def AddLocalFavorite(self):
+        if QtOwner().localFavoriteView.IsHave(self.bookId):
+            QtOwner().localFavoriteView.DelFavorites(self.bookId)
+            QtOwner().ShowMsg(Str.GetStr(Str.DelFavoriteSuc))
+            self.UpdateFavoriteIcon()
+        else:
+            bookInfo = BookMgr().GetBook(self.bookId)
+            if bookInfo:
+                QtOwner().localFavoriteView.AddFavorites(bookInfo)
+                QtOwner().ShowMsg(Str.GetStr(Str.AddFavoriteSuc))
+                self.UpdateFavoriteIcon()
+                QtOwner().OpenLocalFavoriteFold(self.bookId)
 
     def OpenComment(self):
         QtOwner().OpenComment(self.bookId)

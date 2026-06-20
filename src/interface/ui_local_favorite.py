@@ -26,7 +26,7 @@ class Ui_LocalFavorite(object):
     def setupUi(self, LocalFavorite):
         if not LocalFavorite.objectName():
             LocalFavorite.setObjectName(u"LocalFavorite")
-        LocalFavorite.resize(628, 334)
+        LocalFavorite.resize(756, 404)
         self.gridLayout_2 = QGridLayout(LocalFavorite)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.gridLayout_3 = QGridLayout()
@@ -146,6 +146,12 @@ class Ui_LocalFavorite(object):
         self.label.setObjectName(u"label")
 
         self.horizontalLayout_2.addWidget(self.label)
+
+        self.folderBox = QComboBox(self.widget)
+        self.folderBox.setObjectName(u"folderBox")
+        self.folderBox.setMinimumSize(QSize(120, 0))
+
+        self.horizontalLayout_2.addWidget(self.folderBox)
 
         self.lineEdit = QLineEdit(self.widget)
         self.lineEdit.setObjectName(u"lineEdit")

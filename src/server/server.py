@@ -232,6 +232,9 @@ class Server(Singleton):
         if not request.isUseHttps:
             request.url = request.url.replace("https://", "http://")
 
+        ## 图片域名
+        request.resetUrlHost = GlobalConfig.PicUrlList.value[:]
+
         if request.proxyUrl:
             host = ToolUtil.GetUrlHost(request.url)
             request.url = request.url.replace(host, request.proxyUrl+"/"+host)

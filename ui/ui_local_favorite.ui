@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>628</width>
-    <height>334</height>
+    <width>756</width>
+    <height>404</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -189,6 +189,16 @@
        <widget class="QLabel" name="label">
         <property name="text">
          <string>搜索：</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="folderBox">
+        <property name="minimumSize">
+         <size>
+          <width>120</width>
+          <height>0</height>
+         </size>
         </property>
        </widget>
       </item>

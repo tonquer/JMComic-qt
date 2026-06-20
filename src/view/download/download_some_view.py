@@ -330,3 +330,10 @@ class DownloadSomeView(QWidget, Ui_DownloadSome, QtTaskBase):
                 QtOwner().nasView.AddNasUploadCache(nasId, v.bookId)
         QtOwner().ShowMsg(Str.GetStr(Str.CvAddUpload))
         pass
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.ForwardButton:
+            event.ignore()
+        elif event.button() == Qt.BackButton:
+            event.ignore()
+        return super(self.__class__, self).mousePressEvent(event)

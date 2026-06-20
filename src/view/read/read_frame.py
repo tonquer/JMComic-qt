@@ -136,7 +136,8 @@ class ReadFrame(QFrame):
     def UpdateProcessBar(self, info):
         if info:
             self.downloadSize = info.downloadSize
-            self.downloadMaxSize = max(1, info.size)
+            # self.downloadMaxSize = max(1, info.size)
+            self.downloadMaxSize = 1024*200
             value = int((self.downloadSize / self.downloadMaxSize) * 100)
             # print(value)
             self.process.setValue(value)
@@ -148,7 +149,7 @@ class ReadFrame(QFrame):
     def UpdateProcessBar2(self, info):
         if info:
             self.downloadSize = info.downloadSize
-            self.downloadMaxSize = max(1, info.size)
+            self.downloadMaxSize = 1024*200
             value = int((self.downloadSize / self.downloadMaxSize) * 100)
             # print(value)
             self.process2.setValue(value)

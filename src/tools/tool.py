@@ -286,6 +286,22 @@ class ToolUtil(object):
         return None
 
     @staticmethod
+    def SavePicture(data, path, format):
+        if path and not os.path.isdir(os.path.dirname(path)):
+            os.makedirs(os.path.dirname(path))
+
+        formatList = [".jpg", ".png", ".gif", ".webp", ".bmp", ".apng", "jpeg"]
+        if path and data:
+            if path[-4:] in formatList:
+                pass
+            elif path[-5:] in formatList:
+                pass
+            else:
+                path = path + "." + format
+            with open(path, "wb+") as f:
+                f.write(data)
+
+    @staticmethod
     def IsHaveFile(filePath):
         try:
             if os.path.isfile(filePath):
@@ -1069,6 +1085,8 @@ class ToolUtil(object):
 
         writer = etree.SubElement(root, "Writer")  # 作者
         writer.text = bookInfo.baseInfo.author
+        if bookInfo.baseInfo.authorList:
+            writer.text = bookInfo.baseInfo.authorList[0]
 
         desc = etree.SubElement(root, "Summary")  # 摘要
         desc.text = bookInfo.pageInfo.des

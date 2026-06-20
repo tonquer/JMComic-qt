@@ -63,7 +63,7 @@ class NasAddView(BaseMaskDialog, Ui_NasAdd, QtTaskBase):
             self.addressEdit.setText("http://192.168.31.28")
             self.portEdit.setText("5005")
 
-        elif self.comboBox.currentIndex() == 1:
+        elif self.comboBox.currentIndex() == 1 or self.comboBox.currentIndex() == 3:
             self.addressEdit.setText("192.168.31.28")
             self.portEdit.setText("0")
         else:
@@ -159,7 +159,10 @@ class NasAddView(BaseMaskDialog, Ui_NasAdd, QtTaskBase):
         self.AddUploadTask(nasInfo, QtUpTask.Check, "", "", "","","", backParam=self.nextId, callBack=self.TestLinkCallBack)
         return
 
-    def TestLinkCallBack(self, st, back):
+    def TestLinkCallBack(self, st, back, msg):
         self.loadingDialog.close()
-        QtOwner().ShowError(Str.GetStr(st))
+        if msg:
+            QtOwner().ShowError(msg)
+        else:
+            QtOwner().ShowError(Str.GetStr(st))
         return

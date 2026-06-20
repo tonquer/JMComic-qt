@@ -62,7 +62,21 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         self.lastResult = {}
         self.LoadHistory()
         self.host_img_domain.SetWordData(GlobalConfig.ImgAutoUrl.value[:])
-        self.host_api_domain.SetWordData(GlobalConfig.ApiAutoUrl.value[:])
+        self.allApiUrl = []
+
+    def InitJmServer(self):
+        self.AddHttpTask(req.GetJmServerReq(), self.InitJmServerBack)
+        return
+
+    def InitJmServerBack(self, raw):
+        if raw.get("st") == Str.Ok:
+            for server in raw.get('data', {}).get("jm3_Server"):
+                if not server:
+                    continue
+                url = server[0]
+                self.allApiUrl.append(url)
+            self.host_api_domain.SetWordData(self.allApiUrl)
+        return
 
     def Init(self):
         self.LoadSetting()
@@ -72,6 +86,8 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
             self.checkLabel.setVisible(False)
         else:
             self.checkLabel.setVisible(True)
+        if not self.allApiUrl:
+            self.InitJmServer()
 
     def LoadHistory(self):
         if not Setting.LastProxyResult.value:

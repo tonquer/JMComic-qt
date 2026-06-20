@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>897</width>
-    <height>515</height>
+    <height>519</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -31,6 +31,11 @@
        <item>
         <property name="text">
          <string>本地路径</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>SMBv3</string>
         </property>
        </item>
       </widget>

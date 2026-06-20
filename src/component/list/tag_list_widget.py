@@ -33,8 +33,8 @@ class TagListWidget(BaseListWidget):
             arg__1.ignore()
             return
         if Setting.IsGrabGesture.value:
-            self.horizontalScrollBar().setValue(-arg__1.angleDelta().y())
-            return
+            return QListWidget.wheelEvent(self, arg__1)
+            # return
         self.hScrollBar.ScrollValue(-arg__1.angleDelta().y())
 
     def AddItem(self, name, isSelectable=False):

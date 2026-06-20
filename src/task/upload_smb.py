@@ -54,11 +54,11 @@ class SmbClient(UpLoadBase):
             self.client.listPath(self.service_name, "/")
             self.isLink = True
             if not result:
-                return Str.CvAuthError
+                return Str.CvAuthError, ""
         except Exception as es:
             Log.Error(es)
-            return self.GetExceptionSt(es)
-        return Str.Ok
+            return self.GetExceptionSt(es), ""
+        return Str.Ok, ""
 
     def DisConnect(self):
         try:

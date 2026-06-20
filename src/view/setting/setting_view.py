@@ -300,7 +300,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
 
     def OpenProxy(self):
         loginView = LoginView(QtOwner().owner, False)
-        loginView.tabWidget.setCurrentIndex(3)
+        loginView.tabWidget.setCurrentIndex(0)
         loginView.tabWidget.removeTab(0)
         loginView.tabWidget.removeTab(0)
         loginView.tabWidget.removeTab(0)
