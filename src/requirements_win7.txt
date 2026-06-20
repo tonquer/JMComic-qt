@@ -13,4 +13,5 @@ pysmb
 httpx
 httpx[http2]
 httpx[socks]
+cryptography==38.0.4
 smbprotocol
