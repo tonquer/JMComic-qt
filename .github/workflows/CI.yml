@@ -59,7 +59,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pyinstaller==4.6
+        pip install pyinstaller
         pip install sr-vulkan
         pip install sr-vulkan-model-waifu2x
         pip install sr-vulkan-model-realcugan
