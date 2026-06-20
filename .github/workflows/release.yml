@@ -65,7 +65,7 @@ jobs:
         pip install delocate wheel_filename==1.4.2
         python build_universal2.py pillow
         python build_universal2.py cffi 1.17.1
-        python build_universal2.py curl_cffi 0.14.0
+        python build_universal2.py curl_cffi 0.13.0
         python build_universal2.py pyyaml 6.0.2
         pip install *.whl
         cd ..
@@ -134,7 +134,7 @@ jobs:
         pip install delocate wheel_filename
         python build_universal2.py pillow
         python build_universal2.py cffi 1.17.1
-        python build_universal2.py curl_cffi 0.14.0
+        python build_universal2.py curl_cffi 0.13.0
         python build_universal2.py pyyaml 6.0.2
         pip install *.whl
         cd ..
