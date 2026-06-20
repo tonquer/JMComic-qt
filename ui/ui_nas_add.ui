@@ -435,7 +435,7 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="compressGroup"/>
   <buttongroup name="buttonGroup"/>
+  <buttongroup name="compressGroup"/>
  </buttongroups>
 </ui>

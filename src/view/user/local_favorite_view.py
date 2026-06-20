@@ -1,6 +1,7 @@
 import json
 
 from PySide6 import QtWidgets
+from PySide6.QtWidgets import QMessageBox
 
 from config.setting import Setting
 from interface.ui_local_favorite import Ui_LocalFavorite
@@ -83,6 +84,11 @@ class LocalFavoriteView(QtWidgets.QWidget, Ui_LocalFavorite, QtTaskBase):
         if not config.LoginUserName:
             QtOwner().ShowError(Str.GetStr(Str.NotLogin))
             return
+
+        isShow = QMessageBox.information(self, Str.GetStr(Str.ImportFavorite), Str.GetStr(Str.ImportFavoriteNotice), QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
+        if isShow != QtWidgets.QMessageBox.Yes:
+            return
+
         QtOwner().ShowLoading()
         sort = "mr"
         fid = ""

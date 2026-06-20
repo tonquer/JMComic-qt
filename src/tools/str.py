@@ -289,6 +289,8 @@ class Str:
     ExportedJmIds = 180     # 导出的JM号
     Close = 181             # 关闭
     Switch = 182            # 切换
+    ImportFavorite = 183                  # 导入收藏
+    ImportFavoriteNotice = 184            # 是否从账号收藏导入
 
 
     @classmethod
@@ -565,6 +567,8 @@ class Str:
         cls.strDict[cls.ExportedJmIds] = QCoreApplication.translate("cls.obj", "导出的JM号", None)
         cls.strDict[cls.Close] = QCoreApplication.translate("cls.obj", "关闭", None)
         cls.strDict[cls.Switch] = QCoreApplication.translate("cls.obj", "切换", None)
+        cls.strDict[cls.ImportFavorite] = QCoreApplication.translate("cls.obj", "导入收藏", None)
+        cls.strDict[cls.ImportFavoriteNotice] = QCoreApplication.translate("cls.obj", "是否从账号收藏导入", None)
 
     @classmethod
     def GetStr(cls, enumType, defualt=""):

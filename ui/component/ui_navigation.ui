@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>430</width>
-    <height>516</height>
+    <width>440</width>
+    <height>694</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -199,8 +199,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>393</width>
-        <height>746</height>
+        <width>403</width>
+        <height>792</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -268,47 +268,6 @@
         </widget>
        </item>
        <item>
-        <widget class="QToolButton" name="localCollectButton">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>150</width>
-           <height>40</height>
-          </size>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="text">
-          <string>本地收藏</string>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>:/images/menu/Contact.png</normaloff>:/images/menu/Contact.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextBesideIcon</enum>
-         </property>
-         <attribute name="buttonGroup">
-          <string notr="true">buttonGroup</string>
-         </attribute>
-        </widget>
-       </item>
-       <item>
         <widget class="QToolButton" name="myCommentButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -350,7 +309,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QToolButton" name="historyButton">
+        <widget class="QToolButton" name="remoteHistoryButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -367,7 +326,7 @@
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="text">
-          <string>本地记录</string>
+          <string>观看记录</string>
          </property>
          <property name="icon">
           <iconset>
@@ -391,7 +350,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QToolButton" name="remoteHistoryButton">
+        <widget class="QToolButton" name="localCollectButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -408,7 +367,48 @@
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="text">
-          <string>观看记录</string>
+          <string>本地收藏</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>:/images/menu/Contact.png</normaloff>:/images/menu/Contact.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>32</width>
+           <height>32</height>
+          </size>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextBesideIcon</enum>
+         </property>
+         <attribute name="buttonGroup">
+          <string notr="true">buttonGroup</string>
+         </attribute>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="historyButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>150</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="text">
+          <string>本地记录</string>
          </property>
          <property name="icon">
           <iconset>

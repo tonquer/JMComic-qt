@@ -26,7 +26,7 @@ class Ui_Navigation(object):
     def setupUi(self, Navigation):
         if not Navigation.objectName():
             Navigation.setObjectName(u"Navigation")
-        Navigation.resize(430, 516)
+        Navigation.resize(440, 694)
         self.verticalLayout = QVBoxLayout(Navigation)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.topWidget = QWidget(Navigation)
@@ -158,7 +158,7 @@ class Ui_Navigation(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 393, 746))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 403, 792))
         self.verticalLayout_3 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_3.setSpacing(6)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
@@ -189,20 +189,6 @@ class Ui_Navigation(object):
 
         self.verticalLayout_3.addWidget(self.collectButton)
 
-        self.localCollectButton = QToolButton(self.scrollAreaWidgetContents)
-        self.buttonGroup.addButton(self.localCollectButton)
-        self.localCollectButton.setObjectName(u"localCollectButton")
-        sizePolicy1.setHeightForWidth(self.localCollectButton.sizePolicy().hasHeightForWidth())
-        self.localCollectButton.setSizePolicy(sizePolicy1)
-        self.localCollectButton.setMinimumSize(QSize(150, 40))
-        self.localCollectButton.setFocusPolicy(Qt.NoFocus)
-        self.localCollectButton.setIcon(icon)
-        self.localCollectButton.setIconSize(QSize(32, 32))
-        self.localCollectButton.setCheckable(True)
-        self.localCollectButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-
-        self.verticalLayout_3.addWidget(self.localCollectButton)
-
         self.myCommentButton = QToolButton(self.scrollAreaWidgetContents)
         self.buttonGroup.addButton(self.myCommentButton)
         self.myCommentButton.setObjectName(u"myCommentButton")
@@ -217,20 +203,6 @@ class Ui_Navigation(object):
 
         self.verticalLayout_3.addWidget(self.myCommentButton)
 
-        self.historyButton = QToolButton(self.scrollAreaWidgetContents)
-        self.buttonGroup.addButton(self.historyButton)
-        self.historyButton.setObjectName(u"historyButton")
-        sizePolicy1.setHeightForWidth(self.historyButton.sizePolicy().hasHeightForWidth())
-        self.historyButton.setSizePolicy(sizePolicy1)
-        self.historyButton.setMinimumSize(QSize(150, 40))
-        self.historyButton.setFocusPolicy(Qt.NoFocus)
-        self.historyButton.setIcon(icon)
-        self.historyButton.setIconSize(QSize(32, 32))
-        self.historyButton.setCheckable(True)
-        self.historyButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-
-        self.verticalLayout_3.addWidget(self.historyButton)
-
         self.remoteHistoryButton = QToolButton(self.scrollAreaWidgetContents)
         self.buttonGroup.addButton(self.remoteHistoryButton)
         self.remoteHistoryButton.setObjectName(u"remoteHistoryButton")
@@ -244,6 +216,34 @@ class Ui_Navigation(object):
         self.remoteHistoryButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
 
         self.verticalLayout_3.addWidget(self.remoteHistoryButton)
+
+        self.localCollectButton = QToolButton(self.scrollAreaWidgetContents)
+        self.buttonGroup.addButton(self.localCollectButton)
+        self.localCollectButton.setObjectName(u"localCollectButton")
+        sizePolicy1.setHeightForWidth(self.localCollectButton.sizePolicy().hasHeightForWidth())
+        self.localCollectButton.setSizePolicy(sizePolicy1)
+        self.localCollectButton.setMinimumSize(QSize(150, 40))
+        self.localCollectButton.setFocusPolicy(Qt.NoFocus)
+        self.localCollectButton.setIcon(icon)
+        self.localCollectButton.setIconSize(QSize(32, 32))
+        self.localCollectButton.setCheckable(True)
+        self.localCollectButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+
+        self.verticalLayout_3.addWidget(self.localCollectButton)
+
+        self.historyButton = QToolButton(self.scrollAreaWidgetContents)
+        self.buttonGroup.addButton(self.historyButton)
+        self.historyButton.setObjectName(u"historyButton")
+        sizePolicy1.setHeightForWidth(self.historyButton.sizePolicy().hasHeightForWidth())
+        self.historyButton.setSizePolicy(sizePolicy1)
+        self.historyButton.setMinimumSize(QSize(150, 40))
+        self.historyButton.setFocusPolicy(Qt.NoFocus)
+        self.historyButton.setIcon(icon)
+        self.historyButton.setIconSize(QSize(32, 32))
+        self.historyButton.setCheckable(True)
+        self.historyButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+
+        self.verticalLayout_3.addWidget(self.historyButton)
 
         self.line = QFrame(self.scrollAreaWidgetContents)
         self.line.setObjectName(u"line")
@@ -489,10 +489,10 @@ class Ui_Navigation(object):
         self.proxyImgName.setText("")
         self.label.setText(QCoreApplication.translate("Navigation", u"\u7528\u6237", None))
         self.collectButton.setText(QCoreApplication.translate("Navigation", u"\u6211\u7684\u6536\u85cf", None))
-        self.localCollectButton.setText(QCoreApplication.translate("Navigation", u"\u672c\u5730\u6536\u85cf", None))
         self.myCommentButton.setText(QCoreApplication.translate("Navigation", u"\u6211\u7684\u8bc4\u8bba", None))
-        self.historyButton.setText(QCoreApplication.translate("Navigation", u"\u672c\u5730\u8bb0\u5f55", None))
         self.remoteHistoryButton.setText(QCoreApplication.translate("Navigation", u"\u89c2\u770b\u8bb0\u5f55", None))
+        self.localCollectButton.setText(QCoreApplication.translate("Navigation", u"\u672c\u5730\u6536\u85cf", None))
+        self.historyButton.setText(QCoreApplication.translate("Navigation", u"\u672c\u5730\u8bb0\u5f55", None))
         self.label_2.setText(QCoreApplication.translate("Navigation", u"\u5bfc\u822a", None))
         self.indexButton.setText(QCoreApplication.translate("Navigation", u"\u9996\u9875", None))
         self.searchButton.setText(QCoreApplication.translate("Navigation", u"\u641c\u7d22", None))

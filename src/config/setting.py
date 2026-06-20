@@ -156,7 +156,7 @@ class Setting:
     # 看图设置
     LookReadMode = SettingValue("ReadSetting", 1, False)
     LookReadFull = SettingValue("ReadSetting", 0, False)
-    ScrollSpeed = SettingValue("ReadSetting", 200, False)
+    ScrollSpeed = SettingValue("ReadSetting", 20, False)
     TurnSpeed = SettingValue("ReadSetting", 5000, False)
     ScrollInitSpeed = SettingValue("ReadSetting", 400, False)
     ScrollTime = SettingValue("ReadSetting", 100, False)
