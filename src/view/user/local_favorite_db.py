@@ -14,7 +14,7 @@ from view.download.download_item import DownloadItem, DownloadEpsItem
 class LocalFavoriteDb(object):
     def __init__(self):
         self.db = QSqlDatabase.addDatabase("QSQLITE", "favorite")
-        path = os.path.join(Setting.GetConfigPath(), "favorite.db")
+        path = os.path.join(Setting.GetStatePath(), "favorite.db")
         self.db.setDatabaseName(path)
         if not self.db.open():
             Log.Warn(self.db.lastError().text())
