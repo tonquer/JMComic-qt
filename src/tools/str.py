@@ -291,6 +291,7 @@ class Str:
     Switch = 182            # 切换
     ImportFavorite = 183                  # 导入收藏
     ImportFavoriteNotice = 184            # 是否从账号收藏导入
+    RightLeftScroll2 = 185         # 右左滚动(滚轮正序)
 
 
     @classmethod
@@ -569,6 +570,7 @@ class Str:
         cls.strDict[cls.Switch] = QCoreApplication.translate("cls.obj", "切换", None)
         cls.strDict[cls.ImportFavorite] = QCoreApplication.translate("cls.obj", "导入收藏", None)
         cls.strDict[cls.ImportFavoriteNotice] = QCoreApplication.translate("cls.obj", "是否从账号收藏导入", None)
+        cls.strDict[cls.RightLeftScroll2] = QCoreApplication.translate("cls.obj", "右左滚动(滚轮正序)", None)
 
     @classmethod
     def GetStr(cls, enumType, defualt=""):

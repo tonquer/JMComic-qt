@@ -132,6 +132,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         AddReadMode(Str.GetStr(Str.RightLeftScroll), 5)
         AddReadMode(Str.GetStr(Str.RightLeftDouble2), 6)
         AddReadMode(Str.GetStr(Str.SameWight), 7)
+        AddReadMode(Str.GetStr(Str.RightLeftScroll2), 8)
 
         menu3 = popMenu.addMenu(Str.GetStr(Str.Scale)+ "(- +)")
 
@@ -517,10 +518,12 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         assert isinstance(p, QtFileData)
         p.cacheImage = data
         p.cacheImageTaskId = 0
+
+        start = max(0, self.curIndex - 1)
         if index == self.curIndex:
             self.ShowImg(index)
-        elif self.stripModel in [ReadMode.UpDown, ReadMode.RightLeftScroll,
-                                 ReadMode.LeftRightScroll] and self.curIndex < index <= self.curIndex + config.PreLoading - 1:
+        elif self.stripModel in [ReadMode.UpDown, ReadMode.RightLeftScroll, ReadMode.RightLeftScroll2,
+                                 ReadMode.LeftRightScroll] and start < index <= self.curIndex + config.PreLook - 1:
             self.ShowImg(index)
         elif ReadMode.isDouble(self.stripModel) and self.curIndex < index <= self.curIndex + 1:
             self.ShowImg(index)
@@ -574,14 +577,17 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
     #     return True
 
     def ShowImgAll(self):
-        if self.stripModel in [ReadMode.UpDown, ReadMode.RightLeftScroll, ReadMode.LeftRightScroll]:
+        if self.stripModel in [ReadMode.UpDown, ReadMode.RightLeftScroll, ReadMode.LeftRightScroll, ReadMode.RightLeftScroll2]:
+            start = max(0, self.curIndex - 1)
             size = config.PreLook
         elif ReadMode.isDouble(self.stripModel):
+            start = self.curIndex
             size = 2
         else:
+            start = self.curIndex
             size = 1
 
-        for index in range(self.curIndex, self.curIndex + size):
+        for index in range(start, self.curIndex + size):
             self.ShowImg(index)
         self.CheckSetProcess()
         self.CheckSetWaifu2xProcess()
@@ -590,6 +596,8 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
     @time_me
     def ShowImg(self, index):
         if index >= self.maxPic:
+            return
+        if index < 0:
             return
         isCurIndex = index == self.curIndex
         p = self.pictureData.get(index)
@@ -796,6 +804,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
             Log.Error("Not found waifu2xId ：{}, index: {}".format(str(waifu2xId), str(index)))
             return
         p.SetWaifuData(data, round(tick, 2))
+        start = max(0, self.curIndex - 1)
         if data:
             model = self.qtTool.stripModel
             self.CheckLoadPicture()
@@ -806,8 +815,8 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
             self.qtTool.SetData(waifuState=p.waifuState)
             self.frame.waifu2xProcess.hide()
             # self.ShowImg()
-        elif self.stripModel in [ReadMode.UpDown, ReadMode.RightLeftScroll,
-                                 ReadMode.LeftRightScroll] and self.curIndex < index <= self.curIndex + config.PreLoading - 1:
+        elif self.stripModel in [ReadMode.UpDown, ReadMode.RightLeftScroll, ReadMode.RightLeftScroll2,
+                                 ReadMode.LeftRightScroll] and start < index <= self.curIndex + config.PreLoading - 1:
             # self.ShowOtherPage()
             self.CheckLoadPicture()
         else:
@@ -822,10 +831,11 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
 
         p.cacheWaifu2xImage = data
         p.cacheWaifu2xImageTaskId = 0
+        start = max(0, self.curIndex - 1)
         if index == self.curIndex:
             self.ShowImg(index)
-        elif self.stripModel in [ReadMode.UpDown, ReadMode.RightLeftScroll,
-                                 ReadMode.LeftRightScroll] and self.curIndex < index <= self.curIndex + config.PreLoading - 1:
+        elif self.stripModel in [ReadMode.UpDown, ReadMode.RightLeftScroll, ReadMode.RightLeftScroll2,
+                                 ReadMode.LeftRightScroll] and start < index <= self.curIndex + config.PreLook - 1:
             self.ShowImg(index)
         elif ReadMode.isDouble(self.stripModel) and self.curIndex < index <= self.curIndex + 1:
             self.ShowImg(index)

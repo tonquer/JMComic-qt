@@ -41,7 +41,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-129</y>
+        <y>0</y>
         <width>301</width>
         <height>897</height>
        </rect>
@@ -481,6 +481,11 @@
                <string>等宽模式</string>
               </property>
              </item>
+             <item>
+              <property name="text">
+               <string>右左滚动(滚轮正序)</string>
+              </property>
+             </item>
             </widget>
            </item>
           </layout>
@@ -548,7 +553,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QSpinBox" name="scrollInitSpeed">
+            <widget class="WheelSpinBox" name="scrollInitSpeed">
              <property name="minimum">
               <number>1</number>
              </property>

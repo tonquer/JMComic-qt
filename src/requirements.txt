@@ -10,7 +10,7 @@ pycryptodomex
 Pysocks
 natsort
 curl_cffi
-jmcomic>=2.4.3
+jmcomic==2.6.20
 webdavclient3
 tqdm
 pysmb

@@ -62,7 +62,7 @@ class SmoothScroll:
         while self.stepsLeftQueue and self.stepsLeftQueue[0][1] == 0:
             self.stepsLeftQueue.popleft()
         # 构造滚轮事件
-        if self.parent().qtTool.stripModel not in [ReadMode.RightLeftScroll, ReadMode.LeftRightScroll]:
+        if self.parent().qtTool.stripModel not in [ReadMode.RightLeftScroll, ReadMode.LeftRightScroll, ReadMode.RightLeftScroll2]:
             # 构造滚轮事件
             e = QWheelEvent(self.qEventParam[0],
                             self.qEventParam[1],

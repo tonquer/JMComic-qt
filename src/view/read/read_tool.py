@@ -574,7 +574,7 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
             # properties.setScrollMetric(QScrollerProperties.HorizontalOvershootPolicy, 2)
             # properties.setScrollMetric(QScrollerProperties.VerticalOvershootPolicy, 2)
             # QScroller.scroller(self.readImg.scrollArea).setScrollerProperties(properties)
-        elif self.stripModel in [ReadMode.RightLeftScroll, ReadMode.LeftRightScroll]:
+        elif self.stripModel in [ReadMode.RightLeftScroll, ReadMode.LeftRightScroll, ReadMode.RightLeftScroll2]:
             pass
             # self.zoomSlider.setValue(100)
             # properties = QScroller.scroller(self.readImg.scrollArea).scrollerProperties()
@@ -630,7 +630,7 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
 
     def StartScrollAndTurn(self):
         self.CloseScrollAndTurn()
-        if self.stripModel in [ReadMode.LeftRightScroll, ReadMode.RightLeftScroll, ReadMode.UpDown]:
+        if self.stripModel in [ReadMode.LeftRightScroll, ReadMode.RightLeftScroll, ReadMode.UpDown, ReadMode.RightLeftScroll2]:
             self.AutoScroll()
         else:
             self.AutoTurn()
@@ -661,19 +661,25 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
         pass
 
     def TimeOut(self):
-        if self.stripModel in [ReadMode.LeftRightScroll, ReadMode.RightLeftScroll, ReadMode.UpDown]:
+        if self.stripModel in [ReadMode.LeftRightScroll, ReadMode.RightLeftScroll, ReadMode.UpDown, ReadMode.RightLeftScroll2]:
             value = int(self.scrollSpeed.value())
             if self.stripModel == ReadMode.UpDown:
                 if self.imgFrame.scrollArea.vScrollBar.value() >= self.imgFrame.scrollArea.vScrollBar.maximum():
                     self.CloseScrollAndTurn()
+                else:
+                    self.scrollArea.GetScrollBar().Finished()
                 self.imgFrame.scrollArea.vScrollBar.scrollValue(value)
             elif self.stripModel == ReadMode.LeftRightScroll:
                 if self.imgFrame.scrollArea.hScrollBar.value() >= self.imgFrame.scrollArea.hScrollBar.maximum():
                     self.CloseScrollAndTurn()
+                else:
+                    self.scrollArea.GetScrollBar().Finished()
                 self.imgFrame.scrollArea.hScrollBar.scrollValue(value)
-            elif self.stripModel == ReadMode.RightLeftScroll:
+            elif self.stripModel in [ReadMode.RightLeftScroll, ReadMode.RightLeftScroll2]:
                 if self.imgFrame.scrollArea.hScrollBar.value() <= self.imgFrame.scrollArea.hScrollBar.minimum():
                     self.CloseScrollAndTurn()
+                else:
+                    self.scrollArea.GetScrollBar().Finished()
                 self.imgFrame.scrollArea.hScrollBar.scrollValue(-value)
         else:
             self._NextPage()

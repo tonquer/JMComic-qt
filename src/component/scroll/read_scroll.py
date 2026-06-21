@@ -35,10 +35,10 @@ class ReadScroll(QScrollBar):
         # self.valueChanged.connect(self.ValueChange)
         self.oldv = 0
         self.changeState = False
-        
-        self.lastSubV = 0
 
-        
+        self.lastSubV = 0
+        self.lastIndex = 0
+
     @property
     def stripModel(self):
         return self._owner().qtTool.stripModel
@@ -64,10 +64,10 @@ class ReadScroll(QScrollBar):
     #     self.oldupdateCurrentValue(value)
 
     def ResetAniValueByAdd(self, oldV, addV):
-        print("reset1 setV, {}".format(oldV+addV))
-        QScrollBar.setValue(self, oldV+addV)
+        print("reset1 setV, {}".format(oldV + addV))
+        QScrollBar.setValue(self, oldV + addV)
         changeV = self.lastAniEndV - self.lastAniStartV
-        laveV  = self.lastAniEndV - oldV
+        laveV = self.lastAniEndV - oldV
         scrollTime = 0
         if changeV != 0:
             scrollTime = min(self.maxScrollTme, int(laveV / changeV * self.lastScrollTime))
@@ -84,7 +84,7 @@ class ReadScroll(QScrollBar):
         changeV = self.lastAniEndV - self.lastAniStartV
         addV2 = self.lastAniEndV - self.value()
         self.lastAniStartV = self.value()
-        if addV <= 0 :
+        if addV <= 0:
             v = max(self.maxRate * addV, addV + addV2)
         else:
             v = min(self.maxRate * addV, addV + addV2)
@@ -128,6 +128,7 @@ class ReadScroll(QScrollBar):
     def StopScroll(self):
         self.ani.stop()
         # print("ani stop 2")
+
     #
     # def Scroll(self, value, time=0):
     #     if self.ani.state() == QAbstractAnimation.State.Running:
@@ -170,8 +171,7 @@ class ReadScroll(QScrollBar):
         self.ani.setEndValue(end)
         self.ani.setDuration(duration)
         self.ani.start()
-        if self.orientation() == Qt.Orientation.Vertical:
-            print("start ani, start:{}, end:{}".format(start, end))
+        print("start ani, start:{}, end:{}".format(start, end))
 
     def setValue(self, value: int):
         print("setV, {}".format(value))
@@ -180,7 +180,7 @@ class ReadScroll(QScrollBar):
 
         # stop running animation
         if self.ani.state() == self.ani.State.Running:
-            self.AniValueByAdd(value-self.value())
+            self.AniValueByAdd(value - self.value())
             # print("ani stop 1")
             # self.StartAni(self.value(), value, self.scrollTime)
         else:
@@ -193,7 +193,7 @@ class ReadScroll(QScrollBar):
         # self.__value += value
         # self.__value = max(self.minimum(), self.__value)
         # self.__value = min(self.maximum(), self.__value)
-        self.setValue(self.value()+value)
+        self.setValue(self.value() + value)
 
     # def scrollTo(self, value: int):
     #     """ scroll to the specified position """
@@ -209,31 +209,46 @@ class ReadScroll(QScrollBar):
     def SaveLastPosition(self):
         if not self.isCurReadModel:
             return
-        
+
         if not ReadMode.isScroll(self.stripModel):
             return
 
         oldV = self.value()
         oldMinV = max(1, self.labelSize.get(self.readImg.curIndex, 0))
-        height =  max(1,self.labelSize.get(self.readImg.curIndex-1, 0))
-        subV = (oldV - oldMinV)/height
+        if self.stripModel in [ReadMode.RightLeftScroll, ReadMode.RightLeftScroll2]:
+            nextV = max(1, self.labelSize.get(self.readImg.curIndex - 1, 0))
+            height = nextV - oldMinV
+        else:
+            nextV = max(1, self.labelSize.get(self.readImg.curIndex + 1, 0))
+            height = nextV - oldMinV
+        subV = (oldV - oldMinV) / height
+
         if self.isCurReadModel:
             print("set lastV, {}, {}".format(oldV, subV))
         self.lastSubV = subV
         self.changeState = True
         return
-    
+
     def SaveLastPositionEnd(self):
         if not self.isCurReadModel:
             return
-        
+
         if not ReadMode.isScroll(self.stripModel):
-            return    
+            return
 
         oldV = self.value()
         oldMinV = max(1, self.labelSize.get(self.readImg.curIndex, 0))
-        height =  max(1,self.labelSize.get(self.readImg.curIndex-1, 0))
-        newV = int(oldMinV + height*self.lastSubV)
+        if self.stripModel in [ReadMode.RightLeftScroll, ReadMode.RightLeftScroll2]:
+            nextV = max(1, self.labelSize.get(self.readImg.curIndex - 1, 0))
+            height = nextV - oldMinV
+            newV = int(oldMinV + height * self.lastSubV)
+        else:
+            nextV = max(1, self.labelSize.get(self.readImg.curIndex + 1, 0))
+            height = nextV - oldMinV
+            newV = int(oldMinV + height * self.lastSubV)
+
+        self.lastIndex = self.readImg.curIndex
+
         if oldV == newV:
             self.__value = newV
             self.lastSubV = 0
@@ -247,7 +262,7 @@ class ReadScroll(QScrollBar):
         self.lastSubV = 0
         self.changeState = False
         return
-    
+
     def OnValueChange(self, value):
         if self.changeState:
             return
@@ -262,7 +277,7 @@ class ReadScroll(QScrollBar):
             return
 
         changeIndex = self.readImg.curIndex
-        if self.scrollArea.initReadMode == ReadMode.RightLeftScroll:
+        if self.scrollArea.initReadMode in [ReadMode.RightLeftScroll, ReadMode.RightLeftScroll2]:
             newValue = value + self.scrollArea.width()
             curPictureSize = self.labelSize.get(self.readImg.curIndex)
             nextPictureSize = self.labelSize.get(self.readImg.curIndex - 1, 0)
@@ -310,14 +325,18 @@ class ReadScroll(QScrollBar):
                     break
                 curPictureSize = self.labelSize.get(changeIndex)
                 nextPictureSize = self.labelSize.get(changeIndex + 1, 0)
-        print("change, {}->{}, {}->{}, curV:{}, value:{}, addV:{}".format(self.readImg.curIndex, changeIndex, curPictureSize, nextPictureSize, curV, value, addValue))
+                print("change, {}->{}, {}->{}, curV:{}, value:{}, addV:{}".format(self.readImg.curIndex, changeIndex,
+                                                                          curPictureSize, nextPictureSize, curV, value,
+                                                                          addValue))
 
         if self.readImg.curIndex == changeIndex:
             return
         elif self.readImg.curIndex > changeIndex:
+            self.lastIndex = self.readImg.curIndex
             self.readImg.curIndex = changeIndex
             self.scrollArea.changeLastPage.emit(self.readImg.curIndex)
         elif self.readImg.curIndex < changeIndex:
+            self.lastIndex = self.readImg.curIndex
             self.readImg.curIndex = changeIndex
             self.scrollArea.changeNextPage.emit(self.readImg.curIndex)
         return
