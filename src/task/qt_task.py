@@ -90,9 +90,7 @@ class QtTaskBase:
 
         if not cachePath and not savePath:
             if Setting.SavePath.value and path:
-                filePath2 = os.path.join(os.path.join(Setting.SavePath.value, config.CachePathDir), path)
-                cachePath = filePath2
-
+                cachePath = os.path.join(Setting.GetCachePath(), path)
         # if not Setting.IsOpenDohPicture.value:
         return TaskDownload().DownloadTask(url, downloadCallBack, completeCallBack, downloadStCallBack, backParam, loadPath,
                                                cachePath, savePath, saveParam, cleanFlag, isReload, resetCnt)
