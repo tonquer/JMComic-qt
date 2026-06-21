@@ -1,6 +1,8 @@
 import os
 import sys
 
+from config import config
+
 
 class SettingValue:
     def __init__(self, tag, defaultV, isNeedReset, des=None):
@@ -205,6 +207,8 @@ class Setting:
                 setItem.InitValue(value, name)
         from tools.log import Log
         Log.UpdateLoggingLevel()
+        if sys.platform == "linux" and not Setting.SavePath.value:
+            Setting.SavePath.SetValue(Setting.GetDataPath())
         return
 
     @staticmethod
@@ -228,27 +232,43 @@ class Setting:
 
     @staticmethod
     def Init():
-        path = Setting.GetConfigPath()
-        if not os.path.isdir(path):
-            os.mkdir(path)
+        for path in [
+            Setting.GetConfigPath(),
+            Setting.GetDataPath(),
+            Setting.GetCachePath(),
+            Setting.GetStatePath(),
+        ]:
+            os.makedirs(path, exist_ok=True)
         return
 
     @staticmethod
-    def GetConfigPath():
-        import sys
+    def _xdgDir(envName, default, *subdirs):
         if sys.platform == "win32":
             return "data"
-        else:
-            from PySide6.QtCore import QDir
-            homePath = QDir.homePath()
-            projectName = ".jmcomic"
-            return os.path.join(homePath, projectName)
+        base = os.environ.get(envName, os.path.join(os.path.expanduser("~"), default))
+        return os.path.join(base, "jmcomic-qt", *subdirs)
+
+    @staticmethod
+    def GetConfigPath():
+        return Setting._xdgDir("XDG_CONFIG_HOME", ".config")
+
+    @staticmethod
+    def GetDataPath():
+        return Setting._xdgDir("XDG_DATA_HOME", ".local/share")
+
+    @staticmethod
+    def GetCachePath():
+        if sys.platform == "win32":
+            return os.path.join(Setting.SavePath.value, config.CachePathDir)
+        return Setting._xdgDir("XDG_CACHE_HOME", ".cache")
+
+    @staticmethod
+    def GetStatePath():
+        return Setting._xdgDir("XDG_STATE_HOME", ".local/state")
 
     @staticmethod
     def GetLogPath():
-        import sys
         if sys.platform == "win32":
             return "logs"
-        else:
-            return os.path.join(Setting.GetConfigPath(), "logs")
+        return Setting._xdgDir("XDG_STATE_HOME", ".local/state", "logs")
 
