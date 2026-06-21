@@ -29,9 +29,9 @@ class LocalFavoriteDb(object):
             category varchar,\
             tagList varchar,\
             description varchar, \
-            tick int,\
-            max_eps_num int,
-            last_uptick int
+            tick int  DEFAULT 0,\
+            max_eps_num int  DEFAULT 0,
+            last_uptick int  DEFAULT 0
             )\
             """,
             """\
