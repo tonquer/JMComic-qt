@@ -1,4 +1,5 @@
 import json
+import time
 
 from PySide6 import QtWidgets
 from PySide6.QtWidgets import QMessageBox
@@ -50,6 +51,7 @@ class LocalFavoriteView(QtWidgets.QWidget, Ui_LocalFavorite, QtTaskBase):
         self.allBookIds = set(bookList.keys())
         self.allDownButton.clicked.connect(self.OpenSomeBook)
         self.importButton.clicked.connect(self.ImportFavorite)
+        self.startEpsUpdate.clicked.connect(self.StartUpdateEps)
         self.loadPage = 1
         self.maxPage = 1
         self.loadFidNum = 0
@@ -57,6 +59,10 @@ class LocalFavoriteView(QtWidgets.QWidget, Ui_LocalFavorite, QtTaskBase):
         self.folderDict = self.db.LoadFold()
         self.fidBookList = self.db.LoadBookFold()
         self.folderBox.currentIndexChanged.connect(self.RefreshDataFocus)
+        self.updateEpsIds = []
+        self.updateFailIds = []
+        self.updateTick = 0
+        self.updateEpsIndex = 0
 
     def GetFidByName(self, name):
         for k, v in self.folderDict.items():
@@ -88,7 +94,7 @@ class LocalFavoriteView(QtWidgets.QWidget, Ui_LocalFavorite, QtTaskBase):
         isShow = QMessageBox.information(self, Str.GetStr(Str.ImportFavorite), Str.GetStr(Str.ImportFavoriteNotice), QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
         if isShow != QtWidgets.QMessageBox.Yes:
             return
-
+        self.SetEnable(False)
         QtOwner().ShowLoading()
         sort = "mr"
         fid = ""
@@ -115,7 +121,7 @@ class LocalFavoriteView(QtWidgets.QWidget, Ui_LocalFavorite, QtTaskBase):
                         self.loadFid.insert(0, ("", ""))
                         for name, _ in self.loadFid:
                             self.AddFidByName(name)
-
+                self.SetTipText(f"{Str.GetStr(Str.ImportFavorite)}:{fidName}_{page}/{self.maxPage}")
                 for book in bookList:
                     self.AddFavoritesAndFidName(book, fidName)
             else:
@@ -131,6 +137,8 @@ class LocalFavoriteView(QtWidgets.QWidget, Ui_LocalFavorite, QtTaskBase):
             if self.loadFidNum >= len(self.loadFid)-1:
                 QtOwner().CloseLoading()
                 QtOwner().ShowMsg(Str.GetStr(Str.Ok))
+                self.SetEnable(True)
+                self.SetTipText("")
                 self.RefreshData()
                 return
             else:
@@ -295,3 +303,67 @@ class LocalFavoriteView(QtWidgets.QWidget, Ui_LocalFavorite, QtTaskBase):
     def FoldChangeBack(self):
         self.RefreshDataFocus()
         return
+
+    def SetTipText(self, str):
+        self.tipText.setStyleSheet("background-color:transparent;color:{}".format("#d71345"))
+        self.tipText.setText(str)
+
+    def SetEnable(self, enable):
+        self.importButton.setEnabled(enable)
+        self.startEpsUpdate.setEnabled(enable)
+        self.allDownButton.setEnabled(enable)
+        self.sortIdCombox.setEnabled(enable)
+        self.sortKeyCombox.setEnabled(enable)
+        self.folderBox.setEnabled(enable)
+
+    def StartUpdateEps(self):
+        self.updateEpsIds = []
+        name = self.folderBox.currentText()
+        fid = self.GetFidByName(name)
+        if fid > 0:
+            books = list(self.fidBookList.get(fid, []))
+        else:
+            books = list(self.allBookIds)
+        if not books:
+            return
+        QtOwner().ShowLoading()
+        self.updateEpsIds = books
+        self.updateFailIds = []
+        self.updateEpsIndex = 0
+        self.updateTick = int(time.time())
+        self.SetEnable(False)
+        self.StartUpdateEpsReq()
+
+    def StartUpdateEpsReq(self):
+        if self.updateEpsIndex >= len(self.updateEpsIds):
+            QtOwner().CloseLoading()
+            self.SetEnable(True)
+            if self.updateFailIds:
+                self.SetTipText(f"{Str.GetStr(Str.Fail)}/{Str.GetStr(Str.Ok)}:{len(self.updateFailIds)}/{len(self.updateEpsIds)}")
+            else:
+                self.SetTipText("")
+            self.RefreshDataFocus()
+            return
+        bookId = self.updateEpsIds[self.updateEpsIndex]
+        self.SetTipText(f"{Str.GetStr(Str.Update)}:{self.updateEpsIndex}/{len(self.updateEpsIds)}")
+        self.AddHttpTask(req.GetBookInfoReq2(bookId), self.StartUpdateEpsBack, bookId)
+        return
+
+    def StartUpdateEpsBack(self, raw, bookId):
+        st = raw.get('st')
+        try:
+            if st == Status.Ok:
+                info = BookMgr().GetBook(bookId)
+                if not info:
+                    self.updateFailIds.append(bookId)
+                    return
+                self.db.UpdateBookEpsNum(bookId, info.epsCount, self.updateTick)
+                self.db.UpdateBookInfo(info)
+            else:
+                self.updateFailIds.append(bookId)
+        except Exception as es:
+            Log.Error(es)
+        finally:
+            self.updateEpsIndex += 1
+            self.StartUpdateEpsReq()
+

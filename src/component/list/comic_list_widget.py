@@ -95,14 +95,21 @@ class ComicListWidget(BaseListWidget):
             popMenu.exec_(QCursor.pos())
         return
 
-    def AddBookItemByBook(self, v, isShowHistory=False):
+    def AddBookItemByBook(self, v, isShowHistory=False, isShowToolButton=False):
         from tools.book import BookInfo
         assert isinstance(v, BookInfo)
         title = v.baseInfo.title
         url = v.baseInfo.coverUrl
         _id = v.baseInfo.id
         categories = ",".join(v.baseInfo.category)
-        self.AddBookItem(_id, title, categories, url)
+        if isShowHistory:
+            info = QtOwner().owner.historyView.GetHistory(_id)
+            if info:
+                if v.localMaxEps - 1 > info.epsId:
+                    isShowToolButton = True
+                categories = Str.GetStr(Str.LastLook) + str(info.epsId + 1) + Str.GetStr(Str.Chapter) + "/" + str(
+                    v.localMaxEps) + Str.GetStr(Str.Chapter)
+        self.AddBookItem(_id, title, categories, url, isShowToolButton=isShowToolButton)
 
     def AddBookByLocal(self, v, category=""):
         from task.task_local import LocalData
@@ -149,7 +156,7 @@ class ComicListWidget(BaseListWidget):
         categories = "{} {}".format(ToolUtil.GetUpdateStrByTick(v.tick), Str.GetStr(Str.Looked))
         self.AddBookItem(_id, title, categories, url)
 
-    def AddBookItem(self, _id, title, categoryStr="", url=""):
+    def AddBookItem(self, _id, title, categoryStr="", url="", isShowToolButton=False):
         index = self.count()
         widget = ComicItemWidget()
         widget.setFocusPolicy(Qt.NoFocus)
@@ -159,6 +166,8 @@ class ComicListWidget(BaseListWidget):
         widget.id = _id
         widget.url = url
         widget.index = index
+        if not isShowToolButton:
+            widget.toolButton.hide()
         widget.categoryLabel.setText(categoryStr)
         widget.SetTitle(title, "")
         widget.path = ToolUtil.GetRealPath(_id, "cover")

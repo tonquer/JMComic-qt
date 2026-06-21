@@ -49,6 +49,11 @@
          </property>
          <item>
           <property name="text">
+           <string>更新时间</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
            <string>收藏时间</string>
           </property>
          </item>
@@ -86,6 +91,13 @@
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="startEpsUpdate">
+         <property name="text">
+          <string>获取章节更新</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="horizontalSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -97,6 +109,13 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="tipText">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="Line" name="line_2">

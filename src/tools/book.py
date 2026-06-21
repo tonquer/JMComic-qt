@@ -153,6 +153,7 @@ class BookInfo(object):
     def __init__(self):
         self.baseInfo = BookBaseInfo()
         self.pageInfo = BookPageInfo()
+        self.localMaxEps = 0
 
     @property
     def epsCount(self):

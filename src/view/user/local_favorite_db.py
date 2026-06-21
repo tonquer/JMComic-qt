@@ -29,7 +29,9 @@ class LocalFavoriteDb(object):
             category varchar,\
             tagList varchar,\
             description varchar, \
-            tick int\
+            tick int,\
+            max_eps_num int,
+            last_uptick int
             )\
             """,
             """\
@@ -54,6 +56,14 @@ class LocalFavoriteDb(object):
                 a = query.lastError().text()
                 Log.Warn(a)
 
+        query = QSqlQuery(self.db)
+        sql1 = """ALTER TABLE 'favorite' ADD 'max_eps_num' int DEFAULT 0;"""
+        sql2 = """ALTER TABLE 'favorite' ADD 'last_uptick' int DEFAULT 0;"""
+        for sql in [sql1, sql2]:
+            suc = query.exec_(sql)
+            if not suc:
+                a = query.lastError().text()
+                Log.Warn(a)
         # self.LoadDownload()
 
     def DelFavoriteDB(self, bookId):
@@ -89,6 +99,7 @@ class LocalFavoriteDb(object):
         suc = query.exec_(sql)
         if not suc:
             Log.Warn(query.lastError().text())
+        self.UpdateBookEpsNum(book.baseInfo.bookId, book.epsCount, int(time.time()))
         return
 
     def AddFavoriteFid(self, name):
@@ -143,6 +154,29 @@ class LocalFavoriteDb(object):
                 return False
         return True
 
+    def UpdateBookEpsNum(self, bookId, epsNum, updateTick):
+        query = QSqlQuery(self.db)
+        sql = f"UPDATE favorite SET max_eps_num={epsNum}, last_uptick={updateTick} WHERE bookId='{bookId}' and max_eps_num!={epsNum}"
+        suc = query.exec_(sql)
+        if not suc:
+            Log.Warn(query.lastError().text())
+            return False
+        return True
+
+    def UpdateBookInfo(self, book):
+        query = QSqlQuery(self.db)
+        tagStr = Converter('zh-hans').convert(",".join(book.baseInfo.tagList).replace("'", "''"))
+        author = Converter('zh-hans').convert(",".join(book.baseInfo.authorList).replace("'", "''"))
+        coverUrl = book.baseInfo.coverUrl
+        des = Converter('zh-hans').convert(book.pageInfo.des).replace("'", "''")
+        title = Converter('zh-hans').convert(book.baseInfo.title).replace("'", "''")
+        sql = f"UPDATE favorite SET description='{des}', title='{title}', coverUrl='{coverUrl}', author='{author}', tagList='{tagStr}' WHERE bookId='{book.baseInfo.bookId}'"
+        suc = query.exec_(sql)
+        if not suc:
+            Log.Warn(query.lastError().text())
+            return False
+        return True
+
     def DelBookFavoriteFid(self, book_id):
         query = QSqlQuery(self.db)
         sql = "delete from favorite_fid where bookId='{}'".format(book_id)
@@ -185,12 +219,12 @@ class LocalFavoriteDb(object):
 
     def SearchFavorite(self, page, sortKey=0, sortId=0, fid=0, searchText=""):
         if not searchText:
-            sql = "select bookId, author, title, coverUrl, category, tagList, description, tick  " \
+            sql = "select bookId, author, title, coverUrl, category, tagList, description, tick, max_eps_num  " \
                   "from favorite as book  where 1 "
             if fid != 0:
                 sql += f" and bookId in (select bookId from favorite_fid where fid={fid}) "
         else:
-            sql = "select bookId, author, title, coverUrl, category, tagList, description, tick  " \
+            sql = "select bookId, author, title, coverUrl, category, tagList, description, tick, max_eps_num  " \
                   "from favorite as book where 1 "
             if fid != 0:
                 sql += f" and bookId in (select bookId from favorite_fid where fid={fid}) "
@@ -198,15 +232,21 @@ class LocalFavoriteDb(object):
             sql += " book.author like '%{}%' or ".format(Converter('zh-hans').convert(searchText).replace("'", "''"))
             sql += " book.description like '%{}%' or ".format(Converter('zh-hans').convert(searchText).replace("'", "''"))
             sql += " book.tagList like '%{}%' or ".format(Converter('zh-hans').convert(searchText).replace("'", "''"))
+            sql += " book.bookId like '%{}%' or ".format(Converter('zh-hans').convert(searchText).replace("'", "''"))
             sql += " book.category like '%{}%')  ".format(Converter('zh-hans').convert(searchText).replace("'", "''"))
 
         if sortKey == 0:
-            sql += "ORDER BY book.tick "
+            if sortId == 0:
+                sql += "ORDER BY book.last_uptick DESC, book.tick DESC, book.bookId ASC"
+            else:
+                sql += "ORDER BY book.last_uptick ASC, book.tick ASC, book.bookId ASC"
+        elif sortKey == 1:
+            if sortId == 0:
+                sql += "ORDER BY book.tick DESC, book.bookId ASC"
+            else:
+                sql += "ORDER BY book.tick ASC, book.bookId ASC"
 
-        if sortId == 0:
-            sql += "DESC"
-        else:
-            sql += "ASC"
+
         if page >= 0:
             sql += "  limit {},{};".format((page - 1) * 20, 20)
 
@@ -227,5 +267,6 @@ class LocalFavoriteDb(object):
             info.baseInfo.category = query.value(4).split(",")
             info.baseInfo.tagList = query.value(5).split(",")
             info.pageInfo.des = query.value(6)
+            info.localMaxEps = query.value(8)
             data[bookId] = info
         return data

@@ -51,6 +51,7 @@ class Ui_LocalFavorite(object):
 
         self.sortKeyCombox = QComboBox(LocalFavorite)
         self.sortKeyCombox.addItem("")
+        self.sortKeyCombox.addItem("")
         self.sortKeyCombox.setObjectName(u"sortKeyCombox")
         self.sortKeyCombox.setEnabled(True)
         self.sortKeyCombox.setMinimumSize(QSize(100, 0))
@@ -75,9 +76,19 @@ class Ui_LocalFavorite(object):
 
         self.horizontalLayout.addWidget(self.allDownButton)
 
+        self.startEpsUpdate = QPushButton(LocalFavorite)
+        self.startEpsUpdate.setObjectName(u"startEpsUpdate")
+
+        self.horizontalLayout.addWidget(self.startEpsUpdate)
+
         self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout.addItem(self.horizontalSpacer)
+
+        self.tipText = QLabel(LocalFavorite)
+        self.tipText.setObjectName(u"tipText")
+
+        self.horizontalLayout.addWidget(self.tipText)
 
         self.line_2 = QFrame(LocalFavorite)
         self.line_2.setObjectName(u"line_2")
@@ -171,13 +182,16 @@ class Ui_LocalFavorite(object):
     def retranslateUi(self, LocalFavorite):
         LocalFavorite.setWindowTitle(QCoreApplication.translate("LocalFavorite", u"\u6536\u85cf", None))
         self.msgLabel.setText("")
-        self.sortKeyCombox.setItemText(0, QCoreApplication.translate("LocalFavorite", u"\u6536\u85cf\u65f6\u95f4", None))
+        self.sortKeyCombox.setItemText(0, QCoreApplication.translate("LocalFavorite", u"\u66f4\u65b0\u65f6\u95f4", None))
+        self.sortKeyCombox.setItemText(1, QCoreApplication.translate("LocalFavorite", u"\u6536\u85cf\u65f6\u95f4", None))
 
         self.sortIdCombox.setItemText(0, QCoreApplication.translate("LocalFavorite", u"\u964d\u5e8f", None))
         self.sortIdCombox.setItemText(1, QCoreApplication.translate("LocalFavorite", u"\u5347\u5e8f", None))
 
         self.importButton.setText(QCoreApplication.translate("LocalFavorite", u"\u4ece\u8d26\u53f7\u6536\u85cf\u5bfc\u5165", None))
         self.allDownButton.setText(QCoreApplication.translate("LocalFavorite", u"\u6279\u91cf\u4e0b\u8f7d", None))
+        self.startEpsUpdate.setText(QCoreApplication.translate("LocalFavorite", u"\u83b7\u53d6\u7ae0\u8282\u66f4\u65b0", None))
+        self.tipText.setText("")
         self.nums.setText(QCoreApplication.translate("LocalFavorite", u"\u6536\u85cf\u6570\uff1a", None))
         self.pages.setText(QCoreApplication.translate("LocalFavorite", u"\u9875", None))
         self.jumpButton.setText(QCoreApplication.translate("LocalFavorite", u"\u8df3\u8f6c", None))
