@@ -21,7 +21,7 @@ pip3 uninstall sr-vulkan-model-waifu2x -y
 pip3 uninstall sr-vulkan-model-realcugan -y
 pip3 uninstall sr-vulkan-model-realesrgan -y
 pip3 install -r requirements_nosr.txt
-rm -rm dist
+rm -rf dist
 pyinstaller --hidden-import=_cffi_backend --collect-data curl_cffi --add-data "../lib/linux/*:."  -w start.py
 cd dist
 rm -rf uos
