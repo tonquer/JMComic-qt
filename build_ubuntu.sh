@@ -30,7 +30,7 @@ cp -r start/* ubuntu/opt/JMComic/
 chmod -R 755 ubuntu
 sudo dpkg-deb --root-owner-group  -b ubuntu jmcomic.deb
 cd ..
-mv dist/jmcomic.deb jmcomic_{$version}_ubuntu_nosr_amd64.deb
+mv dist/jmcomic.deb jmcomic_${version}_ubuntu_nosr_amd64.deb
 
 # build
 pip3 install -r requirements.txt
@@ -43,4 +43,4 @@ cp -r start/* ubuntu/opt/JMComic/
 chmod -R 755 ubuntu
 sudo dpkg-deb --root-owner-group  -b ubuntu jmcomic.deb
 cd ..
-mv dist/jmcomic.deb jmcomic_{$version}_ubuntu_amd64.deb
+mv dist/jmcomic.deb jmcomic_${version}_ubuntu_amd64.deb
