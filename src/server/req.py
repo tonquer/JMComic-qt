@@ -228,6 +228,7 @@ class CheckUpdateInfoReq(ServerReq):
         url = url2 + "/{}.txt?".format(newVersion)
         url += ToolUtil.DictToUrl(data)
         super(self.__class__, self).__init__(url, {}, method)
+        self.headers["user-agent"] = config.RealVersion
         self.isParseRes = False
         self.useImgProxy = False
 
@@ -242,6 +243,7 @@ class CheckUpdateConfigReq(ServerReq):
         url = url2 + "/config.txt?"
         url += ToolUtil.DictToUrl(data)
         super(self.__class__, self).__init__(url, {}, method)
+        self.headers["user-agent"] = config.RealVersion
         self.isParseRes = False
         self.useImgProxy = False
 

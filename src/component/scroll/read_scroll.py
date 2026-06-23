@@ -221,7 +221,10 @@ class ReadScroll(QScrollBar):
         else:
             nextV = max(1, self.labelSize.get(self.readImg.curIndex + 1, 0))
             height = nextV - oldMinV
-        subV = (oldV - oldMinV) / height
+        if height != 0:
+            subV = (oldV - oldMinV) / height
+        else:
+            subV = 0
 
         if self.isCurReadModel:
             print("set lastV, {}, {}".format(oldV, subV))
