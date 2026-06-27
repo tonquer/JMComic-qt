@@ -157,7 +157,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             title = info.baseInfo.title
 
             if info.pageInfo.pages:
-                title += "<font color=#d5577c>{}</font>".format("(" + str(info.pageInfo.pages) + "P)")
+                title += "<font color=#CC6600>{}</font>".format("(" + str(info.pageInfo.pages) + "P)")
             self.title.setText(title)
             font = QFont()
             font.setPointSize(12)
@@ -249,7 +249,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
                     item.setToolTip(epsInfo.epsTitle)
 
                 label.setAlignment(Qt.AlignCenter)
-                label.setStyleSheet("color: rgb(196, 95, 125);")
+                label.setStyleSheet("color: rgb(204, 102, 0);")
                 font = QFont()
                 font.setPointSize(12)
                 font.setBold(True)
@@ -343,7 +343,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             epsInfo = info.pageInfo.epsInfo.get(index)
             label = QLabel(epsInfo.title)
             label.setAlignment(Qt.AlignCenter)
-            label.setStyleSheet("color: rgb(196, 95, 125);")
+            label.setStyleSheet("color: rgb(204, 102, 0);")
             font = QFont()
             font.setPointSize(12)
             font.setBold(True)

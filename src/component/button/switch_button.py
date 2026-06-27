@@ -49,7 +49,7 @@ class SwitchButton(QWidget):
         if self.state:
             # 绘制背景
             painter.setPen(Qt.NoPen)
-            brush = QBrush(QColor('#FF475D'))
+            brush = QBrush(QColor('#E07000'))
             painter.setBrush(brush)
             painter.drawRoundedRect(0, 0, self.width(), self.height(), self.height() // 2, self.height() // 2)
 
