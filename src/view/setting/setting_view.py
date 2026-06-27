@@ -393,9 +393,9 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         Setting.ThemeIndex.autoValue = themeId
 
         if themeId == 1:
-            f = QFile(":/file/theme/dark_pink.qss")
+            f = QFile(":/file/theme/dark_orange.qss")
         else:
-            f = QFile(":/file/theme/light_pink.qss")
+            f = QFile(":/file/theme/light_orange.qss")
         f.open(QFile.ReadOnly)
         data = str(f.readAll(), encoding='utf-8')
         if Setting.FontName.value:

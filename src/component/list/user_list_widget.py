@@ -40,7 +40,7 @@ class UserListWidget(BaseListWidget):
         widget.setFocusPolicy(Qt.NoFocus)
         widget.linkId = info.linkBookId
         if widget.linkId and widget.linkId != "0":
-            widget.linkLabel.setText("<u><font color=#d5577c>{}</font></u>".format(info.linkBookName))
+            widget.linkLabel.setText("<u><font color=#CC6600>{}</font></u>".format(info.linkBookName))
             widget.linkLabel.setVisible(True)
         if isSub:
             widget.commentButton.hide()

@@ -50,10 +50,10 @@ class HelpLogWidget(QWidget, Ui_HelpLogWidget):
 
     def _AddLog(self, logData, color=None):
         if not self.defaultColor:
-            self.defaultColor = QColor(255, 64, 129)
+            self.defaultColor = QColor(255, 123, 0)
         self.textBrowser.moveCursor(QTextCursor.Start)
         if not color:
-            color = "#ff4081"
+            color = "#FF7B00"
         #     logData = "<font color=#1661ab>{}</font>".format(logData)
             self.textBrowser.setTextColor(color)
         else:

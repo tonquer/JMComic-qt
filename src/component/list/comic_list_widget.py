@@ -124,9 +124,9 @@ class ComicListWidget(BaseListWidget):
         widget.picNum = v.picCnt
         widget.url = v.file
         if len(v.eps) > 0:
-            fontColor = "<font color=#d5577c>{}</font>".format("(" + str(len(v.eps)) + "E)")
+            fontColor = "<font color=#CC6600>{}</font>".format("(" + str(len(v.eps)) + "E)")
         else:
-            fontColor = "<font color=#d5577c>{}</font>".format("(" + str(v.picCnt) + "P)")
+            fontColor = "<font color=#CC6600>{}</font>".format("(" + str(v.picCnt) + "P)")
         if v.lastReadTime:
             categories = "{} {}".format(ToolUtil.GetUpdateStrByTick(v.lastReadTime), Str.GetStr(Str.Looked))
 

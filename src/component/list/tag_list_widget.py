@@ -40,7 +40,7 @@ class TagListWidget(BaseListWidget):
     def AddItem(self, name, isSelectable=False):
         label = QLabel(name)
         label.setAlignment(Qt.AlignCenter)
-        label.setStyleSheet("color:#d5577c")
+        label.setStyleSheet("color:#CC6600")
         # font = QFont()
         # font.setPointSize(12)
         # font.setBold(True)
