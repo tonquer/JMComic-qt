@@ -105,7 +105,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         else:
             self.localButton.setIcon(QIcon(":/png/icon/icon_like_off.png"))
         path = os.path.join(Setting.GetCachePath(), "cover/{}.*".format(self.bookId))
-        waifuPath = os.path.join(Setting.GetCachePath(), "waifu2x/cover/{}*".format(self.bookId))
+        waifuPath = os.path.join(Setting.GetCachePath(), "waifu2x/cover/{}.*".format(self.bookId))
         if glob.glob(path) or glob.glob(waifuPath):
             self.clearButton.setIcon(QIcon(":/png/icon/clear_on.png"))
         else:
@@ -383,7 +383,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         displayPath = os.path.join(Setting.GetCachePath(), "cover/{}".format(self.bookId))
         displayWaifuPath = os.path.join(Setting.GetCachePath(), "waifu2x/cover/{}".format(self.bookId))
         path = displayPath + ".*"
-        waifuPath = displayWaifuPath + "*"
+        waifuPath = displayWaifuPath + ".*"
         isClear = QMessageBox.information(self, Str.GetStr(Str.ClearCache), Str.GetStr(Str.ConfirmClearBookCache).format(displayPath, displayWaifuPath), QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
         if isClear == QtWidgets.QMessageBox.Yes:
             if not Setting.SavePath.value:
