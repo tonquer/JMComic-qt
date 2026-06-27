@@ -473,8 +473,8 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         if not url:
             url = "./"
         self.downloadDir.setText(os.path.join(url, config.SavePathDir))
-        self.cacheDir.setText(os.path.join(url, config.CachePathDir))
-        self.waifu2xDir.setText(os.path.join(os.path.join(url, config.CachePathDir), config.Waifu2xPath))
+        self.cacheDir.setText(Setting.GetCachePath())
+        self.waifu2xDir.setText(os.path.join(Setting.GetCachePath(), config.Waifu2xPath))
 
     def OpenDir(self, label):
         QDesktopServices.openUrl(QUrl.fromLocalFile(label.text()))

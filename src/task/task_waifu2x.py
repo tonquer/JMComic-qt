@@ -208,8 +208,7 @@ class TaskWaifu2x(TaskBase):
         if not noSaveCache and path and Setting.SavePath.value:
             a = crc32(json.dumps(model).encode("utf-8"))
             if Setting.SavePath.value:
-                path2 = os.path.join(os.path.join(Setting.SavePath.value, config.CachePathDir), config.Waifu2xPath)
-                path = os.path.join(path2, path)
+                path = os.path.join(Setting.GetCachePath(), config.Waifu2xPath, path)
                 info.cachePath = path + "-{}".format(a)
 
         if cleanFlag:
