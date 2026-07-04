@@ -147,7 +147,7 @@ class Server(Singleton):
             ver = CurlHttpVersion.V2_0
         curlDict[CurlOpt.SSLVERSION] = CurlSslVersion.TLSv1_3
 
-        return NewSession(curl_options=curlDict, http_version=ver)
+        return NewSession(curl_options=curlDict, http_version=ver, impersonate="chrome110")
         # try:
         #     return httpx.Client(http2=True, verify=False, trust_env=False, proxy=proxy)
         # except Exception as es:
@@ -344,10 +344,10 @@ class Server(Singleton):
         task.res = res.BaseRes("", False)
 
         if task.req.cookies:
-            r = session.post(request.url, proxies=request.proxy, impersonate="chrome110", headers=request.headers, data=request.params,
+            r = session.post(request.url, proxies=request.proxy, headers=request.headers, data=request.params,
                                   timeout=task.timeout, verify=False, cookies=task.req.cookies)
         else:
-            r = session.post(request.url, proxies=request.proxy, impersonate="chrome110", headers=request.headers, data=request.params,
+            r = session.post(request.url, proxies=request.proxy, headers=request.headers, data=request.params,
                                   timeout=task.timeout, verify=False, cookies=task.req.cookies)
         task.res = res.BaseRes(r, request.isParseRes)
         return task
@@ -384,7 +384,7 @@ class Server(Singleton):
         else:
             session = self.threadSession[index]
 
-        r = session.put(request.url, proxies=request.proxy, impersonate="chrome110", headers=request.headers, timeout=task.timeout, verify=False)
+        r = session.put(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout, verify=False)
         task.res = res.BaseRes(r, request.isParseRes)
         return task
 
@@ -402,9 +402,9 @@ class Server(Singleton):
         else:
             session = self.threadSession[index]
         if task.req.cookies:
-            r = session.get(request.url, proxies=request.proxy, impersonate="chrome110", headers=request.headers, timeout=task.timeout, verify=False, cookies=task.req.cookies)
+            r = session.get(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout, verify=False, cookies=task.req.cookies)
         else:
-            r = session.get(request.url, proxies=request.proxy, impersonate="chrome110", headers=request.headers, timeout=task.timeout, verify=False)
+            r = session.get(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout, verify=False)
         task.res = res.BaseRes(r, request.isParseRes)
         return task
 

@@ -9,7 +9,7 @@ lxml
 pycryptodomex
 Pysocks
 natsort
-curl_cffi>=0.13.0
+curl_cffi>=0.13.0,<=0.14.0
 jmcomic==2.6.20
 webdavclient3
 tqdm

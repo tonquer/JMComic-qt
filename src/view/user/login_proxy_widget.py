@@ -212,7 +212,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         self.imgTimeout.setCurrentIndex(Setting.ImgTimeOut.value)
         self.host_api_domain.setText(Setting.HostApiDomain.value)
         self.host_img_domain.setText(Setting.HostImgDomain.value)
-        self.echBox.setChecked(bool(Setting.IsOpenDoh.value))
+        self.echBox.setChecked(bool(Setting.EnableEch.value))
         self.dohBox.setChecked(bool(Setting.IsOpenDoh.value))
         self.dohLine.setText(Setting.DohAddress.value)
         self.http3Box.setChecked(bool(Setting.IsOpenHTTP3.value))
