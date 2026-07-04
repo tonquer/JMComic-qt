@@ -199,12 +199,15 @@ class MainView(Main, QtTaskBase):
         self.navigationWidget.retranslateUi(self.navigationWidget)
         self.searchView2.retranslateUi(self.searchView2)
         self.nasView.retranslateUi(self.nasView)
+        self.localReadView.retranslateUi(self.localReadView)
+        self.bookInfoView.retranslateUi(self.bookInfoView)
 
     def Init(self):
         IsCanUse = False
         self.helpView.Init()
         self.downloadView.Init()
         self.nasView.Init()
+        Server().Init()
         if config.CanWaifu2x:
             from sr_vulkan import sr_vulkan as sr
             stat = sr.init()
@@ -227,7 +230,6 @@ class MainView(Main, QtTaskBase):
 
             sts = sr.initSet(config.Encode, config.UseCpuNum)
             TaskWaifu2x().Start()
-            TaskMulti().Start()
 
             version = sr.getVersion()
             config.Waifu2xVersion = version
@@ -259,6 +261,7 @@ class MainView(Main, QtTaskBase):
         if Setting.IsUpdate.value:
             self.helpView.InitUpdate()
 
+        TaskMulti().Start()
         self.searchView.InitWord()
         self.msgLabel = MsgLabel(self)
         self.msgLabel.hide()

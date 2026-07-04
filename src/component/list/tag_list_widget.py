@@ -5,6 +5,7 @@ from PySide6.QtWidgets import QListWidgetItem, QLabel, QAbstractItemView, QListW
 from component.list.base_list_widget import BaseListWidget
 from component.scroll.smooth_scroll_bar import SmoothScrollBar
 from config.setting import Setting
+from qt_owner import QtOwner
 
 
 class TagListWidget(BaseListWidget):
@@ -40,7 +41,7 @@ class TagListWidget(BaseListWidget):
     def AddItem(self, name, isSelectable=False):
         label = QLabel(name)
         label.setAlignment(Qt.AlignCenter)
-        label.setStyleSheet("color:#CC6600")
+        label.setStyleSheet(f"color:{QtOwner().GetThemeColor()}")
         # font = QFont()
         # font.setPointSize(12)
         # font.setBold(True)

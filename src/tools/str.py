@@ -47,6 +47,7 @@ class Str:
     SpaceEps = 1031          # "空白章节"
     DownloadBusy = 1032      # "下载繁忙"
     Fail = 1033              # 失败
+    DnsError = 1034              # dns错误
 
     Success = 2001         # "下载完成"
     Reading = 2002         # "获取信息"
@@ -332,6 +333,7 @@ class Str:
         cls.strDict[cls.SpaceEps] = QCoreApplication.translate("cls.obj", "空白章节", None)
         cls.strDict[cls.DownloadBusy] = QCoreApplication.translate("cls.obj", "下载繁忙", None)
         cls.strDict[cls.Fail] = QCoreApplication.translate("cls.obj", "失败", None)
+        cls.strDict[cls.DnsError] = QCoreApplication.translate("cls.obj", "DNS错误", None)
 
         cls.strDict[cls.LoadingPicture] = QCoreApplication.translate("cls.obj",  "图片加载中...", None)
         cls.strDict[cls.LoadingFail] = QCoreApplication.translate("cls.obj",  "图片加载失败", None)

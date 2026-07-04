@@ -7,6 +7,7 @@ class Status(object):
     Error = Str.Error
     WaitLoad = Str.WaitLoad
     NetError = Str.NetError
+    DnsError = Str.DnsError
     UserError = Str.UserError
     RegisterError = Str.RegisterError
     UnKnowError = Str.UnKnowError

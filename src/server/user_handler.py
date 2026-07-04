@@ -859,8 +859,8 @@ class DownloadBookHandler(object):
             index = backData.index
             isFail = False
             try:
-                with Server().downloadSession[index].stream("GET", request.url, follow_redirects=True, headers=request.headers,
-                                    timeout=backData.timeout, extensions=request.extend) as r:
+                with Server().downloadSession[index].stream("GET", request.url,  headers=request.headers,
+                                    timeout=backData.timeout, proxies=request.proxy) as r:
                     # fileSize = int(r.headers.get('Content-Length', 0))
                     getSize = 0
                     data = b""
@@ -878,7 +878,7 @@ class DownloadBookHandler(object):
                     isAlreadySend = False
                     try:
                         addSize = 0
-                        for chunk in r.iter_bytes(chunk_size=1024):
+                        for chunk in r.iter_content():
                                 cur = time.time()
                                 tick = cur - now
                                 addSize += len(chunk)
@@ -980,7 +980,7 @@ class DownloadBookHandler(object):
 @handler(req.DnsOverHttpsReq)
 class DnsOverHttpsReqHandler(object):
     def __call__(self, task):
-        data = {"st": task.status}
+        data = {"st": task.status, "data": task.res.GetText()}
         try:
             if task.status != Status.Ok:
                 return
@@ -1000,7 +1000,7 @@ class SpeedTestPingHandler(object):
         data = {"st": task.status, "data": task.res.GetText()}
         if hasattr(task.res.raw, "elapsed"):
             if task.res.raw.status_code == 401 or task.res.raw.status_code == 200:
-                data["data"] = str(task.res.raw.elapsed.total_seconds()*1000//4)
+                data["data"] = str(task.res.raw.elapsed*1000//4)
             else:
                 data["st"] = Status.Error
                 data["data"] = "0"
@@ -1042,15 +1042,15 @@ class SpeedTestHandler(object):
             request = backData.req
             index = backData.index
             try:
-                with Server().downloadSession[index].stream("GET", request.url, follow_redirects=True, headers=request.headers,
-                                    timeout=backData.timeout, extensions=request.extend) as r:
+                with Server().downloadSession[index].stream("GET", request.url, headers=request.headers,
+                                    timeout=backData.timeout) as r:
 
                     fileSize = int(r.headers.get('Content-Length', 0))
                     getSize = 0
                     now = time.time()
                     # 网速快，太卡了，优化成最多100ms一次
                     try:
-                        for chunk in r.iter_bytes(chunk_size=1024):
+                        for chunk in r.iter_content():
                             getSize += len(chunk)
                             consume = time.time() - now
                             if consume >= 3.0:

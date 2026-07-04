@@ -33,8 +33,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>430</width>
-        <height>664</height>
+        <width>413</width>
+        <height>682</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -296,11 +296,22 @@
         </layout>
        </item>
        <item>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <widget class="QCheckBox" name="http3Box">
+           <property name="text">
+            <string>启用HTTP3（UDP）</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
         <layout class="QHBoxLayout" name="horizontalLayout_9">
          <item>
-          <widget class="QCheckBox" name="httpsBox">
+          <widget class="QCheckBox" name="echBox">
            <property name="text">
-            <string>启用Https（如果出现连接被重置，建议关闭试试）</string>
+            <string>启用ECH（Encrypted Client Hello）</string>
            </property>
            <property name="checked">
             <bool>true</bool>
@@ -310,51 +321,46 @@
         </layout>
        </item>
        <item>
-        <widget class="QRadioButton" name="loginProxy">
-         <property name="text">
-          <string>使用注册分流（无法注册可尝试开启）</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item>
-          <widget class="QLabel" name="label_9">
-           <property name="minimumSize">
-            <size>
-             <width>90</width>
-             <height>0</height>
-            </size>
-           </property>
+          <widget class="QCheckBox" name="dohBox">
            <property name="text">
-            <string>UA设置:</string>
+            <string>启用DOH（DNS-over-HTTPS）</string>
            </property>
           </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="uaRandom">
-           <property name="text">
-            <string>随机生成</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
          </item>
         </layout>
        </item>
        <item>
-        <widget class="QLineEdit" name="uaEdit"/>
+        <layout class="QHBoxLayout" name="horizontalLayout_14">
+         <item>
+          <widget class="QLabel" name="label_13">
+           <property name="text">
+            <string>DOH地址：</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="TipLineEdit" name="dohLine"/>
+         </item>
+         <item>
+          <widget class="QToolButton" name="dohTool">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="Line" name="line_8">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3"/>
        </item>
        <item>
         <widget class="QPushButton" name="testSpeedButton">
@@ -850,7 +856,7 @@
  </slots>
  <buttongroups>
   <buttongroup name="radioProxyGroup"/>
-  <buttongroup name="radioApiGroup"/>
   <buttongroup name="radioImgGroup"/>
+  <buttongroup name="radioApiGroup"/>
  </buttongroups>
 </ui>

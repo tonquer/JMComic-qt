@@ -80,6 +80,8 @@ class Setting:
     IsUpdate = SettingValue("GeneraSetting", 1, False)
     Language = SettingValue("GeneraSetting", 0, False, ["Auto", "zh", "hk", "en"])  # ch-zh ch-hk eu
     ThemeIndex = SettingValue("GeneraSetting", 0, False, ["Auto", "light", "dark"])  #
+    ThemeColorIndex = SettingValue("GeneraSetting", 0, False)  #
+
     LogIndex = SettingValue("GeneraSetting", 0, False, ["warn", "info", "debug"])  # Warn Info Debug
     CoverSize = SettingValue("GeneraSetting", 100, False)  #
     TitleLine = SettingValue("GeneraSetting", 2, False)  #
@@ -108,11 +110,13 @@ class Setting:
     IsUseHttps = SettingValue("ProxySetting", 1, False)
     ProxySelectIndex = SettingValue("ProxySetting", 1, False)
     IsOpenDoh = SettingValue("ProxySetting", 0, False)
-    IsOpenDohPicture = SettingValue("ProxySetting", 0, False)
-    DohAddress = SettingValue("ProxySetting", "https://doh.pub/dns-query", True)
+    # IsOpenDohPicture = SettingValue("ProxySetting", 0, False)
+    DohAddress = SettingValue("ProxySetting", "https://doh.pub/dns-query", False)
+    EnableEch = SettingValue("ProxySetting", 0, False)
+    IsOpenHTTP3 = SettingValue("ProxySetting", 0, False)
+
     ApiVersion = SettingValue("ProxySetting", 0, False)
     LastProxyResult = SettingValue("ProxySetting", {}, False)
-
     ProxyImgSelectIndex = SettingValue("ProxySetting", 1, False)
     PreferCDNIPImg = SettingValue("ProxySetting", "104.18.227.172", False)
 
@@ -196,6 +200,12 @@ class Setting:
     IsSkipPic = SettingValue("Other", 0, False)
 
     @staticmethod
+    def GetThemeColor():
+        if Setting.ThemeColorIndex.value == 0:
+            return  "#FF7B00"
+        return "#ff4081"
+
+    @staticmethod
     def InitLoadSetting():
         path = os.path.join(Setting.GetConfigPath(), "config.ini")
         from PySide6.QtCore import QSettings
@@ -207,7 +217,7 @@ class Setting:
                 setItem.InitValue(value, name)
         from tools.log import Log
         Log.UpdateLoggingLevel()
-        if sys.platform == "linux" and not Setting.SavePath.value:
+        if sys.platform.lower() == "linux" and not Setting.SavePath.value:
             Setting.SavePath.SetValue(Setting.GetDataPath())
         return
 

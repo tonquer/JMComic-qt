@@ -30,7 +30,7 @@ class FavoriteFoldItem(QWidget):
             self.SetEditEnable(False)
         else:
             self.lineEdit = QLineEdit(text, self)
-            self.lineEdit.setStyleSheet("border: 2px solid #FF7B00")
+            self.lineEdit.setStyleSheet(f"border: 2px solid {QtOwner().GetThemeColor()}")
             self.lineEdit.setMinimumSize(100, 40)
             self.pushButton = QPushButton(Str.GetStr(Str.Save), self, clicked=self._DoDeleteItem)
             self.SetEditEnable(True)

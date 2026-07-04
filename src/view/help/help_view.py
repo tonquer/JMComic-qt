@@ -95,7 +95,7 @@ class HelpView(QWidget, Ui_Help, QtTaskBase):
                 return
             self.StartCheckDns()
             data = raw.get("data")
-            self.UpdateText(self.configButton, Str.AlreadyUpdate, "#FF7B00", True)
+            self.UpdateText(self.configButton, Str.AlreadyUpdate, QtOwner().GetThemeColor(), True)
             if not data:
                 return
             GlobalConfig.UpdateSetting(data)
@@ -123,7 +123,7 @@ class HelpView(QWidget, Ui_Help, QtTaskBase):
     def StartUpdate(self):
         self.updateWidget.setVisible(False)
         # if self.checkUpdateIndex > len(self.updateUrl) -1:
-        #     self.UpdateText(self.verCheck, Str.AlreadyUpdate, "#FF7B00", True)
+        #     self.UpdateText(self.verCheck, Str.AlreadyUpdate, QtOwner().GetThemeColor(), True)
         #     return
         self.updateUrlIndex = 0
         self.AddHttpTask(req.CheckUpdateReq(self.configUrlList[self.updateUrlIndex], Setting.IsPreUpdate.value), self.InitUpdateBack)
@@ -141,10 +141,10 @@ class HelpView(QWidget, Ui_Help, QtTaskBase):
                 return
             data = raw.get("data")
             if not data:
-                self.UpdateText(self.verCheck, Str.AlreadyUpdate, "#FF7B00", True)
+                self.UpdateText(self.verCheck, Str.AlreadyUpdate, QtOwner().GetThemeColor(), True)
                 return
             if data == "no":
-                self.UpdateText(self.verCheck, Str.AlreadyUpdate, "#FF7B00", True)
+                self.UpdateText(self.verCheck, Str.AlreadyUpdate, QtOwner().GetThemeColor(), True)
                 return
 
             self.AddHttpTask(req.CheckUpdateInfoReq(self.configUrlList[self.updateUrlIndex], data), self.InitUpdateInfoBack)

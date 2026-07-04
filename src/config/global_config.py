@@ -76,6 +76,11 @@ class GlobalConfig:
     ProxyImgUrl = GlobalItem("https://cdn-msp.jmapiproxy3.cc")
     HeaderVer = GlobalItem("2.0.26")
     JMServerUrl = GlobalItem("https://rup4a04-c01.tos-ap-southeast-1.bytepluses.com/newsvr-2025.txt")
+    NoHttp3Url = GlobalItem(["rup4a04-c01.tos-ap-southeast-1.bytepluses.com"])
+    DohUrlList = GlobalItem(["https://parse.jpacg.cc/parse",
+                             "https://doh.pub/dns-query",
+                             "https://dot.pub/dns-query"])
+
     def __init__(self):
         pass
 

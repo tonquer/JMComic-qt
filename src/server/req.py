@@ -38,15 +38,7 @@ class ServerReq(object):
         #     elif host in GlobalConfig.PicUrlList.value:
         #         self.proxyUrl = config.ProxyImgDomain
 
-        if Setting.IsHttpProxy.value == 1:
-            self.proxy = {"http": Setting.HttpProxy.value, "https": Setting.HttpProxy.value}
-        elif Setting.IsHttpProxy.value == 3:
-            proxy = urllib.request.getproxies()
-            if isinstance(proxy, dict) and proxy.get("http"):
-                self.proxy = {"http": proxy.get("http"), "https": proxy.get("http")}
-        else:
-            self.proxy = {"http": None, "https": None}
-
+        self.SetProxy(Setting.IsHttpProxy.value, Setting.HttpProxy.value, Setting.Sock5Proxy.value)
         host = ToolUtil.GetUrlHost(url)
         IsApi = False
         IsImg = False
@@ -79,6 +71,25 @@ class ServerReq(object):
         #     self.cookies["AVS"] = config.AVS
         # if config.shunt:
         #     self.cookies["shunt"] = config.shunt
+
+    def SetProxy(self, proxyIndex, httpProxy, sock5Proxy):
+        if proxyIndex == 1:
+            self.proxy = {"http": httpProxy, "https": httpProxy}
+        elif proxyIndex == 2 and sock5Proxy:
+            data = sock5Proxy.replace("http://", "").replace("https://", "").replace("sock5://", "").replace(
+                "socks5://", "")
+            data = data.split(":")
+            if len(data) == 2:
+                host = data[0]
+                port = data[1]
+                proxy = f"socks5://{host}:{port}"
+                self.proxy = {"http": proxy, "https": proxy}
+        elif proxyIndex == 3:
+            proxy = urllib.request.getproxies()
+            if isinstance(proxy, dict) and proxy.get("http"):
+                self.proxy = {"http": proxy.get("http"), "https": proxy.get("http")}
+        else:
+            self.proxy = {"http": None, "https": None}
 
     def ResetToSwitchNextUrl(self):
         if not self.resetUrl:
@@ -120,15 +131,15 @@ class ServerReq(object):
     def GetHeader(self, _url: str, method: str) -> dict:
         param = "{}{}".format(self.now, "18comicAPP")
         token = hashlib.md5(param.encode("utf-8")).hexdigest()
-        if Setting.UerAgent.value:
-            ua = Setting.UerAgent.value
-        else:
-            ua = "Mozilla/5.0 (Linux; Android 7.1.2; DT1901A Build/N2G47O; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/86.0.4240.198 Mobile Safari/537.36"
+        # if Setting.UerAgent.value:
+        #     ua = Setting.UerAgent.value
+        # else:
+        #     ua = "Mozilla/5.0 (Linux; Android 7.1.2; DT1901A Build/N2G47O; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/86.0.4240.198 Mobile Safari/537.36"
 
         header = {
             "tokenparam": "{},{}".format(self.now, GlobalConfig.HeaderVer.value),
             "token": token,
-            "user-agent": ua,
+            # "user-agent": ua,
             "accept-encoding": "gzip",
             "version": config.UpdateVersion,
         }
@@ -269,13 +280,13 @@ class DownloadBookReq(ServerReq):
 
         self.headers = dict()
         self.headers["Accept-Encoding"] ="None"
-        if Setting.UerAgent.value:
-            ua = Setting.UerAgent.value
-        else:
-            ua = "Mozilla/5.0 (Linux; Android 7.1.2; DT1901A Build/N2G47O; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/86.0.4240.198 Mobile Safari/537.36"
+        # if Setting.UerAgent.value:
+        #     ua = Setting.UerAgent.value
+        # else:
+        #     ua = "Mozilla/5.0 (Linux; Android 7.1.2; DT1901A Build/N2G47O; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/86.0.4240.198 Mobile Safari/537.36"
 
-        self.headers["Accept-Encoding"] ="None"
-        self.headers["user-agent"] = ua
+        # self.headers["Accept-Encoding"] ="None"
+        # self.headers["user-agent"] = ua
 
 
 # 注册前，需要获取cookie
@@ -911,11 +922,12 @@ class SignDailyReq2(ServerReq):
 
 # Doh域名解析
 class DnsOverHttpsReq(ServerReq):
-    def __init__(self, domain=""):
-        url = Setting.DohAddress.value + "?name={}&type=A".format(domain)
+    def __init__(self, domain="", dohAddress=""):
+        url = dohAddress + "?name={}&type=A".format(ToolUtil.GetUrlHost(domain))
         method = "GET"
         header = dict()
         header["accept"] = "application/dns-json"
+        header["Content-Type"] = "application/dns-json"
         super(self.__class__, self).__init__(url, {}, method)
         self.timeout = 5
         self.headers = header

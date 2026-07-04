@@ -2,6 +2,7 @@ from PySide6.QtCore import QRect, Signal
 from PySide6.QtGui import QPen, QColor, QBrush, Qt, QPainter, QFont
 from PySide6.QtWidgets import QWidget
 
+from qt_owner import QtOwner
 from tools.str import Str
 
 
@@ -49,7 +50,7 @@ class SwitchButton(QWidget):
         if self.state:
             # 绘制背景
             painter.setPen(Qt.NoPen)
-            brush = QBrush(QColor('#E07000'))
+            brush = QBrush(QColor(QtOwner().GetThemeColor()))
             painter.setBrush(brush)
             painter.drawRoundedRect(0, 0, self.width(), self.height(), self.height() // 2, self.height() // 2)
 

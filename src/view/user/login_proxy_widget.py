@@ -3,8 +3,8 @@ from copy import deepcopy
 import random
 
 from PySide6 import QtWidgets
-from PySide6.QtCore import QUrl
-from PySide6.QtGui import QDesktopServices
+from PySide6.QtCore import QUrl, QSize, Qt
+from PySide6.QtGui import QDesktopServices, QIcon
 
 from config import config
 from config.global_config import GlobalConfig
@@ -57,12 +57,26 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         self.UpdateServer()
         self.commandLinkButton.clicked.connect(self.OpenUrl)
         self.maxNum = 8
-        self.loginProxy.hide()
-        self.uaRandom.clicked.connect(self.RandomUa)
+        # self.loginProxy.hide()
+        # self.uaRandom.clicked.connect(self.RandomUa)
         self.lastResult = {}
         self.LoadHistory()
         self.host_img_domain.SetWordData(GlobalConfig.ImgAutoUrl.value[:])
+        self.dohLine.SetWordData(GlobalConfig.DohUrlList.value[:])
         self.allApiUrl = []
+        self.echBox.clicked.connect(self.CheckEch)
+        self.dohBox.clicked.connect(self.CheckDoh)
+        self.checkDohUrl = ""
+        self.checkResult = None
+        self.dohLine.editingFinished.connect(self.CheckDohReq)
+
+    def CheckEch(self):
+        if self.echBox.isChecked() and not self.dohBox.isChecked():
+            self.dohBox.setChecked(True)
+
+    def CheckDoh(self):
+        if self.echBox.isChecked() and not self.dohBox.isChecked():
+            self.echBox.setChecked(False)
 
     def InitJmServer(self):
         self.AddHttpTask(req.GetJmServerReq(), self.InitJmServerBack)
@@ -88,6 +102,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
             self.checkLabel.setVisible(True)
         if not self.allApiUrl:
             self.InitJmServer()
+        self.CheckDohReq()
 
     def LoadHistory(self):
         if not Setting.LastProxyResult.value:
@@ -133,14 +148,50 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         self.radio_img_5.setEnabled(enabled)
         self.radio_img_6.setEnabled(enabled)
         self.radio_img_7.setEnabled(enabled)
+        self.echBox.setEnabled(enabled)
+        self.http3Box.setEnabled(enabled)
+        self.dohBox.setEnabled(enabled)
+        self.dohLine.setEnabled(enabled)
         # self.radioButton_5.setEnabled(enabled)
 
-    def RandomUa(self):
-        # str1 = random.sample('qwertyuiopasdfghjklzxcvbnm1234567890', 7)
-        # ua = "Mozilla/5.0 (Linux; Android 7.1.2; {} Build/N2G47O; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/86.0.4240.198 Mobile Safari/537.36".format(str1)
-        ua = random.choice(UALIST)
-        self.uaEdit.setText(ua)
-        return
+    # def RandomUa(self):
+    #     # str1 = random.sample('qwertyuiopasdfghjklzxcvbnm1234567890', 7)
+    #     # ua = "Mozilla/5.0 (Linux; Android 7.1.2; {} Build/N2G47O; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/86.0.4240.198 Mobile Safari/537.36".format(str1)
+    #     ua = random.choice(UALIST)
+    #     self.uaEdit.setText(ua)
+    #     return
+
+    def SetDohIcon(self):
+        icon2 = QIcon()
+        if self.checkResult == True:
+            icon2.addFile(u":/png/icon/right.svg", QSize(), QIcon.Normal, QIcon.Off)
+        elif self.checkResult == False:
+            icon2.addFile(u":/png/icon/error.svg", QSize(), QIcon.Normal, QIcon.Off)
+        self.dohTool.setStyleSheet(u"background-color:transparent;")
+        self.dohTool.setMinimumSize(QSize(0, 40))
+        self.dohTool.setFocusPolicy(Qt.NoFocus)
+        self.dohTool.setIcon(icon2)
+        self.dohTool.setIconSize(QSize(20, 20))
+
+    def CheckDohReq(self):
+        self.checkResult = None
+        self.checkDohUrl = self.dohLine.text()
+        self.SetDohIcon()
+        url = GlobalConfig().Url2List.value[0]
+        request = req.DnsOverHttpsReq(url, self.checkDohUrl)
+        self.AddHttpTask(request, self.CheckDohBack, self.checkDohUrl)
+
+    def CheckDohBack(self, raw, url):
+        data = raw["data"]
+        st = raw["st"]
+        Log.Warn(f"check_doh, {url}, st:{st}, data:{data}")
+        if url != self.checkDohUrl:
+            return
+        if st == Str.Ok and raw.get("Answer"):
+            self.checkResult = True
+        else:
+            self.checkResult = False
+        self.SetDohIcon()
 
     def LoadSetting(self):
         # self.dohBox.setChecked(Setting.IsOpenDoh.value)
@@ -155,12 +206,16 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         button.setChecked(True)
         self.cdn_api_ip.setText(Setting.PreferCDNIP.value)
         self.cdn_img_ip.setText(Setting.PreferCDNIPImg.value)
-        self.uaEdit.setText(Setting.UerAgent.value)
-        self.loginProxy.setChecked(bool(Setting.IsLoginProxy.value))
+        # self.uaEdit.setText(Setting.UerAgent.value)
+        # self.loginProxy.setChecked(bool(Setting.IsLoginProxy.value))
         self.apiTimeout.setCurrentIndex(Setting.ApiTimeOut.value)
         self.imgTimeout.setCurrentIndex(Setting.ImgTimeOut.value)
         self.host_api_domain.setText(Setting.HostApiDomain.value)
         self.host_img_domain.setText(Setting.HostImgDomain.value)
+        self.echBox.setChecked(bool(Setting.IsOpenDoh.value))
+        self.dohBox.setChecked(bool(Setting.IsOpenDoh.value))
+        self.dohLine.setText(Setting.DohAddress.value)
+        self.http3Box.setChecked(bool(Setting.IsOpenHTTP3.value))
 
     def SaveSetting(self):
         Setting.IsHttpProxy.SetValue(int(self.radioProxyGroup.checkedId()))
@@ -168,14 +223,18 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         Setting.HttpProxy.SetValue(self.httpLine.text())
         Setting.ProxySelectIndex.SetValue(self.radioApiGroup.checkedId())
         Setting.ProxyImgSelectIndex.SetValue(self.radioImgGroup.checkedId())
-        Setting.IsLoginProxy.SetValue(int(self.loginProxy.isChecked()))
+        # Setting.IsLoginProxy.SetValue(int(self.loginProxy.isChecked()))
         Setting.PreferCDNIPImg.SetValue(self.cdn_img_ip.text())
         Setting.PreferCDNIP.SetValue(self.cdn_api_ip.text())
         Setting.HostApiDomain.SetValue(self.host_api_domain.text())
         Setting.HostImgDomain.SetValue(self.host_img_domain.text())
-        Setting.UerAgent.SetValue(self.uaEdit.text())
+        # Setting.UerAgent.SetValue(self.uaEdit.text())
         Setting.ApiTimeOut.SetValue(self.apiTimeout.currentIndex())
         Setting.ImgTimeOut.SetValue(self.imgTimeout.currentIndex())
+        Setting.IsOpenDoh.SetValue(bool(self.dohBox.isChecked()))
+        Setting.EnableEch.SetValue(bool(self.echBox.isChecked()))
+        Setting.DohAddress.SetValue((self.dohLine.text()))
+        Setting.IsOpenHTTP3.SetValue(bool(self.http3Box.isChecked()))
         # Setting.DohAddress.SetValue(self.dohEdit.text())
         # Setting.IsOpenDoh.SetValue(int(self.dohBox.isChecked()))
         self.UpdateServer()
@@ -200,10 +259,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
             address = Setting.PreferCDNIP.value
         else:
             address = ""
-        if Setting.IsLoginProxy.value:
-            Server().UpdateDns(address, imageServer)
-        else:
-            Server().UpdateDns(address, imageServer)
+        Server().UpdateDns(address, imageServer)
         Server().UpdateProxy()
         # QtOwner().settingView.SetSock5Proxy()
         Log.Warn("update proxy, ver:{}, setId:{}:{}, address:{}, img:{}".format(config.UpdateVersion, Setting.ProxySelectIndex.value, Setting.ProxyImgSelectIndex.value, address, imageServer))
@@ -262,12 +318,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
             return
 
         request = req.SpeedTestPingReq()
-        if self.radioProxyGroup.checkedId() == 1:
-            request.proxy = {"http": httpProxy, "https": httpProxy}
-        elif self.radioProxyGroup.checkedId() == 3:
-            request.proxy = ""
-        else:
-            request.proxy = {"http": None, "https": None}
+        request.SetProxy(self.radioProxyGroup.checkedId(), self.httpLine.text(), self.sockEdit.text())
 
         if isProxyUrl:
             if "user-agent" in request.headers:
@@ -282,7 +333,11 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         #     self.SetSock5Proxy(False)
 
         Server().UpdateDns(dnslist[0], dnslist[1])
-        Server().UpdateProxy2(self.radioProxyGroup.checkedId(), self.httpLine.text(), self.sockEdit.text())
+        Server().UpdateProxy2(self.http3Box.isChecked(),
+                              self.echBox.isChecked(),
+                              self.dohBox.isChecked(),
+                              self.dohLine.text()
+                              )
         
         host = ToolUtil.GetUrlHost(request.url)
         host2 = ToolUtil.GetUrlHost(address)
@@ -356,12 +411,7 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
 
         request = req.SpeedTestReq()
         # request.isUseHttps = self.httpsBox.isChecked()
-        if self.radioProxyGroup.checkedId() == 1:
-            request.proxy = {"http": httpProxy, "https": httpProxy}
-        elif self.radioProxyGroup.checkedId() == 3:
-            request.proxy = ""
-        else:
-            request.proxy = {"http": None, "https": None}
+        request.SetProxy(self.radioProxyGroup.checkedId(), self.httpLine.text(), self.sockEdit.text())
 
         if isProxyUrl:
             if "user-agent" in request.headers:
@@ -375,7 +425,11 @@ class LoginProxyWidget(QtWidgets.QWidget, Ui_LoginProxyWidget, QtTaskBase):
         # else:
         #     self.SetSock5Proxy(False)
         Server().UpdateDns(dnslist[0], dnslist[1])
-        Server().UpdateProxy2(self.radioProxyGroup.checkedId(), self.httpLine.text(), self.sockEdit.text())
+        Server().UpdateProxy2(self.http3Box.isChecked(),
+                              self.echBox.isChecked(),
+                              self.dohBox.isChecked(),
+                              self.dohLine.text()
+                              )
         
         host = ToolUtil.GetUrlHost(request.url)
         host2 = ToolUtil.GetUrlHost(imgUrl)

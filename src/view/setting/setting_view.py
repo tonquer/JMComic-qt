@@ -81,6 +81,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.fontSize.currentTextChanged.connect(partial(self.CheckRadioEvent, Setting.FontSize))
         self.fontStyle.currentIndexChanged.connect(partial(self.CheckRadioEvent, Setting.FontStyle))
         self.tileComboBox.currentIndexChanged.connect(partial(self.CheckRadioEvent, Setting.Waifu2xTileSize))
+        self.colorBox.currentIndexChanged.connect(partial(self.CheckRadioEvent, Setting.ThemeColorIndex))
 
         # spinBox
         # self.preDownNum.valueChanged.connect(partial(self.SpinBoxEvent, "", self.preDownNum))
@@ -199,6 +200,8 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         if setItem == Setting.IsHttpProxy:
             from server.server import Server
             Server().UpdateProxy()
+        elif setItem == Setting.ThemeColorIndex:
+            self.SetTheme()
         self.CheckMsgLabel()
         return
 
@@ -286,6 +289,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         # self.coverNoise.setCurrentIndex(Setting.CoverLookNoise.value)
         self.coverScale.setValue(Setting.CoverLookScale.value)
         # self.coverModel.setCurrentIndex(Setting.CoverLookModel.value)
+        self.colorBox.setCurrentIndex(Setting.ThemeColorIndex.value)
 
         self.downAuto.setChecked(Setting.DownloadAuto.value)
         # self.downNoise.setCurrentIndex(Setting.DownloadNoise.value)
@@ -387,22 +391,30 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         if themeId == 0:
             themeId = self.GetSysColor()
 
-        if themeId == Setting.ThemeIndex.autoValue:
-            return
+        # if themeId == Setting.ThemeIndex.autoValue:
+        #     return
 
         Setting.ThemeIndex.autoValue = themeId
 
         if themeId == 1:
-            f = QFile(":/file/theme/dark_orange.qss")
+            if Setting.ThemeColorIndex.value == 0:
+                f = QFile(":/file/theme/dark_orange.qss")
+            else:
+                f = QFile(":/file/theme/dark_pink.qss")
         else:
-            f = QFile(":/file/theme/light_orange.qss")
+            if Setting.ThemeColorIndex.value == 0:
+                f = QFile(":/file/theme/light_orange.qss")
+            else:
+                f = QFile(":/file/theme/light_pink.qss")
         f.open(QFile.ReadOnly)
         data = str(f.readAll(), encoding='utf-8')
         if Setting.FontName.value:
             data = data.replace("/*replace*/", "font-family: {};".format(Setting.FontName.value))
         QtOwner().app.setStyleSheet(data)
-        self.SetSettingTheme(themeId)
         f.close()
+        QtOwner().localReadView.retranslateUi(QtOwner().localReadView)
+        QtOwner().bookInfoView.retranslateUi(QtOwner().bookInfoView)
+        self.SetSettingTheme(themeId)
 
     def SetSettingTheme(self, themId):
         if themId != 1:

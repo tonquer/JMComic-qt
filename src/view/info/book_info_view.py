@@ -93,6 +93,54 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         # self.toolMenu = QMenu(self.uploadButton)
         # self.uploadButton.setMenu(self.toolMenu)
 
+    def retranslateUi(self, view):
+        Ui_BookInfo.retranslateUi(self, view)
+        self.tagList.setStyleSheet(u"QPushButton {\n"
+                                   f"                   background-color:{QtOwner().GetThemeColorList(1)};\n"
+                                   f"                   color: {QtOwner().GetThemeColorList(2)};\n"
+                                   "                   border:2px solid red;\n"
+                                   "                   border-radius: 10px;\n"
+                                   f"                   border-color:{QtOwner().GetThemeColorList(2)};\n"
+                                   "                   }\n"
+                                   "                   QPushButton:hover\n"
+                                   "                   {\n"
+                                   "                   background-color:rgb(21, 85, 154);\n"
+                                   "                   border-radius: 10px;\n"
+                                   "                   color: rgb(0, 0, 0);\n"
+                                   "                   }\n"
+                                   "")
+        self.epsListWidget.setStyleSheet(u"QListWidget {background-color:transparent;}\n"
+                                         "QListWidget::item {\n"
+                                         f"    background-color:{QtOwner().GetThemeColorList(1)};\n"
+                                         f"    color: {QtOwner().GetThemeColorList(2)};\n"
+                                         "	border:2px solid red;\n"
+                                         "    border-radius: 10px;\n"
+                                         f"	border-color:{QtOwner().GetThemeColorList(2)};\n"
+                                         "}\n"
+                                         " QListWidget::item:hover \n"
+                                         "{\n"
+                                         "    background-color:rgb(21, 85, 154);\n"
+                                         "    border-radius: 10px;\n"
+                                         "    color: rgb(0, 0, 0);\n"
+                                         "}\n"
+                                         "")
+        self.listWidget.setStyleSheet(u"QListWidget {background-color:transparent;}\n"
+                                      "QListWidget::item {\n"
+                                      f"    background-color:{QtOwner().GetThemeColorList(1)};\n"
+                                      f"    color: {QtOwner().GetThemeColorList(2)};\n"
+                                      "	border:2px solid red;\n"
+                                      "    border-radius: 10px;\n"
+                                      f"	border-color:{QtOwner().GetThemeColorList(2)};\n"
+                                      "}\n"
+                                      "/* \u9f20\u6807\u5728\u6309\u94ae\u4e0a\u65f6\uff0c\u6309\u94ae\u989c\u8272 */\n"
+                                      " QListWidget::item:hover \n"
+                                      "{\n"
+                                      "    background-color:rgb(21, 85, 154);\n"
+                                      "    border-radius: 10px;\n"
+                                      "    color: rgb(0, 0, 0);\n"
+                                      "}\n"
+                                      "")
+
     def UpdateFavoriteIcon(self):
         p = QPixmap()
         if self.isFavorite:
@@ -158,7 +206,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             title = info.baseInfo.title
 
             if info.pageInfo.pages:
-                title += "<font color=#CC6600>{}</font>".format("(" + str(info.pageInfo.pages) + "P)")
+                title += "<font color={}>{}</font>".format(QtOwner().GetThemeColor(), "(" + str(info.pageInfo.pages) + "P)")
             self.title.setText(title)
             font = QFont()
             font.setPointSize(12)
@@ -250,7 +298,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
                     item.setToolTip(epsInfo.epsTitle)
 
                 label.setAlignment(Qt.AlignCenter)
-                label.setStyleSheet("color: rgb(204, 102, 0);")
+                label.setStyleSheet(f"color: {QtOwner().GetThemeColor()};")
                 font = QFont()
                 font.setPointSize(12)
                 font.setBold(True)
@@ -344,7 +392,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             epsInfo = info.pageInfo.epsInfo.get(index)
             label = QLabel(epsInfo.title)
             label.setAlignment(Qt.AlignCenter)
-            label.setStyleSheet("color: rgb(204, 102, 0);")
+            label.setStyleSheet(f"color: {QtOwner().GetThemeColor()};")
             font = QFont()
             font.setPointSize(12)
             font.setBold(True)

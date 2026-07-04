@@ -83,6 +83,29 @@ class LocalReadView(QWidget, Ui_Local, QtTaskBase):
 
         self.sortAllBookIds = []
 
+    def retranslateUi(self, SettingNew):
+        Ui_Local.retranslateUi(self, SettingNew)
+        self.tagsList.setStyleSheet(u"QListWidget {background-color:transparent;}\n"
+                                    "QListWidget::item {\n"
+                                    f"    background-color:{QtOwner().GetThemeColorList(1)};\n"
+                                    f"    color: {QtOwner().GetThemeColorList(2)};\n"
+                                    "	border:2px solid red;\n"
+                                    "    border-radius: 10px;\n"
+                                    f"	border-color:{QtOwner().GetThemeColorList(2)};\n"
+                                    "}\n"
+                                    " QListWidget::item:hover \n"
+                                    "{\n"
+                                    "    background-color:rgb(21, 85, 154);\n"
+                                    "    border-radius: 10px;\n"
+                                    "    color: rgb(0, 0, 0);\n"
+                                    "}\n"
+                                    " QListWidget::item:selected \n"
+                                    "{\n"
+                                    "    background-color:rgb(21, 85, 154);\n"
+                                    "    border-radius: 10px;\n"
+                                    "    color: rgb(0, 0, 0);\n"
+                                    "}")
+
     def SearchTextChange(self, text):
         self.searchText = text
         self.InitBook()

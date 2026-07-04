@@ -18,7 +18,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QButtonGroup, QCheckBox, QCommandLinkButton,
     QFrame, QGridLayout, QHBoxLayout, QLabel,
     QLineEdit, QPushButton, QRadioButton, QSizePolicy,
-    QSpacerItem, QVBoxLayout, QWidget)
+    QSpacerItem, QToolButton, QVBoxLayout, QWidget)
 
 from component.box.wheel_combo_box import WheelComboBox
 from component.line_edit.tip_line_edit import TipLineEdit
@@ -38,7 +38,7 @@ class Ui_LoginProxyWidget(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 430, 664))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 413, 682))
         self.verticalLayout = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.horizontalLayout_11 = QHBoxLayout()
@@ -195,46 +195,68 @@ class Ui_LoginProxyWidget(object):
 
         self.verticalLayout.addLayout(self.horizontalLayout_5)
 
+        self.verticalLayout_2 = QVBoxLayout()
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.http3Box = QCheckBox(self.scrollAreaWidgetContents)
+        self.http3Box.setObjectName(u"http3Box")
+
+        self.verticalLayout_2.addWidget(self.http3Box)
+
+
+        self.verticalLayout.addLayout(self.verticalLayout_2)
+
         self.horizontalLayout_9 = QHBoxLayout()
         self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
-        self.httpsBox = QCheckBox(self.scrollAreaWidgetContents)
-        self.httpsBox.setObjectName(u"httpsBox")
-        self.httpsBox.setChecked(True)
+        self.echBox = QCheckBox(self.scrollAreaWidgetContents)
+        self.echBox.setObjectName(u"echBox")
+        self.echBox.setChecked(True)
 
-        self.horizontalLayout_9.addWidget(self.httpsBox)
+        self.horizontalLayout_9.addWidget(self.echBox)
 
 
         self.verticalLayout.addLayout(self.horizontalLayout_9)
 
-        self.loginProxy = QRadioButton(self.scrollAreaWidgetContents)
-        self.loginProxy.setObjectName(u"loginProxy")
+        self.horizontalLayout_6 = QHBoxLayout()
+        self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
+        self.dohBox = QCheckBox(self.scrollAreaWidgetContents)
+        self.dohBox.setObjectName(u"dohBox")
 
-        self.verticalLayout.addWidget(self.loginProxy)
+        self.horizontalLayout_6.addWidget(self.dohBox)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout_6)
+
+        self.horizontalLayout_14 = QHBoxLayout()
+        self.horizontalLayout_14.setObjectName(u"horizontalLayout_14")
+        self.label_13 = QLabel(self.scrollAreaWidgetContents)
+        self.label_13.setObjectName(u"label_13")
+
+        self.horizontalLayout_14.addWidget(self.label_13)
+
+        self.dohLine = TipLineEdit(self.scrollAreaWidgetContents)
+        self.dohLine.setObjectName(u"dohLine")
+
+        self.horizontalLayout_14.addWidget(self.dohLine)
+
+        self.dohTool = QToolButton(self.scrollAreaWidgetContents)
+        self.dohTool.setObjectName(u"dohTool")
+
+        self.horizontalLayout_14.addWidget(self.dohTool)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout_14)
+
+        self.line_8 = QFrame(self.scrollAreaWidgetContents)
+        self.line_8.setObjectName(u"line_8")
+        self.line_8.setFrameShape(QFrame.HLine)
+        self.line_8.setFrameShadow(QFrame.Sunken)
+
+        self.verticalLayout.addWidget(self.line_8)
 
         self.horizontalLayout_3 = QHBoxLayout()
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
-        self.label_9 = QLabel(self.scrollAreaWidgetContents)
-        self.label_9.setObjectName(u"label_9")
-        self.label_9.setMinimumSize(QSize(90, 0))
-
-        self.horizontalLayout_3.addWidget(self.label_9)
-
-        self.uaRandom = QPushButton(self.scrollAreaWidgetContents)
-        self.uaRandom.setObjectName(u"uaRandom")
-
-        self.horizontalLayout_3.addWidget(self.uaRandom)
-
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_3.addItem(self.horizontalSpacer)
-
 
         self.verticalLayout.addLayout(self.horizontalLayout_3)
-
-        self.uaEdit = QLineEdit(self.scrollAreaWidgetContents)
-        self.uaEdit.setObjectName(u"uaEdit")
-
-        self.verticalLayout.addWidget(self.uaEdit)
 
         self.testSpeedButton = QPushButton(self.scrollAreaWidgetContents)
         self.testSpeedButton.setObjectName(u"testSpeedButton")
@@ -576,10 +598,11 @@ class Ui_LoginProxyWidget(object):
         self.imgTimeout.setItemText(3, QCoreApplication.translate("LoginProxyWidget", u"10", None))
         self.imgTimeout.setItemText(4, QCoreApplication.translate("LoginProxyWidget", u"15", None))
 
-        self.httpsBox.setText(QCoreApplication.translate("LoginProxyWidget", u"\u542f\u7528Https\uff08\u5982\u679c\u51fa\u73b0\u8fde\u63a5\u88ab\u91cd\u7f6e\uff0c\u5efa\u8bae\u5173\u95ed\u8bd5\u8bd5\uff09", None))
-        self.loginProxy.setText(QCoreApplication.translate("LoginProxyWidget", u"\u4f7f\u7528\u6ce8\u518c\u5206\u6d41\uff08\u65e0\u6cd5\u6ce8\u518c\u53ef\u5c1d\u8bd5\u5f00\u542f\uff09", None))
-        self.label_9.setText(QCoreApplication.translate("LoginProxyWidget", u"UA\u8bbe\u7f6e:", None))
-        self.uaRandom.setText(QCoreApplication.translate("LoginProxyWidget", u"\u968f\u673a\u751f\u6210", None))
+        self.http3Box.setText(QCoreApplication.translate("LoginProxyWidget", u"\u542f\u7528HTTP3\uff08UDP\uff09", None))
+        self.echBox.setText(QCoreApplication.translate("LoginProxyWidget", u"\u542f\u7528ECH\uff08Encrypted Client Hello\uff09", None))
+        self.dohBox.setText(QCoreApplication.translate("LoginProxyWidget", u"\u542f\u7528DOH\uff08DNS-over-HTTPS\uff09", None))
+        self.label_13.setText(QCoreApplication.translate("LoginProxyWidget", u"DOH\u5730\u5740\uff1a", None))
+        self.dohTool.setText("")
         self.testSpeedButton.setText(QCoreApplication.translate("LoginProxyWidget", u"\u6d4b\u901f", None))
         self.label_api_3.setText("")
         self.radio_img_3.setText(QCoreApplication.translate("LoginProxyWidget", u"\u5206\u6d413", None))

@@ -321,6 +321,18 @@ class QtOwner(Singleton):
     def SetDirty(self):
         pass
 
+    def GetThemeColor(self):
+        from config.setting import Setting
+        if Setting.ThemeColorIndex.value == 0:
+            return "#FF7B00"
+        return "#ff4081"
+
+    def GetThemeColorList(self, index):
+        from config.setting import Setting
+        if Setting.ThemeColorIndex.value == 0:
+            return ["#FF7B00", "#fff1e6", "#cc6600"][index]
+        return ["#ff4081", "#fbeff3", "#c45f7d"][index]
+
     @staticmethod
     def SetFont():
         try:

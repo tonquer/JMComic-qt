@@ -53,6 +53,10 @@ class CommentItemWidget(QtWidgets.QWidget, Ui_CommentItem):
         self.isLoadPicture = False
         self.commentList = []
 
+        self.levelLabel.setStyleSheet(f"color: {QtOwner().GetThemeColorList(2)};")
+        self.titleLabel.setStyleSheet(f"color: {QtOwner().GetThemeColorList(2)};")
+
+
     def GetTitle(self):
         return self.linkLabel.text()
 

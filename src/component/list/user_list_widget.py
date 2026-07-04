@@ -5,6 +5,7 @@ from PySide6.QtWidgets import QListWidgetItem, QFrame, QListWidget
 
 from component.list.base_list_widget import BaseListWidget
 from config import config
+from qt_owner import QtOwner
 from tools.status import Status
 from tools.str import Str
 from tools.tool import ToolUtil
@@ -40,7 +41,7 @@ class UserListWidget(BaseListWidget):
         widget.setFocusPolicy(Qt.NoFocus)
         widget.linkId = info.linkBookId
         if widget.linkId and widget.linkId != "0":
-            widget.linkLabel.setText("<u><font color=#CC6600>{}</font></u>".format(info.linkBookName))
+            widget.linkLabel.setText("<u><font color={}>{}</font></u>".format(QtOwner().GetThemeColor(),info.linkBookName))
             widget.linkLabel.setVisible(True)
         if isSub:
             widget.commentButton.hide()

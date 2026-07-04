@@ -5,12 +5,9 @@ lxml
 pycryptodomex
 Pysocks
 natsort
-curl_cffi
+curl_cffi>=0.13.0
 jmcomic==2.6.20
 webdavclient3
 tqdm
 pysmb
-httpx
-httpx[http2]
-httpx[socks]
 smbprotocol

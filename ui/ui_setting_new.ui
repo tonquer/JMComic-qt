@@ -95,9 +95,9 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>-2082</y>
+          <y>0</y>
           <width>661</width>
-          <height>2871</height>
+          <height>2927</height>
          </rect>
         </property>
         <property name="styleSheet">
@@ -253,6 +253,55 @@
                <string notr="true">themeGroup</string>
               </attribute>
              </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_23">
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>21</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>颜色</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_12">
+              <item>
+               <widget class="QComboBox" name="colorBox">
+                <item>
+                 <property name="text">
+                  <string>橙色</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>粉色</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_5">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
             </item>
            </layout>
           </widget>
@@ -2393,10 +2442,10 @@
  <connections/>
  <buttongroups>
   <buttongroup name="proxyGroup"/>
+  <buttongroup name="saveNameGroup"/>
+  <buttongroup name="languageGroup"/>
   <buttongroup name="themeGroup"/>
   <buttongroup name="showCloseButtonGroup"/>
-  <buttongroup name="saveNameGroup"/>
   <buttongroup name="logGroup"/>
-  <buttongroup name="languageGroup"/>
  </buttongroups>
 </ui>

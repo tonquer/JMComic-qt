@@ -1,8 +1,11 @@
 import json
 import pickle
 import threading
+import time
 from queue import Queue
-from curl_cffi import requests as requests2, CurlOpt
+
+import curl_cffi.requests.exceptions as exceptions
+from curl_cffi import requests as requests2, CurlOpt, CurlHttpVersion, CurlSslVersion
 
 import server.req as req
 import server.res as res
@@ -15,22 +18,21 @@ from tools.singleton import Singleton
 from tools.status import Status
 from tools.tool import ToolUtil
 import socket
-import httpx
 import urllib
 
 
 host_table = {}
-_orig_getaddrinfo = socket.getaddrinfo
-# 如果使用代理，無法使用自定義dns
-def getaddrinfo2(host, port, *args, **kwargs):
-    if host in host_table:
-        address = host_table[host]
-        Log.Info("dns parse, host:{}->{}".format(host, address))
-    else:
-        address = host
-    results = _orig_getaddrinfo(address, port, *args, **kwargs)
-    return results
-socket.getaddrinfo = getaddrinfo2
+# _orig_getaddrinfo = socket.getaddrinfo
+# # 如果使用代理，無法使用自定義dns
+# def getaddrinfo2(host, port, *args, **kwargs):
+#     if host in host_table:
+#         address = host_table[host]
+#         Log.Info("dns parse, host:{}->{}".format(host, address))
+#     else:
+#         address = host
+#     results = _orig_getaddrinfo(address, port, *args, **kwargs)
+#     return results
+# socket.getaddrinfo = getaddrinfo2
 
 
 def handler(request):
@@ -44,15 +46,15 @@ class NewSession(requests2.Session):
     def __init__(self, **kwargs):
         requests2.Session.__init__(self, **kwargs)
 
-    def _set_curl_options(self, *args, **kwargs):
-        c = args[0]
-        if GlobalConfig.WebDnsList.value:
-            c.setopt(CurlOpt.RESOLVE, GlobalConfig.WebDnsList.value)
-        # c.setopt(CurlOpt.SSL_OPTIONS, CurlOpt.ALLO)
-        # c.setopt(CurlOpt.SSLVERSION, 6)
-        # c.setopt(CurlOpt.SSL_VERIFYHOST, False)
-        # c.setopt(CurlOpt.SSL_VERIFYPEER, False)
-        return requests2.Session._set_curl_options(self, *args, **kwargs)
+    # def _set_curl_options(self, *args, **kwargs):
+    #     c = args[0]
+    #     if GlobalConfig.WebDnsList.value:
+    #         c.setopt(CurlOpt.RESOLVE, GlobalConfig.WebDnsList.value)
+    #     # c.setopt(CurlOpt.SSL_OPTIONS, CurlOpt.ALLO)
+    #     # c.setopt(CurlOpt.SSLVERSION, 6)
+    #     # c.setopt(CurlOpt.SSL_VERIFYHOST, False)
+    #     # c.setopt(CurlOpt.SSL_VERIFYPEER, False)
+    #     return requests2.Session._set_curl_options(self, *args, **kwargs)
 
 
 class Task(object):
@@ -64,6 +66,7 @@ class Task(object):
         self.status = Status.Ok
         self.cacheAndLoadPath = cacheAndLoadPath
         self.loadPath = loadPath
+        self.index=0
 
     @property
     def bakParam(self):
@@ -81,8 +84,8 @@ class Server(Singleton):
     def __init__(self) -> None:
         Singleton.__init__(self)
         self.handler = {}
-        self.session = NewSession()
-        self.session2 = NewSession()
+        # self.session = NewSession()
+        # self.session2 = NewSession()
         # self.session2 = cloudscraper.session()
         self.address = ""
         self.imageServer = ""
@@ -90,6 +93,7 @@ class Server(Singleton):
         self.token = ""
         self._inQueue = Queue()
         self._downloadQueue = Queue()
+        self._oldQueue = Queue()
         self.threadHandler = 0
         self.threadNum = config.ThreadNum
 
@@ -97,27 +101,58 @@ class Server(Singleton):
         self.downloadNum = Setting.MultiNum.value
         self.threadSession = []
         self.downloadSession = []
+        self.oldSession = []
+
+    def Init(self):
+        self.UpdateProxy()
+        for i in range(1):
+            self.oldSession.append(NewSession())
+            thread = threading.Thread(target=self.RunOld, args=[i])
+            thread.setName("HTTP-Old-"+str(i))
+            thread.setDaemon(True)
+            thread.start()
 
         for i in range(self.threadNum):
-            self.threadSession.append(self.GetNewSession())
+            # self.threadSession.append(self.GetNewSession())
             thread = threading.Thread(target=self.Run, args=[i])
             thread.setName("HTTP-"+str(i))
             thread.setDaemon(True)
             thread.start()
 
         for i in range(self.downloadNum):
-            self.downloadSession.append(self.GetNewSession())
+            # self.downloadSession.append(self.GetNewSession())
             thread = threading.Thread(target=self.RunDownload, args=[i])
             thread.setName("Download-" + str(i))
             thread.setDaemon(True)
             thread.start()
 
-    def GetNewSession(self, proxy=None):
-        try:
-            return httpx.Client(http2=True, verify=False, trust_env=False, proxy=proxy)
-        except Exception as es:
-            Log.Error(es)
-            return httpx.Client(http2=True, verify=False, trust_env=False)
+    def GetNewSession(self, isOpenHttp3=False, isOpenEch=False, isOpenDoh=False, dohUrl=""):
+        curlDict = {}
+
+        if host_table:
+            resolve_list = []
+            for k, v in host_table.items():
+                resolve_list.append(f"{k}:443:{v}")
+
+            curlDict[CurlOpt.RESOLVE] = resolve_list
+
+        if isOpenEch:
+            curlDict[CurlOpt.ECH] = "true"
+        if isOpenDoh and dohUrl:
+            curlDict[CurlOpt.DOH_URL] = dohUrl
+
+        if isOpenHttp3:
+            ver = CurlHttpVersion.V3
+        else:
+            ver = CurlHttpVersion.V2_0
+        curlDict[CurlOpt.SSLVERSION] = CurlSslVersion.TLSv1_3
+
+        return NewSession(curl_options=curlDict, http_version=ver)
+        # try:
+        #     return httpx.Client(http2=True, verify=False, trust_env=False, proxy=proxy)
+        # except Exception as es:
+        #     Log.Error(es)
+        #     return httpx.Client(http2=True, verify=False, trust_env=False)
     
     def Run(self, index):
         while True:
@@ -127,6 +162,18 @@ class Server(Singleton):
                 if task == "":
                     break
                 self._Send(task, index)
+            except Exception as es:
+                Log.Error(es)
+        pass
+
+    def RunOld(self, index):
+        while True:
+            task = self._oldQueue.get(True)
+            self._oldQueue.task_done()
+            try:
+                if task == "":
+                    break
+                self._Send(task, index, isOld=True)
             except Exception as es:
                 Log.Error(es)
         pass
@@ -179,52 +226,25 @@ class Server(Singleton):
 
     def UpdateProxy(self):
         from config.setting import Setting
-        self.UpdateProxy2(Setting.IsHttpProxy.value, Setting.HttpProxy.value, Setting.Sock5Proxy.value)
+        self.UpdateProxy2(Setting.IsOpenHTTP3.value,
+                        Setting.EnableEch.value,
+                          Setting.IsOpenDoh.value,
+                          Setting.DohAddress.value)
 
-    def UpdateProxy2(self, httpProxyIndex, httpProxy, sock5Proxy):
+    def UpdateProxy2(self, isOpenHttp3=False, isOpenEch=False, isOpenDoh=False, dohUrl=""):
         from tools.str import Str
-        # sock5代理
-        if httpProxyIndex == 2 and sock5Proxy:
-            data = sock5Proxy.replace("http://", "").replace("https://", "").replace("sock5://",
-                                                                                                   "").replace(
-                "socks5://", "")
-            trustEnv = False
-            data = data.split(":")
-            if len(data) == 2:
-                host = data[0]
-                port = data[1]
-                proxy = f"socks5://{host}:{port}"
-            else:
-                return Str.Sock5Error
-        # http代理
-        elif httpProxyIndex == 1 and httpProxy:
-            proxy = httpProxy
-            trustEnv = False
-            if "http" not in proxy:
-                proxy = "http://" + proxy
-                
-        # 系统代理
-        elif httpProxyIndex == 3:
-            proxy = None
-            proxyDict = urllib.request.getproxies()
-            if isinstance(proxyDict, dict) and proxyDict.get("http"):
-                proxy = proxyDict.get("http")
-                if "http" not in proxy:
-                    proxy = "http://" + proxy
-            trustEnv = False
-        # 其他
-        else:
-            trustEnv = False
-            proxy = None
-        Log.Warn(f"update proxy, index:{httpProxyIndex}, proxy:{proxy}, env:{trustEnv}")
 
-        self.threadSession = []
         for i in range(self.threadNum):
-            self.threadSession.append(self.GetNewSession(proxy))
+            if i+1 > len(self.threadSession):
+                self.threadSession.append(self.GetNewSession(isOpenHttp3, isOpenEch, isOpenDoh, dohUrl))
+            else:
+                self.threadSession[i] = self.GetNewSession(isOpenHttp3, isOpenEch, isOpenDoh, dohUrl)
 
-        self.downloadSession = []
         for i in range(self.downloadNum):
-            self.downloadSession.append(self.GetNewSession(proxy))
+            if i+1 > len(self.downloadSession):
+                self.downloadSession.append(self.GetNewSession(isOpenHttp3, isOpenEch, isOpenDoh, dohUrl))
+            else:
+                self.downloadSession[i] = self.GetNewSession(isOpenHttp3, isOpenEch, isOpenDoh, dohUrl)
         return
     
     def __DealHeaders(self, request, token):
@@ -248,13 +268,17 @@ class Server(Singleton):
                 return self._Download(Task(request, backParam), index)
         else:
             if isASync:
-                return self._inQueue.put(Task(request, backParam))
+                host = ToolUtil.GetUrlHost(request.url)
+                if host in GlobalConfig.NoHttp3Url.value or isinstance(request, req.DnsOverHttpsReq):
+                    return self._oldQueue.put(Task(request, backParam))
+                else:
+                    return self._inQueue.put(Task(request, backParam))
             else:
                 return self._Send(Task(request, backParam), index)
 
-    def _Send(self, task, index):
+    def _Send(self, task, index, isOld=False):
         try:
-            Log.Info("request-> backId:{}, {}".format(task.bakParam, task.req))
+            Log.Info("request{}-> backId:{}, {}".format(index, task.bakParam, task.req))
             if QtOwner().isOfflineModel:
                 task.status = Status.OfflineModel
                 data = {"st": Status.OfflineModel, "data": ""}
@@ -262,23 +286,38 @@ class Server(Singleton):
                 return
 
             if task.req.method.lower() == "post":
-                self.Post(task, index)
+                self.Post(task, index, isOld)
             elif task.req.method.lower() == "post2":
-                self.Post2(task)
+                self.Post(task)
             elif task.req.method.lower() == "get":
-                self.Get(task, index)
+                self.Get(task, index, isOld)
             elif task.req.method.lower() == "get2":
-                self.Get2(task)
+                self.Get(task)
             elif task.req.method.lower() == "put":
-                self.Put(task, index)
+                self.Put(task, index, isOld)
             else:
                 return
+        except exceptions.DNSError as es:
+            task.status = Status.DnsError
+            Log.Warn(f"error:{task.req.url}")
+            Log.Error(es)
+        except exceptions.Timeout as es:
+            task.status = Status.TimeOut
+            Log.Warn(f"error:{task.req.url}")
+            Log.Error(es)
+        except exceptions.SSLError as es:
+            if "Connection was reset" in str(es):
+                task.status = Status.ResetErr
+            else:
+                task.status = Status.NetError
+            Log.Warn(f"error:{task.req.url}")
+            Log.Error(es)
         except Exception as es:
             task.status = Status.NetError
             Log.Warn(f"error:{task.req.url}")
             Log.Error(es)
         finally:
-            Log.Info("response-> backId:{}, {}, st:{}, {}".format(task.backParam, task.req.__class__.__name__, task.status, task.res))
+            Log.Info("response{}-> backId:{}, {}, st:{}, {}".format(index, task.backParam, task.req.__class__.__name__, task.status, task.res))
         try:
             self.handler.get(task.req.__class__.__name__)(task)
             # if isinstance(task.res.raw, requests2.Response):
@@ -291,41 +330,47 @@ class Server(Singleton):
         finally:
             return task.res
 
-    def Post(self, task, index=0):
+    def Post(self, task, index=0, isOld=False):
         request = task.req
         if request.params == None:
             request.params = {}
 
         if request.headers == None:
             request.headers = {}
-        session = self.threadSession[index]
-        task.res = res.BaseRes("", False)
-        if task.req.cookies:
-            r = session.post(request.url, follow_redirects=True, headers=request.headers, timeout=task.timeout, extensions=request.extend, cookies=task.req.cookies, data=request.params)
+        if isOld:
+            session = self.oldSession[index]
         else:
-            r = session.post(request.url, follow_redirects=True, headers=request.headers, timeout=task.timeout, extensions=request.extend, data=request.params)
-        task.res = res.BaseRes(r, request.isParseRes)
-        return task
-
-    def Post2(self, task):
-        request = task.req
-        if request.params == None:
-            request.params = {}
-
-        if request.headers == None:
-            request.headers = {}
-
+            session = self.threadSession[index]
         task.res = res.BaseRes("", False)
+
         if task.req.cookies:
-            r = self.session2.post(request.url, proxies=request.proxy, impersonate="chrome110", headers=request.headers, data=request.params,
+            r = session.post(request.url, proxies=request.proxy, impersonate="chrome110", headers=request.headers, data=request.params,
                                   timeout=task.timeout, verify=False, cookies=task.req.cookies)
         else:
-            r = self.session2.post(request.url, proxies=request.proxy, impersonate="chrome110", headers=request.headers, data=request.params,
-                                  timeout=task.timeout, verify=False)
+            r = session.post(request.url, proxies=request.proxy, impersonate="chrome110", headers=request.headers, data=request.params,
+                                  timeout=task.timeout, verify=False, cookies=task.req.cookies)
         task.res = res.BaseRes(r, request.isParseRes)
         return task
 
-    def Put(self, task, index=0):
+    # def Post2(self, task):
+    #     request = task.req
+    #     if request.params == None:
+    #         request.params = {}
+    #
+    #     if request.headers == None:
+    #         request.headers = {}
+    #
+    #     task.res = res.BaseRes("", False)
+    #     if task.req.cookies:
+    #         r = self.session2.post(request.url, proxies=request.proxy, impersonate="chrome110", headers=request.headers, data=request.params,
+    #                               timeout=task.timeout, verify=False, cookies=task.req.cookies)
+    #     else:
+    #         r = self.session2.post(request.url, proxies=request.proxy, impersonate="chrome110", headers=request.headers, data=request.params,
+    #                               timeout=task.timeout, verify=False)
+    #     task.res = res.BaseRes(r, request.isParseRes)
+    #     return task
+
+    def Put(self, task, index=0, isOld=False):
         request = task.req
         if request.params == None:
             request.params = {}
@@ -334,43 +379,50 @@ class Server(Singleton):
             request.headers = {}
 
         task.res = res.BaseRes("", False)
-        session = self.threadSession[index]
-        r = session.put(request.url, follow_redirects=True, headers=request.headers, data=request.params, timeout=15, extensions=request.extend)
-        task.res = res.BaseRes(r, request.isParseRes)
-        return task
-
-    def Get(self, task, index=0):
-        request = task.req
-        if request.params == None:
-            request.params = {}
-
-        if request.headers == None:
-            request.headers = {}
-
-        task.res = res.BaseRes("", False)
-        session = self.threadSession[index]
-        if task.req.cookies:
-            r = session.get(request.url, follow_redirects=True, headers=request.headers, timeout=task.timeout, extensions=request.extend, cookies=task.req.cookies)
+        if isOld:
+            session = self.oldSession[index]
         else:
-            r = session.get(request.url, follow_redirects=True, headers=request.headers, timeout=task.timeout, extensions=request.extend)
+            session = self.threadSession[index]
+
+        r = session.put(request.url, proxies=request.proxy, impersonate="chrome110", headers=request.headers, timeout=task.timeout, verify=False)
         task.res = res.BaseRes(r, request.isParseRes)
         return task
 
-    def Get2(self, task):
+    def Get(self, task, index=0, isOld=False):
         request = task.req
         if request.params == None:
             request.params = {}
 
         if request.headers == None:
             request.headers = {}
-        task.res = res.BaseRes("", False)
 
-        if task.req.cookies:
-            r = self.session2.get(request.url, proxies=request.proxy, impersonate="chrome110", headers=request.headers, timeout=task.timeout, cookies=task.req.cookies)
+        task.res = res.BaseRes("", False)
+        if isOld:
+            session = self.oldSession[index]
         else:
-            r = self.session2.get(request.url, proxies=request.proxy, impersonate="chrome110", headers=request.headers, timeout=task.timeout)
+            session = self.threadSession[index]
+        if task.req.cookies:
+            r = session.get(request.url, proxies=request.proxy, impersonate="chrome110", headers=request.headers, timeout=task.timeout, verify=False, cookies=task.req.cookies)
+        else:
+            r = session.get(request.url, proxies=request.proxy, impersonate="chrome110", headers=request.headers, timeout=task.timeout, verify=False)
         task.res = res.BaseRes(r, request.isParseRes)
         return task
+
+    # def Get2(self, task):
+    #     request = task.req
+    #     if request.params == None:
+    #         request.params = {}
+    #
+    #     if request.headers == None:
+    #         request.headers = {}
+    #     task.res = res.BaseRes("", False)
+    #
+    #     if task.req.cookies:
+    #         r = self.session2.get(request.url, proxies=request.proxy, impersonate="chrome110", headers=request.headers, timeout=task.timeout, cookies=task.req.cookies)
+    #     else:
+    #         r = self.session2.get(request.url, proxies=request.proxy, impersonate="chrome110", headers=request.headers, timeout=task.timeout)
+    #     task.res = res.BaseRes(r, request.isParseRes)
+    #     return task
 
     def Download(self, request, token="", backParams="", cacheAndLoadPath="", loadPath= "", isASync=True):
         self.__DealHeaders(request, token)
@@ -396,7 +448,7 @@ class Server(Singleton):
                             if data:
                                 TaskBase.taskObj.downloadBack.emit(task.bakParam, 0, len(data), b"")
                                 TaskBase.taskObj.downloadBack.emit(task.bakParam, 0, 0, data)
-                                Log.Info("request cache -> backId:{}, {}".format(task.bakParam, task.req))
+                                Log.Info("request{} cache -> backId:{}, {}".format(index, task.bakParam, task.req))
                                 return
 
             if QtOwner().isOfflineModel:
@@ -411,9 +463,9 @@ class Server(Singleton):
             if request.headers == None:
                 request.headers = {}
             if not request.isReset:
-                Log.Info("request-> backId:{}, {}".format(task.bakParam, task.req))
+                Log.Info("request{}-> backId:{}, {}".format(index, task.bakParam, task.req))
             else:
-                Log.Info("request reset:{} -> backId:{}, {}".format(task.req.resetCnt, task.bakParam, task.req))
+                Log.Info("request{} reset:{} -> backId:{}, {}".format(index, task.req.resetCnt, task.bakParam, task.req))
             # task.res = res.BaseRes(r)
             # print(r.elapsed.total_seconds())
             task.res = None
