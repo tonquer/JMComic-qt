@@ -192,7 +192,7 @@ class SearchLineEdit(QLineEdit):
         return
 
     def SaveCacheWord(self):
-        path = os.path.join(Setting.GetCachePath(), "cache_word")
+        path = os.path.join(Setting.GetDataPath(), "cache_word")
         try:
             if not self.cacheWords:
                 return
@@ -203,7 +203,7 @@ class SearchLineEdit(QLineEdit):
             Log.Error(es)
 
     def LoadCacheWord(self):
-        path = os.path.join(Setting.GetCachePath(), "cache_word")
+        path = os.path.join(Setting.GetDataPath(), "cache_word")
         try:
             if not os.path.isfile(path):
                 return

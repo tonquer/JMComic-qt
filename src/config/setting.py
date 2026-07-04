@@ -245,10 +245,15 @@ class Setting:
         for path in [
             Setting.GetConfigPath(),
             Setting.GetDataPath(),
-            Setting.GetCachePath(),
             Setting.GetStatePath(),
         ]:
             os.makedirs(path, exist_ok=True)
+
+        if Setting.SavePath.value:
+            for path in [
+                Setting.GetCachePath(),
+            ]:
+                os.makedirs(path, exist_ok=True)
         return
 
     @staticmethod
