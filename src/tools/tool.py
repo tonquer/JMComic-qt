@@ -696,9 +696,9 @@ class ToolUtil(object):
     def ParseMsg(data):
         isSuc = False
         msg = ""
-        mo = re.search(r"(?<=toastr\[\'error\'\]\(\").*\"", data)
-        if mo:
-            msg = mo.group().strip("\"")
+        errList = re.findall(r"(?<=toastr\[\'error\'\]\(\").*\"", data)
+        if errList:
+            msg = "\n".join(errList)
 
         mo = re.search(r"(?<=toastr\[\'success\'\]\(\").*\"", data)
         if mo:

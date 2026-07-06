@@ -170,12 +170,13 @@ class ServerReq(object):
         }
 
     def GetWebHeader(self) -> dict:
-        return {
+        header = {
         # 'authority': '18comic.org',
-          "accept":"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+          "accept":"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
           "accept-encoding":"gzip, deflate, br",
            # "cookie": 'ipcountry=CN; ipm5=6846bee8bfbb7323e83d0f32c635eae9',
           "accept-language":"zh-CN,zh;q=0.9",
+           # "content-type": "application/x-www-form-urlencoded",
            "upgrade-insecure-requests":"1",
             # 'sec-ch-ua':'"Not.A/Brand";v="8", "Chromium";v="114", "Microsoft Edge";v="114"',
             # 'sec-ch-ua-mobile': '?0',
@@ -186,6 +187,9 @@ class ServerReq(object):
             # 'sec-fetch-user': '?1',
             'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.43"
         }
+        if self.method.lower() == "post" or self.method.lower() == "post2":
+            header["content-type"] = "application/x-www-form-urlencoded"
+        return header
 
     def GetWebError(self, text):
         if "Edge IP Restricted" in text:
@@ -342,6 +346,7 @@ class RegisterReq(ServerReq):
         data["username"] = userId
         data["password"] = passwd
         data["email"] = email
+        # data["uicode"] = ""
         data["verification"] = ver
         data["password_confirm"] = passwd2
         data["gender"] = sex
@@ -350,19 +355,21 @@ class RegisterReq(ServerReq):
         data["submit_signup"] = ""
         super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
         self.headers = self.GetWebHeader()
-
+        self.headers["referer"] = url
 
 # 重新获取注册验证
 class RegisterVerifyMailReq(ServerReq):
-    def __init__(self, email):
+    def __init__(self, user, password):
         method = "POST2"
         url = GlobalConfig.Url.value + "/confirm"
 
         data = dict()
-        data["email"] = email
+        data["username"] = user
+        data["password"] = password
         data["submit_confirm"] = "發送EMAIL"
         super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
         self.headers = self.GetWebHeader()
+        self.headers["referer"] = url
 
 
 # 重置密码
@@ -376,6 +383,7 @@ class ResetPasswordReq(ServerReq):
         data["submit_lost"] = "恢復密碼"
         super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
         self.headers = self.GetWebHeader()
+        self.headers["referer"] = url
 
 
 # 验证码图片

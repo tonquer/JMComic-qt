@@ -265,7 +265,7 @@ class MainView(Main, QtTaskBase):
         self.searchView.InitWord()
         self.msgLabel = MsgLabel(self)
         self.msgLabel.hide()
-        self.AddHttpTask(req.LoginCheck301Req(), callBack=self.LoginCheckBack)
+        # self.AddHttpTask(req.LoginCheck301Req(), callBack=self.LoginCheckBack)
         # QtReadImgPoolManager().Init()
 
         if not Setting.SavePath.value:
@@ -275,8 +275,8 @@ class MainView(Main, QtTaskBase):
         else:
             self.OpenLoginView()
 
-    def LoginCheckBack(self, raw):
-        self.AddHttpTask(req.LoginPreReq())
+    # def LoginCheckBack(self, raw):
+    #     self.AddHttpTask(req.LoginPreReq())
 
     def ClearTabBar(self):
         for toolButton in self.toolButtons:

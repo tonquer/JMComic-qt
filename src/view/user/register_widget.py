@@ -51,8 +51,15 @@ class RegisterWidget(QtWidgets.QWidget, Ui_RegisterWidget, QtTaskBase):
     def SwitchButton(self):
         Setting.RegisterProsyIndex.SetValue(self.regGroup.checkedId())
         GlobalConfig.SetSetting("Url", GlobalConfig.UrlList.value[self.regGroup.checkedId()-1])
+        # self.AddHttpTask(req.LoginCheck301Req(), callBack=self.LoginCheckBack)
         self.LoadVer()
         return
+
+    # def LoginCheckBack(self, raw):
+    #     self.AddHttpTask(req.LoginPreReq(), callBack=self.LoginPreBack)
+    #
+    # def LoginPreBack(self, raw):
+    #     self.LoadVer()
 
     def OpenUrl(self):
         sender = self.sender()

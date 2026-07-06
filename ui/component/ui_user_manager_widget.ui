@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>449</width>
+    <height>561</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,8 +24,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>390</width>
-        <height>462</height>
+        <width>429</width>
+        <height>541</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -51,6 +51,13 @@
         </widget>
        </item>
        <item>
+        <widget class="QCommandLinkButton" name="commandLinkButton2">
+         <property name="text">
+          <string>官方Telegram</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="Line" name="line">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -69,12 +76,26 @@
          <item>
           <widget class="QLabel" name="label_2">
            <property name="text">
-            <string>邮箱：</string>
+            <string>用户名：</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QLineEdit" name="verfyEdit"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QLabel" name="label_9">
+           <property name="text">
+            <string>密    码：</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="verfyPsEdit"/>
          </item>
         </layout>
        </item>
@@ -111,7 +132,7 @@
        <item>
         <widget class="QLabel" name="label_3">
          <property name="text">
-          <string>重置密码</string>
+          <string>忘记用户名或密码</string>
          </property>
         </widget>
        </item>

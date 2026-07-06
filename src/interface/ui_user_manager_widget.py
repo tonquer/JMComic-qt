@@ -23,7 +23,7 @@ class Ui_UserManagerWidget(object):
     def setupUi(self, UserManagerWidget):
         if not UserManagerWidget.objectName():
             UserManagerWidget.setObjectName(u"UserManagerWidget")
-        UserManagerWidget.resize(400, 300)
+        UserManagerWidget.resize(449, 561)
         self.verticalLayout = QVBoxLayout(UserManagerWidget)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.scrollArea = QScrollArea(UserManagerWidget)
@@ -31,7 +31,7 @@ class Ui_UserManagerWidget(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 390, 462))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 429, 541))
         self.verticalLayout_2 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.label_7 = QLabel(self.scrollAreaWidgetContents)
@@ -48,6 +48,11 @@ class Ui_UserManagerWidget(object):
         self.commandLinkButton.setObjectName(u"commandLinkButton")
 
         self.verticalLayout_2.addWidget(self.commandLinkButton)
+
+        self.commandLinkButton2 = QCommandLinkButton(self.scrollAreaWidgetContents)
+        self.commandLinkButton2.setObjectName(u"commandLinkButton2")
+
+        self.verticalLayout_2.addWidget(self.commandLinkButton2)
 
         self.line = QFrame(self.scrollAreaWidgetContents)
         self.line.setObjectName(u"line")
@@ -75,6 +80,21 @@ class Ui_UserManagerWidget(object):
 
 
         self.verticalLayout_2.addLayout(self.horizontalLayout)
+
+        self.horizontalLayout_4 = QHBoxLayout()
+        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
+        self.label_9 = QLabel(self.scrollAreaWidgetContents)
+        self.label_9.setObjectName(u"label_9")
+
+        self.horizontalLayout_4.addWidget(self.label_9)
+
+        self.verfyPsEdit = QLineEdit(self.scrollAreaWidgetContents)
+        self.verfyPsEdit.setObjectName(u"verfyPsEdit")
+
+        self.horizontalLayout_4.addWidget(self.verfyPsEdit)
+
+
+        self.verticalLayout_2.addLayout(self.horizontalLayout_4)
 
         self.verfyButton = QPushButton(self.scrollAreaWidgetContents)
         self.verfyButton.setObjectName(u"verfyButton")
@@ -168,10 +188,12 @@ class Ui_UserManagerWidget(object):
         self.label_7.setText(QCoreApplication.translate("UserManagerWidget", u"\u5982\u679c\u4f60\u7684\u90ae\u4ef6\u4e00\u76f4\u65e0\u6cd5\u63a5\u53d7\u5230\u9a8c\u8bc1\u8fde\u63a5", None))
         self.label_8.setText(QCoreApplication.translate("UserManagerWidget", u"\u8bf7\u524d\u5f80\u5b98\u65b9Discord\u9891\u9053-\u672a\u6536\u5230\u9a8c\u8bc1\u4fe1\u534f\u52a9\u533a", None))
         self.commandLinkButton.setText(QCoreApplication.translate("UserManagerWidget", u"\u5b98\u65b9Discord", None))
+        self.commandLinkButton2.setText(QCoreApplication.translate("UserManagerWidget", u"\u5b98\u65b9Telegram", None))
         self.label.setText(QCoreApplication.translate("UserManagerWidget", u"\u91cd\u65b0\u53d1\u9001\u90ae\u7bb1\u9a8c\u8bc1", None))
-        self.label_2.setText(QCoreApplication.translate("UserManagerWidget", u"\u90ae\u7bb1\uff1a", None))
+        self.label_2.setText(QCoreApplication.translate("UserManagerWidget", u"\u7528\u6237\u540d\uff1a", None))
+        self.label_9.setText(QCoreApplication.translate("UserManagerWidget", u"\u5bc6    \u7801\uff1a", None))
         self.verfyButton.setText(QCoreApplication.translate("UserManagerWidget", u"\u53d1\u9001", None))
-        self.label_3.setText(QCoreApplication.translate("UserManagerWidget", u"\u91cd\u7f6e\u5bc6\u7801", None))
+        self.label_3.setText(QCoreApplication.translate("UserManagerWidget", u"\u5fd8\u8bb0\u7528\u6237\u540d\u6216\u5bc6\u7801", None))
         self.label_4.setText(QCoreApplication.translate("UserManagerWidget", u"\u90ae\u7bb1\uff1a", None))
         self.resetButton.setText(QCoreApplication.translate("UserManagerWidget", u"\u53d1\u9001", None))
         self.label_5.setText(QCoreApplication.translate("UserManagerWidget", u"\u8d26\u53f7\u9a8c\u8bc1\uff08\u5982\u679c\u4f60\u65e0\u6cd5\u6253\u5f00\u90ae\u7bb1\u91cc\u7684\u9a8c\u8bc1\u5730\u5740\uff0c\u53ef\u4ee5\u590d\u5236\u5230\u6b64\u5904\u9a8c\u8bc1\uff09", None))

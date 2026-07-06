@@ -22,6 +22,7 @@ class UserManagerWidget(QtWidgets.QWidget, Ui_UserManagerWidget, QtTaskBase):
         self.resetButton.clicked.connect(self.ResetPassword)
         self.sendButton.clicked.connect(self.VerifyEmail)
         self.commandLinkButton.clicked.connect(self.OpenUrl)
+        self.commandLinkButton2.clicked.connect(self.OpenUrl2)
 
     def Init(self):
         return
@@ -29,12 +30,16 @@ class UserManagerWidget(QtWidgets.QWidget, Ui_UserManagerWidget, QtTaskBase):
     def OpenUrl(self):
         QDesktopServices.openUrl(QUrl("https://discord.com/invite/V74p7HM"))
 
+    def OpenUrl2(self):
+        QDesktopServices.openUrl(QUrl("https://t.me/hcomic18"))
+
     def RegisterVerifyEmail(self):
         email = self.verfyEdit.text()
-        if not email:
+        password = self.verfyPsEdit.text()
+        if not email or not password:
             return
         self.ShowLoading.emit()
-        self.AddHttpTask(req.RegisterVerifyMailReq(email), self._Back)
+        self.AddHttpTask(req.RegisterVerifyMailReq(email, password), self._Back)
 
     def ResetPassword(self):
         email = self.resetEdit.text()

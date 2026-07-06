@@ -171,6 +171,7 @@ class ParseMsgHandler(object):
             if task.status != Status.Ok:
                 return
             if task.res.raw.status_code != 200:
+                data["st"] = Status.Error
                 data["msg"] = task.req.GetWebError(task.res.raw.text)
 
         except Exception as es:
@@ -193,11 +194,10 @@ class ParseMsgHandler(object):
                 return
             isSuc, msg = ToolUtil.ParseMsg(task.res.raw.text)
             if isinstance(task.req, req.RegisterReq):
-                if msg == "" and not isSuc and task.res.raw.history:
-                    for v in task.res.raw.history:
-                        if v.status_code == 301:
-                            data["st"] = Status.Ok
-                            return
+                desUrl = ToolUtil.GetUrlHost(task.res.raw.url)
+                srcUrl = ToolUtil.GetUrlHost(task.req.url)
+                if msg == "" and not isSuc and desUrl != srcUrl:
+                    msg = "出现301跳转{}, 无法注册".format(desUrl)
 
             data["msg"] = msg
             if isSuc:
