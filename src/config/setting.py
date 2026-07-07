@@ -111,7 +111,7 @@ class Setting:
     ProxySelectIndex = SettingValue("ProxySetting", 1, False)
     IsOpenDoh = SettingValue("ProxySetting", 0, False)
     # IsOpenDohPicture = SettingValue("ProxySetting", 0, False)
-    DohAddress = SettingValue("ProxySetting", "https://doh.pub/dns-query", False)
+    DohAddress = SettingValue("ProxySetting", "https://parse.jpacg.cc/parse", False)
     EnableEch = SettingValue("ProxySetting", 0, False)
     IsOpenHTTP3 = SettingValue("ProxySetting", 0, False)
 

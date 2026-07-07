@@ -3,7 +3,7 @@ import os
 import pickle
 import re
 import time
-
+from datetime import timedelta
 
 from config import config
 from config.global_config import GlobalConfig
@@ -1000,7 +1000,11 @@ class SpeedTestPingHandler(object):
         data = {"st": task.status, "data": task.res.GetText()}
         if hasattr(task.res.raw, "elapsed"):
             if task.res.raw.status_code == 401 or task.res.raw.status_code == 200:
-                data["data"] = str(task.res.raw.elapsed*1000//4)
+                if isinstance(task.res.raw.elapsed, timedelta):
+                    data["data"] = str(
+                        (task.res.raw.elapsed.seconds * 1000 + task.res.raw.elapsed.microseconds / 1000) // 4)
+                else:
+                    data["data"] = str(task.res.raw.elapsed * 1000 // 4)
             else:
                 data["st"] = Status.Error
                 data["data"] = "0"
