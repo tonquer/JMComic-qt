@@ -42,9 +42,9 @@ def handler(request):
     return generator
 
 
-class NewSession(requests2.Session):
-    def __init__(self, **kwargs):
-        requests2.Session.__init__(self, **kwargs)
+# class NewSession(requests2.Session):
+#     def __init__(self, **kwargs):
+#         requests2.Session.__init__(self, **kwargs)
 
     # def _set_curl_options(self, *args, **kwargs):
     #     c = args[0]
@@ -106,7 +106,7 @@ class Server(Singleton):
     def Init(self):
         self.UpdateProxy()
         for i in range(1):
-            self.oldSession.append(NewSession())
+            self.oldSession.append(requests2.Session())
             thread = threading.Thread(target=self.RunOld, args=[i])
             thread.setName("HTTP-Old-"+str(i))
             thread.setDaemon(True)
@@ -141,13 +141,14 @@ class Server(Singleton):
         if isOpenDoh and dohUrl:
             curlDict[CurlOpt.DOH_URL] = dohUrl
 
+        curlDict[CurlOpt.DNS_CACHE_TIMEOUT] = 300
         if isOpenHttp3:
             ver = CurlHttpVersion.V3
         else:
             ver = CurlHttpVersion.V2_0
         curlDict[CurlOpt.SSLVERSION] = CurlSslVersion.TLSv1_3
 
-        return NewSession(curl_options=curlDict, http_version=ver, impersonate="chrome110")
+        return requests2.Session(curl_options=curlDict, http_version=ver, impersonate="chrome110")
         # try:
         #     return httpx.Client(http2=True, verify=False, trust_env=False, proxy=proxy)
         # except Exception as es:
