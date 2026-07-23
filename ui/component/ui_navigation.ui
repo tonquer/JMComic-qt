@@ -177,6 +177,17 @@
           </property>
          </widget>
         </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_7">
+        <item>
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>分流：</string>
+          </property>
+         </widget>
+        </item>
         <item>
          <widget class="QCommandLinkButton" name="proxyImgName">
           <property name="text">

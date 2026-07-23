@@ -17,7 +17,6 @@ from tools.log import Log
 from tools.str import Str
 from tools.tool import ToolUtil
 from view.tool.doh_dns_view import DohDnsView
-from view.user.login_view import LoginView
 
 
 class SettingView(QtWidgets.QWidget, Ui_SettingNew):
@@ -156,8 +155,9 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
             elif setItem == Setting.Language:
                 self.SetLanguage()
             elif setItem == Setting.IsHttpProxy:
-                from server.server import Server
-                Server().UpdateProxy()
+                pass
+                # from server.server import Server
+                # Server().UpdateProxy()
             QtOwner().ShowMsgOne(Str.GetStr(Str.SaveSuc))
         self.CheckMsgLabel()
         return
@@ -198,8 +198,9 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         setItem.SetValue(value)
         QtOwner().ShowMsgOne(Str.GetStr(Str.SaveSuc))
         if setItem == Setting.IsHttpProxy:
-            from server.server import Server
-            Server().UpdateProxy()
+            pass
+            # from server.server import Server
+            # Server().UpdateProxy()
         elif setItem == Setting.ThemeColorIndex:
             self.SetTheme()
         self.CheckMsgLabel()
@@ -211,8 +212,8 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         setItem.SetValue(value)
         QtOwner().ShowMsgOne(Str.GetStr(Str.SaveSuc))
         self.CheckMsgLabel()
-        from server.server import Server
-        Server().UpdateProxy()
+        # from server.server import Server
+        # Server().UpdateProxy()
         return
 
     def SpinBoxEvent(self, setItem, value):
@@ -237,8 +238,8 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.InitSetting()
         self.SetTheme()
         self.SetLanguage()
-        from server.server import Server
-        Server().UpdateProxy()
+        # from server.server import Server
+        # Server().UpdateProxy()
         return
 
     def ExitSaveSetting(self, mainQsize):
@@ -303,15 +304,16 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.SetDownloadLabel()
 
     def OpenProxy(self):
-        loginView = LoginView(QtOwner().owner, False)
-        loginView.tabWidget.setCurrentIndex(0)
-        loginView.tabWidget.removeTab(0)
-        loginView.tabWidget.removeTab(0)
-        loginView.tabWidget.removeTab(0)
-        loginView.loginButton.setText(Str.GetStr(Str.Save))
-        loginView.show()
-
-        loginView.closed.connect(QtOwner().owner.navigationWidget.UpdateProxyName)
+        QtOwner().OpenLogin()
+        # loginView = LoginView(QtOwner().owner, False)
+        # loginView.tabWidget.setCurrentIndex(0)
+        # loginView.tabWidget.removeTab(0)
+        # loginView.tabWidget.removeTab(0)
+        # loginView.tabWidget.removeTab(0)
+        # loginView.loginButton.setText(Str.GetStr(Str.Save))
+        # loginView.show()
+        #
+        # loginView.closed.connect(QtOwner().owner.navigationWidget.UpdateProxyName)
         return
 
     def retranslateUi(self, SettingNew):

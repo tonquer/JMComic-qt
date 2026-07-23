@@ -48,6 +48,7 @@ class Str:
     DownloadBusy = 1032      # "下载繁忙"
     Fail = 1033              # 失败
     DnsError = 1034              # dns错误
+    EchError = 1035              # ECH过期
 
     Success = 2001         # "下载完成"
     Reading = 2002         # "获取信息"
@@ -294,6 +295,7 @@ class Str:
     ImportFavorite = 183                  # 导入收藏
     ImportFavoriteNotice = 184            # 是否从账号收藏导入
     RightLeftScroll2 = 185         # 右左滚动(滚轮正序)
+    UpdateTime = 186         # 更新时间
 
 
     @classmethod
@@ -334,6 +336,7 @@ class Str:
         cls.strDict[cls.DownloadBusy] = QCoreApplication.translate("cls.obj", "下载繁忙", None)
         cls.strDict[cls.Fail] = QCoreApplication.translate("cls.obj", "失败", None)
         cls.strDict[cls.DnsError] = QCoreApplication.translate("cls.obj", "DNS错误", None)
+        cls.strDict[cls.EchError] = QCoreApplication.translate("cls.obj", "ECH过期", None)
 
         cls.strDict[cls.LoadingPicture] = QCoreApplication.translate("cls.obj",  "图片加载中...", None)
         cls.strDict[cls.LoadingFail] = QCoreApplication.translate("cls.obj",  "图片加载失败", None)
@@ -575,6 +578,7 @@ class Str:
         cls.strDict[cls.ImportFavorite] = QCoreApplication.translate("cls.obj", "导入收藏", None)
         cls.strDict[cls.ImportFavoriteNotice] = QCoreApplication.translate("cls.obj", "是否从账号收藏导入", None)
         cls.strDict[cls.RightLeftScroll2] = QCoreApplication.translate("cls.obj", "右左滚动(滚轮正序)", None)
+        cls.strDict[cls.UpdateTime] = QCoreApplication.translate("cls.obj", "更新时间", None)
 
     @classmethod
     def GetStr(cls, enumType, defualt=""):

@@ -22,6 +22,7 @@ class QtOwner(Singleton):
         self.isOfflineModel = False
         self.closeType = 1   # 1普通， 2关闭弹窗触发， 3任务栏触发
         self.isMaxSize = 0
+        self.echConfig = ""
 
     @property
     def cookie(self):
@@ -71,6 +72,9 @@ class QtOwner(Singleton):
         self.owner.loadingDialog.close()
         return
 
+    def UpdateProxyName(self):
+        self.owner.navigationWidget.UpdateProxyName()
+
     def GetNasInfo(self, nasId):
         return self.owner.nasView.nasDict.get(nasId)
 
@@ -82,16 +86,18 @@ class QtOwner(Singleton):
         QtOwner().ShowMsg(Str.GetStr(Str.CopySuc))
 
     def OpenProxy(self):
-        from view.user.login_view import LoginView
-        loginView = LoginView(QtOwner().owner, False)
-        loginView.tabWidget.setCurrentIndex(0)
-        loginView.tabWidget.removeTab(0)
-        loginView.tabWidget.removeTab(0)
-        loginView.tabWidget.removeTab(0)
-        loginView.loginButton.setText(Str.GetStr(Str.Save))
-        loginView.show()
-
-        loginView.closed.connect(QtOwner().owner.navigationWidget.UpdateProxyName)
+        arg = {"refresh": True, "page": 3}
+        self.owner.SwitchWidget(self.owner.loginNewView, **arg)
+        # from view.user.login_view import LoginView
+        # loginView = LoginView(QtOwner().owner, False)
+        # loginView.tabWidget.setCurrentIndex(0)
+        # loginView.tabWidget.removeTab(0)
+        # loginView.tabWidget.removeTab(0)
+        # loginView.tabWidget.removeTab(0)
+        # loginView.loginButton.setText(Str.GetStr(Str.Save))
+        # loginView.show()
+        #
+        # loginView.closed.connect(QtOwner().owner.navigationWidget.UpdateProxyName)
         return
 
     @property
@@ -103,6 +109,10 @@ class QtOwner(Singleton):
     @property
     def app(self):
         return self._app()
+
+    @property
+    def loginNewView(self):
+        return self.owner.loginNewView
 
     @property
     def localServer(self):
@@ -204,8 +214,13 @@ class QtOwner(Singleton):
         self.owner.SwitchWidget(self.owner.rankView, **arg)
 
     def OpenIndex(self):
-        arg = {"refresh": True}
-        self.owner.SwitchWidget(self.owner.indexView, **arg)
+        self.owner.navigationWidget.indexButton.click()
+        # arg = {"refresh": True}
+        # self.owner.SwitchWidget(self.owner.indexView, **arg)
+
+    def OpenLogin(self):
+        arg = {"refresh": True, "page": 0}
+        self.owner.SwitchWidget(self.owner.loginNewView, **arg)
 
     def OpenDownloadAll(self, books):
         arg = {"books": books}

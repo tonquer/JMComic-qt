@@ -210,7 +210,7 @@ jobs:
         python script/build_qrc.py
         cd src
         cp ..\res\icon\icon.ico .\
-        pyinstaller --hidden-import=_cffi_backend --collect-data curl_cffi --add-data "..\lib\win\*;." -F -w -i icon.ico start.py  --upx-dir "D:\upx-5.0.1-win64"
+        pyinstaller --hidden-import=_cffi_backend --collect-all curl_cffi  -F -w -i icon.ico start.py  --upx-dir "D:\upx-5.0.1-win64"
 
         $pkg = "jmcomic"
         Remove-Item -Recurse -Force $pkg -ErrorAction SilentlyContinue
@@ -265,7 +265,7 @@ jobs:
         python script/build_qrc.py
         cd src
         cp ..\res\icon\icon.ico .\
-        pyinstaller --hidden-import=_cffi_backend --collect-data curl_cffi --add-data "..\lib\win\*;."  -F -w -i icon.ico start.py  --upx-dir "D:\upx-5.0.1-win64"
+        pyinstaller --hidden-import=_cffi_backend --collect-all curl_cffi -F -w -i icon.ico start.py  --upx-dir "D:\upx-5.0.1-win64"
         $pkg = "jmcomic"
         Remove-Item -Recurse -Force $pkg -ErrorAction SilentlyContinue
         New-Item $pkg -ItemType Directory

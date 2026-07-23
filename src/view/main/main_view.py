@@ -54,7 +54,6 @@ class MainView(Main, QtTaskBase):
         self.loadingDialog = LoadingDialog(self)
         self.navigationWidget.helpButton.click()
         self.subStackWidget.setCurrentIndex(self.subStackWidget.indexOf(self.helpView))
-
         self.__initWidget()
 
         # 窗口切换相关
@@ -201,9 +200,11 @@ class MainView(Main, QtTaskBase):
         self.nasView.retranslateUi(self.nasView)
         self.localReadView.retranslateUi(self.localReadView)
         self.bookInfoView.retranslateUi(self.bookInfoView)
+        self.loginNewView.retranslateUi(self.loginNewView )
 
     def Init(self):
         IsCanUse = False
+        self.SwitchWidgetAndClear(self.subStackWidget.indexOf(self.helpView))
         self.helpView.Init()
         self.downloadView.Init()
         self.nasView.Init()

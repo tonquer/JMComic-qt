@@ -47,6 +47,7 @@ from view.tool.local_read_view import LocalReadView
 from view.tool.waifu2x_tool_view import Waifu2xToolView
 from view.user.favorite_view import FavoriteView
 from view.user.local_favorite_view import LocalFavoriteView
+from view.user.login_new_view import LoginNewView
 
 class Ui_Main(object):
     def setupUi(self, Main):
@@ -123,6 +124,9 @@ class Ui_Main(object):
         self.localReadView = LocalReadView()
         self.localReadView.setObjectName(u"localReadView")
         self.subStackWidget.addWidget(self.localReadView)
+        self.loginNewView = LoginNewView()
+        self.loginNewView.setObjectName(u"loginNewView")
+        self.subStackWidget.addWidget(self.loginNewView)
         self.downloadAllView = DownloadAllView()
         self.downloadAllView.setObjectName(u"downloadAllView")
         self.subStackWidget.addWidget(self.downloadAllView)

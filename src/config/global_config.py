@@ -76,10 +76,75 @@ class GlobalConfig:
     ProxyImgUrl = GlobalItem("https://cdn-msp.jmapiproxy3.cc")
     HeaderVer = GlobalItem("2.0.26")
     JMServerUrl = GlobalItem("https://rup4a04-c01.tos-ap-southeast-1.bytepluses.com/newsvr-2025.txt")
-    NoHttp3Url = GlobalItem(["rup4a04-c01.tos-ap-southeast-1.bytepluses.com"])
+
+    # 非CF域名
+    # NoHttp3Url = GlobalItem([
+    #     "rup4a04-c01.tos-ap-southeast-1.bytepluses.com",
+    #     "jpacg.cc",
+    # ])
+
     DohUrlList = GlobalItem(["https://parse.jpacg.cc/parse",
                              "https://doh.pub/dns-query",
                              "https://dot.pub/dns-query"])
+    EchDomain = GlobalItem("cloudflare-ech.com")
+    
+    ProxyIpList = GlobalItem([
+"158.180.231.216",
+"150.136.87.192",
+"43.170.8.95",
+"150.136.219.11",
+"159.89.91.17",
+"165.232.51.34",
+"172.174.11.248",
+"198.199.84.192",
+"43.153.105.7",
+"43.170.25.96",
+"103.7.138.56",
+"107.151.188.57",
+"107.172.32.207",
+"129.213.150.222",
+"147.75.230.33",
+"192.9.250.241",
+"47.251.95.178",
+"152.70.232.72",
+"158.180.231.216",
+"95.216.46.85",
+"152.70.232.72",
+"144.24.73.232",
+"107.172.145.153",
+"158.180.231.216",
+"43.170.8.95",
+"46.224.21.216",
+"91.99.20.251",
+"178.104.46.210",
+"204.168.238.95",
+"62.238.51.190",
+])
+    BestCfIpList = GlobalItem([
+"104.18.40.104",
+"172.64.229.155",
+"198.41.208.26",
+"162.159.39.157",  # CF 电信优选
+"188.164.248.179",  # CF 电信优选
+"162.159.32.130",  # CF 电信优选
+"8.39.125.218", # CF 电信优选
+"172.67.74.21",  # CF 联通优选
+"172.67.74.74",  # CF 联通优选
+"104.26.15.77",  # CF 联通优选
+"104.26.9.248",  # CF 联通优选
+"104.17.159.180",  # CF 移动优选
+"104.18.33.232",  # CF 移动优选
+"172.66.0.147",  # CF 移动优选
+"91.193.58.245",  # CF 移动优选
+"2606:4700:0:f920:12e9:bef7:bd1b:bf3",
+"2606:4700:0:77:ba66:ef50:489c:299d",
+"2606:4700:0:a0:6574:f93:6c28:17c5",
+"2606:4700::2d:a321:64d3",
+"2606:4700:0:a0:a55f:f7f9:5a17:8b8e",
+"2606:4700:0:e0:9996:e26c:4b53:e69a",
+"2606:4700:0:a0:65dc:517c:ad49:a2fd",
+"2606:4700:0:f920:12c2:bb61:198a:ca56",
+"2606:4700:0:e0:c653:a255:83dc:d0c"])
 
     def __init__(self):
         pass
@@ -94,9 +159,8 @@ class GlobalConfig:
             return GlobalConfig.CdnApiUrl.value
         elif index == 6:
             return GlobalConfig.ProxyApiUrl.value
-        elif index == 7:
-            from tools.tool import ToolUtil
-            return "https://" + ToolUtil.GetUrlHost(Setting.HostApiDomain.value)
+        elif index >= 7:
+            return GlobalConfig.Url2List.value[0]
         return GlobalConfig.Url2List.value[index-1]
 
     @staticmethod
@@ -109,9 +173,8 @@ class GlobalConfig:
             return GlobalConfig.CdnImgUrl.value
         elif index == 6:
             return GlobalConfig.ProxyImgUrl.value
-        elif index == 7:
-            from tools.tool import ToolUtil
-            return "https://" + ToolUtil.GetUrlHost(Setting.HostImgDomain.value)
+        elif index >= 7:
+            return GlobalConfig.PicUrlList.value[0]
         return GlobalConfig.PicUrlList.value[index-1]
 
 

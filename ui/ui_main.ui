@@ -94,6 +94,7 @@
             <widget class="LocalReadAllView" name="localReadAllView"/>
             <widget class="LocalReadEpsView" name="localReadEpsView"/>
             <widget class="LocalReadView" name="localReadView"/>
+            <widget class="LoginNewView" name="loginNewView"/>
             <widget class="DownloadAllView" name="downloadAllView"/>
             <widget class="HelpView" name="helpView"/>
             <widget class="SettingView" name="settingView"/>
@@ -291,6 +292,12 @@
    <class>BatchSrToolView</class>
    <extends>QWidget</extends>
    <header location="global">view.tool.batch_sr_tool_view.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>LoginNewView</class>
+   <extends>QWidget</extends>
+   <header location="global">view.user.login_new_view.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -1,6 +1,7 @@
 import base64
 import hashlib
 import json
+import struct
 import time
 
 from config import config
@@ -11,6 +12,7 @@ from tools.str import Str
 from tools.tool import ToolUtil
 import platform
 import urllib
+from curl_cffi import CurlOpt, CurlHttpVersion
 
 
 class ServerReq(object):
@@ -18,6 +20,7 @@ class ServerReq(object):
 
     def __init__(self, url, params=None, method="POST") -> None:
         self.url = url
+        self.resetCnt = 1
         self.resetUrl = []
         self.resetIndex = 0
         self.params = params
@@ -29,6 +32,17 @@ class ServerReq(object):
         self.proxyUrl = ""
         self.extend = {}
         self.cookies = {}
+        self.curl_opt = {}
+        self.isApi = False
+        self.isImg = False
+        host = ToolUtil.GetUrlHost(self.url)
+        if "https://" + host in GlobalConfig.Url2List.value :
+            self.isApi = True
+            self.timeout = Setting.ApiTimeOut.GetIndexV()
+
+        if "https://" +host in GlobalConfig.PicUrlList.value:
+            self.isImg = True
+            self.timeout = Setting.ImgTimeOut.GetIndexV()
         # if Setting.ProxySelectIndex.value == 5:
         #     host = ToolUtil.GetUrlHost(url)
         #     if host in GlobalConfig.Url2List.value:
@@ -37,40 +51,39 @@ class ServerReq(object):
         #         self.proxyUrl = config.ProxyApiDomain
         #     elif host in GlobalConfig.PicUrlList.value:
         #         self.proxyUrl = config.ProxyImgDomain
-
+        self.SetIndex(Setting.ProxySelectIndex.value, Setting.ProxyImgSelectIndex.value)
         self.SetProxy(Setting.IsHttpProxy.value, Setting.HttpProxy.value, Setting.Sock5Proxy.value)
-        host = ToolUtil.GetUrlHost(url)
-        IsApi = False
-        IsImg = False
-        if "https://" + host in GlobalConfig.Url2List.value :
-            IsApi = True
-            self.timeout = Setting.ApiTimeOut.GetIndexV()
-        
-        if "https://" +host in GlobalConfig.PicUrlList.value:
-            IsImg = True
-            self.timeout = Setting.ImgTimeOut.GetIndexV()
             
         self.now = int(time.time())
         self.headers = self.GetHeader(url, method)
-        if IsApi and Setting.ProxySelectIndex.value == 6:
-            self.headers.pop("user-agent")
-            self.url  += "/"
-            self.proxyUrl = GlobalConfig.ProxyApiDomain2.value
-
-        if IsImg and Setting.ProxySelectIndex.value == 6:
-            self.headers.pop("user-agent")
-            self.proxyUrl = GlobalConfig.ProxyImgDomain2.value
             
         from qt_owner import QtOwner
-        self.cookies = QtOwner().cookie
-        # if config.ipcountry:
-        #     self.cookies["ipcountry"] = config.ipcountry
-        # if config.ipm5:
-        #     self.cookies["ipm5"] = config.ipm5
-        # if config.AVS:
-        #     self.cookies["AVS"] = config.AVS
-        # if config.shunt:
-        #     self.cookies["shunt"] = config.shunt
+        self.cookies = dict(QtOwner().cookie)
+        if self.isApi and not self.proxyUrl and Setting.ProxySelectIndex.value == 5:
+            self.ipList = [Setting.ProxyIpValue.value]
+        elif self.isImg and not self.proxyUrl and Setting.ProxyImgSelectIndex.value == 5:
+            self.ipList = [Setting.ProxyIpValue.value]
+        else:
+            self.ipList = []
+        self.SetCurlOpt(Setting.IsOpenHTTP3.value, Setting.EnableEch.value, QtOwner().echConfig, self.ipList)
+
+    def SetIndex(self, apiIndex, imgIndex, apiHost=None, imgHost=None):
+        host = ToolUtil.GetUrlHost(self.url)
+        self.proxyUrl = ""
+
+        if self.isApi:
+            if apiIndex == 6:
+                self.proxyUrl = GlobalConfig.ProxyApiDomain2.value
+            if apiHost:
+                self.url = self.url.replace(host, ToolUtil.GetUrlHost(apiHost))
+
+        if self.isImg:
+            if imgIndex == 6:
+                self.proxyUrl = GlobalConfig.ProxyImgDomain2.value
+            if imgHost:
+                self.url = self.url.replace(host, ToolUtil.GetUrlHost(imgHost))
+        if self.proxyUrl:
+            self.url += "/"
 
     def SetProxy(self, proxyIndex, httpProxy, sock5Proxy):
         if proxyIndex == 1:
@@ -91,6 +104,31 @@ class ServerReq(object):
         else:
             self.proxy = {"http": None, "https": None}
 
+    def SetCurlOpt(self, isHttp3=False, isEch=False, echConfig="", dnsIpList=None):
+        self.curl_opt = dict()
+        self.curl_opt[CurlOpt.HTTP_VERSION] = CurlHttpVersion.V2_0
+        host = ToolUtil.GetUrlHost(self.url)
+        isEch = isEch and (self.isImg or self.isApi) and not self.proxyUrl
+        # allUrls = GlobalConfig.DohUrlList.value[:]
+        # allUrls.extend(GlobalConfig.NoHttp3Url.value[:])
+        # allUrls.append(Setting.DohAddress.value)
+        # for ignoreUrl in allUrls:
+        #     if host in ignoreUrl:
+        #         isEch = False
+        #         break
+        if isEch and echConfig:
+            self.curl_opt[CurlOpt.ECH] = f"ecl:{echConfig}"
+        if dnsIpList:
+            if isinstance(dnsIpList, list):
+                ipStr = ",".join(dnsIpList)
+            else:
+                ipStr = dnsIpList
+
+            if ipStr:
+                self.curl_opt[CurlOpt.RESOLVE] = [f"{host}:443:{ipStr}"]
+        if isHttp3:
+            self.curl_opt[CurlOpt.HTTP_VERSION] = CurlHttpVersion.V3
+
     def ResetToSwitchNextUrl(self):
         if not self.resetUrl:
             return False
@@ -101,32 +139,35 @@ class ServerReq(object):
         Log.Info("request switch url:{}->{}".format(self.url, url))
         self.url = url
         return True
-        host = ToolUtil.GetUrlHost(self.url)
-        if host in self.resetUrlHost:
-            index = self.resetUrlHost.index(host)
-            if index >= len(self.resetUrlHost)-1:
-                return False
-            newHost = self.resetUrlHost[index+1]
-            host = ToolUtil.GetUrlHost(self.url)
-            self.url = self.url.replace(host, newHost)
-            Log.Info("request 404 switch:{}->{}".format(host, newHost))
-            return True
-        else:
-            newUrl = self.resetUrl[0]
-            host = ToolUtil.GetUrlHost(self.url)
-            self.url = self.url.replace(host, newHost)
-            Log.Info("request 404 switch:{}->{}".format(host, newHost))
-            return True
+        # host = ToolUtil.GetUrlHost(self.url)
+        # if host in self.resetUrlHost:
+        #     index = self.resetUrlHost.index(host)
+        #     if index >= len(self.resetUrlHost)-1:
+        #         return False
+        #     newHost = self.resetUrlHost[index+1]
+        #     host = ToolUtil.GetUrlHost(self.url)
+        #     self.url = self.url.replace(host, newHost)
+        #     Log.Info("request 404 switch:{}->{}".format(host, newHost))
+        #     return True
+        # else:
+        #     newUrl = self.resetUrl[0]
+        #     host = ToolUtil.GetUrlHost(self.url)
+        #     self.url = self.url.replace(host, newHost)
+        #     Log.Info("request 404 switch:{}->{}".format(host, newHost))
+        #     return True
 
     def __str__(self):
+        ech = False
+        if CurlOpt.ECH in self.curl_opt:
+            ech = True
         if Setting.LogIndex.value == 0:
             return self.__class__.__name__
         elif Setting.LogIndex.value == 1:
-            return "{}, url:{}".format(self.__class__.__name__, self.url)
+            return "{}, ech:{}, url:{}, ip:{}".format(self.__class__.__name__, ech, self.url, self.ipList)
         headers = dict()
         headers.update(self.headers)
         params = self.params
-        return "{}, url:{}, proxy:{}, method:{}, headers:{}, params:{}".format(self.__class__.__name__, self.url, self.proxy, self.method, headers, params)
+        return "{}, ech:{}, url:{}, proxy:{}, method:{}, headers:{}, params:{}".format(self.__class__.__name__, ech, self.url, self.proxy, self.method, headers, params)
 
     def GetHeader(self, _url: str, method: str) -> dict:
         param = "{}{}".format(self.now, "18comicAPP")
@@ -217,50 +258,58 @@ class ServerReq(object):
 
 # 检查更新
 class CheckUpdateReq(ServerReq):
-    def __init__(self, url2, isPre=False):
+    def __init__(self, url2List, isPre=False):
         method = "GET"
         data = dict()
         data["version"] = config.RealVersion
         data["platform"] = platform.platform()
         if not isPre:
-            url = url2 + "/version.txt?"
+            newList = [v + "/version.txt?" for v in url2List[1:]]
+            url = url2List[0] + "/version.txt?"
         else:
-            url = url2 + "/version_pre.txt?"
+            newList = [v + "/version_pre.txt?" for v in url2List[1:]]
+            url = url2List[0] + "/version_pre.txt?"
         url += ToolUtil.DictToUrl(data)
         super(self.__class__, self).__init__(url, {}, method)
         self.isParseRes = False
         self.headers["user-agent"] = config.RealVersion
         self.useImgProxy = False
+        self.resetUrl = newList
+        self.resetCnt = len(url2List)
 
 
 # 检查更新
 class CheckUpdateInfoReq(ServerReq):
-    def __init__(self, url2, newVersion):
+    def __init__(self, url2List, newVersion):
         method = "GET"
         data = dict()
         data["version"] = config.RealVersion
         data["platform"] = platform.platform()
-        url = url2 + "/{}.txt?".format(newVersion)
+        url = url2List[0] + "/{}.txt?".format(newVersion)
         url += ToolUtil.DictToUrl(data)
         super(self.__class__, self).__init__(url, {}, method)
         self.headers["user-agent"] = config.RealVersion
         self.isParseRes = False
         self.useImgProxy = False
+        self.resetUrl = [v + "/{}.txt?".format(newVersion) for v in url2List[1:]]
+        self.resetCnt = len(url2List)
 
 
 # 检查更新配置
 class CheckUpdateConfigReq(ServerReq):
-    def __init__(self, url2):
+    def __init__(self, url2List):
         method = "GET"
         data = dict()
         data["version"] = config.RealVersion
         data["platform"] = platform.platform()
-        url = url2 + "/config.txt?"
+        url = url2List[0] + "/config.txt?"
         url += ToolUtil.DictToUrl(data)
         super(self.__class__, self).__init__(url, {}, method)
         self.headers["user-agent"] = config.RealVersion
         self.isParseRes = False
         self.useImgProxy = False
+        self.resetUrl = [v + "/config.txt?" for v in url2List[1:]]
+        self.resetCnt = len(url2List)
 
 
 # 下载图片
@@ -275,9 +324,9 @@ class DownloadBookReq(ServerReq):
         self.savePath = savePath
         self.saveParam = saveParam
         self.isReload = isReload
-        self.resetCnt = resetCnt
         self.isReset = False
         super(self.__class__, self).__init__(self.url, {}, method)
+        self.resetCnt = resetCnt
 
         if "_3x4" in self.url:
             self.resetUrl.append(self.url.replace("_3x4", ""))
@@ -942,10 +991,100 @@ class DnsOverHttpsReq(ServerReq):
         self.isParseRes = True
 
 
+# Doh域名解析
+class GetEchConfigReq(ServerReq):
+    TYPE_HTTPS = 65
+
+    @staticmethod
+    def build_dns_query(domain: str, qtype: int) -> bytes:
+        parts = [b"\x00\x01\x01\x00\x00\x01\x00\x00\x00\x00\x00\x00"]
+        for label in domain.split("."):
+            label_bytes = label.encode("idna")
+            parts.append(bytes([len(label_bytes)]))
+            parts.append(label_bytes)
+        parts.append(b"\x00")
+        parts.append(struct.pack("!HH", qtype, 1))
+        return b"".join(parts)
+
+    @staticmethod
+    def _skip_dns_name(packet: bytes, offset: int) -> int:
+        while offset < len(packet):
+            length = packet[offset]
+            if length & 0xC0 == 0xC0:
+                return offset + 2
+            if length == 0:
+                return offset + 1
+            offset += length + 1
+        return offset
+
+    @staticmethod
+    def parse_https_record(data: bytes) -> str:
+        if len(data) < 2:
+            return ""
+        offset = 2
+        if offset < len(data) and data[offset] == 0:
+            offset += 1
+        else:
+            offset = GetEchConfigReq._skip_dns_name(data, offset)
+        while offset + 4 <= len(data):
+            key, length = struct.unpack("!HH", data[offset: offset + 4])
+            offset += 4
+            if offset + length > len(data):
+                break
+            value = data[offset: offset + length]
+            offset += length
+            if key == 5:
+                return base64.b64encode(value).decode("ascii")
+        return ""
+
+    @staticmethod
+    def parse_dns_response(response: bytes) :
+        if len(response) < 12:
+            return ""
+        ancount = struct.unpack("!H", response[6:8])[0]
+        if ancount == 0:
+            return ""
+
+        offset = GetEchConfigReq._skip_dns_name(response, 12) + 4
+        for _ in range(ancount):
+            offset = GetEchConfigReq._skip_dns_name(response, offset)
+            if offset + 10 > len(response):
+                break
+            rr_type = struct.unpack("!H", response[offset : offset + 2])[0]
+            offset += 8
+            data_len = struct.unpack("!H", response[offset : offset + 2])[0]
+            offset += 2
+            if offset + data_len > len(response):
+                break
+            data = response[offset : offset + data_len]
+            offset += data_len
+            if rr_type == GetEchConfigReq.TYPE_HTTPS:
+                ech = GetEchConfigReq.parse_https_record(data)
+                if ech:
+                    return ech
+        return ""
+
+    def __init__(self, domain="", dohAddress=None):
+        url = dohAddress[0]
+        method = "POST"
+        super(self.__class__, self).__init__(url, {}, method)
+        headers = {
+                    "Accept": "application/dns-message",
+                   "Content-Type": "application/dns-message"
+        }
+        self.timeout = 5
+        self.params = self.build_dns_query(domain, GetEchConfigReq.TYPE_HTTPS)
+        self.headers = headers
+        self.isParseRes = False
+        self.resetUrl = dohAddress[1:]
+        self.resetCnt = len(dohAddress)
+        # self.resetUrl = ["https://parse.jpacg.cc/jmserve", "https://parse2.jpacg.cc/jmserve"]
+        # self.resetCnt = 3
+
 # 测试Ping
 class SpeedTestPingReq(ServerReq):
-    def __init__(self):
-        url = GlobalConfig.GetApiUrl() + "/latest"
+    def __init__(self, url):
+        url = url + "/latest"
         data = dict()
         data["page"] = "0"
 
@@ -959,6 +1098,21 @@ class SpeedTestPingReq(ServerReq):
         self.headers['pragma'] = 'no-cache'
         self.headers["authorization"] = ""
         self.isReload = False
+        self.timeout = 3
+
+
+# 测试Ping
+class SpeedTestPing2Req(ServerReq):
+    def __init__(self, url):
+        url = url + "/cdn-cgi/trace"
+        method = "GET"
+        super(self.__class__, self).__init__(url, {}, method)
+        self.headers['cache-control'] = 'no-cache'
+        self.headers['expires'] = '0'
+        self.headers['pragma'] = 'no-cache'
+        self.headers["authorization"] = ""
+        self.isReload = False
+        self.timeout = 3
 
 
 class SpeedTestReq(ServerReq):
@@ -992,4 +1146,31 @@ class GetJmServerReq(ServerReq):
         url = GlobalConfig.JMServerUrl.value
         method = "GET"
         super(self.__class__, self).__init__(url, {}, method)
+        self.resetUrl = ["https://parse.jpacg.cc/jmserve", "https://parse2.jpacg.cc/jmserve"]
+        self.resetCnt = 3
         self.timeout = 5
+
+
+# 通过cf优选ip
+class GetCfDnsReq(ServerReq):
+    def __init__(self, domain):
+        domain = ToolUtil.GetUrlHost(domain)
+        url = "https://macapi1.com/app/picacomic/dns/resolve?domain={}".format(domain)
+        method = "Get"
+        self.domain = domain
+        super(self.__class__, self).__init__(url, {}, method)
+
+
+# Doh域名解析
+class GetIpInfoReq(ServerReq):
+    def __init__(self, ip):
+        url = f"https://parse.jpacg.cc/ipinfo?ip={ip}"
+        method = "GET"
+        super(self.__class__, self).__init__(url, {}, method)
+        self.timeout = 5
+        self.headers = {
+            "version": config.UpdateVersion
+        }
+        self.isParseRes = False
+        self.resetUrl = [f"https://parse2.jpacg.cc/ipinfo?ip={ip}"]
+        self.resetCnt = 2

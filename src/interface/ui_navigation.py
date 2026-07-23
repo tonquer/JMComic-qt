@@ -142,13 +142,23 @@ class Ui_Navigation(object):
 
         self.horizontalLayout_6.addWidget(self.proxyName)
 
+
+        self.verticalLayout_4.addLayout(self.horizontalLayout_6)
+
+        self.horizontalLayout_7 = QHBoxLayout()
+        self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
+        self.label_5 = QLabel(self.topWidget)
+        self.label_5.setObjectName(u"label_5")
+
+        self.horizontalLayout_7.addWidget(self.label_5)
+
         self.proxyImgName = QCommandLinkButton(self.topWidget)
         self.proxyImgName.setObjectName(u"proxyImgName")
 
-        self.horizontalLayout_6.addWidget(self.proxyImgName)
+        self.horizontalLayout_7.addWidget(self.proxyImgName)
 
 
-        self.verticalLayout_4.addLayout(self.horizontalLayout_6)
+        self.verticalLayout_4.addLayout(self.horizontalLayout_7)
 
 
         self.verticalLayout.addWidget(self.topWidget)
@@ -486,6 +496,7 @@ class Ui_Navigation(object):
         self.favorite.setText("")
         self.label_4.setText(QCoreApplication.translate("Navigation", u"\u5206\u6d41\uff1a", None))
         self.proxyName.setText("")
+        self.label_5.setText(QCoreApplication.translate("Navigation", u"\u5206\u6d41\uff1a", None))
         self.proxyImgName.setText("")
         self.label.setText(QCoreApplication.translate("Navigation", u"\u7528\u6237", None))
         self.collectButton.setText(QCoreApplication.translate("Navigation", u"\u6211\u7684\u6536\u85cf", None))
