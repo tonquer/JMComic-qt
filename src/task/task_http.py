@@ -1,4 +1,4 @@
-import pickle
+import json
 from types import FunctionType
 
 from tools.log import Log
@@ -33,7 +33,7 @@ class TaskHttp(TaskBase):
     def HandlerTask(self, taskId, data):
         try:
             info = self.tasks.get(taskId)
-            data = pickle.loads(data)
+            data = json.loads(data)
             if not info:
                 Log.Warn("[Task] not find taskId:{}, {}".format(taskId, data))
                 return
