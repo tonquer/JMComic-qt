@@ -441,6 +441,8 @@ class ToolUtil(object):
         b.baseInfo.author = v.get("author")
         b.baseInfo.title = v.get("name")
         b.baseInfo.coverUrl = "/media/albums/{}_3x4.jpg".format(b.baseInfo.id)
+        if isinstance(v.get("update_at"), int):
+            b.baseInfo.addTime = v.get("update_at")
         category = v.get("category", {}).get("title")
         if category:
             b.baseInfo.category.append(category)
