@@ -1211,11 +1211,15 @@ class GetIpInfoReq(ServerReq):
 class GetProxyIpInfoReq(ServerReq):
     def __init__(self, country=""):
         if country:
-            url = f"https://check.proxyip.cmliussss.net/resolve?proxyip=proxyip.{country}.cmliussss.net"
+            url = f"https://check.jpacg.cc/resolve?proxyip=proxyip.{country}.cmliussss.net"
         else:
-            url = f"https://check.proxyip.cmliussss.net/resolve?proxyip=proxyip.proxyip.cmliussss.net"
+            url = f"https://check.jpacg.cc/resolve?proxyip=proxyip.cmliussss.net"
         method = "GET"
-        super(self.__class__, self).__init__(url, {}, method, isOtherCloudFlare=True)
-        self.timeout = 5
-        self.headers = {}
+        super(self.__class__, self).__init__(url, {}, method)
+        self.headers = {
+            "version": config.RealVersion
+        }
         self.isParseRes = False
+        realUrl = ToolUtil.GetUrlHost(url)
+        self.resetUrl = [url.replace(realUrl, "check2.jpacg.cc")]
+        self.resetCnt = 2
