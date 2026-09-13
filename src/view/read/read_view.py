@@ -324,6 +324,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
 
         # 预下载
         preLoadList = list(range(max(0, self.curIndex-4), self.curIndex + config.PreLoading))
+
         # 预转换QImage
         preQImage = list(range(max(0, self.curIndex-2), self.curIndex + config.PreLook))
         preRealQImage = list(range(max(0, self.curIndex-2), self.curIndex + config.PreLook))
@@ -523,7 +524,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         if index == self.curIndex:
             self.ShowImg(index)
         elif self.stripModel in [ReadMode.UpDown, ReadMode.RightLeftScroll, ReadMode.RightLeftScroll2,
-                                 ReadMode.LeftRightScroll] and start < index <= self.curIndex + config.PreLook - 1:
+                                 ReadMode.LeftRightScroll] and self._IsPrefetchIndex(index):
             self.ShowImg(index)
         elif ReadMode.isDouble(self.stripModel) and self.curIndex < index <= self.curIndex + 1:
             self.ShowImg(index)
@@ -578,7 +579,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
 
     def ShowImgAll(self):
         if self.stripModel in [ReadMode.UpDown, ReadMode.RightLeftScroll, ReadMode.LeftRightScroll, ReadMode.RightLeftScroll2]:
-            start = max(0, self.curIndex - 1)
+            start = max(0, self.curIndex - 2)
             size = config.PreLook
         elif ReadMode.isDouble(self.stripModel):
             start = self.curIndex
@@ -816,7 +817,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
             self.frame.waifu2xProcess.hide()
             # self.ShowImg()
         elif self.stripModel in [ReadMode.UpDown, ReadMode.RightLeftScroll, ReadMode.RightLeftScroll2,
-                                 ReadMode.LeftRightScroll] and start < index <= self.curIndex + config.PreLoading - 1:
+                                 ReadMode.LeftRightScroll] and self._IsPrefetchIndex(index):
             # self.ShowOtherPage()
             self.CheckLoadPicture()
         else:
@@ -835,7 +836,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         if index == self.curIndex:
             self.ShowImg(index)
         elif self.stripModel in [ReadMode.UpDown, ReadMode.RightLeftScroll, ReadMode.RightLeftScroll2,
-                                 ReadMode.LeftRightScroll] and start < index <= self.curIndex + config.PreLook - 1:
+                                 ReadMode.LeftRightScroll] and self._IsPrefetchIndex(index):
             self.ShowImg(index)
         elif ReadMode.isDouble(self.stripModel) and self.curIndex < index <= self.curIndex + 1:
             self.ShowImg(index)
@@ -1013,3 +1014,10 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
         clipboard.setImage(p)
         QtOwner().ShowMsg(Str.GetStr(Str.CopySuc))
         return
+
+    def _IsPrefetchIndex(self, index):
+        # 滚动模式显示前一页，更流畅
+        start = max(0, self.curIndex - 1)
+        if not start < index < self.maxPic:
+            return False
+        return index < self.curIndex + config.PreLook
