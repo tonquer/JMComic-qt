@@ -85,6 +85,7 @@ class BookEps(object):
 class BookBaseInfo(object):
     def __init__(self):
         self.bookId = ""
+        self.series_id = ""
         self.title = ""
         self.bookUrl = ""
         self.author = ""

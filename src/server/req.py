@@ -501,6 +501,8 @@ class GetBookInfoReq2(ServerReq):
         url = GlobalConfig.GetApiUrl() + "/album"
         method = "GET"
         data = dict()
+
+        data["lang"] = self.GetLang()
         data["comicName"] = ""
         data["id"] = bookId
 

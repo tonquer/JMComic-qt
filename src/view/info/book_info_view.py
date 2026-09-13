@@ -1,5 +1,7 @@
 import os
+import re
 import shutil
+from datetime import datetime
 from functools import partial
 
 from PySide6 import QtWidgets, QtCore, QtGui
@@ -90,6 +92,8 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.buyButton.clicked.connect(self.DoBuyBook)
         # self.commandLinkButton.clicked.connect(self.OpenRecommend)
         self.commandLinkButton.setVisible(False)
+        self.mainButton.setVisible(False)
+        self.mainButton.clicked.connect(self.OpenMainJmID)
 
         # self.toolMenu = QMenu(self.uploadButton)
         # self.uploadButton.setMenu(self.toolMenu)
@@ -164,6 +168,12 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.ClearTask()
         self.epsListWidget.clear()
 
+    def OpenMainJmID(self):
+        text = self.mainButton.text()
+        if text and (re.match('JM\d+', text) or re.match('jm\d+', text)):
+            bookId = text.lower().replace("jm", "")
+            self.OpenBook(bookId)
+
     def SwitchCurrent(self, **kwargs):
         self.update()
         bookId = kwargs.get("bookId")
@@ -223,7 +233,15 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             self.commentButton.setText("({})".format(info.pageInfo.commentNum))
             self.bookName = info.baseInfo.title
             self.description.setPlainText(info.pageInfo.des)
-
+            if info.baseInfo.series_id and str(info.baseInfo.series_id) != str(info.baseInfo.id):
+                self.mainButton.setVisible(True)
+                self.mainButton.setText("JM"+str(info.baseInfo.series_id))
+            else:
+                self.mainButton.setVisible(False)
+            if info.baseInfo.addTime:
+                dt_object = datetime.fromtimestamp(info.baseInfo.addTime)
+                date_string = dt_object.strftime("%Y-%m-%d %H:%M:%S")
+                self.lastUpTime.setText(date_string)
             # for name in info.categories:
             #     self.categoriesList.AddItem(name)
             for name in info.baseInfo.tagList:

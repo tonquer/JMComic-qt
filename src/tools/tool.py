@@ -573,10 +573,12 @@ class ToolUtil(object):
         bookId = raw["id"]
         b.baseInfo.coverUrl = "/media/albums/{}_3x4.jpg".format(bookId)
         b.baseInfo.bookId = bookId
+        if raw.get('series_id') and raw.get('series_id') != "0":
+            b.baseInfo.series_id = raw.get('series_id')
         b.baseInfo.title = raw.get('name')
         b.baseInfo.likes = raw.get('likes')
         b.baseInfo.views = raw.get('total_views')
-        addTime = raw.get("addTime", "")
+        addTime = raw.get("addtime", "")
         if isinstance(addTime, str) and addTime.isdigit():
             b.baseInfo.addTime = int(addTime)
 
