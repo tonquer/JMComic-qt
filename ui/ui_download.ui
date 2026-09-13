@@ -95,21 +95,21 @@
      <item>
       <widget class="QCheckBox" name="webp2Png">
        <property name="text">
-        <string>Webp保存为Png</string>
+        <string>Webp转Png</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QCheckBox" name="redownloadRadio">
        <property name="text">
-        <string>下载失败后1分钟自动重试</string>
+        <string>失败后自动重试</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QCheckBox" name="skipPic">
        <property name="text">
-        <string>超分跳过损坏图片</string>
+        <string>超分跳过损坏</string>
        </property>
       </widget>
      </item>
@@ -119,7 +119,7 @@
         <bool>true</bool>
        </property>
        <property name="text">
-        <string>下载自动进行图片超分</string>
+        <string>下载自动进行超分</string>
        </property>
        <property name="checked">
         <bool>true</bool>
@@ -179,28 +179,28 @@
      <item>
       <widget class="QPushButton" name="pushButton">
        <property name="text">
-        <string>全部开始下载</string>
+        <string>全部开始</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="pushButton_3">
        <property name="text">
-        <string>全部暂停下载</string>
+        <string>全部暂停</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="pushButton_2">
        <property name="text">
-        <string>全部开始转换</string>
+        <string>开始转换</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="pushButton_4">
        <property name="text">
-        <string>全部暂停转换</string>
+        <string>暂停转换</string>
        </property>
       </widget>
      </item>

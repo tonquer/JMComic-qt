@@ -52,17 +52,6 @@ class Ui_LocalFavorite(object):
 
         self.gridLayout_2.addWidget(self.widget, 0, 0, 1, 1)
 
-        self.gridLayout_3 = QGridLayout()
-        self.gridLayout_3.setObjectName(u"gridLayout_3")
-        self.bookList = ComicListWidget(LocalFavorite)
-        self.bookList.setObjectName(u"bookList")
-        self.bookList.setStyleSheet(u"")
-
-        self.gridLayout_3.addWidget(self.bookList, 0, 0, 1, 1)
-
-
-        self.gridLayout_2.addLayout(self.gridLayout_3, 2, 0, 1, 1)
-
         self.gridLayout_4 = QGridLayout()
         self.gridLayout_4.setObjectName(u"gridLayout_4")
         self.horizontalLayout = QHBoxLayout()
@@ -167,6 +156,17 @@ class Ui_LocalFavorite(object):
 
         self.gridLayout_2.addLayout(self.gridLayout_4, 3, 0, 1, 1)
 
+        self.gridLayout_3 = QGridLayout()
+        self.gridLayout_3.setObjectName(u"gridLayout_3")
+        self.bookList = ComicListWidget(LocalFavorite)
+        self.bookList.setObjectName(u"bookList")
+        self.bookList.setStyleSheet(u"")
+
+        self.gridLayout_3.addWidget(self.bookList, 0, 0, 1, 1)
+
+
+        self.gridLayout_2.addLayout(self.gridLayout_3, 2, 0, 1, 1)
+
 
         self.retranslateUi(LocalFavorite)
         self.jumpButton.clicked.connect(LocalFavorite.JumpPage)
@@ -184,8 +184,8 @@ class Ui_LocalFavorite(object):
         self.sortIdCombox.setItemText(0, QCoreApplication.translate("LocalFavorite", u"\u964d\u5e8f", None))
         self.sortIdCombox.setItemText(1, QCoreApplication.translate("LocalFavorite", u"\u5347\u5e8f", None))
 
-        self.importButton.setText(QCoreApplication.translate("LocalFavorite", u"\u4ece\u8d26\u53f7\u6536\u85cf\u5bfc\u5165", None))
-        self.startEpsUpdate.setText(QCoreApplication.translate("LocalFavorite", u"\u83b7\u53d6\u7ae0\u8282\u66f4\u65b0", None))
+        self.importButton.setText(QCoreApplication.translate("LocalFavorite", u"\u4ece\u6536\u85cf\u5bfc\u5165", None))
+        self.startEpsUpdate.setText(QCoreApplication.translate("LocalFavorite", u"\u83b7\u53d6\u66f4\u65b0", None))
         self.tipText.setText("")
         self.nums.setText(QCoreApplication.translate("LocalFavorite", u"\u6536\u85cf\u6570\uff1a", None))
         self.pages.setText(QCoreApplication.translate("LocalFavorite", u"\u9875", None))

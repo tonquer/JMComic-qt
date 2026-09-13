@@ -284,8 +284,13 @@ class ComicListWidget(BaseListWidget):
         widget.id = _id
         widget.url = url
         widget.index = index
+        widget.timeLabel.setVisible(False)
         if rawBook:
             widget.rawBook = rawBook
+            if isinstance(rawBook, BookInfo) and rawBook.baseInfo.addTime:
+                updateStr = ToolUtil.GetUpdateStrByTick(rawBook.baseInfo.addTime) + Str.GetStr(Str.Update)
+                widget.timeLabel.setText(updateStr)
+                widget.timeLabel.setVisible(True)
 
         if not isShowToolButton:
             widget.toolButton.hide()
@@ -293,7 +298,6 @@ class ComicListWidget(BaseListWidget):
         widget.SetTitle(title, "")
         widget.path = ToolUtil.GetRealPath(_id, "cover")
         widget.starButton.setVisible(False)
-        widget.timeLabel.setVisible(False)
         # if updated_at:
         #     dayStr = ToolUtil.GetUpdateStr(updated_at)
         #     updateStr = dayStr + Str.GetStr(Str.Update)

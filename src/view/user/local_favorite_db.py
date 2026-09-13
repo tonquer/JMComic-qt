@@ -99,7 +99,7 @@ class LocalFavoriteDb(object):
         suc = query.exec_(sql)
         if not suc:
             Log.Warn(query.lastError().text())
-        self.UpdateBookEpsNum(book.baseInfo.bookId, book.epsCount, int(time.time()))
+        self.UpdateBookEpsNum(book.baseInfo.bookId, book.epsCount, int(book.baseInfo.addTime))
         return
 
     def AddFavoriteFid(self, name):
@@ -156,7 +156,7 @@ class LocalFavoriteDb(object):
 
     def UpdateBookEpsNum(self, bookId, epsNum, updateTick):
         query = QSqlQuery(self.db)
-        sql = f"UPDATE favorite SET max_eps_num={epsNum}, last_uptick={updateTick} WHERE bookId='{bookId}' and max_eps_num!={epsNum}"
+        sql = f"UPDATE favorite SET max_eps_num={epsNum}, last_uptick={updateTick} WHERE bookId='{bookId}'"
         suc = query.exec_(sql)
         if not suc:
             Log.Warn(query.lastError().text())
@@ -219,12 +219,12 @@ class LocalFavoriteDb(object):
 
     def SearchFavorite(self, page, sortKey=0, sortId=0, fid=0, searchText=""):
         if not searchText:
-            sql = "select bookId, author, title, coverUrl, category, tagList, description, tick, max_eps_num  " \
+            sql = "select bookId, author, title, coverUrl, category, tagList, description, tick, max_eps_num, last_uptick  " \
                   "from favorite as book  where 1 "
             if fid != 0:
                 sql += f" and bookId in (select bookId from favorite_fid where fid={fid}) "
         else:
-            sql = "select bookId, author, title, coverUrl, category, tagList, description, tick, max_eps_num  " \
+            sql = "select bookId, author, title, coverUrl, category, tagList, description, tick, max_eps_num, last_uptick  " \
                   "from favorite as book where 1 "
             if fid != 0:
                 sql += f" and bookId in (select bookId from favorite_fid where fid={fid}) "
@@ -268,5 +268,6 @@ class LocalFavoriteDb(object):
             info.baseInfo.tagList = query.value(5).split(",")
             info.pageInfo.des = query.value(6)
             info.localMaxEps = query.value(8)
+            info.baseInfo.addTime = query.value(9)
             data[bookId] = info
         return data

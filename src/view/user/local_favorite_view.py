@@ -66,9 +66,9 @@ class LocalFavoriteView(QtWidgets.QWidget, Ui_LocalFavorite, QtTaskBase):
         self.fidBookList = self.db.LoadBookFold()
         self.folderBox.currentIndexChanged.connect(self.RefreshDataFocus)
         self.updateEpsIds = []
-        self.updateFailIds = []
+        self.updateMax = 0
+        # self.updateFailIds = []
         self.updateTick = 0
-        self.updateEpsIndex = 0
 
     def GetFidByName(self, name):
         for k, v in self.folderDict.items():
@@ -345,24 +345,21 @@ class LocalFavoriteView(QtWidgets.QWidget, Ui_LocalFavorite, QtTaskBase):
             return
         QtOwner().ShowLoading()
         self.updateEpsIds = books
-        self.updateFailIds = []
-        self.updateEpsIndex = 0
+        self.updateMax = len(books)
+        # self.updateFailIds = []
         self.updateTick = int(time.time())
         self.SetEnable(False)
         self.StartUpdateEpsReq()
 
     def StartUpdateEpsReq(self):
-        if self.updateEpsIndex >= len(self.updateEpsIds):
+        if not self.updateEpsIds:
             QtOwner().CloseLoading()
             self.SetEnable(True)
-            if self.updateFailIds:
-                self.SetTipText(f"{Str.GetStr(Str.Fail)}/{Str.GetStr(Str.Ok)}:{len(self.updateFailIds)}/{len(self.updateEpsIds)}")
-            else:
-                self.SetTipText("")
+            self.SetTipText("")
             self.RefreshDataFocus()
             return
-        bookId = self.updateEpsIds[self.updateEpsIndex]
-        self.SetTipText(f"{Str.GetStr(Str.Update)}:{self.updateEpsIndex}/{len(self.updateEpsIds)}")
+        bookId = self.updateEpsIds.pop(0)
+        self.SetTipText(f"{Str.GetStr(Str.Update)}:{self.updateMax-len(self.updateEpsIds)}/{self.updateMax}")
         self.AddHttpTask(req.GetBookInfoReq2(bookId), self.StartUpdateEpsBack, bookId)
         return
 
@@ -372,15 +369,13 @@ class LocalFavoriteView(QtWidgets.QWidget, Ui_LocalFavorite, QtTaskBase):
             if st == Status.Ok:
                 info = BookMgr().GetBook(bookId)
                 if not info:
-                    self.updateFailIds.append(bookId)
                     return
-                self.db.UpdateBookEpsNum(bookId, info.epsCount, self.updateTick)
+                self.db.UpdateBookEpsNum(bookId, info.epsCount, info.baseInfo.addTime)
                 self.db.UpdateBookInfo(info)
             else:
-                self.updateFailIds.append(bookId)
+                self.updateEpsIds.append(bookId)
         except Exception as es:
             Log.Error(es)
         finally:
-            self.updateEpsIndex += 1
             self.StartUpdateEpsReq()
 
