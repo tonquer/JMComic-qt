@@ -72,6 +72,10 @@ class MainView(Main, QtTaskBase):
 
         self.searchView.searchTab.hide()
         self.searchView2.searchWidget.hide()
+        self.searchView2.cateLabel.hide()
+        self.searchView2.monthBox.hide()
+        self.searchView2.typeBox.hide()
+        self.searchView2.yearBox.hide()
         self.myTrayIcon = MySystemTrayIcon()
         self.myTrayIcon.show()
         self.totalStackWidget.currentChanged.connect(self.SwitchReadView)
@@ -137,10 +141,10 @@ class MainView(Main, QtTaskBase):
 
     def __initWidget(self):
         self.navigationWidget.indexButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.indexView)))
-        self.navigationWidget.settingButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.settingView)))
+        self.navigationWidget.settingButton.clicked.connect(partial(self.SwitchWidgetByIndex, self.subStackWidget.indexOf(self.settingView)))
         self.navigationWidget.searchButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.searchView)))
         self.navigationWidget.collectButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.favoriteView)))
-        self.navigationWidget.helpButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.helpView)))
+        self.navigationWidget.helpButton.clicked.connect(partial(self.SwitchWidgetByIndex, self.subStackWidget.indexOf(self.helpView)))
         self.navigationWidget.commentButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.allCommentView)))
         self.navigationWidget.waifu2xButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.waifu2xToolView)))
         self.navigationWidget.downloadButton.clicked.connect(partial(self.SwitchWidgetAndClear, self.subStackWidget.indexOf(self.downloadView)))

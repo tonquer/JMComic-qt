@@ -1,5 +1,5 @@
 from PySide6.QtCore import Qt, QSize, Signal
-from PySide6.QtGui import QPixmap, QIcon, QFont, QFontMetrics
+from PySide6.QtGui import QPixmap, QIcon, QFont, QFontMetrics, QImage
 from PySide6.QtWidgets import QWidget
 
 from config import config
@@ -11,15 +11,18 @@ from tools.str import Str
 class ComicItemWidget(QWidget, Ui_ComicItem):
     PicLoad = Signal(int)
 
-    def __init__(self, isCategory=False):
+    def __init__(self, isCategory=False, isShiled=False):
         QWidget.__init__(self)
         Ui_ComicItem.__init__(self)
         self.setupUi(self)
+        self.isShiled = isShiled
         self.picData = None
         self.id = ""
         self.title = ""
         self.picNum = 0
         self.category = ""
+        self.tags = ""
+        self.rawBook = None
 
         self.index = 0
         self.url = ""
@@ -46,6 +49,15 @@ class ComicItemWidget(QWidget, Ui_ComicItem):
         self.toolButton.setIconSize(QSize(32, 32))
 
         self.picLabel.setFixedSize(width, height)
+        if self.isShiled:
+            pic = QImage(":/png/icon/shiled.svg")
+            radio = self.devicePixelRatio()
+            pic.setDevicePixelRatio(radio)
+            newPic = pic.scaled(self.picLabel.width() * radio, self.picLabel.height() * radio, Qt.KeepAspectRatio,
+                                Qt.SmoothTransformation)
+            newPic2 = QPixmap(newPic)
+            self.picLabel.setPixmap(newPic2)
+
         # self.picLabel.setMinimumSize(300, 400)
         # self.picLabel.setMaximumSize(220, 308)
 
@@ -94,7 +106,7 @@ class ComicItemWidget(QWidget, Ui_ComicItem):
 
     def ElidedLineText(self, fontColor):
         line = Setting.TitleLine.value
-        if line <= 0:
+        if line <= 0 :
             line = 2
         f = QFontMetrics(self.nameLable.font())
         if (line == 1):
@@ -104,7 +116,7 @@ class ComicItemWidget(QWidget, Ui_ComicItem):
         start = 0
         isEnd = False
         for i in range(1, len(self.title)):
-            if f.boundingRect(self.title[start:i]).width() >= self.nameLable.maximumWidth() - 10:
+            if f.boundingRect(self.title[start:i]).width() >= self.nameLable.maximumWidth()-10:
                 strList.append(self.title[start:i])
                 if len(strList) >= line:
                     isEnd = True
@@ -122,12 +134,12 @@ class ComicItemWidget(QWidget, Ui_ComicItem):
         hasElided = True
         endIndex = len(strList) - 1
         endString = strList[endIndex]
-        if f.boundingRect(endString).width() < self.nameLable.maximumWidth() - 10:
+        if f.boundingRect(endString).width() < self.nameLable.maximumWidth() -10:
             strList[endIndex] += fontColor
             hasElided = False
 
         if (hasElided):
-            if len(endString) > 8:
+            if len(endString) > 8 :
                 endString = endString[0:len(endString) - 8] + "..." + fontColor
                 strList[endIndex] = endString
             else:
@@ -162,10 +174,23 @@ class ComicItemWidget(QWidget, Ui_ComicItem):
         newPic = pic.scaled(self.picLabel.width()*radio, self.picLabel.height()*radio, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.picLabel.setPixmap(newPic)
 
-    def SetPictureErr(self):
-        self.picLabel.setText(Str.GetStr(Str.LoadingFail))
+    def SetPictureErr(self, status):
+        self.picLabel.setText(Str.GetStr(status))
+
+    @property
+    def isSelect(self):
+        return self.picLabel.isSelect
+
+    def SetSelect(self, select):
+        self.picLabel.SetSelect(select)
+
+    def SwitchSelect(self):
+        self.picLabel.SetSelect(not self.picLabel.isSelect)
 
     def paintEvent(self, event) -> None:
+        if self.isShiled:
+            return QWidget.paintEvent(self, event)
         if self.url and not self.isLoadPicture and config.IsLoadingPicture:
             self.isLoadPicture = True
             self.PicLoad.emit(self.index)
+        return QWidget.paintEvent(self, event)

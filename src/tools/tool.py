@@ -525,6 +525,14 @@ class ToolUtil(object):
 
     # 解析搜索结果
     @staticmethod
+    def ParseRecommend2(result):
+        raw = json.loads(result)
+        # total = int(raw.get("total"))
+        bookList = ToolUtil.ParseBookList(raw.get("content", []))
+        return len(bookList), bookList
+
+    # 解析搜索结果
+    @staticmethod
     def ParseCategory2(result):
         raw = json.loads(result)
         categoryList = []
@@ -537,6 +545,12 @@ class ToolUtil(object):
             b.slug = v.get("slug")
             b.type = v.get("type")
             b.total = v.get("total_albums")
+            for v2 in v.get("sub_categories", []):
+                b2 = Category()
+                b2.id = v2.get("CID")
+                b2.name = v2.get("name")
+                b2.slug = v2.get("slug")
+                b.sub_categories.append(b2)
             categoryList.append(b)
         categoryTitle = OrderedDict()
         for v in raw.get("blocks", []):
@@ -562,12 +576,18 @@ class ToolUtil(object):
         b.baseInfo.title = raw.get('name')
         b.baseInfo.likes = raw.get('likes')
         b.baseInfo.views = raw.get('total_views')
+        addTime = raw.get("addTime", "")
+        if isinstance(addTime, str) and addTime.isdigit():
+            b.baseInfo.addTime = int(addTime)
+
         if raw.get('price'):
             b.baseInfo.price = raw.get('price', 0)
         if raw.get('purchased'):
             b.baseInfo.purchased = raw.get('purchased', True)
         b.baseInfo.authorList = raw.get("author")
         b.baseInfo.tagList = raw.get("tags", [])
+        b.baseInfo.workList = raw.get("works", [])
+        b.baseInfo.actorList = raw.get("actors", [])
         b.pageInfo.des = raw.get("description")
         b.pageInfo.commentNum = int(raw.get("comment_total"))
         isFavorite = raw.get("is_favorite")

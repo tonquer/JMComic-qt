@@ -1,3 +1,4 @@
+import datetime
 import json
 import re
 
@@ -5,6 +6,7 @@ from PySide6.QtCore import QEvent, Qt
 from PySide6.QtGui import QHelpEvent
 from PySide6.QtWidgets import QWidget
 
+from config.setting import Setting
 from interface.ui_search import Ui_Search
 from qt_owner import QtOwner
 from server import req, Log, Status, config
@@ -30,8 +32,14 @@ class SearchView(QWidget, Ui_Search, QtTaskBase):
         self.isAuthor = True
         self.bookList.LoadCallBack = self.LoadNextPage
         self.sortCombox.currentIndexChanged.connect(self.ChangeSort)
+        self.typeBox.currentIndexChanged.connect(self.ChangeSort)
+        self.monthBox.currentIndexChanged.connect(self.ChangeSort)
+        self.yearBox.currentIndexChanged.connect(self.ChangeSort)
         self.searchButton.clicked.connect(self.lineEdit.Search)
         self.jumpPage.clicked.connect(self.JumpPage)
+        now = datetime.datetime.now()
+        for year in reversed(range(2012, now.year+1)):
+            self.yearBox.addItem(str(year))
         # self.searchLabel.installEventFilter(self)
 
     def InitWord(self):
@@ -45,7 +53,12 @@ class SearchView(QWidget, Ui_Search, QtTaskBase):
     def SwitchCurrent(self, **kwargs):
         self.update()
         text = kwargs.get("text")
-
+        recoment = kwargs.get("recoment")
+        if recoment == 1:
+            bookId = kwargs.get("bookId")
+            self.AddHttpTask(req.GetRecommendReq2(bookId),
+                             self.SendSearchBack, 1)
+            return
         if text and (re.match('JM\d+', text) or re.match('jm\d+', text)):
             QtOwner().OpenBookInfo(text.lower().replace("jm", ""))
             return
@@ -91,7 +104,15 @@ class SearchView(QWidget, Ui_Search, QtTaskBase):
         QtOwner().ShowLoading()
         sortList = ["mr", "mv", "mp", "tf"]
         sort = sortList[self.sortCombox.currentIndex()]
-        self.AddHttpTask(req.GetSearchReq2(self.text, sort, page), self.SendSearchBack, page)
+        searchTypeList = ["site", "work", "author", "tag", "character"]
+        year = ""
+        month = ""
+        searchType = searchTypeList[self.typeBox.currentIndex()]
+        if self.yearBox.currentIndex() > 0:
+            year = self.yearBox.currentText()
+        if self.monthBox.currentIndex() > 0:
+            month = self.monthBox.currentText()
+        self.AddHttpTask(req.GetSearchReq2(self.text, sort, page,search_type=searchType, y=year, m=month), self.SendSearchBack, page)
 
     def JumpPage(self):
         page = int(self.spinBox.text())

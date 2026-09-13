@@ -57,7 +57,7 @@ class FavoriteFoldItem(QWidget):
 
 
 class LocalFoldView(BaseMaskDialog, Ui_LocalFold, QtTaskBase):
-    MoveOkBack = Signal(str, list)
+    MoveOkBack = Signal(list, list)
     FoldChange = Signal()
     AddFold = Signal(str)
     DelFold = Signal(str)
@@ -78,9 +78,13 @@ class LocalFoldView(BaseMaskDialog, Ui_LocalFold, QtTaskBase):
         self.editButton.clicked.connect(self.SwitchEdit)
         self.InitBack.connect(self.Init)
         self.isEditMode = False
-        self.bookId = bookId
+        self.bookIds = []
+        if isinstance(bookId, list):
+            self.bookIds = bookId[:]
+        else:
+            self.bookIds = [bookId]
         self.isFoldChange = False
-        if not self.bookId:
+        if not self.bookIds:
             self.saveButton.hide()
 
         self.Init()
@@ -126,7 +130,7 @@ class LocalFoldView(BaseMaskDialog, Ui_LocalFold, QtTaskBase):
                 w.SetEditEnable(True)
                 # item.setFlags(item.flags() & ~Qt.ItemIsSelectable)
         else:
-            if self.bookId:
+            if self.bookIds:
                 self.saveButton.setVisible(True)
 
             # 删除最后一个
@@ -157,11 +161,12 @@ class LocalFoldView(BaseMaskDialog, Ui_LocalFold, QtTaskBase):
         # item.setData(Qt.CheckStateRole, Qt.Checked)
         # item.setCheckable(True)
         item.setCheckState(Qt.Unchecked)
-        if self.bookId:
-            allCategory = self.bookCategory.get(self.bookId, [])
-            if name in allCategory:
-                item.setCheckState(Qt.Checked)
-                item.setSelected(True)
+        if self.bookIds:
+            if len(self.bookIds) == 1:
+                allCategory = self.bookCategory.get(self.bookIds[0], [])
+                if name in allCategory:
+                    item.setCheckState(Qt.Checked)
+                    item.setSelected(True)
 
         item.setSizeHint(widget.sizeHint())
         self.listWidget.setItemWidget(item, widget)
@@ -237,7 +242,7 @@ class LocalFoldView(BaseMaskDialog, Ui_LocalFold, QtTaskBase):
             w = self.listWidget.itemWidget(item)
             if item.isSelected():
                 allcategory.append(w.lineEdit.text())
-        self.MoveOkBack.emit(self.bookId, allcategory)
+        self.MoveOkBack.emit(self.bookIds, allcategory)
 
     def _MoveBookToFoldBack(self, raw):
         QtOwner().CloseLoading()

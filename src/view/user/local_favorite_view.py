@@ -35,9 +35,15 @@ class LocalFavoriteView(QtWidgets.QWidget, Ui_LocalFavorite, QtTaskBase):
         self.maxSortId = 0
         self.bookList.isDelMenu = True
         self.bookList.isMoveMenu = True
+        self.bookList.isCanBatch = True
+        self.bookList.isLocalFavorite = True
         self.bookList.LoadCallBack = self.LoadNextPage
         self.bookList.DelCallBack = self.DelCallBack
         self.bookList.MoveCallBack = self.MoveCallBack
+
+        self.bookList.BatchDelCallBack = self.BatchDelCallBack
+        self.bookList.BatchMoveCallBack = self.BatchMoveCallBack
+
         self.resetCnt = 5
         self.sortIdCombox.currentIndexChanged.connect(self.RefreshDataFocus)
         self.sortKeyCombox.currentIndexChanged.connect(self.RefreshDataFocus)
@@ -49,7 +55,7 @@ class LocalFavoriteView(QtWidgets.QWidget, Ui_LocalFavorite, QtTaskBase):
         self.db = LocalFavoriteDb()
         bookList = self.db.SearchFavorite(-1, 0, 0, 0, "")
         self.allBookIds = set(bookList.keys())
-        self.allDownButton.clicked.connect(self.OpenSomeBook)
+        # self.allDownButton.clicked.connect(self.OpenSomeBook)
         self.importButton.clicked.connect(self.ImportFavorite)
         self.startEpsUpdate.clicked.connect(self.StartUpdateEps)
         self.loadPage = 1
@@ -198,6 +204,12 @@ class LocalFavoriteView(QtWidgets.QWidget, Ui_LocalFavorite, QtTaskBase):
         # self.RefreshDataFocus()
         pass
 
+    def BatchDelCallBack(self, bookIds):
+        for bookId in bookIds:
+            self.DelFavorites(bookId)
+        self.RefreshData()
+        pass
+
     def IsHave(self, bookId):
         return str(bookId) in self.allBookIds
 
@@ -247,12 +259,12 @@ class LocalFavoriteView(QtWidgets.QWidget, Ui_LocalFavorite, QtTaskBase):
         self.InitFolder()
         return isSuc
 
-    def UpdateBookFid(self, bookId, fids):
-        isSuc = self.db.UpdateBookFavoriteFid(bookId, fids)
+    def UpdateBookFid(self, bookList, fids):
+        for bookId in bookList:
+            self.db.UpdateBookFavoriteFid(bookId, fids)
         self.folderDict = self.db.LoadFold()
         self.fidBookList = self.db.LoadBookFold()
-
-        return isSuc
+        return True
 
     def LoadNextPage(self):
         self.bookList.page += 1
@@ -296,6 +308,11 @@ class LocalFavoriteView(QtWidgets.QWidget, Ui_LocalFavorite, QtTaskBase):
         QtOwner().OpenLocalFavoriteFold(bookId, self.MoveOkBack, self.FoldChangeBack)
         return
 
+    def BatchMoveCallBack(self, bookIds):
+        self.lastMoveBookIds = bookIds[:]
+        QtOwner().OpenLocalFavoriteFold(bookIds, self.MoveOkBack, self.FoldChangeBack)
+        return
+
     def MoveOkBack(self):
         self.RefreshDataFocus()
         return
@@ -311,7 +328,7 @@ class LocalFavoriteView(QtWidgets.QWidget, Ui_LocalFavorite, QtTaskBase):
     def SetEnable(self, enable):
         self.importButton.setEnabled(enable)
         self.startEpsUpdate.setEnabled(enable)
-        self.allDownButton.setEnabled(enable)
+        # self.allDownButton.setEnabled(enable)
         self.sortIdCombox.setEnabled(enable)
         self.sortKeyCombox.setEnabled(enable)
         self.folderBox.setEnabled(enable)

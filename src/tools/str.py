@@ -97,6 +97,7 @@ class Str:
     CvSpace = 5010            # 空
     CvZipError = 5011        # 打包出错了
     CvXMLInfo = 5012         # 获取XML信息
+    CvXMLErr = 5013          # 无法获取XML信息
 
     CvAuthError = 5101        # 验证失败
     CvFileNotFound = 5102     # 本地文件未找到
@@ -297,7 +298,18 @@ class Str:
     ImportFavoriteNotice = 184            # 是否从账号收藏导入
     RightLeftScroll2 = 185         # 右左滚动(滚轮正序)
     UpdateTime = 186         # 更新时间
-
+    JPProxyRoute = 187      # JP反代分流
+    BatchModel = 189        # 多选模式
+    BatchDelete = 190        # 批量删除
+    BatchLocalFavorite = 191  # 批量本地收藏
+    BatchMove = 192           # 批量移动
+    CloseBatchModel = 193     # 退出多选模式
+    LocalFavorite = 194       # 本地收藏
+    DelLocalFavorite = 195    # 删除本地收藏
+    Cover  = 196  # 封面
+    BatchDeleteNotice = 197            # 是否批量删除
+    WorksName = 198            # 作品
+    ActorsName = 199           # 登场人物
 
     @classmethod
     def Reload(cls):
@@ -391,6 +403,7 @@ class Str:
         cls.strDict[cls.CvSpace] = QCoreApplication.translate("cls.obj",  "空", None)
         cls.strDict[cls.CvZipError] = QCoreApplication.translate("cls.obj",  "打包出错了", None)
         cls.strDict[cls.CvXMLInfo] = QCoreApplication.translate("cls.obj", "获取XML信息", None)
+        cls.strDict[cls.CvXMLErr] = QCoreApplication.translate("cls.obj", "无法获取XML信息", None)
         cls.strDict[cls.CvAuthError] = QCoreApplication.translate("cls.obj",  "验证失败", None)
         cls.strDict[cls.CvFileNotFound] = QCoreApplication.translate("cls.obj",  "本地文件未找到", None)
         cls.strDict[cls.CvNotSpace] = QCoreApplication.translate("cls.obj",  "空间不足", None)
@@ -553,6 +566,7 @@ class Str:
         cls.strDict[cls.CopyIdAndTitle] = QCoreApplication.translate("cls.obj", "复制ID和标题", None)
         cls.strDict[cls.Route] = QCoreApplication.translate("cls.obj", "分流{}", None)
         cls.strDict[cls.UsProxyRoute] = QCoreApplication.translate("cls.obj", "US反代分流", None)
+        cls.strDict[cls.JPProxyRoute] = QCoreApplication.translate("cls.obj", "JP反代分流", None)
         cls.strDict[cls.CustomDomain] = QCoreApplication.translate("cls.obj", "自定义域名", None)
         cls.strDict[cls.AutoCheckInDone] = QCoreApplication.translate("cls.obj", "已自动打卡", None)
         cls.strDict[cls.TasksWaiting] = QCoreApplication.translate("cls.obj", "{}个任务等待处理", None)
@@ -581,6 +595,18 @@ class Str:
         cls.strDict[cls.ImportFavoriteNotice] = QCoreApplication.translate("cls.obj", "是否从账号收藏导入", None)
         cls.strDict[cls.RightLeftScroll2] = QCoreApplication.translate("cls.obj", "右左滚动(滚轮正序)", None)
         cls.strDict[cls.UpdateTime] = QCoreApplication.translate("cls.obj", "更新时间", None)
+        cls.strDict[cls.BatchModel] = QCoreApplication.translate("cls.obj", "多选模式", None)
+        cls.strDict[cls.BatchDelete] = QCoreApplication.translate("cls.obj", "批量删除", None)
+        cls.strDict[cls.BatchLocalFavorite] = QCoreApplication.translate("cls.obj", "批量本地收藏", None)
+        cls.strDict[cls.LocalFavorite] = QCoreApplication.translate("cls.obj", "本地收藏", None)
+        cls.strDict[cls.DelLocalFavorite] = QCoreApplication.translate("cls.obj", "删除本地收藏", None)
+        cls.strDict[cls.BatchMove] = QCoreApplication.translate("cls.obj", "批量移动", None)
+        cls.strDict[cls.CloseBatchModel] = QCoreApplication.translate("cls.obj", "退出多选模式", None)
+        cls.strDict[cls.Cover] = QCoreApplication.translate("cls.obj", "封面", None)
+        cls.strDict[cls.BatchDeleteNotice] = QCoreApplication.translate("cls.obj", "是否批量删除", None)
+        cls.strDict[cls.WorksName] = QCoreApplication.translate("cls.obj", "作品", None)
+        cls.strDict[cls.ActorsName] = QCoreApplication.translate("cls.obj", "登场人物", None)
+
 
     @classmethod
     def GetStr(cls, enumType, defualt=""):

@@ -197,6 +197,24 @@
         </item>
        </layout>
       </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_9">
+        <item>
+         <widget class="QLabel" name="label_9">
+          <property name="text">
+           <string>屏蔽词：</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="hideButton">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
      </layout>
     </widget>
    </item>
@@ -1028,15 +1046,15 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>HeadLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">component.label.head_label.h</header>
+  </customwidget>
+  <customwidget>
    <class>SmoothScrollArea</class>
    <extends>QScrollArea</extends>
    <header location="global">component.scroll_area.smooth_scroll_area.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>HeadLabel</class>
-   <extends>QLabel</extends>
-   <header location="global">component.label.head_label.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -57,7 +57,7 @@ class LocalFavoriteFoldView(BaseMaskDialog, Ui_FavoriteFold, QtTaskBase):
     MoveOkBack = Signal()
     FoldChange = Signal()
 
-    def __init__(self, parent=None, bookId=""):
+    def __init__(self, parent=None, bookIds=""):
         BaseMaskDialog.__init__(self, parent)
         QtTaskBase.__init__(self)
         self.setupUi(self.widget)
@@ -69,9 +69,15 @@ class LocalFavoriteFoldView(BaseMaskDialog, Ui_FavoriteFold, QtTaskBase):
         self.saveButton.clicked.connect(self._MoveBookToFold)
         self.editButton.clicked.connect(self.SwitchEdit)
         self.isEditMode = False
-        self.bookId = bookId
+        self.bookList = []
+        if isinstance(bookIds, list):
+            self.bookList = bookIds[:]
+        else:
+            if bookIds:
+                self.bookList = [bookIds]
+        # self.bookId = bookId
         self.isFoldChange = False
-        if not self.bookId:
+        if not self.bookList:
             self.saveButton.hide()
 
         self.fids = set()
@@ -81,7 +87,12 @@ class LocalFavoriteFoldView(BaseMaskDialog, Ui_FavoriteFold, QtTaskBase):
     def Init(self):
         self.fids.clear()
         for k, v in QtOwner().localFavoriteView.fidBookList.items():
-            if self.bookId in v:
+            isAllIn = True
+            for bookId in self.bookList:
+                if bookId not in v:
+                    isAllIn = False
+                    break
+            if isAllIn and self.bookList:
                 self.fids.add(k)
 
         self.listWidget.clear()
@@ -110,7 +121,7 @@ class LocalFavoriteFoldView(BaseMaskDialog, Ui_FavoriteFold, QtTaskBase):
                 w.SetEditEnable(True)
                 # item.setFlags(item.flags() & ~Qt.ItemIsSelectable)
         else:
-            if self.bookId:
+            if self.bookList:
                 self.saveButton.setVisible(True)
 
             # 删除最后一个
@@ -199,7 +210,7 @@ class LocalFavoriteFoldView(BaseMaskDialog, Ui_FavoriteFold, QtTaskBase):
                 if w.fid:
                     fids.add(w.fid)
 
-        QtOwner().localFavoriteView.UpdateBookFid(self.bookId, fids)
+        QtOwner().localFavoriteView.UpdateBookFid(self.bookList, fids)
         self.close()
         self.MoveOkBack.emit()
 

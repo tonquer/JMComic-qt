@@ -18,6 +18,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QSizePolicy,
     QSpacerItem, QToolButton, QVBoxLayout, QWidget)
 
+from component.label.comic_label import ComicLabel
+
 class Ui_ComicItem(object):
     def setupUi(self, ComicItem):
         if not ComicItem.objectName():
@@ -54,7 +56,7 @@ class Ui_ComicItem(object):
 "}")
         self.verticalLayout_2 = QVBoxLayout(ComicItem)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.picLabel = QLabel(ComicItem)
+        self.picLabel = ComicLabel(ComicItem)
         self.picLabel.setObjectName(u"picLabel")
         self.picLabel.setAlignment(Qt.AlignCenter)
 

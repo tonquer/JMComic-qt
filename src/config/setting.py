@@ -49,6 +49,8 @@ class SettingValue:
                     return int(v)
                 elif isinstance(defV, float):
                     return float(v)
+                elif isinstance(defV, list) and isinstance(v, str):
+                    return [v]
                 else:
                     return v
             return defV
@@ -202,6 +204,11 @@ class Setting:
     IsPreUpdate = SettingValue("Other", 0, False)
     UerAgent = SettingValue("Other", "", False)
     GlobalConfig = SettingValue("Other", "", False)
+    ForbidWords = SettingValue("Other", [], False)
+    AddForbidWords = SettingValue("Other", [], False)
+    IsForbidCategory =SettingValue("Other", True, False)
+    IsForbidTag = SettingValue("Other", False, False)
+    IsForbidTitle = SettingValue("Other", False, False)
     # IpbMemberId = SettingValue("Other", "", False)
     # IpbPassHash = SettingValue("Other", "", False)
     # Igneous = SettingValue("Other", "", False)

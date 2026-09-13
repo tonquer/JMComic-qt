@@ -15,11 +15,11 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QAbstractItemView, QApplication, QFrame, QGridLayout,
-    QHBoxLayout, QLabel, QLayout, QListView,
-    QListWidgetItem, QPlainTextEdit, QPushButton, QSizePolicy,
-    QSpacerItem, QTabWidget, QToolButton, QVBoxLayout,
-    QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QCommandLinkButton, QFrame,
+    QGridLayout, QHBoxLayout, QLabel, QLayout,
+    QListView, QListWidgetItem, QPlainTextEdit, QPushButton,
+    QSizePolicy, QSpacerItem, QTabWidget, QToolButton,
+    QVBoxLayout, QWidget)
 
 from component.button.icon_tool_button import IconToolButton
 from component.list.eps_list_widget import EpsListWidget
@@ -235,23 +235,24 @@ class Ui_BookInfo(object):
 
         self.verticalLayout_2.addLayout(self.horizontalLayout_7)
 
-        self.horizontalLayout_9 = QHBoxLayout()
-        self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
-        self.label_7 = QLabel(self.scrollAreaWidgetContents)
-        self.label_7.setObjectName(u"label_7")
-        self.label_7.setMinimumSize(QSize(80, 0))
-        self.label_7.setMaximumSize(QSize(55, 20))
+        self.horizontalLayout_16 = QHBoxLayout()
+        self.horizontalLayout_16.setObjectName(u"horizontalLayout_16")
+        self.commandLinkButton = QCommandLinkButton(self.scrollAreaWidgetContents)
+        self.commandLinkButton.setObjectName(u"commandLinkButton")
+        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.commandLinkButton.sizePolicy().hasHeightForWidth())
+        self.commandLinkButton.setSizePolicy(sizePolicy)
 
-        self.horizontalLayout_9.addWidget(self.label_7)
+        self.horizontalLayout_16.addWidget(self.commandLinkButton)
 
-        self.views = QLabel(self.scrollAreaWidgetContents)
-        self.views.setObjectName(u"views")
-        self.views.setMaximumSize(QSize(16777215, 20))
+        self.horizontalSpacer_7 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.horizontalLayout_9.addWidget(self.views)
+        self.horizontalLayout_16.addItem(self.horizontalSpacer_7)
 
 
-        self.verticalLayout_2.addLayout(self.horizontalLayout_9)
+        self.verticalLayout_2.addLayout(self.horizontalLayout_16)
 
 
         self.horizontalLayout.addLayout(self.verticalLayout_2)
@@ -487,8 +488,7 @@ class Ui_BookInfo(object):
         self.label_8.setText(QCoreApplication.translate("BookInfo", u"\u89c2\u770b\u6570:", None))
         self.viewLabel.setText("")
         self.label_5.setText(QCoreApplication.translate("BookInfo", u"Tags\uff1a", None))
-        self.label_7.setText(QCoreApplication.translate("BookInfo", u"\u89c2\u770b\u6570\uff1a", None))
-        self.views.setText("")
+        self.commandLinkButton.setText(QCoreApplication.translate("BookInfo", u"\u66f4\u591a\u76f8\u5173", None))
         self.favoriteButton.setText(QCoreApplication.translate("BookInfo", u"\u6536\u85cf", None))
         self.localButton.setText(QCoreApplication.translate("BookInfo", u"\u672c\u5730", None))
         self.commentButton.setText(QCoreApplication.translate("BookInfo", u"\u8bc4\u8bba", None))

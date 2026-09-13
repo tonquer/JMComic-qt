@@ -1,9 +1,7 @@
-import json
 import os
-from this import d
 
 from PySide6.QtCore import Signal, QUrl
-from PySide6.QtGui import QAction, Qt, QDesktopServices
+from PySide6.QtGui import QAction, QDesktopServices
 from PySide6.QtWidgets import QWidget, QMenu, QFileDialog
 from natsort import natsorted
 
@@ -59,6 +57,7 @@ class LocalReadView(QWidget, Ui_Local, QtTaskBase):
 
         self.bookList.isDelMenu = True
         self.bookList.DelCallBack = self.DelLocalRead
+        self.bookList.BatchDelCallBack = self.BatchDelCallBack
         self.bookList.LoadingPicture = self.LoadingPicture
         self.bookList.ReDownloadPicture = self.LoadingPicture
         self.bookList.LoadCallBack = self.LoadNextPage
@@ -75,6 +74,7 @@ class LocalReadView(QWidget, Ui_Local, QtTaskBase):
         self.isCurRead = False
         self.bookList.isMoveMenu = True
         self.bookList.MoveHandler = self.MoveCallBack
+        self.bookList.BatchMoveCallBack = self.BatchMoveCallBack
         self.bookList.openMenu = True
         self.bookList.OpenDirHandler = self.OpenDirCallBack
         self.lineEdit.textChanged.connect(self.SearchTextChange)
@@ -281,6 +281,11 @@ class LocalReadView(QWidget, Ui_Local, QtTaskBase):
         # self.Init()
         self.bookList.DelBookID(bookId)
 
+    def BatchDelCallBack(self, bookIds):
+        for bookId in bookIds:
+            self.DelLocalRead(bookId)
+        return
+
     def DelLocalReadAll(self, bookIds):
         for bookId in bookIds:
             if bookId not in self.allBookInfos:
@@ -459,6 +464,10 @@ class LocalReadView(QWidget, Ui_Local, QtTaskBase):
         if widget:
             self.OpenFavoriteFold(widget.id)
 
+    def BatchMoveCallBack(self, allIds):
+        self.OpenFavoriteFold(allIds)
+        return
+
     def OpenDirCallBack(self, index):
         widget = self.bookList.indexWidget(index)
         if widget:
@@ -493,8 +502,9 @@ class LocalReadView(QWidget, Ui_Local, QtTaskBase):
         self.curSelectCategory = ""
         self.Init()
 
-    def MoveCategory(self, bookId, categoryList):
-        self.db.DelBookCategory(bookId)
-        for v in categoryList:
-            self.db.AddCategory(v, bookId)
+    def MoveCategory(self, bookIds, categoryList):
+        for bookId in bookIds:
+            self.db.DelBookCategory(bookId)
+            for v in categoryList:
+                self.db.AddCategory(v, bookId)
         self.Init()

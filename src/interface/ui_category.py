@@ -23,7 +23,7 @@ class Ui_Category(object):
     def setupUi(self, Category):
         if not Category.objectName():
             Category.setObjectName(u"Category")
-        Category.resize(400, 300)
+        Category.resize(552, 305)
         self.verticalLayout = QVBoxLayout(Category)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.tabWidget = QTabWidget(Category)
@@ -46,6 +46,13 @@ class Ui_Category(object):
         self.sortCombox.setMinimumSize(QSize(100, 0))
 
         self.horizontalLayout.addWidget(self.sortCombox)
+
+        self.subBox = QComboBox(Category)
+        self.subBox.addItem("")
+        self.subBox.setObjectName(u"subBox")
+        self.subBox.setMinimumSize(QSize(100, 0))
+
+        self.horizontalLayout.addWidget(self.subBox)
 
         self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
@@ -113,6 +120,8 @@ class Ui_Category(object):
         self.sortCombox.setItemText(4, QCoreApplication.translate("Category", u"\u65e5\u6392\u884c", None))
         self.sortCombox.setItemText(5, QCoreApplication.translate("Category", u"\u6700\u591a\u56fe\u7247", None))
         self.sortCombox.setItemText(6, QCoreApplication.translate("Category", u"\u6700\u591a\u7231\u5fc3", None))
+
+        self.subBox.setItemText(0, QCoreApplication.translate("Category", u"\u5168\u90e8", None))
 
         self.label.setText(QCoreApplication.translate("Category", u"\u9875\uff1a0/0", None))
         self.jumpPage.setText(QCoreApplication.translate("Category", u"\u8df3\u8f6c", None))

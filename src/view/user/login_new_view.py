@@ -97,7 +97,9 @@ class LoginNewView(QtWidgets.QWidget, Ui_LoginNew, QtTaskBase):
     def InitEchConfig(self):
         # self.echConfigIndex = 0
         self.dohDomainList = GlobalConfig.DohUrlList.value[:]
-        if Setting.DohAddress.value and Setting.DohAddress.value not in self.dohDomainList:
+        if Setting.DohAddress.value and Setting.DohAddress.value in self.dohDomainList:
+            self.dohDomainList.remove(Setting.DohAddress.value)
+        if Setting.DohAddress.value:
             self.dohDomainList.insert(0, Setting.DohAddress.value)
         if not self.dohDomainList:
             return

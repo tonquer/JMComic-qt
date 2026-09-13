@@ -17,12 +17,13 @@ class FavoriteInfo(object):
 
 # 分类
 class Category(object):
-    def __init__(self):
+    def __init__(self, name=""):
         self.id = ""
-        self.name = ""
+        self.name = name
         self.slug = ""
         self.type = ""
         self.total = 0
+        self.sub_categories = []
 
 
 # 评论
@@ -91,10 +92,13 @@ class BookBaseInfo(object):
         self.views = ""
         self.authorList = []
         self.tagList = []
+        self.workList = []
+        self.actorList = []
         self.category = []
         self.updateDate = ""
         self.coverUrl = ""
-        self.tagStr = ""
+        self.addTime = 0
+        # self.tagStr = ""
         self.price = 0
         self.purchased = False
 
@@ -112,7 +116,7 @@ class BookBaseInfo(object):
         self.author = o.author
         self.bookUrl = o.bookUrl
         self.coverUrl = o.coverUrl
-        self.tagStr = o.tagStr
+        # self.tagStr = o.tagStr
         self.authorList = o.authorList
         self.tagList = o.tagList
         self.category = o.category
@@ -163,6 +167,10 @@ class BookInfo(object):
         self.baseInfo = BookBaseInfo()
         self.pageInfo = BookPageInfo()
         self.localMaxEps = 0
+
+    @property
+    def id(self):
+        return self.baseInfo.id
 
     @property
     def epsCount(self):

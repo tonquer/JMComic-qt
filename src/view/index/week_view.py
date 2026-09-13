@@ -53,7 +53,7 @@ class WeekView(QWidget, Ui_Week, QtTaskBase):
                 for i, v in enumerate(data.get('categories')):
                     index = v.get("id")
                     self.comboIndexDict[i] = index
-                    title = v.get('time') + " - " + v.get("title")
+                    title = v.get('time')
                     if len(title) > maxSize:
                         maxSize = len(title)
                     self.comboBox.addItem(title)

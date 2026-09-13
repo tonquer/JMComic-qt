@@ -56,7 +56,7 @@ background-color:transparent;
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="QLabel" name="picLabel">
+    <widget class="ComicLabel" name="picLabel">
      <property name="text">
       <string>TextLabel</string>
      </property>
@@ -173,6 +173,13 @@ background-color:transparent;</string>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ComicLabel</class>
+   <extends>QLabel</extends>
+   <header>component.label.comic_label.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

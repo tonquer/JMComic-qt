@@ -78,6 +78,55 @@ class Ui_Search(object):
 
         self.verticalLayout.addWidget(self.searchWidget)
 
+        self.horizontalLayout_6 = QHBoxLayout()
+        self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
+        self.cateLabel = QLabel(Search)
+        self.cateLabel.setObjectName(u"cateLabel")
+        self.cateLabel.setMinimumSize(QSize(80, 40))
+
+        self.horizontalLayout_6.addWidget(self.cateLabel)
+
+        self.typeBox = QComboBox(Search)
+        self.typeBox.addItem("")
+        self.typeBox.addItem("")
+        self.typeBox.addItem("")
+        self.typeBox.addItem("")
+        self.typeBox.addItem("")
+        self.typeBox.setObjectName(u"typeBox")
+
+        self.horizontalLayout_6.addWidget(self.typeBox)
+
+        self.yearBox = QComboBox(Search)
+        self.yearBox.addItem("")
+        self.yearBox.setObjectName(u"yearBox")
+
+        self.horizontalLayout_6.addWidget(self.yearBox)
+
+        self.monthBox = QComboBox(Search)
+        self.monthBox.addItem("")
+        self.monthBox.addItem("")
+        self.monthBox.addItem("")
+        self.monthBox.addItem("")
+        self.monthBox.addItem("")
+        self.monthBox.addItem("")
+        self.monthBox.addItem("")
+        self.monthBox.addItem("")
+        self.monthBox.addItem("")
+        self.monthBox.addItem("")
+        self.monthBox.addItem("")
+        self.monthBox.addItem("")
+        self.monthBox.addItem("")
+        self.monthBox.setObjectName(u"monthBox")
+
+        self.horizontalLayout_6.addWidget(self.monthBox)
+
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_6.addItem(self.horizontalSpacer)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout_6)
+
         self.bookList = ComicListWidget(Search)
         self.bookList.setObjectName(u"bookList")
 
@@ -165,6 +214,29 @@ class Ui_Search(object):
 #endif // QT_CONFIG(tooltip)
         self.label_3.setText(QCoreApplication.translate("Search", u"?", None))
         self.searchButton.setText(QCoreApplication.translate("Search", u"\u641c\u7d22", None))
+        self.cateLabel.setText(QCoreApplication.translate("Search", u"\u9ad8\u7ea7\u641c\u7d22\uff1a", None))
+        self.typeBox.setItemText(0, QCoreApplication.translate("Search", u"\u7ad9\u5185\u641c\u7d22", None))
+        self.typeBox.setItemText(1, QCoreApplication.translate("Search", u"\u4f5c\u54c1", None))
+        self.typeBox.setItemText(2, QCoreApplication.translate("Search", u"\u4f5c\u8005", None))
+        self.typeBox.setItemText(3, QCoreApplication.translate("Search", u"\u6807\u7b7e", None))
+        self.typeBox.setItemText(4, QCoreApplication.translate("Search", u"\u767b\u573a\u4eba\u7269", None))
+
+        self.yearBox.setItemText(0, QCoreApplication.translate("Search", u"\u5168\u90e8\u5e74\u4efd", None))
+
+        self.monthBox.setItemText(0, QCoreApplication.translate("Search", u"\u5168\u90e8\u6708\u4efd", None))
+        self.monthBox.setItemText(1, QCoreApplication.translate("Search", u"1", None))
+        self.monthBox.setItemText(2, QCoreApplication.translate("Search", u"2", None))
+        self.monthBox.setItemText(3, QCoreApplication.translate("Search", u"3", None))
+        self.monthBox.setItemText(4, QCoreApplication.translate("Search", u"4", None))
+        self.monthBox.setItemText(5, QCoreApplication.translate("Search", u"5", None))
+        self.monthBox.setItemText(6, QCoreApplication.translate("Search", u"6", None))
+        self.monthBox.setItemText(7, QCoreApplication.translate("Search", u"7", None))
+        self.monthBox.setItemText(8, QCoreApplication.translate("Search", u"8", None))
+        self.monthBox.setItemText(9, QCoreApplication.translate("Search", u"9", None))
+        self.monthBox.setItemText(10, QCoreApplication.translate("Search", u"10", None))
+        self.monthBox.setItemText(11, QCoreApplication.translate("Search", u"11", None))
+        self.monthBox.setItemText(12, QCoreApplication.translate("Search", u"12", None))
+
         self.sortCombox.setItemText(0, QCoreApplication.translate("Search", u"\u6700\u65b0", None))
         self.sortCombox.setItemText(1, QCoreApplication.translate("Search", u"\u6700\u591a\u70b9\u51fb", None))
         self.sortCombox.setItemText(2, QCoreApplication.translate("Search", u"\u6700\u591a\u56fe\u7247", None))

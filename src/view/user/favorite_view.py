@@ -31,11 +31,12 @@ class FavoriteView(QtWidgets.QWidget, Ui_Favorite, QtTaskBase):
         # self.reupdateBookIds = set()
         # self.allFavoriteIds = dict()
         # self.maxSortId = 0
+        self.bookList.isFavorite = True
         self.bookList.isDelMenu = True
-        self.bookList.isMoveMenu = True
         self.bookList.LoadCallBack = self.LoadNextPage
         self.bookList.MoveCallBack = self.MoveCallBack
         self.bookList.DelCallBack = self.DelCallBack
+        self.bookList.BatchDelCallBack = self.BatchDelCallBack
         self.resetCnt = 5
         self.folderBox.addItem(Str.GetStr(Str.All))
         self.sortCombox.currentIndexChanged.connect(self.RefreshDataFocus)
@@ -69,6 +70,11 @@ class FavoriteView(QtWidgets.QWidget, Ui_Favorite, QtTaskBase):
         QtOwner().ShowLoading()
         self.AddHttpTask(req.AddAndDelFavoritesReq2(bookId), self.DelAndFavoritesBack, bookId)
         pass
+
+    def BatchDelCallBack(self, bookIds):
+        QtOwner().ShowLoading()
+        for bookId in bookIds:
+            self.AddHttpTask(req.AddAndDelFavoritesReq2(bookId), self.DelAndFavoritesBack, bookId)
 
     def MoveCallBack(self, bookId):
         name = self.folderBox.currentText()

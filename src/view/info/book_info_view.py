@@ -88,6 +88,8 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.uploadButton.clicked.connect(self.ShowMenu)
         self.buyButton.setVisible(False)
         self.buyButton.clicked.connect(self.DoBuyBook)
+        # self.commandLinkButton.clicked.connect(self.OpenRecommend)
+        self.commandLinkButton.setVisible(False)
 
         # self.toolMenu = QMenu(self.uploadButton)
         # self.uploadButton.setMenu(self.toolMenu)
@@ -189,6 +191,9 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.buyButton.setVisible(False)
         self.AddHttpTask(req.GetBookInfoReq2(self.bookId), self.OpenBookBack)
 
+    # def OpenRecommend(self):
+    #     QtOwner().OpenRecomment(self.bookId)
+
     def OpenBookBack(self, raw):
         QtOwner().CloseLoading()
         self.ClearTags()
@@ -223,6 +228,10 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             #     self.categoriesList.AddItem(name)
             for name in info.baseInfo.tagList:
                 self.AddTags(name)
+            for name in info.baseInfo.workList:
+                self.AddTags(Str.GetStr(Str.WorksName)  + "#"+name)
+            for name in info.baseInfo.actorList:
+                self.AddTags(Str.GetStr(Str.ActorsName)  + "#"+name)
             # self.starButton.setText(str(info.totalLikes))
             # self.views.setText(str(info.totalViews))
             # self.isFavorite = info.isFavourite
@@ -554,7 +563,12 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
     def ClickTagsItem(self):
         text = self.sender().text()
         # QtOwner().owner.searchForm.SearchTags(text)
-        QtOwner().OpenSearch2(text)
+        texts = text.split("#", 2)
+        if len(texts)>1:
+            newText = texts[1]
+        else:
+            newText = texts[0]
+        QtOwner().OpenSearch2(newText)
         return
 
     def CopyClickTagsItem(self):

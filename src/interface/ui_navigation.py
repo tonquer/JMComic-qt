@@ -160,6 +160,21 @@ class Ui_Navigation(object):
 
         self.verticalLayout_4.addLayout(self.horizontalLayout_7)
 
+        self.horizontalLayout_9 = QHBoxLayout()
+        self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
+        self.label_9 = QLabel(self.topWidget)
+        self.label_9.setObjectName(u"label_9")
+
+        self.horizontalLayout_9.addWidget(self.label_9)
+
+        self.hideButton = QPushButton(self.topWidget)
+        self.hideButton.setObjectName(u"hideButton")
+
+        self.horizontalLayout_9.addWidget(self.hideButton)
+
+
+        self.verticalLayout_4.addLayout(self.horizontalLayout_9)
+
 
         self.verticalLayout.addWidget(self.topWidget)
 
@@ -498,6 +513,8 @@ class Ui_Navigation(object):
         self.proxyName.setText("")
         self.label_5.setText(QCoreApplication.translate("Navigation", u"\u5206\u6d41\uff1a", None))
         self.proxyImgName.setText("")
+        self.label_9.setText(QCoreApplication.translate("Navigation", u"\u5c4f\u853d\u8bcd\uff1a", None))
+        self.hideButton.setText("")
         self.label.setText(QCoreApplication.translate("Navigation", u"\u7528\u6237", None))
         self.collectButton.setText(QCoreApplication.translate("Navigation", u"\u6211\u7684\u6536\u85cf", None))
         self.myCommentButton.setText(QCoreApplication.translate("Navigation", u"\u6211\u7684\u8bc4\u8bba", None))

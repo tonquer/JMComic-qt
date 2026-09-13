@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>552</width>
+    <height>305</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -63,6 +63,21 @@
        <item>
         <property name="text">
          <string>最多爱心</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="subBox">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>0</height>
+        </size>
+       </property>
+       <item>
+        <property name="text">
+         <string>全部</string>
         </property>
        </item>
       </widget>

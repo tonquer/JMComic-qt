@@ -341,38 +341,32 @@ QScrollArea {background-color:transparent;}</string>
               </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_9">
+              <layout class="QHBoxLayout" name="horizontalLayout_16">
                <item>
-                <widget class="QLabel" name="label_7">
-                 <property name="minimumSize">
-                  <size>
-                   <width>80</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>55</width>
-                   <height>20</height>
-                  </size>
+                <widget class="QCommandLinkButton" name="commandLinkButton">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
                  </property>
                  <property name="text">
-                  <string>观看数：</string>
+                  <string>更多相关</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="views">
-                 <property name="maximumSize">
+                <spacer name="horizontalSpacer_7">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
                   <size>
-                   <width>16777215</width>
+                   <width>40</width>
                    <height>20</height>
                   </size>
                  </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                </widget>
+                </spacer>
                </item>
               </layout>
              </item>

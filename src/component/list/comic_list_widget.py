@@ -1,14 +1,16 @@
 from functools import partial
 
+from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QCursor
-from PySide6.QtWidgets import QListWidgetItem, QMenu, QApplication, QFrame, QListWidget
+from PySide6.QtWidgets import QListWidgetItem, QMenu, QApplication, QFrame, QListWidget, QMessageBox
 
 from component.list.base_list_widget import BaseListWidget
 from component.widget.comic_item_widget import ComicItemWidget
 from config import config
 from config.setting import Setting
 from qt_owner import QtOwner
+from tools.book import BookInfo
 from tools.status import Status
 from tools.str import Str
 from tools.tool import ToolUtil
@@ -35,6 +37,66 @@ class ComicListWidget(BaseListWidget):
         self.isLocal = False
         self.isLocalEps = False
         self.openMenu = False
+        self.isLocalFavorite = False
+        self.isFavorite = False
+        self.isHistory = False
+
+        self.isOpen2 = False
+        self.isCanBatch = True
+        self.isOpenBatch = False
+
+    def OpenBatch(self):
+        self.isOpenBatch = True
+        for row in range(0, self.count()):
+            item = self.item(row)
+            w = self.itemWidget(item)
+            assert isinstance(w, ComicItemWidget)
+            w.SetSelect(False)
+        return
+
+    def CloseBatch(self):
+        self.isOpenBatch = False
+        for row in range(0, self.count()):
+            item = self.item(row)
+            w = self.itemWidget(item)
+            assert isinstance(w, ComicItemWidget)
+            w.SetSelect(None)
+        return
+
+    def BatchAll(self):
+        for row in range(0, self.count()):
+            item = self.item(row)
+            w = self.itemWidget(item)
+            assert isinstance(w, ComicItemWidget)
+            if isinstance(w.rawBook, BookInfo):
+                if isinstance(w.rawBook.baseInfo.tagList, list):
+                    tags = ",".join(w.rawBook.baseInfo.tagList)
+                else:
+                    tags = w.rawBook.baseInfo.tagList
+
+                if isinstance(w.rawBook.baseInfo.category, list):
+                    category = ",".join(w.rawBook.baseInfo.category)
+                else:
+                    category = w.rawBook.baseInfo.category
+                if QtOwner().IsInFilter(category, tags, w.rawBook.title):
+                    isFilter = True
+                else:
+                    isFilter = False
+            else:
+                isFilter = False
+            if not isFilter:
+                w.SetSelect(True)
+        return
+
+    def GetAllSelectNum(self):
+        num = 0
+        for row in range(0, self.count()):
+            item = self.item(row)
+            w = self.itemWidget(item)
+            if w and w.isSelect:
+                num += 1
+        return num
+
 
     def SelectMenuBook(self, pos):
         index = self.indexAt(pos)
@@ -43,55 +105,104 @@ class ComicListWidget(BaseListWidget):
             assert isinstance(widget, ComicItemWidget)
             popMenu = QMenu(self)
 
-            if not self.isLocal:
-                action = popMenu.addAction(Str.GetStr(Str.Open))
-                action.triggered.connect(partial(self.OpenBookInfoHandler, index))
-
-            action = popMenu.addAction(Str.GetStr(Str.LookCover))
-            action.triggered.connect(partial(self.OpenPicture, index))
-            action = popMenu.addAction(Str.GetStr(Str.ReDownloadCover))
-            action.triggered.connect(partial(self.ReDownloadPicture, index))
-            if config.CanWaifu2x and widget.picData:
-                if not widget.isWaifu2x:
-                    action = popMenu.addAction(Str.GetStr(Str.Waifu2xConvert))
-                    action.triggered.connect(partial(self.Waifu2xPicture, index))
-                    if widget.isWaifu2xLoading or not config.CanWaifu2x:
+            if not self.isOpenBatch:
+                if not self.isLocal:
+                    action = popMenu.addAction(Str.GetStr(Str.Open))
+                    action.triggered.connect(partial(self.OpenBookInfoHandler, index))
+                    nas = QMenu(Str.GetStr(Str.NetNas))
+                    nasDict = QtOwner().owner.nasView.nasDict
+                    if not nasDict:
+                        action = nas.addAction(Str.GetStr(Str.CvSpace))
                         action.setEnabled(False)
-                else:
-                    action = popMenu.addAction(Str.GetStr(Str.DelWaifu2xConvert))
-                    action.triggered.connect(partial(self.CancleWaifu2xPicture, index))
-            action = popMenu.addAction(Str.GetStr(Str.CopyTitle))
-            action.triggered.connect(partial(self.CopyHandler, index))
+                    else:
+                        for k, v in nasDict.items():
+                            action = nas.addAction(v.showTitle)
+                            if QtOwner().nasView.IsInUpload(k, widget.id):
+                                action.setEnabled(False)
+                            action.triggered.connect(partial(self.NasUploadHandler, k, index))
+                    popMenu.addMenu(nas)
 
-            if not self.isLocal:
-                action = popMenu.addAction(Str.GetStr(Str.Download))
-                action.triggered.connect(partial(self.DownloadHandler, index))
-                nas = QMenu(Str.GetStr(Str.NetNas))
-                nasDict = QtOwner().owner.nasView.nasDict
-                if not nasDict:
-                    action = nas.addAction(Str.GetStr(Str.CvSpace))
-                    action.setEnabled(False)
-                else:
-                    for k, v in nasDict.items():
-                        action = nas.addAction(v.title)
-                        if QtOwner().nasView.IsInUpload(k, widget.id):
+                cover = QMenu(Str.GetStr(Str.Cover))
+                action = cover.addAction(Str.GetStr(Str.LookCover))
+                action.triggered.connect(partial(self.OpenPicture, index))
+                action = cover.addAction(Str.GetStr(Str.ReDownloadCover))
+                action.triggered.connect(partial(self.ReDownloadPicture, index))
+                if config.CanWaifu2x and widget.picData:
+                    if not widget.isWaifu2x:
+                        action = cover.addAction(Str.GetStr(Str.Waifu2xConvert))
+                        action.triggered.connect(partial(self.Waifu2xPicture, index))
+                        if widget.isWaifu2xLoading or not config.CanWaifu2x:
                             action.setEnabled(False)
-                        action.triggered.connect(partial(self.NasUploadHandler, k, index))
-                popMenu.addMenu(nas)
+                    else:
+                        action = cover.addAction(Str.GetStr(Str.DelWaifu2xConvert))
+                        action.triggered.connect(partial(self.CancleWaifu2xPicture, index))
+                popMenu.addMenu(cover)
 
-                # if not self.isGame:
-                #     action = popMenu.addAction(Str.GetStr(Str.DownloadAll))
-                #     action.triggered.connect(self.OpenBookDownloadAll)
+                action = popMenu.addAction(Str.GetStr(Str.CopyTitle))
+                action.triggered.connect(partial(self.CopyHandler, index))
 
-            if self.isDelMenu:
-                action = popMenu.addAction(Str.GetStr(Str.Delete))
-                action.triggered.connect(partial(self.DelHandler, index))
-            if self.isMoveMenu:
-                action = popMenu.addAction(Str.GetStr(Str.Move))
-                action.triggered.connect(partial(self.MoveHandler, index))
-            if self.openMenu:
-                action = popMenu.addAction(Str.GetStr(Str.OpenDir))
-                action.triggered.connect(partial(self.OpenDirHandler, index))
+                if not self.isLocal and not self.isGame:
+                    action = popMenu.addAction(Str.GetStr(Str.Download))
+                    action.triggered.connect(partial(self.DownloadHandler, index))
+
+                if self.isDelMenu and not self.isLocalFavorite and not self.isLocal:
+                    action = popMenu.addAction(Str.GetStr(Str.Delete))
+                    action.triggered.connect(partial(self.DelHandler, index))
+                if self.isMoveMenu and not self.isLocalFavorite and not self.isLocal:
+                    action = popMenu.addAction(Str.GetStr(Str.Move))
+                    action.triggered.connect(partial(self.MoveHandler, index))
+                if self.openMenu:
+                    action = popMenu.addAction(Str.GetStr(Str.OpenDir))
+                    action.triggered.connect(partial(self.OpenDirHandler, index))
+
+                if not self.isFavorite and not self.isLocalFavorite and not self.isLocal and not self.isGame and not self.isHistory:
+                    if QtOwner().localFavoriteView.IsHave(widget.id):
+                        action = popMenu.addAction(Str.GetStr(Str.DelLocalFavorite))
+                        action.triggered.connect(partial(self.DelFavoriteHandler, index))
+                    else:
+                        action = popMenu.addAction(Str.GetStr(Str.LocalFavorite))
+                        action.triggered.connect(partial(self.LocalFavoriteHandler, index))
+
+                if self.isCanBatch and not self.isGame:
+                    action = popMenu.addAction(Str.GetStr(Str.BatchModel))
+                    action.triggered.connect(self.OpenBatch)
+            else:
+                num = self.GetAllSelectNum()
+                if num > 0:
+                    action = popMenu.addAction(Str.GetStr(Str.SelectAll)+ f"({num})")
+                else:
+                    action = popMenu.addAction(Str.GetStr(Str.SelectAll))
+                action.triggered.connect(self.BatchAll)
+
+                if not self.isLocal and not self.isGame and not self.isHistory:
+                    nas = QMenu(Str.GetStr(Str.NetNas))
+                    nasDict = QtOwner().owner.nasView.nasDict
+                    if not nasDict:
+                        action = nas.addAction(Str.GetStr(Str.CvSpace))
+                        action.setEnabled(False)
+                    else:
+                        for k, v in nasDict.items():
+                            action = nas.addAction(v.showTitle)
+                            action.triggered.connect(partial(self.BatchNasUploadHandler, k))
+                    popMenu.addMenu(nas)
+
+                    if not self.isGame and not self.isHistory:
+                        action = popMenu.addAction(Str.GetStr(Str.DownloadAll))
+                        action.triggered.connect(self.OpenBookDownloadAll)
+
+                if self.isDelMenu :
+                    action = popMenu.addAction(Str.GetStr(Str.BatchDelete))
+                    action.triggered.connect(self.BatchDelHandler)
+                if self.isMoveMenu:
+                    action = popMenu.addAction(Str.GetStr(Str.BatchMove))
+                    action.triggered.connect(self.BatchMoveHandler)
+                if not self.isLocalFavorite and not self.isLocal and not self.isGame and not self.isHistory:
+                    action = popMenu.addAction(Str.GetStr(Str.BatchLocalFavorite))
+                    action.triggered.connect(self.BatchLocalFavoriteHandler)
+
+                action = popMenu.addAction(Str.GetStr(Str.CloseBatchModel))
+                action.triggered.connect(self.CloseBatch)
+
             popMenu.exec_(QCursor.pos())
         return
 
@@ -109,7 +220,13 @@ class ComicListWidget(BaseListWidget):
                     isShowToolButton = True
                 categories = Str.GetStr(Str.LastLook) + str(info.epsId + 1) + Str.GetStr(Str.Chapter) + "/" + str(
                     v.localMaxEps) + Str.GetStr(Str.Chapter)
-        self.AddBookItem(_id, title, categories, url, isShowToolButton=isShowToolButton)
+
+        if isinstance(v.baseInfo.tagList, list):
+            tags = ",".join(v.baseInfo.tagList)
+        else:
+            tags = ""
+        isShiled = QtOwner().IsInFilter(categories, tags, title)
+        self.AddBookItem(_id, title, categories, url, isShowToolButton=isShowToolButton, isShiled=isShiled, rawBook=v)
 
     def AddBookByLocal(self, v, category=""):
         from task.task_local import LocalData
@@ -157,9 +274,9 @@ class ComicListWidget(BaseListWidget):
         categories = "{} {}".format(ToolUtil.GetUpdateStrByTick(v.tick), Str.GetStr(Str.Looked))
         self.AddBookItem(_id, title, categories, url)
 
-    def AddBookItem(self, _id, title, categoryStr="", url="", isShowToolButton=False):
+    def AddBookItem(self, _id, title, categoryStr="", url="", isShowToolButton=False, isShiled=False, rawBook=None):
         index = self.count()
-        widget = ComicItemWidget()
+        widget = ComicItemWidget(isShiled=isShiled)
         widget.setFocusPolicy(Qt.NoFocus)
         widget.title = title
         widget.category = categoryStr
@@ -167,6 +284,9 @@ class ComicListWidget(BaseListWidget):
         widget.id = _id
         widget.url = url
         widget.index = index
+        if rawBook:
+            widget.rawBook = rawBook
+
         if not isShowToolButton:
             widget.toolButton.hide()
         widget.categoryLabel.setText(categoryStr)
@@ -197,7 +317,8 @@ class ComicListWidget(BaseListWidget):
         item.setFlags(item.flags() & ~Qt.ItemIsSelectable)
         item.setSizeHint(widget.sizeHint())
         self.setItemWidget(item, widget)
-        widget.picLabel.setText(Str.GetStr(Str.LoadingPicture))
+        if not isShiled:
+            widget.picLabel.setText(Str.GetStr(Str.LoadingPicture))
         widget.PicLoad.connect(self.LoadingPicture)
         # if url and config.IsLoadingPicture:
         #     self.AddDownloadTask(url, widget.path, completeCallBack=self.LoadingPictureComplete, backParam=index)
@@ -235,21 +356,30 @@ class ComicListWidget(BaseListWidget):
             if not widget:
                 return
             assert isinstance(widget, ComicItemWidget)
-            widget.SetPictureErr()
+            widget.SetPictureErr(status)
         return
 
     def SelectItem(self, item):
-        assert isinstance(item, QListWidgetItem)
-        widget = self.itemWidget(item)
-        assert isinstance(widget, ComicItemWidget)
-        if self.isGame:
-            QtOwner().OpenGameInfo(widget.id)
-        elif self.isLocalEps:
-            QtOwner().OpenLocalEpsBook(widget.id)
-        elif self.isLocal:
-            QtOwner().OpenLocalBook(widget.id)
+        if not self.isOpenBatch:
+            assert isinstance(item, QListWidgetItem)
+            widget = self.itemWidget(item)
+            assert isinstance(widget, ComicItemWidget)
+            if widget.isShiled:
+                QtOwner().ShowError(Str.GetStr(Str.Hidden))
+                return
+            if self.isGame:
+                QtOwner().OpenGameInfo(widget.id)
+            elif self.isLocalEps:
+                QtOwner().OpenLocalEpsBook(widget.id)
+            elif self.isLocal:
+                QtOwner().OpenLocalBook(widget.id)
+            else:
+                QtOwner().OpenBookInfo(widget.id, widget.GetTitle())
         else:
-            QtOwner().OpenBookInfo(widget.id, widget.GetTitle())
+            assert isinstance(item, QListWidgetItem)
+            widget = self.itemWidget(item)
+            assert isinstance(widget, ComicItemWidget)
+            widget.SwitchSelect()
         return
 
     def OpenBookInfoHandler(self, index):
@@ -314,11 +444,79 @@ class ComicListWidget(BaseListWidget):
             clipboard.setText(data)
         pass
 
+    def BatchMoveHandler(self):
+        allIds = []
+        for row in range(0, self.count()):
+            item = self.item(row)
+            w = self.itemWidget(item)
+            assert isinstance(w, ComicItemWidget)
+            if w.isSelect and not item.isHidden():
+                allIds.append(w.id)
+
+        if allIds and hasattr(self, "BatchMoveCallBack"):
+            self.BatchMoveCallBack(allIds)
+
     def MoveHandler(self, index):
         widget = self.indexWidget(index)
         if widget:
             assert isinstance(widget, ComicItemWidget)
             self.MoveCallBack(widget.id)
+
+    def OpenBookDownloadAll(self):
+        allBooks = []
+        for row in range(0, self.count()):
+            item = self.item(row)
+            w = self.itemWidget(item)
+            assert isinstance(w, ComicItemWidget)
+            if w.isSelect and w.id and not item.isHidden():
+                allBooks.append(w.id)
+        QtOwner().OpenSomeDownload(allBooks)
+
+    def BatchDelHandler(self):
+        allIds = []
+        for row in range(0, self.count()):
+            item = self.item(row)
+            w = self.itemWidget(item)
+            assert isinstance(w, ComicItemWidget)
+            if w.isSelect and not item.isHidden():
+                allIds.append(w.id)
+
+        if allIds:
+            isShow = QMessageBox.information(self, Str.GetStr(Str.BatchDelete), Str.GetStr(Str.BatchDeleteNotice),
+                                             QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+            if isShow != QtWidgets.QMessageBox.Yes:
+                return
+
+        if allIds and hasattr(self, "BatchDelCallBack"):
+            self.BatchDelCallBack(allIds)
+
+    def DelFavoriteHandler(self, index):
+        widget = self.indexWidget(index)
+        if widget and widget.id:
+            QtOwner().localFavoriteView.DelFavorites(widget.id)
+            QtOwner().ShowMsg(Str.GetStr(Str.DelFavoriteSuc))
+
+    def LocalFavoriteHandler(self, index):
+        widget = self.indexWidget(index)
+        if widget and widget.rawBook:
+            QtOwner().localFavoriteView.AddFavorites(widget.rawBook)
+            QtOwner().OpenLocalFavoriteFold(widget.id)
+
+    def BatchLocalFavoriteHandler(self):
+        allBooks = []
+        for row in range(0, self.count()):
+            item = self.item(row)
+            w = self.itemWidget(item)
+            assert isinstance(w, ComicItemWidget)
+            if w.isSelect and w.rawBook and not item.isHidden():
+                allBooks.append(w.rawBook)
+
+        if allBooks:
+            allIds = []
+            for book in allBooks:
+                QtOwner().localFavoriteView.AddFavorites(book)
+                allIds.append(book.id)
+            QtOwner().OpenLocalFavoriteFold(allIds)
 
     def DelHandler(self, index):
         widget = self.indexWidget(index)
@@ -335,6 +533,15 @@ class ComicListWidget(BaseListWidget):
         widget = self.indexWidget(index)
         if widget:
             QtOwner().OpenEpsInfo(widget.id)
+        pass
+
+    def BatchNasUploadHandler(self, nasId):
+        for row in range(0, self.count()):
+            item = self.item(row)
+            w = self.itemWidget(item)
+            assert isinstance(w, ComicItemWidget)
+            if w.isSelect and w.rawBook and not item.isHidden():
+                QtOwner().nasView.AddNasUpload(nasId, w.id)
         pass
 
     def NasUploadHandler(self, nasId, index):

@@ -21,13 +21,16 @@ class CategoryView(QWidget, Ui_Category, QtTaskBase):
         self.setupUi(self)
         self.isInit = False
         self.isInitNew = False
-        self.bookWidgetList = []
+        # self.bookWidgetList = []
         self.newIndex = 1
         self.indexCategory = {}
         self.tabWidget.currentChanged.connect(self.SwitchTab)
         self.jumpPage.clicked.connect(self._JumpPage)
-        self.sortCombox.currentIndexChanged.connect(self._JumpPage)
+        self.sortCombox.currentIndexChanged.connect(self.SwitchSort)
         self.sortList = ["mr", "mv", "mv_m", "mv_w", "mv_t", "mp", "tf"]
+        self.allIndexWidget = {}
+        self.subCategoryIndex = 0
+        self.subBox.currentIndexChanged.connect(self.SwitchSubTab)
 
     def SwitchCurrent(self, **kwargs):
         refresh = kwargs.get("refresh")
@@ -56,7 +59,7 @@ class CategoryView(QWidget, Ui_Category, QtTaskBase):
                 for category in categoryList:
                     assert isinstance(category, Category)
                     self.indexCategory[self.newIndex] = category
-                    w = self.AddTab(category.name)
+                    self.AddTab(category)
                     self.newIndex += 1
                 self.tabWidget.setCurrentIndex(0)
 
@@ -87,31 +90,42 @@ class CategoryView(QWidget, Ui_Category, QtTaskBase):
     def SearchTitle(self, text):
         QtOwner().OpenSearch(text)
 
-    def AddTab(self, name):
+    def UpdateSubBox(self, index):
+        category = self.indexCategory.get(index)
+        if not category:
+            self.subBox.setVisible(False)
+            return
+        assert isinstance(category, Category)
+        if not category.sub_categories:
+            self.subBox.setVisible(False)
+            return
+        self.subBox.setVisible(True)
+        self.subBox.currentIndexChanged.disconnect()
+        self.subBox.clear()
+        allSub = [Category(Str.GetStr(Str.All))]
+        allSub.extend(category.sub_categories)
+        for v in allSub:
+            self.subBox.addItem(v.name)
+        self.subBox.currentIndexChanged.connect(self.SwitchSubTab)
+
+    def AddTab(self, category):
+        assert isinstance(category, Category)
         tab = QWidget()
         verticalLayout = QVBoxLayout(tab)
         newListWidget = ComicListWidget(tab)
         newListWidget.LoadCallBack = self.LoadNextPage
         tab.bookWidget = newListWidget
         verticalLayout.addWidget(newListWidget)
-        self.bookWidgetList.append(newListWidget)
-        self.tabWidget.addTab(tab, name)
-        return newListWidget
+        # self.bookWidgetList.append(newListWidget)
+        self.allIndexWidget[self.tabWidget.count()] = newListWidget
+        self.tabWidget.addTab(tab, category.name)
 
-    def SwitchTab(self, index, page=1, isForce=False):
-        if index == 0:
-            self.spinBox.setVisible(False)
-            self.label.setVisible(False)
-            self.jumpPage.setVisible(False)
-            self.sortCombox.setVisible(False)
-            return
-        else:
-            self.spinBox.setVisible(True)
-            self.label.setVisible(True)
-            self.jumpPage.setVisible(True)
-            self.sortCombox.setVisible(True)
-        w = self.tabWidget.widget(index)
-        bookWidget = getattr(w, "bookWidget", "")
+    def SwitchSort(self):
+        self.SwitchTab(self.tabWidget.currentIndex(), isForce=True, isChangeSub=False)
+
+    def SwitchSubTab(self, subIndex, page=1, isForce=True):
+        index = self.tabWidget.currentIndex()
+        bookWidget = self.allIndexWidget.get(index)
         if not isinstance(bookWidget, ComicListWidget):
             return
         category = self.indexCategory.get(index)
@@ -128,12 +142,67 @@ class CategoryView(QWidget, Ui_Category, QtTaskBase):
         QtOwner().ShowLoading()
         bookWidget.clear()
         sortId = self.sortList[self.sortCombox.currentIndex()]
-        self.AddHttpTask(req.GetSearchCategoryReq2(category.slug, page=page, sort=sortId), self._SearchCategoryBack, (page, index))
+        self.AddHttpTask(req.GetSearchCategoryReq2(self.GetSlug(), page=page, sort=sortId), self._SearchCategoryBack, (page, index))
+        pass
+
+    def GetSlug(self):
+        index = self.tabWidget.currentIndex()
+        category = self.indexCategory.get(index)
+        if not category:
+            return ""
+        assert isinstance(category, Category)
+        subIndex = self.subBox.currentIndex()
+        if not subIndex:
+            return category.slug
+        if category.sub_categories and subIndex <= len(category.sub_categories):
+            subCategory = category.sub_categories[subIndex - 1]
+            if subCategory.slug:
+                slug = category.slug + "_" + subCategory.slug
+            else:
+                slug = category.slug
+            return slug
+        else:
+            return category.slug
+
+    def SwitchTab(self, index, page=1, isForce=False, isChangeSub=True):
+        if isChangeSub:
+            self.UpdateSubBox(index)
+        if index == 0:
+            self.subCategoryIndex = 0
+            self.spinBox.setVisible(False)
+            self.label.setVisible(False)
+            self.jumpPage.setVisible(False)
+            self.sortCombox.setVisible(False)
+            return
+        else:
+            self.spinBox.setVisible(True)
+            self.label.setVisible(True)
+            self.jumpPage.setVisible(True)
+            self.sortCombox.setVisible(True)
+        bookWidget = self.allIndexWidget.get(index)
+        if not isinstance(bookWidget, ComicListWidget):
+            return
+        category = self.indexCategory.get(index)
+        if not category:
+            return
+        assert isinstance(category, Category)
+        self.spinBox.setMaximum(bookWidget.pages)
+        self.spinBox.setValue(page)
+        self.label.setText(bookWidget.GetPageStr())
+
+        if bookWidget.count() > 0 and not isForce:
+            return
+
+        QtOwner().ShowLoading()
+        bookWidget.clear()
+        sortId = self.sortList[self.sortCombox.currentIndex()]
+        self.AddHttpTask(req.GetSearchCategoryReq2(self.GetSlug(), page=page, sort=sortId), self._SearchCategoryBack, (page, index))
 
     def _JumpPage(self):
         index = self.tabWidget.currentIndex()
         w = self.tabWidget.widget(index)
-        bookWidget = getattr(w, "bookWidget", "")
+        index = self.tabWidget.currentIndex()
+        bookWidget = self.allIndexWidget.get(index)
         if not isinstance(bookWidget, ComicListWidget):
             return
         category = self.indexCategory.get(index)
@@ -142,16 +211,15 @@ class CategoryView(QWidget, Ui_Category, QtTaskBase):
         page = int(self.spinBox.text())
         if page > bookWidget.pages:
             return
-
-        self.SwitchTab(index, page, True)
+        self.SwitchTab(index, page, True, False)
 
     def _SearchCategoryBack(self, raw, v):
         page, index = v
         QtOwner().CloseLoading()
-        w = self.tabWidget.widget(index)
-        bookWidget = getattr(w, "bookWidget", "")
+        bookWidget = self.allIndexWidget.get(index)
+        # w = self.tabWidget.widget(index)
+        # bookWidget = getattr(w, "bookWidget", "")
         assert isinstance(bookWidget, ComicListWidget)
-        category = self.indexCategory.get(index)
         bookWidget.UpdateState()
 
         if raw["st"] == Status.Ok:
@@ -171,12 +239,12 @@ class CategoryView(QWidget, Ui_Category, QtTaskBase):
     def LoadNextPage(self):
         index = self.tabWidget.currentIndex()
         w = self.tabWidget.widget(index)
-        bookWidget = getattr(w, "bookWidget", "")
+        bookWidget = self.allIndexWidget.get(index)
         if not isinstance(bookWidget, ComicListWidget):
             return
         QtOwner().ShowLoading()
         category = self.indexCategory.get(index)
         assert isinstance(category, Category)
         sortId = self.sortList[self.sortCombox.currentIndex()]
-        self.AddHttpTask(req.GetSearchCategoryReq2(category.slug, bookWidget.page + 1, sortId), self._SearchCategoryBack, (bookWidget.page + 1, index))
+        self.AddHttpTask(req.GetSearchCategoryReq2(self.GetSlug(), bookWidget.page + 1, sortId), self._SearchCategoryBack, (bookWidget.page + 1, index))
         return

@@ -59,6 +59,9 @@ class QtOwner(Singleton):
             return
         return self.owner.msgLabel.ShowMsg(msg)
 
+    def IsInFilter(self, name1, name2, name3):
+        return self.owner.navigationWidget.IsInFilter(name1, name2, name3)
+
     def ShowErrOne(self, msg):
         if not hasattr(self.owner, "msgLabel"):
             return
@@ -192,9 +195,9 @@ class QtOwner(Singleton):
         if foldChangeBack:
             w.FoldChange.connect(foldChangeBack)
 
-    def OpenLocalFavoriteFold(self, bookId="", moveBack=None, foldChangeBack=None):
+    def OpenLocalFavoriteFold(self, bookIds="", moveBack=None, foldChangeBack=None):
         from view.user.local_favorite_fold_view import LocalFavoriteFoldView
-        w = LocalFavoriteFoldView(QtOwner().owner, bookId)
+        w = LocalFavoriteFoldView(QtOwner().owner, bookIds)
         w.show()
         if moveBack:
             w.MoveOkBack.connect(moveBack)
@@ -248,7 +251,16 @@ class QtOwner(Singleton):
 
     def OpenSearch2(self, text):
         arg = {"text": text}
+        self.owner.searchView2.setWindowTitle("TAG")
+        self.owner.searchView2.searchTab.setText("{}".format(text))
         self.owner.SwitchWidget(self.owner.searchView2, **arg)
+
+    # def OpenRecomment(self, bookId):
+    #     Title = "看了这边本子的人也在看"
+    #     arg = {"recoment": 1, "bookId": bookId}
+    #     self.owner.searchView2.setWindowTitle(Title)
+    #     self.owner.searchView2.searchTab.setText(Title)
+    #     self.owner.SwitchWidget(self.owner.searchView2, **arg)
 
     def OpenSearch2Author(self, text):
         arg = {"text": text}

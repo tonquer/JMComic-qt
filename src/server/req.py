@@ -75,6 +75,13 @@ class ServerReq(object):
             self.ipList = []
         self.SetCurlOpt(Setting.IsOpenHTTP3.value, Setting.EnableEch.value, QtOwner().echConfig, self.ipList)
 
+    def GetLang(self):
+        if Setting.Language.value == 2:
+            lang = "TW"
+        else:
+            lang = "CN"
+        return lang
+
     def SetIndex(self, apiIndex, imgIndex, apiHost=None, imgHost=None):
         host = ToolUtil.GetUrlHost(self.url)
         self.proxyUrl = ""
@@ -175,6 +182,8 @@ class ServerReq(object):
         headers = dict()
         headers.update(self.headers)
         params = self.params
+        if isinstance(self, (LoginReq2, RegisterReq, RegisterVerifyMailReq, ResetPasswordReq)):
+            params = {}
         return "{}, ech:{}, url:{}, ip:{}, proxy:{}, method:{}, headers:{}, params:{}".format(self.__class__.__name__, ech, self.url, self.ipList, self.proxy, self.method, headers, params)
 
     def __str__(self):
@@ -593,17 +602,27 @@ class GetBookEpsInfoReq2(ServerReq):
 
 # 搜索请求
 class GetSearchReq2(ServerReq):
-    def __init__(self, search, sort="mr", page=1):
+    def __init__(self, search, sort="mr", page=1, search_type=None, y=None, m=None):
 
         # 最新，最多点击，最多图片, 最多爱心
         # o = [mr, mv, mp, tf]
-
+        # search_type=[site, work, author, tag, character]
+        # y=年份
+        # m=月份
+        # lang = TW, CN
         data = dict()
         data["search_query"] = search
-        if page > 1:
+        if page >= 1:
             data['page'] = str(page)
         if sort:
             data["o"] = sort
+        if search_type:
+            data["search_type"] = search_type
+        if y:
+            data["y"] = y
+        if m:
+            data["m"] = m
+        data["lang"] = self.GetLang()
         url = GlobalConfig.GetApiUrl() + "/search"
 
         param = ToolUtil.DictToUrl(data)
@@ -618,6 +637,7 @@ class GetCategoryReq2(ServerReq):
     def __init__(self):
         url = GlobalConfig.GetApiUrl() + "/categories"
         data = dict()
+        data["lang"] = self.GetLang()
         param = ToolUtil.DictToUrl(data)
         if param:
             url += "/?" + param
@@ -639,7 +659,7 @@ class GetSearchCategoryReq2(ServerReq):
         url = GlobalConfig.GetApiUrl() + "/categories/filter"
 
         data = dict()
-
+        data["lang"] = self.GetLang()
         if page > 1:
             data['page'] = str(page)
         if sort:
@@ -671,7 +691,7 @@ class GetIndexInfoReq2(ServerReq):
         method = "GET"
         data = dict()
         data["page"] = page
-
+        data["lang"] = self.GetLang()
         param = ToolUtil.DictToUrl(data)
         if param:
             url += "/?" + param
@@ -686,7 +706,7 @@ class GetLatestInfoReq2(ServerReq):
         method = "GET"
         data = dict()
         data["page"] = page
-
+        data["lang"] = self.GetLang()
         param = ToolUtil.DictToUrl(data)
         if param:
             url += "/?" + param

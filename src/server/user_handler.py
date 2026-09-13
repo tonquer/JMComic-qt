@@ -1059,21 +1059,33 @@ class DnsOverHttpsReqHandler(object):
                 TaskBase.taskObj.taskBack.emit(task.backParam, pickle.dumps(data))
 
 
+
 @handler(req.GetEchConfigReq)
 class GetEchConfigReqHandler(object):
     def __call__(self, task):
         data = {"st": task.status, "data": task.res.GetText()}
+        isReset = False
         try:
             if task.status != Status.Ok:
                 return
+
+            if task.res.raw.status_code != 200:
+                isReset = True
+
             info = task.res.raw.content
             data['data'] = task.req.parse_dns_response(info)
         except Exception as es:
             data["st"] = Status.ParseError
             Log.Error(es)
         finally:
-            if task.backParam:
-                TaskBase.taskObj.taskBack.emit(task.backParam, pickle.dumps(data))
+            if isReset and task.req.resetCnt >= 0:
+                task.req.ResetToSwitchNextUrl()
+                task.req.isReset = True
+                Server().Send(task.req, backParam=task.backParam)
+                return
+            else:
+                if task.backParam:
+                    TaskBase.taskObj.taskBack.emit(task.backParam, pickle.dumps(data))
 
 
 @handler(req.SpeedTestPingReq)

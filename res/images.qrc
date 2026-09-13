@@ -71,6 +71,7 @@
 	<file>icon/loading/loading_10.png</file>
 	<file>icon/right.svg</file>
 	<file>icon/error.svg</file>
+	<file>icon/shiled.svg</file>
   </qresource>
   <qresource prefix="icon">
           <file>theme/dark_orange/disabled/base.svg</file>
