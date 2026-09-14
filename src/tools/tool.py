@@ -443,6 +443,8 @@ class ToolUtil(object):
         b.baseInfo.coverUrl = "/media/albums/{}_3x4.jpg".format(b.baseInfo.id)
         if isinstance(v.get("update_at"), int):
             b.baseInfo.addTime = v.get("update_at")
+        if isinstance(v.get('update_at'), str) and v.get('update_at').isdigit():
+            b.baseInfo.addTime = int(v.get("update_at"))
         category = v.get("category", {}).get("title")
         if category:
             b.baseInfo.category.append(category)
@@ -461,12 +463,19 @@ class ToolUtil(object):
     # 解析首页结果
     @staticmethod
     def ParseIndex2(result):
-        parseData = {}
+        parseData = []
         raw = json.loads(result)
         for v in raw:
+            from tools.book import IndexInfo
+            info = IndexInfo()
             bookList = ToolUtil.ParseBookList(v.get("content", []))
-            parseData[v.get("title")] = bookList
-
+            info.title = v.get("title", "")
+            info.id = v.get("id", "")
+            info.slug = v.get("slug", "")
+            info.type = v.get("type", "")
+            info.bookList = bookList
+            info.filter_val = v.get("filter_val", "")
+            parseData.append(info)
         return parseData
 
     # 解析最近更新
@@ -735,6 +744,13 @@ class ToolUtil(object):
 
     @staticmethod
     def ParseHistoryReq2(result):
+        raw = json.loads(result)
+        bookList = ToolUtil.ParseBookList(raw.get("list", []))
+        total = int(raw.get("total", 0))
+        return bookList, total
+
+    @staticmethod
+    def ParseSerializationReq2(result):
         raw = json.loads(result)
         bookList = ToolUtil.ParseBookList(raw.get("list", []))
         total = int(raw.get("total", 0))

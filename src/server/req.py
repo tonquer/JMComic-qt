@@ -730,6 +730,7 @@ class GetFavoritesReq2(ServerReq):
         else:
             data["folder_id"] = "0"
         data["o"] = sort
+        data["lang"] = self.GetLang()
 
         param = ToolUtil.DictToUrl(data)
         self.now = int(time.time())
@@ -839,6 +840,7 @@ class GetCommentReq2(ServerReq):
         if bookId:
             data["aid"] = bookId
         data["page"] = page
+        data["lang"] = self.GetLang()
 
         param = ToolUtil.DictToUrl(data)
         if param:
@@ -856,6 +858,7 @@ class GetMyCommentReq2(ServerReq):
         data["mode"] = "undefined"
         data["uid"] = uid
         data["page"] = page
+        data["lang"] = self.GetLang()
 
         param = ToolUtil.DictToUrl(data)
         if param:
@@ -901,9 +904,25 @@ class GetWeekCategoriesReq2(ServerReq):
         url = GlobalConfig.GetApiUrl() + "/week"
         method = "GET"
         data = dict()
+        data["lang"] = self.GetLang()
         data["page"] = page
         super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
 
+
+# 获取每周连载
+class GetSerializationReq2(ServerReq):
+    def __init__(self, date=1, type="all", page=1):
+        url = GlobalConfig.GetApiUrl() + "/serialization"
+        method = "GET"
+        data = dict()
+        data["type"] = type
+        data["date"] = date
+        data["page"] = page
+        data["lang"] = self.GetLang()
+        param = ToolUtil.DictToUrl(data)
+        if param:
+            url += "/?" + param
+        super(self.__class__, self).__init__(url, {}, method)
 
 # 获取周推荐
 class GetWeekFilterReq2(ServerReq):
@@ -914,6 +933,7 @@ class GetWeekFilterReq2(ServerReq):
         data["page"] = page
         data["id"] = id
         data["type"] = type
+        data["lang"] = self.GetLang()
         url = url + ToolUtil.DictToUrl(data)
         super(self.__class__, self).__init__(url, {}, method)
 

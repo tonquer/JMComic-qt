@@ -15,9 +15,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
-    QListWidgetItem, QPushButton, QSizePolicy, QSpacerItem,
-    QSpinBox, QTabWidget, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QHBoxLayout,
+    QLabel, QListWidgetItem, QPushButton, QSizePolicy,
+    QSpacerItem, QSpinBox, QTabWidget, QVBoxLayout,
+    QWidget)
 
 from component.list.comic_list_widget import ComicListWidget
 
@@ -48,6 +49,27 @@ class Ui_Index(object):
         self.widget.setObjectName(u"widget")
         self.horizontalLayout = QHBoxLayout(self.widget)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.categoryBox = QComboBox(self.widget)
+        self.categoryBox.addItem("")
+        self.categoryBox.addItem("")
+        self.categoryBox.addItem("")
+        self.categoryBox.setObjectName(u"categoryBox")
+
+        self.horizontalLayout.addWidget(self.categoryBox)
+
+        self.weekBox = QComboBox(self.widget)
+        self.weekBox.addItem("")
+        self.weekBox.addItem("")
+        self.weekBox.addItem("")
+        self.weekBox.addItem("")
+        self.weekBox.addItem("")
+        self.weekBox.addItem("")
+        self.weekBox.addItem("")
+        self.weekBox.addItem("")
+        self.weekBox.setObjectName(u"weekBox")
+
+        self.horizontalLayout.addWidget(self.weekBox)
+
         self.horizontalSpacer = QSpacerItem(383, 27, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout.addItem(self.horizontalSpacer)
@@ -97,6 +119,19 @@ class Ui_Index(object):
     def retranslateUi(self, Index):
         Index.setWindowTitle(QCoreApplication.translate("Index", u"\u9996\u9875", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("Index", u"\u6700\u65b0\u4e0a\u4f20", None))
+        self.categoryBox.setItemText(0, QCoreApplication.translate("Index", u"\u5168\u90e8", None))
+        self.categoryBox.setItemText(1, QCoreApplication.translate("Index", u"\u65e5\u6f2b", None))
+        self.categoryBox.setItemText(2, QCoreApplication.translate("Index", u"\u97e9\u6f2b", None))
+
+        self.weekBox.setItemText(0, QCoreApplication.translate("Index", u"\u5468\u4e00", None))
+        self.weekBox.setItemText(1, QCoreApplication.translate("Index", u"\u5468\u4e8c", None))
+        self.weekBox.setItemText(2, QCoreApplication.translate("Index", u"\u5468\u4e09", None))
+        self.weekBox.setItemText(3, QCoreApplication.translate("Index", u"\u5468\u56db", None))
+        self.weekBox.setItemText(4, QCoreApplication.translate("Index", u"\u5468\u4e94", None))
+        self.weekBox.setItemText(5, QCoreApplication.translate("Index", u"\u5468\u516d", None))
+        self.weekBox.setItemText(6, QCoreApplication.translate("Index", u"\u5468\u65e5", None))
+        self.weekBox.setItemText(7, QCoreApplication.translate("Index", u"\u5df2\u5b8c\u7ed3", None))
+
         self.pages.setText(QCoreApplication.translate("Index", u"\u9875", None))
         self.jumpButton.setText(QCoreApplication.translate("Index", u"\u8df3\u8f6c", None))
 #if QT_CONFIG(shortcut)

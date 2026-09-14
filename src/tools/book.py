@@ -5,6 +5,16 @@ from config import config
 from tools.log import Log
 from tools.singleton import Singleton
 
+# 首页
+class IndexInfo(object):
+    def __init__(self):
+        self.bookList = []
+        self.type = ""
+        self.id = ""
+        self.title = ""
+        self.filter_val = ""
+        self.slug = ""
+
 # 收藏
 class FavoriteInfo(object):
     def __init__(self):

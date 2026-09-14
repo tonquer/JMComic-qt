@@ -21,21 +21,21 @@ class GlobalItem(object):
 
 
 class GlobalConfig:
-    Ver = GlobalItem(80)
-    VerTime = GlobalItem("2026-7-25")
+    Ver = GlobalItem(90)
+    VerTime = GlobalItem("2026-9-14")
 
     # web url
     WebDnsList = GlobalItem([])
     JmFbUrl = GlobalItem("https://jmcomicog.net")
 
-    Url = GlobalItem("https://comic18j-oomi.net")
-    UrlList = GlobalItem(["https://comic18j-oomi.net",
+    Url = GlobalItem("https://comic18j-jjeg.cc")
+    UrlList = GlobalItem(["https://comic18j-jjeg.cc",
                           "https://18comic.vip",
                           "https://jmcomic.me",
                           "https://18comic.tw",
                           "https://jmcomic-zzz.org",
-                          "https://comic18j-oomi.cc",
-                          "https://comic18j-oomi.me"])
+                          "https://comic18j-hbd.site",
+                          "https://comic18j-jjeg.club"])
 
     # mobile url
 
@@ -74,8 +74,8 @@ class GlobalConfig:
     CdnImgUrl = GlobalItem("https://cdn-msp.jmapiproxy3.cc")
     ProxyApiUrl = GlobalItem("https://www.cdnhjk.net")
     ProxyImgUrl = GlobalItem("https://cdn-msp.jmapiproxy3.cc")
-    HeaderVer = GlobalItem("2.0.26")
-    JMServerUrl = GlobalItem("https://rup4a04-c01.tos-ap-southeast-1.bytepluses.com/newsvr-2025.txt")
+    HeaderVer = GlobalItem("2.1.7")
+    JMServerUrl = GlobalItem("https://rup4a04-c02.tos-cn-hongkong.bytepluses.com/newsvr-2025.txt")
 
     # 非CF域名
     # NoHttp3Url = GlobalItem([

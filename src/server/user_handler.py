@@ -309,10 +309,10 @@ class GetIndexInfoReq2Handler(object):
                 return
             cookies = task.res.raw.cookies
             Log.Info("latest suc, cookies:{}".format(cookies))
-            bookInfo = ToolUtil.ParseIndex2(task.req.ParseData(v.get("data")))
+            infos = ToolUtil.ParseIndex2(task.req.ParseData(v.get("data")))
 
             data["st"] = Status.Ok
-            data["bookInfo"] = bookInfo
+            data["infos"] = infos
         except Exception as es:
             data["st"] = Status.ParseError
             data["errorMsg"] = task.res.GetText()
@@ -751,6 +751,34 @@ class GetHistoryReq2Handler(object):
                 data["st"] = Status.Error
                 return
             bookList, total = ToolUtil.ParseHistoryReq2(task.req.ParseData(v.get("data")))
+            data["st"] = Status.Ok
+            data["total"] = total
+            data["bookList"] = bookList
+        except Exception as es:
+            data["st"] = Status.ParseError
+            data["errorMsg"] = task.res.GetText()
+            Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
+            Log.Error(es)
+        finally:
+            if task.backParam:
+                TaskBase.taskObj.taskBack.emit(task.backParam, pickle.dumps(data))
+
+
+@handler(req.GetSerializationReq2)
+class GetSerializationReq2Handler(object):
+    def __call__(self, task):
+        data = {"st": task.status}
+        try:
+            if task.status != Status.Ok:
+                return
+            v = json.loads(task.res.raw.text)
+            code = v.get("code")
+            data["errorMsg"] = v.get("errorMsg", "")
+            data["message"] = v.get("message", "")
+            if code != 200:
+                data["st"] = Status.Error
+                return
+            bookList, total = ToolUtil.ParseSerializationReq2(task.req.ParseData(v.get("data")))
             data["st"] = Status.Ok
             data["total"] = total
             data["bookList"] = bookList

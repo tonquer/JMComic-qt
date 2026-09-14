@@ -35,6 +35,69 @@
     <widget class="QWidget" name="widget" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
+       <widget class="QComboBox" name="categoryBox">
+        <item>
+         <property name="text">
+          <string>全部</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>日漫</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>韩漫</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="weekBox">
+        <item>
+         <property name="text">
+          <string>周一</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>周二</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>周三</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>周四</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>周五</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>周六</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>周日</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>已完结</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
