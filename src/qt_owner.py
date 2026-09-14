@@ -303,6 +303,12 @@ class QtOwner(Singleton):
         arg = {"bookId": bookId, "bookName": bookName}
         self.owner.SwitchWidget(self.owner.bookInfoView, **arg)
 
+    def OpenBookInfo2(self, bookId):
+        Title = "漫画详情2"
+        self.owner.bookInfoView2.setWindowTitle(Title)
+        arg = {"bookId": bookId}
+        self.owner.SwitchWidget(self.owner.bookInfoView2, **arg)
+
     def OpenSomeDownload(self, bookList=None):
         arg = {"bookList": bookList}
         self.owner.SwitchWidget(self.owner.downloadSomeView, **arg)

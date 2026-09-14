@@ -408,10 +408,10 @@ class Server(Singleton):
 
         if task.req.cookies:
             r = requests2.post(request.url, proxies=request.proxy, headers=request.headers, data=request.params,
-                                  timeout=task.timeout, verify=False, cookies=task.req.cookies, curl_options=task.req.curl_opt)
+                                  timeout=task.timeout, cookies=task.req.cookies, curl_options=task.req.curl_opt)
         else:
             r = requests2.post(request.url, proxies=request.proxy, headers=request.headers, data=request.params,
-                                  timeout=task.timeout, verify=False, cookies=task.req.cookies, curl_options=task.req.curl_opt)
+                                  timeout=task.timeout, cookies=task.req.cookies, curl_options=task.req.curl_opt)
         task.res = res.BaseRes(r, request.isParseRes)
         return task
 
@@ -447,7 +447,7 @@ class Server(Singleton):
         # else:
         #     session = self.threadSession[index]
 
-        r = requests2.put(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout, verify=False, curl_options=task.req.curl_opt)
+        r = requests2.put(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout, curl_options=task.req.curl_opt)
         task.res = res.BaseRes(r, request.isParseRes)
         return task
 
@@ -465,10 +465,10 @@ class Server(Singleton):
         # else:
         #     session = self.threadSession[index]
         if task.req.cookies:
-            r = requests2.get(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout, verify=False,
+            r = requests2.get(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout,
                             cookies=task.req.cookies, curl_options=task.req.curl_opt)
         else:
-            r = requests2.get(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout, verify=False,
+            r = requests2.get(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout,
                             curl_options=task.req.curl_opt)
         task.res = res.BaseRes(r, request.isParseRes)
         return task

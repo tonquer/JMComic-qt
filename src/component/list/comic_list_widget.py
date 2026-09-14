@@ -378,7 +378,10 @@ class ComicListWidget(BaseListWidget):
             elif self.isLocal:
                 QtOwner().OpenLocalBook(widget.id)
             else:
-                QtOwner().OpenBookInfo(widget.id, widget.GetTitle())
+                if self.isOpen2:
+                    QtOwner().OpenBookInfo2(widget.id)
+                else:
+                    QtOwner().OpenBookInfo(widget.id, widget.GetTitle())
         else:
             assert isinstance(item, QListWidgetItem)
             widget = self.itemWidget(item)
@@ -390,7 +393,10 @@ class ComicListWidget(BaseListWidget):
         widget = self.indexWidget(index)
         if widget:
             assert isinstance(widget, ComicItemWidget)
-            QtOwner().OpenBookInfo(widget.id, widget.GetTitle())
+            if self.isOpen2:
+                QtOwner().OpenBookInfo2(widget.id)
+            else:
+                QtOwner().OpenBookInfo(widget.id, widget.GetTitle())
             return
 
     def OpenPicture(self, index):

@@ -71,6 +71,7 @@ class MainView(Main, QtTaskBase):
         GlobalConfig.LoadSetting()
 
         self.searchView.searchTab.hide()
+        self.searchView2.bookList.isOpen2 = True
         self.searchView2.searchWidget.hide()
         self.searchView2.cateLabel.hide()
         self.searchView2.monthBox.hide()

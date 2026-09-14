@@ -6,6 +6,8 @@ import time
 from contextlib import closing
 from datetime import timedelta
 
+from curl_cffi.requests import exceptions
+
 from config import config
 from config.global_config import GlobalConfig
 from config.setting import Setting
@@ -892,6 +894,7 @@ class GetReqRawDataHandler(object):
 @handler(req.DownloadBookReq)
 class DownloadBookHandler(object):
     def __call__(self, backData):
+        task = backData
         if backData.status != Status.Ok:
             if backData.bakParam:
                 TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, -backData.status, b"")
@@ -936,16 +939,54 @@ class DownloadBookHandler(object):
 
                             getSize += len(chunk)
 
-                        if backData.bakParam:
-                            TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, getSize, b"")
+                        if not isAlreadySend:
+                            if backData.bakParam:
+                                TaskBase.taskObj.downloadBack.emit(backData.bakParam, addSize, getSize, b"")
 
-                except Exception as es:
+                except exceptions.DNSError as es:
+                    task.status = Status.DnsError
                     isFail = True
                     Log.Error(es)
-                    # if backData.req.resetCnt >= 0:
-                    #     backData.req.isReset = True
-                    #     Server().ReDownload(backData)
-                    #     return
+                except exceptions.Timeout as es:
+                    if "Connection was reset" in str(es):
+                        task.status = Status.ResetErr
+                    elif "ECH_REJECTED" in str(es):
+                        task.status = Status.EchError
+                    elif "TLSV1_ALERT_UNRECOGNIZED_NAME" in str(es):
+                        task.status = Status.SNIError
+                    else:
+                        task.status = Status.TimeOut
+                    isFail = True
+                    Log.Error(es)
+                except exceptions.SSLError as es:
+                    if "Connection was reset" in str(es):
+                        task.status = Status.ResetErr
+                    elif "ECH_REJECTED" in str(es):
+                        task.status = Status.EchError
+                    elif "TLSV1_ALERT_UNRECOGNIZED_NAME" in str(es):
+                        task.status = Status.SNIError
+                    else:
+                        task.status = Status.NetError
+                    isFail = True
+                    Log.Error(es)
+                except exceptions.ConnectionError as es:
+                    isFail = True
+                    task.status = Status.ConnectErr
+                    Log.Error(es)
+                except exceptions.RequestException as es:
+                    if "timed out" in str(es):
+                        task.status = Status.TimeOut
+                    else:
+                        task.status = Status.ConnectErr
+                    isFail = True
+                    Log.Error(es)
+                except Exception as es:
+                    isFail = True
+                    task.status = Status.NetError
+                    Log.Error(es)
+                except:
+                    isFail = True
+                    Log.Warn(f"error:{backData.req.GetPri()}")
 
                 # 异常图片
                 if len(data) < 20 or isFail:
