@@ -3,7 +3,6 @@ import os
 import pickle
 import re
 import time
-from contextlib import closing
 from datetime import timedelta
 
 from curl_cffi.requests import exceptions
@@ -909,8 +908,8 @@ class DownloadBookHandler(object):
                 data = b""
                 isAlreadySend = False
                 try:
-                    with closing(requests2.get(request.url,  headers=request.headers,timeout=backData.timeout,
-                                   proxies=request.proxy, curl_options=request.curl_opt, stream=True)) as r:
+                    with task.session.stream("GET", request.url,  headers=request.headers,
+                                            timeout=backData.timeout, proxies=request.proxy) as r:
                         # fileSize = int(r.headers.get('Content-Length', 0))
 
                         cfHit = r.headers.get("cf-cache-status", False)

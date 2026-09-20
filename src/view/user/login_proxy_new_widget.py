@@ -406,7 +406,7 @@ class LoginProxyNewWidget(object):
             request = req.SpeedTestPingReq(url)
             request.SetProxy(0, "", "")
             request.SetIndex(0, 0, GlobalConfig.CdnApiUrl.value, GlobalConfig.CdnImgUrl.value)
-            request.SetCurlOpt(self.owner.http3Box.isChecked, self.owner.echBox.isChecked, QtOwner().echConfig, item.ip)
+            request.SetCurlOpt(self.owner.http3Box.isChecked(), self.owner.echBox.isChecked(), QtOwner().echConfig, item.ip)
             self.owner.AddHttpTask(request, self.StartTestIpBack, backParam=item.index)
 
             if not item.country or not item.asn:
@@ -446,7 +446,7 @@ class LoginProxyNewWidget(object):
             request = req.SpeedTestPing2Req(url)
             request.SetProxy(0, "", "")
             request.SetIndex(0, 0, GlobalConfig.CdnApiUrl.value, GlobalConfig.CdnImgUrl.value)
-            request.SetCurlOpt(self.owner.http3Box.isChecked, self.owner.echBox.isChecked, QtOwner().echConfig, item.ip)
+            request.SetCurlOpt(self.owner.http3Box.isChecked(), self.owner.echBox.isChecked(), QtOwner().echConfig, item.ip)
             self.owner.AddHttpTask(request, self.StartTestImgBack, backParam=item.index)
         return
 

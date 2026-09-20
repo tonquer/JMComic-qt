@@ -1,3 +1,4 @@
+import copy
 import json
 import pickle
 import threading
@@ -5,7 +6,7 @@ import time
 from queue import Queue
 
 import curl_cffi.requests.exceptions as exceptions
-from curl_cffi import requests as requests2, CurlOpt, CurlHttpVersion, CurlSslVersion
+from curl_cffi import requests as requests2, CurlOpt, CurlHttpVersion, CurlSslVersion, Session
 
 import server.req as req
 import server.res as res
@@ -60,6 +61,7 @@ def handler(request):
 class Task(object):
     def __init__(self, request, backParam="", cacheAndLoadPath="", loadPath=""):
         self.req = request
+        self.session = None
         self.res = None
         self.timeout = 5
         self.backParam = backParam
@@ -173,9 +175,10 @@ class Server(Singleton):
             task = self._inQueue.get(True)
             self._inQueue.task_done()
             try:
-                if task == "":
-                    break
-                self._Send(task, index)
+                with requests2.Session() as session:
+                    if task == "":
+                        break
+                    self._Send(task, index, session)
             except Exception as es:
                 Log.Error(es)
         pass
@@ -186,9 +189,10 @@ class Server(Singleton):
             task = self._speedQueue.get(True)
             self._speedQueue.task_done()
             try:
-                if task == "":
-                    break
-                self._Send(task, index)
+                with requests2.Session() as session:
+                    if task == "":
+                        break
+                    self._Send(task, index, session)
             except Exception as es:
                 Log.Error(es)
         pass
@@ -229,9 +233,10 @@ class Server(Singleton):
             task = self._downloadQueue.get(True)
             self._downloadQueue.task_done()
             try:
-                if task == "":
-                    break
-                self._Download(task, index)
+                with requests2.Session(impersonate="chrome110") as session:
+                    if task == "":
+                        break
+                    self._Download(task, index, session)
             except Exception as es:
                 Log.Error(es)
         pass
@@ -302,20 +307,23 @@ class Server(Singleton):
             if isASync:
                 return self._downloadQueue.put(Task(request, backParam))
             else:
-                return self._Download(Task(request, backParam), index)
+                with requests2.Session() as session:
+                    return self._Download(Task(request, backParam), index, session)
         else:
             if isinstance(request, (req.SpeedTestPingReq, req.SpeedTestPing2Req)):
                 if isASync:
                     return self._speedQueue.put(Task(request, backParam))
                 else:
-                    return self._Send(Task(request, backParam), index)
+                    with requests2.Session() as session:
+                        return self._Send(Task(request, backParam), index, session)
 
             if isASync:
                 return self._inQueue.put(Task(request, backParam))
             else:
-                return self._Send(Task(request, backParam), index)
+                with requests2.Session() as session:
+                    return self._Send(Task(request, backParam), index, session)
 
-    def _Send(self, task, index, isOld=False):
+    def _Send(self, task, index, session):
         try:
             task.req.resetCnt -= 1
             Log.Info("request{}-> backId:{}, {}".format(index, task.bakParam, task.req))
@@ -324,17 +332,20 @@ class Server(Singleton):
                 data = {"st": Status.OfflineModel, "data": ""}
                 TaskBase.taskObj.taskBack.emit(task.bakParam, pickle.dumps(data))
                 return
+            # 复制curl_opts
+            session.curl_options = copy.deepcopy(task.req.curl_opt)
+            task.session = session
 
             if task.req.method.lower() == "post":
-                self.Post(task, index, isOld)
+                self.Post(task, index)
             elif task.req.method.lower() == "post2":
                 self.Post(task)
             elif task.req.method.lower() == "get":
-                self.Get(task, index, isOld)
+                self.Get(task, index)
             elif task.req.method.lower() == "get2":
                 self.Get(task)
             elif task.req.method.lower() == "put":
-                self.Put(task, index, isOld)
+                self.Put(task, index)
             else:
                 return
         except exceptions.DNSError as es:
@@ -378,7 +389,7 @@ class Server(Singleton):
 
         if task.status != Status.Ok and task.req.resetCnt > 0:
             task.req.ResetToSwitchNextUrl()
-            self._Send(task, index, isOld)
+            self._Send(task, index, session)
             return
 
         try:
@@ -391,9 +402,10 @@ class Server(Singleton):
             Log.Warn(task.req.url + " " + es.__repr__())
             Log.Debug(es)
         finally:
+            task.session = None
             return task.res
 
-    def Post(self, task, index=0, isOld=False):
+    def Post(self, task, index=0):
         request = task.req
         if request.params == None:
             request.params = {}
@@ -407,11 +419,11 @@ class Server(Singleton):
         task.res = res.BaseRes("", False)
 
         if task.req.cookies:
-            r = requests2.post(request.url, proxies=request.proxy, headers=request.headers, data=request.params,
-                                  timeout=task.timeout, cookies=task.req.cookies, curl_options=task.req.curl_opt)
+            r = task.session.post(request.url, proxies=request.proxy, headers=request.headers, data=request.params,
+                                  timeout=task.timeout, cookies=task.req.cookies)
         else:
-            r = requests2.post(request.url, proxies=request.proxy, headers=request.headers, data=request.params,
-                                  timeout=task.timeout, cookies=task.req.cookies, curl_options=task.req.curl_opt)
+            r = task.session.post(request.url, proxies=request.proxy, headers=request.headers, data=request.params,
+                                  timeout=task.timeout, cookies=task.req.cookies)
         task.res = res.BaseRes(r, request.isParseRes)
         return task
 
@@ -433,7 +445,7 @@ class Server(Singleton):
     #     task.res = res.BaseRes(r, request.isParseRes)
     #     return task
 
-    def Put(self, task, index=0, isOld=False):
+    def Put(self, task, index=0):
         request = task.req
         if request.params == None:
             request.params = {}
@@ -447,11 +459,11 @@ class Server(Singleton):
         # else:
         #     session = self.threadSession[index]
 
-        r = requests2.put(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout, curl_options=task.req.curl_opt)
+        r = task.session.put(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout)
         task.res = res.BaseRes(r, request.isParseRes)
         return task
 
-    def Get(self, task, index=0, isOld=False):
+    def Get(self, task, index=0):
         request = task.req
         if request.params == None:
             request.params = {}
@@ -465,11 +477,10 @@ class Server(Singleton):
         # else:
         #     session = self.threadSession[index]
         if task.req.cookies:
-            r = requests2.get(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout,
-                            cookies=task.req.cookies, curl_options=task.req.curl_opt)
+            r = task.session.get(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout,
+                            cookies=task.req.cookies)
         else:
-            r = requests2.get(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout,
-                            curl_options=task.req.curl_opt)
+            r = task.session.get(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout)
         task.res = res.BaseRes(r, request.isParseRes)
         return task
 
@@ -495,14 +506,15 @@ class Server(Singleton):
         if isASync:
             self._downloadQueue.put(task)
         else:
-            self._Download(task, 0)
+            with requests2.Session() as session:
+                self._Download(task, 0, session)
 
     def ReDownload(self, task):
         task.res = ""
         task.status = Status.Ok
         self._downloadQueue.put(task)
 
-    def _Download(self, task, index):
+    def _Download(self, task, index, session):
         try:
             task.req.resetCnt -= 1
             if not task.req.isReload:
@@ -520,6 +532,10 @@ class Server(Singleton):
                 task.status = Status.OfflineModel
                 self.handler.get(task.req.__class__.__name__)(task)
                 return
+
+            # 复制curl_opts
+            session.curl_options = copy.deepcopy(task.req.curl_opt)
+            task.session = session
 
             request = task.req
             if request.params == None:
@@ -542,9 +558,14 @@ class Server(Singleton):
             #     task.req.isReset = True
             #     self.ReDownload(task)
             #     return
-        return self.handler.get(task.req.__class__.__name__)(task)
-        # if task.res:
-        #     task.res.close()
+        try:
+            self.handler.get(task.req.__class__.__name__)(task)
+        except Exception as es:
+            task.status = Status.NetError
+            Log.Warn(task.req.url + " " + es.__repr__())
+            Log.Debug(es)
+        finally:
+            task.session = None
 
     def TestSpeed(self, request, bakParams=""):
         self.__DealHeaders(request, "")
