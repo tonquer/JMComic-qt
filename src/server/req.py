@@ -49,6 +49,7 @@ class ServerReq(object):
 
         if "https://" + host in GlobalConfig.Url.value:
             self.isRegister = True
+
         # if Setting.ProxySelectIndex.value == 5:
         #     host = ToolUtil.GetUrlHost(url)
         #     if host in GlobalConfig.Url2List.value:
@@ -62,9 +63,13 @@ class ServerReq(object):
             
         self.now = int(time.time())
         self.headers = self.GetHeader(url, method)
-            
+
         from qt_owner import QtOwner
-        self.cookies = dict(QtOwner().cookie)
+        if self.isApi:
+            ## 图片不设置该值，否则cf-cache-status返回BYPASS
+            self.headers["authorization"] = "Bearer " + QtOwner().user.jwttoken
+
+        # self.cookies = dict(QtOwner().cookie)
         if self.isApi and not self.proxyUrl and GlobalConfig.IsCdnIndex(Setting.ProxySelectIndex.value):
             self.ipList = [Setting.ProxyIpValue.value]
         elif self.isImg and not self.proxyUrl and GlobalConfig.IsCdnIndex(Setting.ProxyImgSelectIndex.value):

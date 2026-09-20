@@ -524,6 +524,7 @@ class ToolUtil(object):
         u.canFavorites = raw.get('album_favorites_max')
         u.exp = raw.get('exp', 0)
         u.nex_exp = raw.get('nextLevelExp', 0)
+        u.jwttoken = raw.get('jwttoken')
         return u
 
     # 解析搜索结果

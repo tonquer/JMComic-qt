@@ -16,6 +16,11 @@ class User:
         self.gender = ""
         self.userAttr = {}
         self.cookie = {}
+        self.jwttoken = ""
+
+    @property
+    def token(self):
+        return self.jwttoken
 
     def Logout(self):
         self.isLogin = False
