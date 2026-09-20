@@ -234,6 +234,7 @@ class TaskDownload(TaskBase, QtTaskBase):
 
                 if not epsInfo.pictureUrl:
                     self.AddHttpTask(req.GetBookEpsInfoReq2(task.bookId, epsInfo.epsId, task.epsIndex), self.HandlerDownload, (taskId, task.ReadingEps))
+                    # self.AddHttpTask(req.ReadBookInfoReq2(task.bookId, epsInfo.epsId, task.epsIndex), self.HandlerDownload, (taskId, task.ReadingEps))
                     return
 
                 assert isinstance(epsInfo, BookEps)

@@ -53,12 +53,12 @@ class SearchView(QWidget, Ui_Search, QtTaskBase):
     def SwitchCurrent(self, **kwargs):
         self.update()
         text = kwargs.get("text")
-        recoment = kwargs.get("recoment")
-        if recoment == 1:
-            bookId = kwargs.get("bookId")
-            self.AddHttpTask(req.GetRecommendReq2(bookId),
-                             self.SendSearchBack, 1)
-            return
+        # recoment = kwargs.get("recoment")
+        # if recoment == 1:
+        #     bookId = kwargs.get("bookId")
+        #     self.AddHttpTask(req.GetRecommendReq2(bookId),
+        #                      self.SendSearchBack, 1)
+        #     return
         if text and (re.match('JM\d+', text) or re.match('jm\d+', text)):
             QtOwner().OpenBookInfo(text.lower().replace("jm", ""))
             return

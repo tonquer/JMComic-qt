@@ -629,6 +629,36 @@ class GetBookInfoReq2Handler(object):
                 TaskBase.taskObj.taskBack.emit(task.backParam, pickle.dumps(data))
 
 
+@handler(req.ReadBookInfoReq2)
+class ReadBookInfoReq2Handler(object):
+    def __call__(self, task):
+        data = {"st": task.status}
+        try:
+            if task.status != Status.Ok:
+                return
+            v = json.loads(task.res.raw.text)
+            code = v.get("code")
+            data["errorMsg"] = v.get("errorMsg", "")
+            data["message"] = v.get("message", "")
+            if code != 200:
+                data["st"] = Status.Error
+                return
+            epsInfo = ToolUtil.ParseReadBook2(task.req.ParseData(v.get("data")))
+            epsInfo.index = task.req.epsIndex
+            from tools.book import BookMgr
+            BookMgr().UpdateBookEps(task.req.bookId, epsInfo)
+            data["st"] = Status.Ok
+            data["epsInfo"] = epsInfo
+        except Exception as es:
+            data["st"] = Status.ParseError
+            data["errorMsg"] = task.res.GetText()
+            Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
+            Log.Error(es)
+        finally:
+            if task.backParam:
+                TaskBase.taskObj.taskBack.emit(task.backParam, pickle.dumps(data))
+
+
 @handler(req.GetBookEpsScrambleReq2)
 class GetBookEpsScrambleReq2Handler(object):
     def __call__(self, task):
@@ -780,6 +810,34 @@ class GetSerializationReq2Handler(object):
                 data["st"] = Status.Error
                 return
             bookList, total = ToolUtil.ParseSerializationReq2(task.req.ParseData(v.get("data")))
+            data["st"] = Status.Ok
+            data["total"] = total
+            data["bookList"] = bookList
+        except Exception as es:
+            data["st"] = Status.ParseError
+            data["errorMsg"] = task.res.GetText()
+            Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
+            Log.Error(es)
+        finally:
+            if task.backParam:
+                TaskBase.taskObj.taskBack.emit(task.backParam, pickle.dumps(data))
+
+
+@handler(req.RandomRecommendReq2)
+class RandomRecommendReq2Handler(object):
+    def __call__(self, task):
+        data = {"st": task.status}
+        try:
+            if task.status != Status.Ok:
+                return
+            v = json.loads(task.res.raw.text)
+            code = v.get("code")
+            data["errorMsg"] = v.get("errorMsg", "")
+            data["message"] = v.get("message", "")
+            if code != 200:
+                data["st"] = Status.Error
+                return
+            bookList, total = ToolUtil.ParseRandomRecommendReq2(task.req.ParseData(v.get("data")))
             data["st"] = Status.Ok
             data["total"] = total
             data["bookList"] = bookList

@@ -671,6 +671,37 @@ class ToolUtil(object):
         epsInfo.allIndex = sorted(epsInfo.pictureUrl.keys())
         return epsInfo
 
+    # 解析搜索结果
+    @staticmethod
+    def ParseReadBook2(result):
+        raw = json.loads(result)
+        from tools.book import BookEps
+        epsInfo = BookEps()
+        epsInfo.epsId = raw.get("id")
+        epsInfo.series_id = raw.get("series_id")
+        epsInfo.epsName = raw.get("name")
+        # for info in raw.get("series", []):
+        #     if str(info.get("id")) == str(epsInfo.epsId):
+        #         epsInfo.sort = int(info.get("sort"))
+        allIds = []
+        idMap = {}
+        for v in raw.get("images", []):
+            page = v.get("page")
+            image = v.get("image")
+            allIds.append((page, image))
+
+        # for index, picId in enumerate(sorted(allIds)):
+        #     idMap[picId] = index
+        for index, v in enumerate(sorted(allIds, key=lambda a:a[0])):
+            _, image = v
+            mo = re.search(r"(?<=media/photos/{}/).*\?".format(epsInfo.epsId), image)
+            name = mo.group().strip("?")
+            epsInfo.pictureName[index] = name.split(".")[0]
+            epsInfo.pictureUrl[index] = "/media/photos/{}/{}".format(epsInfo.epsId, name)
+        epsInfo.allIndex = sorted(epsInfo.pictureUrl.keys())
+        epsInfo.scrambleId = raw.get("scramble_id", "")
+        return epsInfo
+
     @staticmethod
     def ParseBookComment(result):
         raw = json.loads(result)
@@ -755,6 +786,12 @@ class ToolUtil(object):
         bookList = ToolUtil.ParseBookList(raw.get("list", []))
         total = int(raw.get("total", 0))
         return bookList, total
+
+    @staticmethod
+    def ParseRandomRecommendReq2(result):
+        raw = json.loads(result)
+        bookList = ToolUtil.ParseBookList(raw)
+        return bookList, len(bookList)
 
     # 解析用户信息
     # @staticmethod

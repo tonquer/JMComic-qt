@@ -549,6 +549,22 @@ class GetBookEpsInfoReq2(ServerReq):
         super(self.__class__, self).__init__(url, {}, method)
 
 
+# 本子信息
+class ReadBookInfoReq2(ServerReq):
+    def __init__(self, bookId, epsId, epsIndex):
+        self.bookId = bookId
+        url = GlobalConfig.GetApiUrl() + "/comic_read"
+        method = "GET"
+        data = dict()
+        data["lang"] = self.GetLang()
+        data["id"] = epsId
+        self.epsIndex = epsIndex
+        param = ToolUtil.DictToUrl(data)
+        if param:
+            url += "/?" + param
+        super(self.__class__, self).__init__(url, {}, method)
+
+
 # 获取一个章节的图片地址
 # class GetBookImgUrl(ServerReq):
 #     def __init__(self, bookId, epsId):
@@ -992,6 +1008,16 @@ class SignDailyReq2(ServerReq):
         data["daily_id"] = daily_id
         super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
 
+
+# 签到
+class RandomRecommendReq2(ServerReq):
+    def __init__(self):
+        url = GlobalConfig.GetApiUrl() + "/random_recommend?"
+        method = "GET"
+        data = dict()
+        data["lang"] = self.GetLang()
+        url = url + ToolUtil.DictToUrl(data)
+        super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
 
 
 # 查看评论

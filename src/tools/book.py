@@ -69,7 +69,7 @@ class BookEps(object):
         self.pictureUrl = {}     # 图片
         self.pictureName = {}     # 图片
         self.allIndex = []
-        self.aid = 0
+        self.series_id = 0
         self.scrambleId = 0
 
     @property
@@ -89,7 +89,7 @@ class BookEps(object):
         self.pictureUrl.update(o.pictureUrl)
         self.pictureName.update(o.pictureName)
         self.allIndex = sorted(self.pictureUrl.keys())
-        self.aid = o.aid
+        self.series_id = o.series_id
 
 
 class BookBaseInfo(object):
@@ -236,7 +236,7 @@ class BookMgr(Singleton):
         if not epsInfo:
             return
         assert isinstance(epsInfo, BookEps)
-        epsInfo.aid = aid
+        epsInfo.series_id = aid
         epsInfo.minAid = minAid
         epsInfo.pictureUrl.update(pictureUrl)
         epsInfo.pictureName.update(pictureName)
