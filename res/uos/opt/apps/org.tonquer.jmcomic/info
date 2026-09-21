@@ -1,7 +1,7 @@
 {
     "appid": "org.tonquer.jmcomic",
     "name": "JMComic",
-    "version": "1.3.5.1",
+    "version": "1.3.6.0",
     "arch": ["amd64"],
     "permissions": {
         "autostart": false,
