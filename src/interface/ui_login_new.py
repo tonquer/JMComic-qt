@@ -456,7 +456,7 @@ class Ui_LoginNew(object):
         self.scrollArea_3.setWidgetResizable(True)
         self.scrollAreaWidgetContents_3 = QWidget()
         self.scrollAreaWidgetContents_3.setObjectName(u"scrollAreaWidgetContents_3")
-        self.scrollAreaWidgetContents_3.setGeometry(QRect(0, -224, 479, 3297))
+        self.scrollAreaWidgetContents_3.setGeometry(QRect(0, -224, 479, 3281))
         self.verticalLayout_10 = QVBoxLayout(self.scrollAreaWidgetContents_3)
         self.verticalLayout_10.setObjectName(u"verticalLayout_10")
         self.horizontalLayout_15 = QHBoxLayout()
@@ -896,12 +896,6 @@ class Ui_LoginNew(object):
 
         self.horizontalLayout_29 = QHBoxLayout()
         self.horizontalLayout_29.setObjectName(u"horizontalLayout_29")
-        self.label_23 = QLabel(self.scrollAreaWidgetContents_3)
-        self.label_23.setObjectName(u"label_23")
-        self.label_23.setStyleSheet(u"color:rgb(255, 0, 0)")
-
-        self.horizontalLayout_29.addWidget(self.label_23)
-
 
         self.verticalLayout_10.addLayout(self.horizontalLayout_29)
 
@@ -1172,7 +1166,6 @@ class Ui_LoginNew(object):
         self.radio_img_5.setText(QCoreApplication.translate("LoginNew", u"IP\u5206\u6d41", None))
         self.testIpButton.setText(QCoreApplication.translate("LoginNew", u"\u6d4b\u8bd5IP\u5206\u6d41", None))
         self.label_25.setText(QCoreApplication.translate("LoginNew", u"*\u4f7f\u7528\u4ee3\u7406\u65f6IP\u5206\u6d41\u4e0d\u751f\u6548\uff0c\u63a8\u8350\u5f00\u542fECH\u529f\u80fd", None))
-        self.label_23.setText(QCoreApplication.translate("LoginNew", u"*\u66f4\u6362\u5206\u6d41\u6216IP\u9700\u91cd\u65b0\u767b\u5f55", None))
         self.label_26.setText(QCoreApplication.translate("LoginNew", u"\u81ea\u5b9a\u4e49\u83b7\u53d6ProxyIP\u5730\u533a\uff1a", None))
         self.proxyIpLabel.setText("")
         self.label_22.setText(QCoreApplication.translate("LoginNew", u"\u81ea\u5b9a\u4e49IP\u5217\u8868\uff08\u9017\u53f7\u5206\u5272\uff09\uff1a", None))

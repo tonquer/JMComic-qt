@@ -18,7 +18,7 @@ from curl_cffi import CurlOpt, CurlHttpVersion
 class ServerReq(object):
     SPACE_PIC = set()  # 优先使用CDN，如果出现空白图片则回源
 
-    def __init__(self, url, params=None, method="POST", isOtherCloudFlare=False) -> None:
+    def __init__(self, url, params=None, method="POST", isOtherCloudFlare=False, isSpeed=False) -> None:
         self.url = url
         self.resetCnt = 1
         self.resetUrl = []
@@ -47,7 +47,7 @@ class ServerReq(object):
             self.isImg = True
             self.timeout = Setting.ImgTimeOut.GetIndexV()
 
-        if "https://" + host in GlobalConfig.Url.value:
+        if "https://" + host in GlobalConfig.UrlList.value:
             self.isRegister = True
 
         # if Setting.ProxySelectIndex.value == 5:
@@ -65,9 +65,9 @@ class ServerReq(object):
         self.headers = self.GetHeader(url, method)
 
         from qt_owner import QtOwner
-        if self.isApi:
+        if self.isApi and QtOwner().user.token and not isSpeed:
             ## 图片不设置该值，否则cf-cache-status返回BYPASS
-            self.headers["authorization"] = "Bearer " + QtOwner().user.jwttoken
+            self.headers["authorization"] = "Bearer " + QtOwner().user.token
 
         # self.cookies = dict(QtOwner().cookie)
         if self.isApi and not self.proxyUrl and GlobalConfig.IsCdnIndex(Setting.ProxySelectIndex.value):
@@ -147,6 +147,10 @@ class ServerReq(object):
 
             if ipStr:
                 self.curl_opt[CurlOpt.RESOLVE] = [f"{host}:443:{ipStr}"]
+                if self.isRegister:
+                    for v in GlobalConfig.UrlList.value:
+                        host2 =  ToolUtil.GetUrlHost(v)
+                        self.curl_opt[CurlOpt.RESOLVE].append(f"{host2}:443:{ipStr}")
         if isHttp3:
             self.curl_opt[CurlOpt.HTTP_VERSION] = CurlHttpVersion.V3
             self.isH3 = True
@@ -404,6 +408,8 @@ class LoginReq2(ServerReq):
         data["username"] = userId
         data["password"] = passwd
         super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
+        if "authorization" in self.headers:
+            self.headers.pop("authorization")
 
 
 # 注册

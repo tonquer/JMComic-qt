@@ -37,7 +37,7 @@ class CheckUpdateHandler(object):
                 version = int(info[0]) * 1000 + int(info[1]) * 100 + int(info[2]) * 10
 
             info2 = re.findall(r"\d+\d*", os.path.basename(config.RealVersion))
-            if len(info) >= 4:
+            if len(info2) >= 4:
                 curversion = int(info2[0]) * 1000 + int(info2[1]) * 100 + int(info2[2]) * 10 + int(info2[3]) * 1
             else:
                 curversion = int(info2[0]) * 1000 + int(info2[1]) * 100 + int(info2[2]) * 10

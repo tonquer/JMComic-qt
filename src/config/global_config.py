@@ -21,8 +21,8 @@ class GlobalItem(object):
 
 
 class GlobalConfig:
-    Ver = GlobalItem(90)
-    VerTime = GlobalItem("2026-9-14")
+    Ver = GlobalItem(91)
+    VerTime = GlobalItem("2026-9-21")
 
     # web url
     WebDnsList = GlobalItem([])
@@ -34,7 +34,7 @@ class GlobalConfig:
                           "https://jmcomic.me",
                           "https://18comic.tw",
                           "https://jmcomic-zzz.org",
-                          "https://comic18j-hbd.site",
+                          "https://comic18j-hbd.online",
                           "https://comic18j-jjeg.club"])
 
     # mobile url

@@ -672,7 +672,7 @@
               <x>0</x>
               <y>-224</y>
               <width>479</width>
-              <height>3297</height>
+              <height>3281</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -1326,18 +1326,7 @@
               </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_29">
-               <item>
-                <widget class="QLabel" name="label_23">
-                 <property name="styleSheet">
-                  <string notr="true">color:rgb(255, 0, 0)</string>
-                 </property>
-                 <property name="text">
-                  <string>*更换分流或IP需重新登录</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
+              <layout class="QHBoxLayout" name="horizontalLayout_29"/>
              </item>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_30">
@@ -1563,9 +1552,9 @@
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="radioImgGroup"/>
-  <buttongroup name="sexGroup"/>
   <buttongroup name="radioApiGroup"/>
   <buttongroup name="radioProxyGroup"/>
+  <buttongroup name="sexGroup"/>
+  <buttongroup name="radioImgGroup"/>
  </buttongroups>
 </ui>

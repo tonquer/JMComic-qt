@@ -23,8 +23,8 @@ AppUrl3 = "https://app3.jpacg.cc/JMComic"
 UpdateUrlBack = "https://github.com/tonquer/JMComic-qt/"
 
 UpdateVersion = "v1.3.5"
-RealVersion = "v1.3.5"
-VersionTime = "2026-9-13"
+RealVersion = "v1.3.5.1"
+VersionTime = "2026-9-21"
 
 Waifu2xVersion = "2.0.1"
 LoginUserName = ""

@@ -46,46 +46,41 @@ jobs:
         path: ${{ env.PACKAGENAME }}
         retention-days: 7
 
-  ubuntu:
+  ubuntu-appimage:
     runs-on: ubuntu-latest
+    container:
+      image: tonquer/ubuntu-python:24.04
+      options: --privileged
     env:
-      PACKAGENAME: jmcomic_py39_linux
+      PACKAGENAME: jmcomic_py310_linux_glibc2.39
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python 3.10
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.10'
+    - uses: actions/checkout@v7
     - name: Install dependencies
       run: |
-        sudo apt-get install -y fuse libfuse2
-        python -m pip install --upgrade pip
+        python3 -m pip install --upgrade pip
         pip install pyinstaller
         pip install -r src/requirements.txt
     - name: Build
       run: |
-        python script/build_qrc.py
+        python3 script/build_qrc.py
         cd src
         pyinstaller --hidden-import=_cffi_backend --collect-all curl_cffi  -w start.py
         cd dist
         mkdir -p jmcomic.AppRun/usr/bin
-        wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
-        chmod +x appimagetool-x86_64.AppImage
         cp -r ../../res/appimage/* jmcomic.AppRun/
         cp -r ../../res/icon/logo_round.png jmcomic.AppRun/JMComic.png
         cp -r start/* jmcomic.AppRun/usr/bin/
 
-        mv jmcomic.AppRun/usr/bin/start jmcomic.AppRun/usr/bin/JMComic
         chmod +x jmcomic.AppRun/AppRun
-        chmod +x jmcomic.AppRun/usr/bin/JMComic
-        ./appimagetool-x86_64.AppImage jmcomic.AppRun
-        mv JMComic-x86_64.AppImage ../../${{ env.PACKAGENAME }}-x86_64.AppImage
+        chmod +x jmcomic.AppRun/usr/bin/start
+        appimagetool-x86_64.AppImage jmcomic.AppRun
+        mv JMComic-x86_64.AppImage ../../${{ env.PACKAGENAME }}.AppImage
         cd ../..
     - name: Upload
       uses: actions/upload-artifact@v4
       with:
         name: ${{ env.PACKAGENAME }}
-        path: ${{ env.PACKAGENAME }}-x86_64.AppImage
+        path: ${{ env.PACKAGENAME }}.AppImage
         retention-days: 7
 
   macos:
