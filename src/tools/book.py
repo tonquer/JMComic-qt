@@ -90,6 +90,8 @@ class BookEps(object):
         self.pictureName.update(o.pictureName)
         self.allIndex = sorted(self.pictureUrl.keys())
         self.series_id = o.series_id
+        if o.scrambleId:
+            self.scrambleId = o.scrambleId
 
 
 class BookBaseInfo(object):

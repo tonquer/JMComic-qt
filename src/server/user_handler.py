@@ -693,12 +693,13 @@ class GetBookEpsInfoReq2Handler(object):
             if code != 200:
                 data["st"] = Status.Error
                 return
-            epsInfo = ToolUtil.ParseBookEpsInfo2(task.req.ParseData(v.get("data")))
-            epsInfo.index = task.req.epsIndex
-            from tools.book import BookMgr
-            BookMgr().UpdateBookEps(task.req.bookId, epsInfo)
+            # jm2接口，已淘汰
+            # epsInfo = ToolUtil.ParseBookEpsInfo2(task.req.ParseData(v.get("data")))
+            # epsInfo.index = task.req.epsIndex
+            # from tools.book import BookMgr
+            # BookMgr().UpdateBookEps(task.req.bookId, epsInfo)
             data["st"] = Status.Ok
-            data["epsInfo"] = epsInfo
+            # data["epsInfo"] = epsInfo
         except Exception as es:
             data["st"] = Status.ParseError
             data["errorMsg"] = task.res.GetText()
