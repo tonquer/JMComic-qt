@@ -232,7 +232,7 @@ class ReadView(QtWidgets.QWidget, QtTaskBase):
             self.category = info.baseInfo.tagList[::]
             # 添加一个阅读记录使用
             recordId = info.baseInfo.series_id if info.baseInfo.series_id else bookId
-            self.AddHttpTask(req.GetBookEpsInfoReq2(recordId, recordId, epsId))
+            self.AddHttpTask(req.GetBookEpsInfoReq2(recordId, recordId, 0))
 
 
         self.qtTool.checkBox.setChecked(Setting.IsOpenWaifu.value)
