@@ -29,3 +29,9 @@ class SignView(BaseMaskDialog, Ui_SignWidget):
                 label.setPixmap(QPixmap(":/png/icon/no_sign.svg"))
             elif v == True:
                 label.setPixmap(QPixmap(":/png/icon/sign.svg"))
+
+    def UpdateSign(self, day):
+        label = getattr(self, "label_{}".format(day), None)
+        if not label:
+            return
+        label.setPixmap(QPixmap(":/png/icon/sign.svg"))

@@ -1273,7 +1273,7 @@ class SpeedTestHandler(object):
                                proxies=request.proxy, curl_options=request.curl_opt)
 
                 fileSize = int(r.headers.get('Content-Length', 0))
-                getSize = 0
+                getSize = len(r.content)
                 # 网速快，太卡了，优化成最多100ms一次
                 # try:
                 #     for chunk in r.iter_content():

@@ -1011,16 +1011,17 @@ class GetDailyReq2(ServerReq):
 
 # 签到
 class SignDailyReq2(ServerReq):
-    def __init__(self, user_id, daily_id):
+    def __init__(self, user_id, daily_id, date=""):
         url = GlobalConfig.GetApiUrl() + "/daily_chk"
         method = "POST"
         data = dict()
         data["user_id"] = user_id
         data["daily_id"] = daily_id
+        if date:
+            data["date"] = date
         super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
 
-
-# 签到
+#
 class RandomRecommendReq2(ServerReq):
     def __init__(self):
         url = GlobalConfig.GetApiUrl() + "/random_recommend?"

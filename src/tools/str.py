@@ -310,6 +310,8 @@ class Str:
     BatchDeleteNotice = 197            # 是否批量删除
     WorksName = 198            # 作品
     ActorsName = 199           # 登场人物
+    NotSupportFmt = 200            # 不支持该格式
+    ReSign = 201            # 补签
 
     @classmethod
     def Reload(cls):
@@ -606,6 +608,8 @@ class Str:
         cls.strDict[cls.BatchDeleteNotice] = QCoreApplication.translate("cls.obj", "是否批量删除", None)
         cls.strDict[cls.WorksName] = QCoreApplication.translate("cls.obj", "作品", None)
         cls.strDict[cls.ActorsName] = QCoreApplication.translate("cls.obj", "登场人物", None)
+        cls.strDict[cls.NotSupportFmt] = QCoreApplication.translate("cls.obj", "不支持该格式", None)
+        cls.strDict[cls.ReSign] = QCoreApplication.translate("cls.obj", "补签", None)
 
 
     @classmethod

@@ -15,8 +15,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QGridLayout, QLabel, QPushButton,
-    QSizePolicy, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QGridLayout, QHBoxLayout, QLabel,
+    QPushButton, QSizePolicy, QVBoxLayout, QWidget)
 
 class Ui_SignWidget(object):
     def setupUi(self, SignWidget):
@@ -247,10 +247,20 @@ class Ui_SignWidget(object):
 
         self.verticalLayout.addLayout(self.gridLayout)
 
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.reSignButton = QPushButton(SignWidget)
+        self.reSignButton.setObjectName(u"reSignButton")
+
+        self.horizontalLayout.addWidget(self.reSignButton)
+
         self.closeButton = QPushButton(SignWidget)
         self.closeButton.setObjectName(u"closeButton")
 
-        self.verticalLayout.addWidget(self.closeButton)
+        self.horizontalLayout.addWidget(self.closeButton)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout)
 
 
         self.retranslateUi(SignWidget)
@@ -291,6 +301,7 @@ class Ui_SignWidget(object):
         self.label_29.setText(QCoreApplication.translate("SignWidget", u"29", None))
         self.label_30.setText(QCoreApplication.translate("SignWidget", u"30", None))
         self.label_31.setText(QCoreApplication.translate("SignWidget", u"31", None))
+        self.reSignButton.setText(QCoreApplication.translate("SignWidget", u"\u8865\u7b7e", None))
         self.closeButton.setText(QCoreApplication.translate("SignWidget", u"\u5173\u95ed", None))
     # retranslateUi
 

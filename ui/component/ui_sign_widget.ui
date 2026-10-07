@@ -515,11 +515,22 @@
     </layout>
    </item>
    <item>
-    <widget class="QPushButton" name="closeButton">
-     <property name="text">
-      <string>关闭</string>
-     </property>
-    </widget>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="reSignButton">
+       <property name="text">
+        <string>补签</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="closeButton">
+       <property name="text">
+        <string>关闭</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

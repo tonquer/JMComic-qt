@@ -63,7 +63,7 @@ class Task(object):
         self.req = request
         self.session = None
         self.res = None
-        self.timeout = 5
+        self.timeout = request.timeout
         self.backParam = backParam
         self.status = Status.Ok
         self.cacheAndLoadPath = cacheAndLoadPath

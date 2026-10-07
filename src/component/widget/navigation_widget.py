@@ -71,6 +71,9 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
         # self.signButton.setEnabled(False)
         self.signId = 0
         self.signMap = {}
+        self.canResign = False
+        self.maxReSignNum = 5
+        self.useReSignNum = 0
         self.signButton.clicked.connect(self.OpenSign)
         self.isDailySign = False
         self.resetDailySign = 3
@@ -84,6 +87,8 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
             propertiesOne.setScrollMetric(QScrollerProperties.ScrollMetric.HorizontalOvershootPolicy, QScrollerProperties.OvershootPolicy.OvershootAlwaysOff)
             QScroller.scroller(self.scrollArea).setScrollerProperties(propertiesOne)
         self.hideButton.clicked.connect(self.OpenForbidWords)
+        self.tmpSignView = None
+
 
     def IsInFilter(self, categoryList, tagList, title):
         categoryList2 = Converter('zh-hans').convert(categoryList)
@@ -125,10 +130,36 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
     def OpenSign(self):
         if self.isDailySign:
             signView = SignView(QtOwner().owner, self.signMap)
+            signView.reSignButton.clicked.connect(self.ReSign)
+            signView.reSignButton.setText(Str.GetStr(Str.ReSign) + f"({self.useReSignNum}/{self.maxReSignNum})")
+            signView.closed.connect(self.CloseSignView)
+            self.tmpSignView = signView
             signView.show()
         else:
-            self.AddHttpTask(req.SignDailyReq2(QtOwner().user.uid, self.signId), self.GetSignBack)
+            curDate = datetime.today().day
+            self.AddHttpTask(req.SignDailyReq2(QtOwner().user.uid, self.signId), self.GetSignBack, curDate)
         return
+
+    def CloseSignView(self):
+        self.tmpSignView = None
+
+        return
+
+    def ReSign(self):
+        # 选择一个未签到
+        day = None
+        for k, v in sorted(self.signMap.items(), key=lambda a:a[0]):
+            if not v:
+                day = k
+                break
+        if not day:
+            return
+        year = datetime.today().year
+        month = datetime.today().month
+        dt = datetime(year=year, month=month, day=day)
+        date = dt.strftime("%Y-%m-%d")
+        QtOwner().ShowLoading()
+        self.AddHttpTask(req.SignDailyReq2(QtOwner().user.uid, self.signId, date=date), self.GetSignBack, day)
 
     def SwitchOffline(self, state):
         QtOwner().isOfflineModel = state
@@ -187,6 +218,8 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
             data = raw.get("data", {})
             self.signId = data.get("daily_id", 0)
             self.signMap.clear()
+            self.maxReSignNum = data.get('makeup_limit', 0)
+            self.useReSignNum = data.get('makeup_used', 0)
             for v in data.get('record', []):
                 for v2 in v:
                     signDate = int(v2["date"])
@@ -204,14 +237,16 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
                     self.signButton.click()
         pass
 
-    def GetSignBack(self, raw):
+    def GetSignBack(self, raw, curDate):
+        QtOwner().CloseLoading()
         st = raw.get("st")
         msg = raw.get("data", {}).get("msg", "")
         if st == Status.Ok:
             self.isDailySign = True
             self.signButton.setText(Str.GetStr(Str.AlreadySign))
-            curDate = datetime.today().day
             self.signMap[curDate] = True
+            if self.tmpSignView:
+                self.tmpSignView.UpdateSign(curDate)
         else:
             self.AddHttpTask(req.GetDailyReq2(QtOwner().user.uid), self.GetSignDailyBack)
         QtOwner().ShowError(msg if msg else Str.GetStr(st))
