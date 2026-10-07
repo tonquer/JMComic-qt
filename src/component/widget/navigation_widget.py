@@ -147,8 +147,11 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
 
     def ReSign(self):
         # 选择一个未签到
+        curDay = datetime.today().day
         day = None
         for k, v in sorted(self.signMap.items(), key=lambda a:a[0]):
+            if k > curDay:
+                continue
             if not v:
                 day = k
                 break
