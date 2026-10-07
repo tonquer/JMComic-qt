@@ -106,7 +106,7 @@ class CheckUpdateConfigHandler(object):
 #         try:
 #             if task.status != Status.Ok:
 #                 return
-#             user = ToolUtil.ParseUserInfo(task.res.raw.text)
+#             user = ToolUtil.ParseUserInfo(task.res.raw.content)
 #             if user:
 #                 data["st"] = Status.Ok
 #                 data["user"] = user
@@ -148,7 +148,7 @@ class LoginCheck301Handler(object):
             if task.status != Status.Ok:
                 return
             if task.res.raw.status_code != 200:
-                data["msg"] = task.req.GetWebError(task.res.raw.text)
+                data["msg"] = task.req.GetWebError(task.res.raw.content)
 
             cookie_dict = {}
             for cookie in task.res.raw.cookies.jar:
@@ -183,7 +183,7 @@ class ParseMsgHandler(object):
                 return
             if task.res.raw.status_code != 200:
                 data["st"] = Status.Error
-                data["msg"] = task.req.GetWebError(task.res.raw.text)
+                data["msg"] = task.req.GetWebError(task.res.raw.content)
 
         except Exception as es:
             data["st"] = Status.ParseError
@@ -203,7 +203,7 @@ class ParseMsgHandler(object):
         try:
             if task.status != Status.Ok:
                 return
-            isSuc, msg = ToolUtil.ParseMsg(task.res.raw.text)
+            isSuc, msg = ToolUtil.ParseMsg(task.res.raw.content)
             if isinstance(task.req, req.RegisterReq):
                 desUrl = ToolUtil.GetUrlHost(task.res.raw.url)
                 srcUrl = ToolUtil.GetUrlHost(task.req.url)
@@ -216,7 +216,7 @@ class ParseMsgHandler(object):
                 data["st"] = st
             else:
                 if task.res.raw.status_code != 200:
-                    data["msg"] = task.req.GetWebError(task.res.raw.text)
+                    data["msg"] = task.req.GetWebError(task.res.raw.content)
 
                 data["st"] = Status.Error
         except Exception as es:
@@ -234,7 +234,7 @@ class LoginReq2Handler(object):
         try:
             if task.status != Status.Ok:
                 return
-            v = json.loads(task.res.raw.text)
+            v = json.loads(task.res.raw.content)
             code = v.get("code")
             data["errorMsg"] = v.get("errorMsg", "")
             data["message"] = v.get("message", "")
@@ -281,7 +281,7 @@ class LoginReq2Handler(object):
 #         try:
 #             if task.status != Status.Ok:
 #                 return
-#             bookList = ToolUtil.ParseIndex(task.res.raw.text)
+#             bookList = ToolUtil.ParseIndex(task.res.raw.content)
 #             from tools.book import BookMgr
 #             BookMgr().UpdateBookInfoList(bookList)
 #             data["st"] = Status.Ok
@@ -301,7 +301,7 @@ class GetIndexInfoReq2Handler(object):
         try:
             if task.status != Status.Ok:
                 return
-            v = json.loads(task.res.raw.text)
+            v = json.loads(task.res.raw.content)
             code = v.get("code")
             data["errorMsg"] = v.get("errorMsg", "")
             data["message"] = v.get("message", "")
@@ -331,7 +331,7 @@ class GetIndexInfoReq2Handler(object):
         try:
             if task.status != Status.Ok:
                 return
-            v = json.loads(task.res.raw.text)
+            v = json.loads(task.res.raw.content)
             code = v.get("code")
             data["errorMsg"] = v.get("errorMsg", "")
             data["message"] = v.get("message", "")
@@ -359,7 +359,7 @@ class GetFavoritesReq2Handler(object):
         try:
             if task.status != Status.Ok:
                 return
-            v = json.loads(task.res.raw.text)
+            v = json.loads(task.res.raw.content)
             code = v.get("code")
             data["errorMsg"] = v.get("errorMsg", "")
             data["message"] = v.get("message", "")
@@ -389,7 +389,7 @@ class ParseMsgReq2Handler(object):
         try:
             if task.status != Status.Ok:
                 return
-            v = json.loads(task.res.raw.text)
+            v = json.loads(task.res.raw.content)
             code = v.get("code")
             data["errorMsg"] = v.get("errorMsg", "")
             data["message"] = v.get("message", "")
@@ -416,7 +416,7 @@ class ParseMsgReq2Handler(object):
 #         try:
 #             if task.status != Status.Ok:
 #                 return
-#             comments = ToolUtil.ParseComment(task.res.raw.text)
+#             comments = ToolUtil.ParseComment(task.res.raw.content)
 #             data["st"] = Status.Ok
 #             data["comments"] = comments
 #         except Exception as es:
@@ -434,7 +434,7 @@ class ParseMsgReq2Handler(object):
 #         try:
 #             if task.status != Status.Ok:
 #                 return
-#             resData = json.loads(task.res.raw.text)
+#             resData = json.loads(task.res.raw.content)
 #             msg = resData.get("message", [])
 #             comments = ToolUtil.ParseComment("\n".join(msg))
 #             data["st"] = Status.Ok
@@ -455,7 +455,7 @@ class ParseMsgReq2Handler(object):
 #         try:
 #             if task.status != Status.Ok:
 #                 return
-#             maxPages, bookList = ToolUtil.ParseSearch(task.res.raw.text)
+#             maxPages, bookList = ToolUtil.ParseSearch(task.res.raw.content)
 #             data["st"] = Status.Ok
 #             data["maxPages"] = maxPages
 #             data["bookList"] = bookList
@@ -474,7 +474,7 @@ class GetSearchReq2Handler(object):
         try:
             if task.status != Status.Ok:
                 return
-            v = json.loads(task.res.raw.text)
+            v = json.loads(task.res.raw.content)
             code = v.get("code")
             data["errorMsg"] = v.get("errorMsg", "")
             data["message"] = v.get("message", "")
@@ -503,7 +503,7 @@ class GetSearchReq2Handler(object):
         try:
             if task.status != Status.Ok:
                 return
-            v = json.loads(task.res.raw.text)
+            v = json.loads(task.res.raw.content)
             code = v.get("code")
             data["errorMsg"] = v.get("errorMsg", "")
             data["message"] = v.get("message", "")
@@ -532,7 +532,7 @@ class GetSearchCategoryReq2Handler(object):
         try:
             if task.status != Status.Ok:
                 return
-            v = json.loads(task.res.raw.text)
+            v = json.loads(task.res.raw.content)
             code = v.get("code")
             data["errorMsg"] = v.get("errorMsg", "")
             data["message"] = v.get("message", "")
@@ -561,7 +561,7 @@ class GetSearchCategoryReq2Handler(object):
 #         try:
 #             if task.status != Status.Ok:
 #                 return
-#             curNum, maxNum, bookList = ToolUtil.ParseFavorite(task.res.raw.text)
+#             curNum, maxNum, bookList = ToolUtil.ParseFavorite(task.res.raw.content)
 #             data["st"] = Status.Ok
 #             data["curNum"] = curNum
 #             data["maxNum"] = maxNum
@@ -581,7 +581,7 @@ class GetSearchCategoryReq2Handler(object):
 #         try:
 #             if task.status != Status.Ok:
 #                 return
-#             isFavorite, info = ToolUtil.ParseBookInfo(task.res.raw.text, task.req.bookId)
+#             isFavorite, info = ToolUtil.ParseBookInfo(task.res.raw.content, task.req.bookId)
 #             from tools.book import BookMgr
 #             BookMgr().UpdateBookInfo(task.req.bookId, info)
 #             data["st"] = Status.Ok
@@ -603,10 +603,10 @@ class GetBookInfoReq2Handler(object):
                 return
             if task.res.raw.status_code != 200:
                 data["st"] = Status.Error
-                data["message"] = task.res.raw.text
-                Log.Warn("GetBookInfoReq2 error, book_id={}, code={}, msg={}".format(task.req.bookId, task.res.raw.status_code, task.res.raw.text))
+                data["message"] = task.res.raw.content
+                Log.Warn("GetBookInfoReq2 error, book_id={}, code={}, msg={}".format(task.req.bookId, task.res.raw.status_code, task.res.raw.content))
                 return
-            v = json.loads(task.res.raw.text)
+            v = json.loads(task.res.raw.content)
             code = v.get("code")
             data["errorMsg"] = v.get("errorMsg", "")
             data["message"] = v.get("message", "")
@@ -636,7 +636,7 @@ class ReadBookInfoReq2Handler(object):
         try:
             if task.status != Status.Ok:
                 return
-            v = json.loads(task.res.raw.text)
+            v = json.loads(task.res.raw.content)
             code = v.get("code")
             data["errorMsg"] = v.get("errorMsg", "")
             data["message"] = v.get("message", "")
@@ -666,7 +666,7 @@ class GetBookEpsScrambleReq2Handler(object):
         try:
             if task.status != Status.Ok:
                 return
-            scrambleId = ToolUtil.ParseBookEpsScramble(task.res.raw.text)
+            scrambleId = ToolUtil.ParseBookEpsScramble(task.res.raw.content)
             from tools.book import BookMgr
             BookMgr().UpdateBookEpsScrambleId(task.req.bookId, task.req.epsIndex, scrambleId)
             data["st"] = Status.Ok
@@ -686,7 +686,7 @@ class GetBookEpsInfoReq2Handler(object):
         try:
             if task.status != Status.Ok:
                 return
-            v = json.loads(task.res.raw.text)
+            v = json.loads(task.res.raw.content)
             code = v.get("code")
             data["errorMsg"] = v.get("errorMsg", "")
             data["message"] = v.get("message", "")
@@ -718,7 +718,7 @@ class GetCommentReq2Handler(object):
         try:
             if task.status != Status.Ok:
                 return
-            v = json.loads(task.res.raw.text)
+            v = json.loads(task.res.raw.content)
             code = v.get("code")
             data["errorMsg"] = v.get("errorMsg", "")
             data["message"] = v.get("message", "")
@@ -748,7 +748,7 @@ class SendCommentReq2Handler(object):
         try:
             if task.status != Status.Ok:
                 return
-            v = json.loads(task.res.raw.text)
+            v = json.loads(task.res.raw.content)
             code = v.get("code")
             data["errorMsg"] = v.get("errorMsg", "")
             data["message"] = v.get("message", "")
@@ -775,7 +775,7 @@ class GetHistoryReq2Handler(object):
         try:
             if task.status != Status.Ok:
                 return
-            v = json.loads(task.res.raw.text)
+            v = json.loads(task.res.raw.content)
             code = v.get("code")
             data["errorMsg"] = v.get("errorMsg", "")
             data["message"] = v.get("message", "")
@@ -803,7 +803,7 @@ class GetSerializationReq2Handler(object):
         try:
             if task.status != Status.Ok:
                 return
-            v = json.loads(task.res.raw.text)
+            v = json.loads(task.res.raw.content)
             code = v.get("code")
             data["errorMsg"] = v.get("errorMsg", "")
             data["message"] = v.get("message", "")
@@ -831,7 +831,7 @@ class RandomRecommendReq2Handler(object):
         try:
             if task.status != Status.Ok:
                 return
-            v = json.loads(task.res.raw.text)
+            v = json.loads(task.res.raw.content)
             code = v.get("code")
             data["errorMsg"] = v.get("errorMsg", "")
             data["message"] = v.get("message", "")
@@ -866,7 +866,7 @@ class GetReqRawDataHandler(object):
         try:
             if task.status != Status.Ok:
                 return
-            v = json.loads(task.res.raw.text)
+            v = json.loads(task.res.raw.content)
             code = v.get("code")
             data["errorMsg"] = v.get("errorMsg", "")
             data["message"] = v.get("message", "")
@@ -897,7 +897,7 @@ class GetReqRawDataHandler(object):
 #         try:
 #             if task.status != Status.Ok:
 #                 return
-#             aid, minAid, pictureUrl, pictureName = ToolUtil.ParsePictureUrl(task.res.raw.text)
+#             aid, minAid, pictureUrl, pictureName = ToolUtil.ParsePictureUrl(task.res.raw.content)
 #             from tools.book import BookMgr
 #             BookMgr().UpdateBookPicture(task.req.bookId, task.req.epsId, aid, minAid, pictureUrl, pictureName)
 #             data["st"] = Status.Ok
@@ -916,7 +916,7 @@ class GetReqRawDataHandler(object):
 #         try:
 #             if task.status != Status.Ok:
 #                 return
-#             resData = json.loads(task.res.raw.text)
+#             resData = json.loads(task.res.raw.content)
 #             if resData.get("status") == 1:
 #                 data["st"] = Status.Ok
 #             else:
@@ -936,7 +936,7 @@ class GetReqRawDataHandler(object):
 #         try:
 #             if task.status != Status.Ok:
 #                 return
-#             resData = json.loads(task.res.raw.text)
+#             resData = json.loads(task.res.raw.content)
 #             if resData.get("status") == 1:
 #                 data["st"] = Status.Ok
 #             else:
@@ -1160,7 +1160,7 @@ class GetRawHandler(object):
         try:
             if task.status != Status.Ok:
                 return
-            data['data'] = task.res.raw.text
+            data['data'] = task.res.raw.content
         except Exception as es:
             data["st"] = Status.ParseError
             Log.Error(es)
@@ -1176,7 +1176,7 @@ class DnsOverHttpsReqHandler(object):
         try:
             if task.status != Status.Ok:
                 return
-            info = json.loads(task.res.raw.text)
+            info = json.loads(task.res.raw.content)
             data['Answer'] = info.get("Answer")
         except Exception as es:
             data["st"] = Status.ParseError

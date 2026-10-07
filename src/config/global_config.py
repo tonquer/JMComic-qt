@@ -21,8 +21,8 @@ class GlobalItem(object):
 
 
 class GlobalConfig:
-    Ver = GlobalItem(91)
-    VerTime = GlobalItem("2026-9-21")
+    Ver = GlobalItem(92)
+    VerTime = GlobalItem("2026-10-7")
 
     # web url
     WebDnsList = GlobalItem([])
@@ -74,7 +74,7 @@ class GlobalConfig:
     CdnImgUrl = GlobalItem("https://cdn-msp.jmapiproxy3.cc")
     ProxyApiUrl = GlobalItem("https://www.cdnhjk.net")
     ProxyImgUrl = GlobalItem("https://cdn-msp.jmapiproxy3.cc")
-    HeaderVer = GlobalItem("2.1.7")
+    HeaderVer = GlobalItem("2.1.11")
     JMServerUrl = GlobalItem("https://rup4a04-c02.tos-cn-hongkong.bytepluses.com/newsvr-2025.txt")
 
     # 非CF域名
