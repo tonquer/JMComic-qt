@@ -56,6 +56,9 @@ class SearchLineEdit(QLineEdit):
         self.searchTag1 = "<font color=#232629>"
         self.searchTag2 = "</font>"
 
+        self.listView.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.listView.customContextMenuRequested.connect(self.ShowHistoryMenu)
+
     @property
     def listView(self):
         return self.help.listView
@@ -167,6 +170,14 @@ class SearchLineEdit(QLineEdit):
         # print("out")
         return QLineEdit.focusOutEvent(self, ev)
 
+    def inputMethodEvent(self, event):
+        # 输入法组词中(如拼音)隐藏历史框，避免遮挡候选词栏；组词结束后恢复
+        if event.preeditString():
+            self.HideListView()
+        elif self.isShowSearch:
+            self.ShowListView()
+        return QLineEdit.inputMethodEvent(self, event)
+
     def HideListView(self):
         if self.widget.isHidden():
             return
@@ -191,11 +202,30 @@ class SearchLineEdit(QLineEdit):
         self.clearFocus()
         return
 
+    def ShowHistoryMenu(self, pos):
+        from PySide6.QtWidgets import QMenu
+        menu = QMenu(self)
+        index = self.listView.indexAt(pos)
+        actDel = menu.addAction("删除该条历史记录")
+        actDel.setEnabled(index.isValid() and bool(self.cacheWords))
+        actClear = menu.addAction("清空全部历史记录")
+        actClear.setEnabled(bool(self.cacheWords))
+        act = menu.exec_(self.listView.viewport().mapToGlobal(pos))
+        if act == actDel and index.isValid():
+            text = index.data()
+            if text in self.cacheWords:
+                self.cacheWords.remove(text)
+            row = index.row()
+            self.listView.model().removeRow(row)
+            self.SaveCacheWord()
+        elif act == actClear:
+            self.cacheWords = []
+            self.model.setStringList([])
+            self.SaveCacheWord()
+
     def SaveCacheWord(self):
         path = os.path.join(Setting.GetDataPath(), "cache_word")
         try:
-            if not self.cacheWords:
-                return
             f = open(path, "w+", encoding="utf-8")
             f.write("\n".join(self.cacheWords))
             f.close()
