@@ -311,6 +311,15 @@ class Server(Singleton):
                 request.resetUrl.append(request.url.replace(host, ToolUtil.GetUrlHost(url)))
             if len(request.resetUrl) > 0:
                 request.resetCnt = min(len(request.resetUrl), 3)
+        elif request.isImg and not request.resetUrl:
+            # 为图片请求准备备用图片域名，图片下载失败时自动切换到其他CDN重试
+            host = ToolUtil.GetUrlHost(request.url)
+            for domain in GlobalConfig.ImgAutoUrl.value:
+                if domain == host:
+                    continue
+                request.resetUrl.append(request.url.replace(host, domain))
+            if len(request.resetUrl) > 0:
+                request.resetCnt = min(len(request.resetUrl), 3)
 
     def Send(self, request, token="", backParam="", isASync=True, index=0):
         self.__DealHeaders(request, token)
