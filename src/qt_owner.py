@@ -392,7 +392,7 @@ class QtOwner(Singleton):
             if Setting.FontName.value:
                 f = QFont(Setting.FontName.value)
 
-            if Setting.FontSize.value and Setting.FontSize.value != "Defalut":
+            if Setting.FontSize.value and Setting.FontSize.value != "Default":
                 f.setPointSize(int(Setting.FontSize.value))
 
             if Setting.FontStyle.value:
