@@ -69,6 +69,12 @@ class MainView(Main, QtTaskBase):
 
         self.settingView.LoadSetting()
         GlobalConfig.LoadSetting()
+        # 恢复上次从官方域名服务器拉取到的域名列表
+        try:
+            from server.domain_updater import apply_saved_domains
+            apply_saved_domains()
+        except Exception as es:
+            Log.Error(es)
 
         self.searchView.searchTab.hide()
         self.searchView2.bookList.isOpen2 = True
@@ -214,6 +220,9 @@ class MainView(Main, QtTaskBase):
         self.downloadView.Init()
         self.nasView.Init()
         Server().Init()
+        # 后台拉取禁漫官方的最新 API 域名，避免内置域名过期后全线连不上
+        import threading
+        threading.Thread(target=self.UpdateApiDomains, daemon=True).start()
         if config.CanWaifu2x:
             from sr_vulkan import sr_vulkan as sr
             stat = sr.init()
@@ -326,6 +335,20 @@ class MainView(Main, QtTaskBase):
 
     def LoginSucBack(self):
         self.SwitchWidgetAndClear(self.subStackWidget.indexOf(self.indexView))
+
+    def UpdateApiDomains(self):
+        """后台拉取禁漫官方的最新 API 域名列表
+
+        内置域名会过期，这个列表由禁漫自己的域名服务器提供，
+        拉取成功后立即生效（请求时按 GlobalConfig.Url2List 取域名）。
+        """
+        from server.domain_updater import update_api_domains
+        try:
+            if update_api_domains():
+                Log.Warn("已更新禁漫最新 API 域名")
+        except Exception as es:
+            Log.Error(es)
+        return
 
     def SwitchWidgetNext(self):
         index = self.subStackWidget.currentIndex()

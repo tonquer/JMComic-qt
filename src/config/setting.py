@@ -116,6 +116,8 @@ class Setting:
     # IsOpenDoh = SettingValue("ProxySetting", 0, False)
     # IsOpenDohPicture = SettingValue("ProxySetting", 0, False)
     DohAddress = SettingValue("ProxySetting", "https://parse.jpacg.cc/parse", False)
+    # 系统 DNS 查出被墙地址时，请求失败后自动改用 DoH 重新解析
+    EnableDohFallback = SettingValue("ProxySetting", 1, False)
     EchConfig = SettingValue("ProxySetting", "", False)
     EchProxyIndex = SettingValue("ProxySetting", 0, False, ["Auto", "true", "false"])
     ProxyIpLastList =  SettingValue("ProxySetting", "", False)
@@ -136,8 +138,10 @@ class Setting:
 
     IsLoginProxy = SettingValue("ProxySetting", 0, False)
     RegisterProsyIndex = SettingValue("ProxySetting", 1, False)
-    ApiTimeOut = SettingValue("ProxySetting", 1, False, [2, 5, 7, 10])
+    ApiTimeOut = SettingValue("ProxySetting", 1, False, [2, 5, 7, 10, 15, 20])
     ImgTimeOut = SettingValue("ProxySetting", 1, False, [2, 5, 7, 10, 15])
+    # 从禁漫官方域名服务器拉取到的 API 域名（逗号分隔），为空表示用内置列表
+    ApiDomainListOverride = SettingValue("ProxySetting", "", False)
 
     # 下载与缓存
     SavePath = SettingValue("DownloadSetting", "", False)

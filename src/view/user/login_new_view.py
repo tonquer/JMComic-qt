@@ -95,6 +95,10 @@ class LoginNewView(QtWidgets.QWidget, Ui_LoginNew, QtTaskBase):
         self.InitEchConfig()
 
     def InitEchConfig(self):
+        # ECH 关闭时不需要这个配置，否则每次启动都会多发一个注定失败的请求，
+        # 失败后还会每分钟重试一次，平白产生日志噪音
+        if not Setting.EnableEch.value:
+            return
         # self.echConfigIndex = 0
         self.dohDomainList = GlobalConfig.DohUrlList.value[:]
         if Setting.DohAddress.value and Setting.DohAddress.value in self.dohDomainList:
