@@ -138,6 +138,8 @@ class Setting:
     RegisterProsyIndex = SettingValue("ProxySetting", 1, False)
     ApiTimeOut = SettingValue("ProxySetting", 1, False, [2, 5, 7, 10, 15, 20])
     ImgTimeOut = SettingValue("ProxySetting", 1, False, [2, 5, 7, 10, 15])
+    # 从禁漫官方域名服务器拉取到的 API 域名（逗号分隔），为空表示用内置列表
+    ApiDomainListOverride = SettingValue("ProxySetting", "", False)
 
     # 下载与缓存
     SavePath = SettingValue("DownloadSetting", "", False)

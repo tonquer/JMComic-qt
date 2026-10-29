@@ -5,7 +5,7 @@ import sys
 from functools import partial
 
 from PySide6 import QtWidgets
-from PySide6.QtCore import QSettings, Qt, QSize, QUrl, QFile, QTranslator, QLocale
+from PySide6.QtCore import QSettings, Qt, QSize, QUrl, QFile, QTranslator, QLocale, Signal
 from PySide6.QtGui import QDesktopServices, QFontDatabase
 from PySide6.QtWidgets import QFileDialog, QScroller, QScrollerProperties
 
@@ -20,6 +20,8 @@ from view.tool.doh_dns_view import DohDnsView
 
 
 class SettingView(QtWidgets.QWidget, Ui_SettingNew):
+    domainUpdated = Signal(bool, list)
+
     def __init__(self, parent=None):
         super(self.__class__, self).__init__(parent)
         Ui_SettingNew.__init__(self)
@@ -121,6 +123,53 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
             QScroller.scroller(self.scrollArea).setScrollerProperties(propertiesOne)
 
         # self.dohButton.clicked.connect(self.OpenDohView)
+
+        self.InitDomainSection()
+
+    def InitDomainSection(self):
+        """在设置页末尾追加「线路域名」区块
+
+        这里用代码追加而不是改 .ui 文件，避免与上游的界面改动冲突。
+        """
+        domainFrame = QtWidgets.QFrame(self.scrollAreaWidgetContents)
+        domainFrame.setObjectName("domainFrame")
+        domainLayout = QtWidgets.QHBoxLayout(domainFrame)
+        domainLayout.setContentsMargins(0, 0, 0, 0)
+        self.domainLabel = QtWidgets.QLabel("线路域名", domainFrame)
+        self.updateDomainButton = QtWidgets.QPushButton("更新域名", domainFrame)
+        self.updateDomainButton.setToolTip("从禁漫官方域名服务器拉取最新可用域名，启动时也会自动更新")
+        self.updateDomainButton.clicked.connect(self.UpdateDomain)
+        self.domainUpdated.connect(self.OnDomainUpdated)
+        domainLayout.addWidget(self.domainLabel)
+        domainLayout.addWidget(self.updateDomainButton)
+        domainLayout.addStretch(1)
+        self.verticalLayout_4.addWidget(domainFrame)
+
+    def UpdateDomain(self):
+        self.updateDomainButton.setEnabled(False)
+        self.updateDomainButton.setText("更新中…")
+        import threading
+
+        def work():
+            latest = []
+            try:
+                from server.domain_updater import fetch_latest_api_domains, update_api_domains
+                latest = fetch_latest_api_domains(timeout=8)
+                if latest:
+                    update_api_domains()
+            except Exception as es:
+                Log.Error(es)
+            self.domainUpdated.emit(bool(latest), latest)
+
+        threading.Thread(target=work, daemon=True).start()
+
+    def OnDomainUpdated(self, ok, latest):
+        self.updateDomainButton.setEnabled(True)
+        self.updateDomainButton.setText("更新域名")
+        if not ok:
+            QtOwner().ShowErrOne("获取最新域名失败，请检查网络或代理")
+            return
+        QtOwner().ShowMsgOne("当前可用域名：\n" + "\n".join(latest) + "\n\n已立即生效")
 
     def MoveToLabel(self, label):
         p = label.pos()
