@@ -23,9 +23,21 @@ class User:
         return self.jwttoken
 
     def Logout(self):
+        # 只清理内存里的登录态，不动本地已下载的漫画和阅读记录
         self.isLogin = False
         self.uid = ""
         self.userName = ""
+        self.title = ""
+        self.level = ""
+        self.exp = ""
+        self.nex_exp = ""
+        self.favorites = 0
+        self.canFavorites = 0
+        self.coin = 0
+        self.gender = ""
+        self.userAttr = {}
+        self.cookie = {}
+        self.jwttoken = ""
         return
 
     @property

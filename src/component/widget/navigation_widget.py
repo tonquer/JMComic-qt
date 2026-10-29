@@ -169,21 +169,37 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
         return
 
     def OpenLoginView(self):
+        # 已登录时这个按钮的文字是「登出」，点击应该登出，而不是再弹一次登录框
+        if QtOwner().user.isLogin:
+            self.Logout()
+            return
         QtOwner().OpenLogin()
-        # isAutoLogin = Setting.AutoLogin.value
-        # if QtOwner().user.isLogin:
-        #     # self.Sign()
-        #     self.Logout()
-        #     isAutoLogin = 0
-
-        # loginView = LoginView(QtOwner().owner, isAutoLogin)
-        # loginView.show()
-        # loginView.closed.connect(self.LoginSucBack)
         return
 
     def Logout(self):
         User().Logout()
+        # 关闭自动登录并清掉保存的凭据，否则下次启动会立刻又登回去
+        Setting.AutoLogin.SetValue(0)
+        Setting.UserId.SetValue("")
+        Setting.Password.SetValue("")
+        Setting.SaveSetting()
+
+        # 清空界面上残留的个人信息（本地已下载的漫画和阅读记录不会被动到）
+        for label in (self.nameLabel, self.titleLabel, self.levelLabel,
+                      self.favorite, self.coins):
+            label.setText("")
+        f = QFile(u":/png/icon/placeholder_avatar.png")
+        if f.open(QFile.ReadOnly):
+            self.picLabel.SetPicture(f.readAll())
+            f.close()
+        config.LoginUserName = ""
         self.pushButton.setText(Str.GetStr(Str.Login))
+
+        # 清掉界面上已经加载的该账号数据（收藏、历史、评论），磁盘上的数据不受影响
+        try:
+            QtOwner().owner.ClearAccountViews()
+        except Exception as es:
+            Log.Error(es)
         return
 
     def LoginSucBack(self):

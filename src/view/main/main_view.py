@@ -327,6 +327,21 @@ class MainView(Main, QtTaskBase):
     def LoginSucBack(self):
         self.SwitchWidgetAndClear(self.subStackWidget.indexOf(self.indexView))
 
+    def ClearAccountViews(self):
+        """登出时清掉界面上属于该账号已加载的数据
+
+        只清空界面，不删除磁盘上的任何文件（收藏/历史/下载记录都还在）。
+        """
+        for name in ("favoriteView", "historyView", "remoteHistoryView",
+                     "myCommentView", "allCommentView", "favoriteFoldView"):
+            view = getattr(self, name, None)
+            if view is None:
+                continue
+            bookList = getattr(view, "bookList", None)
+            if bookList is not None:
+                bookList.clear()
+        return
+
     def SwitchWidgetNext(self):
         index = self.subStackWidget.currentIndex()
         if index in self.subStackList:
