@@ -273,6 +273,13 @@ class LoginProxyNewWidget(object):
         # self.owner.cdn_img_ip.setText(Setting.PreferCDNIPImg.value)
         # self.uaEdit.setText(Setting.UerAgent.value)
         # self.loginProxy.setChecked(bool(Setting.IsLoginProxy.value))
+        # .ui 里 apiTimeout 只有 2/5/7 三项，配置里却有更多档位，
+        # 运行时补齐下拉项，否则 10 秒以上的超时在界面上根本选不中
+        for box, valueList in ((self.owner.apiTimeout, Setting.ApiTimeOut.des),
+                               (self.owner.imgTimeout, Setting.ImgTimeOut.des)):
+            while box.count() < len(valueList):
+                box.addItem(str(valueList[box.count()]))
+
         self.owner.apiTimeout.setCurrentIndex(Setting.ApiTimeOut.value)
         self.owner.imgTimeout.setCurrentIndex(Setting.ImgTimeOut.value)
         # self.owner.host_api_domain.setText(Setting.HostApiDomain.value)
