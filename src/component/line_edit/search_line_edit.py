@@ -16,10 +16,11 @@ from tools.log import Log
 class HistoryItemDelegate(QStyledItemDelegate):
     """在每条搜索历史的右侧绘制一个 ✕，点击即删除该条记录"""
 
-    DeleteWidth = 26
+    DeleteWidth = 28
     DeleteChar = "\u2715"
 
     deleteClicked = Signal(int)
+    itemClicked = Signal(int)
 
     @classmethod
     def deleteRect(cls, itemRect):
@@ -49,9 +50,13 @@ class HistoryItemDelegate(QStyledItemDelegate):
 
     def editorEvent(self, event, model, option, index):
         if event.type() == QEvent.MouseButtonRelease and event.button() == Qt.LeftButton:
+            # 点 ✕ 只删除，点文字区域才选中并搜索。
+            # 这里同时接管「选中」逻辑，避免 listView.clicked 再触发一次搜索
             if self.deleteRect(option.rect).contains(event.pos()):
                 self.deleteClicked.emit(index.row())
-                return True
+            else:
+                self.itemClicked.emit(index.row())
+            return True
         return QStyledItemDelegate.editorEvent(self, event, model, option, index)
 
 
@@ -90,7 +95,8 @@ class SearchLineEdit(QLineEdit):
         self.model = QStringListModel(self)
         self.listView.setModel(self.model)
         # self.textChanged.connect(self.setCompleter)
-        self.listView.clicked.connect(self.SetText)
+        # 选中由 delegate 的 itemClicked 处理（见下方），这里不再连 clicked，
+        # 否则点 ✕ 删历史时会顺带触发一次搜索
 
         self.isNotReload = False
         self.isShowSearch = True
@@ -102,9 +108,12 @@ class SearchLineEdit(QLineEdit):
         # 每行右侧的 ✕ 删除按钮
         self.historyDelegate = HistoryItemDelegate(self.listView)
         self.historyDelegate.deleteClicked.connect(self.DeleteHistoryRow)
+        self.historyDelegate.itemClicked.connect(self.SetTextByRow)
         self.listView.setItemDelegate(self.historyDelegate)
         # 列表不抢焦点，否则点击列表会让输入框失焦、历史框被 focusOutEvent 隐藏
         self.listView.setFocusPolicy(Qt.NoFocus)
+        # 选中/删除都由 delegate 处理，避免和 clicked 重复触发搜索
+        # self.listView.clicked.connect(self.SetText)
 
         self.listView.setContextMenuPolicy(Qt.CustomContextMenu)
         self.listView.customContextMenuRequested.connect(self.ShowHistoryMenu)
@@ -135,6 +144,13 @@ class SearchLineEdit(QLineEdit):
         # self.setText(text.replace(self.searchTag1, "").replace(self.searchTag2, ""))
         self.setText(text)
         self.Search()
+        return
+
+    def SetTextByRow(self, row):
+        index = self.model.index(row, 0)
+        if not index.isValid():
+            return
+        self.SetText(index)
         return
 
     def setCompleter(self, strings):
