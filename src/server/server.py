@@ -171,16 +171,23 @@ class Server(Singleton):
     
     def Run(self, index):
         time.sleep(2)
-        while True:
-            task = self._inQueue.get(True)
-            self._inQueue.task_done()
-            try:
-                with requests2.Session() as session:
+        # session 在线程内复用，才能保留 TCP/TLS 连接，避免每个请求都重新握手。
+        # 每次请求后清空 cookie，保持与原先「每个请求一个 session」一致的行为。
+        with requests2.Session() as session:
+            while True:
+                task = self._inQueue.get(True)
+                self._inQueue.task_done()
+                try:
                     if task == "":
                         break
                     self._Send(task, index, session)
-            except Exception as es:
-                Log.Error(es)
+                except Exception as es:
+                    Log.Error(es)
+                finally:
+                    try:
+                        session.cookies.clear()
+                    except Exception:
+                        pass
         pass
 
     def RunSpeed(self, index):
@@ -229,16 +236,22 @@ class Server(Singleton):
 
     def RunDownload(self, index):
         time.sleep(2)
-        while True:
-            task = self._downloadQueue.get(True)
-            self._downloadQueue.task_done()
-            try:
-                with requests2.Session(impersonate="chrome110") as session:
+        # 同上：session 复用保留连接，图片是连续大量小请求，收益最明显
+        with requests2.Session(impersonate="chrome110") as session:
+            while True:
+                task = self._downloadQueue.get(True)
+                self._downloadQueue.task_done()
+                try:
                     if task == "":
                         break
                     self._Download(task, index, session)
-            except Exception as es:
-                Log.Error(es)
+                except Exception as es:
+                    Log.Error(es)
+                finally:
+                    try:
+                        session.cookies.clear()
+                    except Exception:
+                        pass
         pass
 
     def UpdateDns(self, address, imageAddress, loginProxy=""):
