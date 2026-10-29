@@ -13,6 +13,7 @@ import server.res as res
 from config import config
 from config.global_config import GlobalConfig
 from qt_owner import QtOwner
+from server.dns_resolver import DnsResolver
 from task.qt_task import TaskBase
 from tools.log import Log
 from tools.singleton import Singleton
@@ -41,6 +42,33 @@ def handler(request):
         Server().handler[request.__name__] = handler()
         return handler
     return generator
+
+
+def TryDohPin(request):
+    """请求失败后用 DoH 重新解析域名，并把结果固定到这条请求上。
+
+    返回 True 表示请求参数已经变了，值得用同一个 URL 再试一次。
+    系统 DNS 被污染时换线路是没用的，所以先走这条路。
+    """
+    if not request.CanDoHResolve():
+        return False
+    host = ToolUtil.GetUrlHost(request.url)
+    if host in request.dohFailHosts:
+        return False
+    if request.dohPinIp:
+        # 固定过的 IP 也没连上，缓存作废，换成新解析的结果再试
+        DnsResolver().Invalidate(host)
+        request.ClearDnsPin()
+        if host in request.dohTryHosts:
+            request.dohFailHosts.add(host)
+            return False
+    ip = DnsResolver().Resolve(host)
+    if not ip:
+        request.dohFailHosts.add(host)
+        return False
+    request.SetDnsPin(ip)
+    request.dohTryHosts.add(host)
+    return True
 
 
 # class NewSession(requests2.Session):
@@ -399,6 +427,9 @@ class Server(Singleton):
     def _Send(self, task, index, session):
         try:
             task.req.resetCnt -= 1
+            # 每次尝试都从干净的状态开始，否则重试成功后还带着上一次的错误
+            task.status = Status.Ok
+            task.req.isSlowFail = False
             Log.Info("request{}-> backId:{}, {}".format(index, task.bakParam, task.req))
             if QtOwner().isOfflineModel:
                 task.status = Status.OfflineModel
@@ -434,6 +465,8 @@ class Server(Singleton):
                 task.status = Status.SNIError
             else:
                 task.status = Status.TimeOut
+                if "too slow" in str(es):
+                    task.req.isSlowFail = True
             Log.Warn(f"error:{task.req.GetPri()}")
             Log.Error(es)
         except exceptions.SSLError as es:
@@ -460,10 +493,16 @@ class Server(Singleton):
         finally:
             Log.Info("response{}-> backId:{}, {}, st:{}, {}".format(index, task.backParam, task.req.__class__.__name__, task.status, task.res))
 
-        if task.status != Status.Ok and task.req.resetCnt > 0:
-            task.req.ResetToSwitchNextUrl()
-            self._Send(task, index, session)
-            return
+        if task.status != Status.Ok:
+            # 先试 DoH 兜底：系统 DNS 被污染时，换备用线路也一样打不开
+            if TryDohPin(task.req):
+                task.req.resetCnt += 1  # DoH 重试不占用备用线路的次数
+                self._Send(task, index, session)
+                return
+            if task.req.resetCnt > 0:
+                task.req.ResetToSwitchNextUrl()
+                self._Send(task, index, session)
+                return
 
         try:
             self.handler.get(task.req.__class__.__name__)(task)
@@ -590,6 +629,8 @@ class Server(Singleton):
     def _Download(self, task, index, session):
         try:
             task.req.resetCnt -= 1
+            task.status = Status.Ok
+            task.req.isSlowFail = False
             if not task.req.isReload:
                 if not isinstance(task.req, req.SpeedTestReq) and not task.req.savePath:
                     for cachePath in [task.req.loadPath, task.req.cachePath]:

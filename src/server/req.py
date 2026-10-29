@@ -7,6 +7,7 @@ import time
 from config import config
 from config.global_config import GlobalConfig
 from config.setting import Setting
+from server.dns_resolver import DnsResolver
 from tools.log import Log
 from tools.str import Str
 from tools.tool import ToolUtil
@@ -38,6 +39,13 @@ class ServerReq(object):
         self.isImg = False
         self.isRegister = False
         self.isH3 = False
+        # DoH 兜底解析状态，见 TryDohPin
+        self.dohPinIp = ""
+        self.dohTryHosts = set()
+        self.dohFailHosts = set()
+        self.isDohReq = False
+        # 连上了但几乎没有数据，属于链路/服务端问题，DoH 兜底帮不上忙
+        self.isSlowFail = False
         host = ToolUtil.GetUrlHost(self.url)
         if "https://" + host in GlobalConfig.Url2List.value :
             self.isApi = True
@@ -164,6 +172,53 @@ class ServerReq(object):
         if isHttp3:
             self.curl_opt[CurlOpt.HTTP_VERSION] = CurlHttpVersion.V3
             self.isH3 = True
+        if not dnsIpList and self.CanDoHResolve():
+            # 之前兜底解析成功过的域名直接用缓存，省掉一次系统 DNS
+            ip = DnsResolver().GetCached(host)
+            if ip:
+                self.SetDnsPin(ip)
+
+    def GetProxyHost(self):
+        proxy = getattr(self, "proxy", None)
+        if isinstance(proxy, dict):
+            return proxy.get("https") or proxy.get("http") or ""
+        return ""
+
+    def CanDoHResolve(self):
+        if not Setting.EnableDohFallback.value:
+            return False
+        if self.isDohReq:
+            # 请求本身就是 DoH 查询，再兜底就套娃了
+            return False
+        if self.isSlowFail:
+            return False
+        if self.proxyUrl:
+            # 走中转域名，解析由中转服务器负责
+            return False
+        if self.GetProxyHost():
+            # 代理自己解析域名，本地固定 IP 没有意义
+            return False
+        if self.ipList and any(self.ipList):
+            # 用户已经在 CDN 优选里手动指定了 IP
+            return False
+        return bool(ToolUtil.GetUrlHost(self.url))
+
+    def SetDnsPin(self, ip):
+        # 只固定这台域名的解析，URL 保持域名不变，TLS 才能带对 SNI
+        host = ToolUtil.GetUrlHost(self.url)
+        if not host or not ip:
+            return
+        resolves = self.curl_opt.setdefault(CurlOpt.RESOLVE, [])
+        resolves[:] = [v for v in resolves if not v.startswith(host + ":")]
+        resolves.append("{}:443:{}".format(host, ip))
+        self.dohPinIp = ip
+
+    def ClearDnsPin(self):
+        host = ToolUtil.GetUrlHost(self.url)
+        resolves = self.curl_opt.get(CurlOpt.RESOLVE)
+        if resolves:
+            resolves[:] = [v for v in resolves if not v.startswith(host + ":")]
+        self.dohPinIp = ""
 
     def ResetToSwitchNextUrl(self):
         if not self.resetUrl:
@@ -1087,6 +1142,7 @@ class DnsOverHttpsReq(ServerReq):
         self.timeout = 5
         self.headers = header
         self.isParseRes = True
+        self.isDohReq = True
 
 
 # Doh域名解析
@@ -1175,6 +1231,7 @@ class GetEchConfigReq(ServerReq):
         self.params = self.build_dns_query(domain, GetEchConfigReq.TYPE_HTTPS)
         self.headers = headers
         self.isParseRes = False
+        self.isDohReq = True
         self.resetUrl = dohAddress[1:]
         self.resetCnt = len(dohAddress)
         # self.resetUrl = ["https://parse.jpacg.cc/jmserve", "https://parse2.jpacg.cc/jmserve"]

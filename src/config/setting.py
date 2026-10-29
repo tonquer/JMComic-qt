@@ -116,6 +116,8 @@ class Setting:
     # IsOpenDoh = SettingValue("ProxySetting", 0, False)
     # IsOpenDohPicture = SettingValue("ProxySetting", 0, False)
     DohAddress = SettingValue("ProxySetting", "https://parse.jpacg.cc/parse", False)
+    # 系统 DNS 查出被墙地址时，请求失败后自动改用 DoH 重新解析
+    EnableDohFallback = SettingValue("ProxySetting", 1, False)
     EchConfig = SettingValue("ProxySetting", "", False)
     EchProxyIndex = SettingValue("ProxySetting", 0, False, ["Auto", "true", "false"])
     ProxyIpLastList =  SettingValue("ProxySetting", "", False)
