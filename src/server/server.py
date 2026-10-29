@@ -98,6 +98,8 @@ class Server(Singleton):
         # self._oldQueue = Queue()
         self._speedQueue = Queue()
         self.threadHandler = 0
+        # 网络配置（尤其代理）改变时自增，工作线程据此丢弃旧连接
+        self.sessionGeneration = 0
         self.threadNum = config.ThreadNum
 
         from config.setting import Setting
@@ -172,23 +174,46 @@ class Server(Singleton):
     def Run(self, index):
         time.sleep(2)
         # session 在线程内复用，才能保留 TCP/TLS 连接，避免每个请求都重新握手。
-        # 每次请求后清空 cookie，保持与原先「每个请求一个 session」一致的行为。
-        with requests2.Session() as session:
-            while True:
-                task = self._inQueue.get(True)
-                self._inQueue.task_done()
-                try:
-                    if task == "":
-                        break
-                    self._Send(task, index, session)
-                except Exception as es:
-                    Log.Error(es)
-                finally:
+        # 网络配置变化时（ResetSessions 自增 generation）重建，保证设置马上生效。
+        generation = -1
+        session = None
+        while True:
+            task = self._inQueue.get(True)
+            self._inQueue.task_done()
+            if task == "":
+                break
+            try:
+                if session is None or generation != self.sessionGeneration:
+                    if session is not None:
+                        try:
+                            session.close()
+                        except Exception:
+                            pass
+                    session = requests2.Session()
+                    generation = self.sessionGeneration
+                self._Send(task, index, session)
+            except Exception as es:
+                Log.Error(es)
+            finally:
+                if session is not None:
                     try:
                         session.cookies.clear()
                     except Exception:
                         pass
+        if session is not None:
+            try:
+                session.close()
+            except Exception:
+                pass
         pass
+
+    def ResetSessions(self):
+        """让所有工作线程在下一次请求前重建 session
+
+        代理、超时等网络配置变化后调用，否则复用的连接仍沿用旧配置。
+        """
+        self.sessionGeneration += 1
+        Log.Info("http sessions reset, generation={0}".format(self.sessionGeneration))
 
     def RunSpeed(self, index):
         time.sleep(2)
@@ -236,22 +261,37 @@ class Server(Singleton):
 
     def RunDownload(self, index):
         time.sleep(2)
-        # 同上：session 复用保留连接，图片是连续大量小请求，收益最明显
-        with requests2.Session(impersonate="chrome110") as session:
-            while True:
-                task = self._downloadQueue.get(True)
-                self._downloadQueue.task_done()
-                try:
-                    if task == "":
-                        break
-                    self._Download(task, index, session)
-                except Exception as es:
-                    Log.Error(es)
-                finally:
+        # 同上：session 复用保留连接，配置变化时重建
+        generation = -1
+        session = None
+        while True:
+            task = self._downloadQueue.get(True)
+            self._downloadQueue.task_done()
+            if task == "":
+                break
+            try:
+                if session is None or generation != self.sessionGeneration:
+                    if session is not None:
+                        try:
+                            session.close()
+                        except Exception:
+                            pass
+                    session = requests2.Session(impersonate="chrome110")
+                    generation = self.sessionGeneration
+                self._Download(task, index, session)
+            except Exception as es:
+                Log.Error(es)
+            finally:
+                if session is not None:
                     try:
                         session.cookies.clear()
                     except Exception:
                         pass
+        if session is not None:
+            try:
+                session.close()
+            except Exception:
+                pass
         pass
 
     def UpdateDns(self, address, imageAddress, loginProxy=""):

@@ -312,6 +312,9 @@ class LoginProxyNewWidget(object):
         # Setting.DohAddress.SetValue(self.dohEdit.text())
         # Setting.IsOpenDoh.SetValue(int(self.dohBox.isChecked()))
         # self.UpdateServer()
+        # 网络设置变了，立即让所有工作线程丢弃旧连接重建，
+        # 否则复用的连接仍然沿用切换前的代理，改设置不会马上生效
+        Server().ResetSessions()
         QtOwner().ShowMsg(Str.GetStr(Str.SaveSuc))
         return
 
