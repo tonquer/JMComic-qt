@@ -101,6 +101,7 @@ class SearchLineEdit(QLineEdit):
         self.isNotReload = False
         self.isShowSearch = True
         self.isMenuShowing = False
+        self.isKeyNavigating = False
 
         self.searchTag1 = "<font color=#232629>"
         self.searchTag2 = "</font>"
@@ -191,6 +192,9 @@ class SearchLineEdit(QLineEdit):
         currentIndex = self.listView.currentIndex()
         if ev.key() == Qt.Key_Up:
             if count > 0:
+                # 只有用户主动按上下键，才让回车使用选中的历史条目；
+                # 否则删除条目后 Qt 自动选中的下一行会劫持回车
+                self.isKeyNavigating = True
                 if currentIndex.row() < 0:
                     row = 0
                 elif currentIndex.row() == 0:
@@ -202,6 +206,7 @@ class SearchLineEdit(QLineEdit):
 
         elif ev.key() == Qt.Key_Down:
             if count > 0:
+                self.isKeyNavigating = True
                 if currentIndex.row() < 0:
                     row = 0
                 else:
@@ -210,12 +215,22 @@ class SearchLineEdit(QLineEdit):
                 self.listView.setCurrentIndex(index)
 
         if ev.key() == Qt.Key_Enter or ev.key() == Qt.Key_Return:
-            currentIndex = self.listView.currentIndex()
-            if currentIndex.row() >= 0:
+            if self.isKeyNavigating and currentIndex.row() >= 0:
                 text = currentIndex.data()
-                self.setText(text)
+                if text is not None:
+                    self.setText(text)
             self.Search()
         return QLineEdit.keyReleaseEvent(self, ev)
+
+    def ClearSelect(self):
+        """清掉历史列表的选中项，避免回车被上一个选中项劫持"""
+        self.isKeyNavigating = False
+        try:
+            self.listView.clearSelection()
+            self.listView.setCurrentIndex(self.model.index(-1, -1))
+        except Exception as es:
+            Log.Error(es)
+        return
 
     def Search(self):
         text = self.text()
@@ -228,6 +243,7 @@ class SearchLineEdit(QLineEdit):
 
     def focusInEvent(self, ev):
         # print("in")
+        self.ClearSelect()
         self.ShowListView()
         return QLineEdit.focusInEvent(self, ev)
 
@@ -280,6 +296,9 @@ class SearchLineEdit(QLineEdit):
         if text is not None and text in self.cacheWords:
             self.cacheWords.remove(text)
         self.model.removeRow(row)
+        # removeRow 后 Qt 会把 currentIndex 挪到相邻行，必须清掉，
+        # 否则回车会搜到那条被自动选中的历史
+        self.ClearSelect()
         self.SaveCacheWord()
         if self.model.rowCount() == 0:
             self.HideListView()
