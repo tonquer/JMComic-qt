@@ -17,7 +17,7 @@ from tools.status import Status
 from tools.log import Log
 from tools.str import Str
 from tools.tool import ToolUtil
-from .server import handler, Task, Server
+from .server import handler, Task, Server, TryDohPin
 from curl_cffi import requests as requests2
 
 @handler(req.CheckUpdateReq)
@@ -1014,6 +1014,9 @@ class DownloadBookHandler(object):
                         task.status = Status.SNIError
                     else:
                         task.status = Status.TimeOut
+                        if "too slow" in str(es):
+                            # 连上了但拉不动数据，不是解析的问题
+                            task.req.isSlowFail = True
                     isFail = True
                     Log.Error(es)
                 except exceptions.SSLError as es:
@@ -1049,6 +1052,12 @@ class DownloadBookHandler(object):
                 # 异常图片
                 if len(data) < 20 or isFail:
                     Log.Warn(f"download_error_picture, url:{backData.req.url}, data:{len(data)}, is_fail:{isFail}")
+                    ## DoH 兜底：系统 DNS 被污染时，换图片域名也没用
+                    if TryDohPin(backData.req):
+                        backData.req.isReset = True
+                        backData.req.resetCnt += 1
+                        Server().ReDownload(backData)
+                        return
                     ## 尝试切换图片地址
                     backData.req.ResetToSwitchNextUrl()
                     if backData.req.resetCnt >= 0:
