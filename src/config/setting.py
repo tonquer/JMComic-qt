@@ -136,7 +136,7 @@ class Setting:
 
     IsLoginProxy = SettingValue("ProxySetting", 0, False)
     RegisterProsyIndex = SettingValue("ProxySetting", 1, False)
-    ApiTimeOut = SettingValue("ProxySetting", 1, False, [2, 5, 7, 10])
+    ApiTimeOut = SettingValue("ProxySetting", 1, False, [2, 5, 7, 10, 15, 20])
     ImgTimeOut = SettingValue("ProxySetting", 1, False, [2, 5, 7, 10, 15])
 
     # 下载与缓存
