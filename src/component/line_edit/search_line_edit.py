@@ -1,16 +1,63 @@
 import os
 import re
 
-from PySide6.QtCore import QStringListModel, QPoint
-from PySide6.QtGui import Qt
+from PySide6.QtCore import QStringListModel, QPoint, QRect, QEvent, Signal
+from PySide6.QtGui import Qt, QColor, QPalette
 from PySide6.QtWidgets import QLineEdit, QLabel, QWidget, \
-    QHBoxLayout
+    QHBoxLayout, QApplication, QStyle, QStyleOptionViewItem, QStyledItemDelegate
 
 from config.setting import Setting
 from interface.ui_line_edit_help_widget import Ui_LineEditHelp
 from qt_owner import QtOwner
 from tools.langconv import Converter
 from tools.log import Log
+
+
+class HistoryItemDelegate(QStyledItemDelegate):
+    """在每条搜索历史的右侧绘制一个 ✕，点击即删除该条记录"""
+
+    DeleteWidth = 28
+    DeleteChar = "\u2715"
+
+    deleteClicked = Signal(int)
+    itemClicked = Signal(int)
+
+    @classmethod
+    def deleteRect(cls, itemRect):
+        return QRect(itemRect.right() - cls.DeleteWidth + 1, itemRect.top(),
+                     cls.DeleteWidth, itemRect.height())
+
+    def paint(self, painter, option, index):
+        opt = QStyleOptionViewItem(option)
+        self.initStyleOption(opt, index)
+        style = opt.widget.style() if opt.widget else QApplication.style()
+        text = opt.text
+        # 由自己绘制文字，避免默认绘制铺满整个单元格、和 ✕ 重叠
+        opt.text = ""
+        style.drawControl(QStyle.CE_ItemViewItem, opt, painter, opt.widget)
+
+        painter.save()
+        textRect = option.rect.adjusted(6, 0, -self.DeleteWidth, 0)
+        elided = option.fontMetrics.elidedText(text, Qt.ElideRight, textRect.width())
+        isSelected = bool(option.state & QStyle.State_Selected)
+        painter.setPen(option.palette.color(
+            QPalette.HighlightedText if isSelected else QPalette.Text))
+        painter.drawText(textRect, Qt.AlignVCenter | Qt.AlignLeft, elided)
+
+        painter.setPen(option.palette.color(QPalette.HighlightedText if isSelected else QPalette.PlaceholderText))
+        painter.drawText(self.deleteRect(option.rect), Qt.AlignCenter, self.DeleteChar)
+        painter.restore()
+
+    def editorEvent(self, event, model, option, index):
+        if event.type() == QEvent.MouseButtonRelease and event.button() == Qt.LeftButton:
+            # 点 ✕ 只删除，点文字区域才选中并搜索。
+            # 这里同时接管「选中」逻辑，避免 listView.clicked 再触发一次搜索
+            if self.deleteRect(option.rect).contains(event.pos()):
+                self.deleteClicked.emit(index.row())
+            else:
+                self.itemClicked.emit(index.row())
+            return True
+        return QStyledItemDelegate.editorEvent(self, event, model, option, index)
 
 
 class SearchLineEdit(QLineEdit):
@@ -48,13 +95,26 @@ class SearchLineEdit(QLineEdit):
         self.model = QStringListModel(self)
         self.listView.setModel(self.model)
         # self.textChanged.connect(self.setCompleter)
-        self.listView.clicked.connect(self.SetText)
+        # 选中由 delegate 的 itemClicked 处理（见下方），这里不再连 clicked，
+        # 否则点 ✕ 删历史时会顺带触发一次搜索
 
         self.isNotReload = False
         self.isShowSearch = True
+        self.isMenuShowing = False
+        self.isKeyNavigating = False
 
         self.searchTag1 = "<font color=#232629>"
         self.searchTag2 = "</font>"
+
+        # 每行右侧的 ✕ 删除按钮
+        self.historyDelegate = HistoryItemDelegate(self.listView)
+        self.historyDelegate.deleteClicked.connect(self.DeleteHistoryRow)
+        self.historyDelegate.itemClicked.connect(self.SetTextByRow)
+        self.listView.setItemDelegate(self.historyDelegate)
+        # 列表不抢焦点，否则点击列表会让输入框失焦、历史框被 focusOutEvent 隐藏
+        self.listView.setFocusPolicy(Qt.NoFocus)
+        # 选中/删除都由 delegate 处理，避免和 clicked 重复触发搜索
+        # self.listView.clicked.connect(self.SetText)
 
         self.listView.setContextMenuPolicy(Qt.CustomContextMenu)
         self.listView.customContextMenuRequested.connect(self.ShowHistoryMenu)
@@ -85,6 +145,13 @@ class SearchLineEdit(QLineEdit):
         # self.setText(text.replace(self.searchTag1, "").replace(self.searchTag2, ""))
         self.setText(text)
         self.Search()
+        return
+
+    def SetTextByRow(self, row):
+        index = self.model.index(row, 0)
+        if not index.isValid():
+            return
+        self.SetText(index)
         return
 
     def setCompleter(self, strings):
@@ -125,6 +192,9 @@ class SearchLineEdit(QLineEdit):
         currentIndex = self.listView.currentIndex()
         if ev.key() == Qt.Key_Up:
             if count > 0:
+                # 只有用户主动按上下键，才让回车使用选中的历史条目；
+                # 否则删除条目后 Qt 自动选中的下一行会劫持回车
+                self.isKeyNavigating = True
                 if currentIndex.row() < 0:
                     row = 0
                 elif currentIndex.row() == 0:
@@ -136,6 +206,7 @@ class SearchLineEdit(QLineEdit):
 
         elif ev.key() == Qt.Key_Down:
             if count > 0:
+                self.isKeyNavigating = True
                 if currentIndex.row() < 0:
                     row = 0
                 else:
@@ -144,12 +215,22 @@ class SearchLineEdit(QLineEdit):
                 self.listView.setCurrentIndex(index)
 
         if ev.key() == Qt.Key_Enter or ev.key() == Qt.Key_Return:
-            currentIndex = self.listView.currentIndex()
-            if currentIndex.row() >= 0:
+            if self.isKeyNavigating and currentIndex.row() >= 0:
                 text = currentIndex.data()
-                self.setText(text)
+                if text is not None:
+                    self.setText(text)
             self.Search()
         return QLineEdit.keyReleaseEvent(self, ev)
+
+    def ClearSelect(self):
+        """清掉历史列表的选中项，避免回车被上一个选中项劫持"""
+        self.isKeyNavigating = False
+        try:
+            self.listView.clearSelection()
+            self.listView.setCurrentIndex(self.model.index(-1, -1))
+        except Exception as es:
+            Log.Error(es)
+        return
 
     def Search(self):
         text = self.text()
@@ -162,10 +243,15 @@ class SearchLineEdit(QLineEdit):
 
     def focusInEvent(self, ev):
         # print("in")
+        self.ClearSelect()
         self.ShowListView()
         return QLineEdit.focusInEvent(self, ev)
 
     def focusOutEvent(self, ev):
+        # 右键菜单是模态的，弹出期间输入框必然失焦；此时不要隐藏历史框，
+        # 否则菜单弹出的一瞬间列表内容就全没了
+        if self.isMenuShowing:
+            return QLineEdit.focusOutEvent(self, ev)
         self.widget.hide()
         # print("out")
         return QLineEdit.focusOutEvent(self, ev)
@@ -202,6 +288,21 @@ class SearchLineEdit(QLineEdit):
         self.clearFocus()
         return
 
+    def DeleteHistoryRow(self, row):
+        if row < 0:
+            return
+        index = self.model.index(row, 0)
+        text = index.data()
+        if text is not None and text in self.cacheWords:
+            self.cacheWords.remove(text)
+        self.model.removeRow(row)
+        # removeRow 后 Qt 会把 currentIndex 挪到相邻行，必须清掉，
+        # 否则回车会搜到那条被自动选中的历史
+        self.ClearSelect()
+        self.SaveCacheWord()
+        if self.model.rowCount() == 0:
+            self.HideListView()
+
     def ShowHistoryMenu(self, pos):
         from PySide6.QtWidgets import QMenu
         menu = QMenu(self)
@@ -210,18 +311,18 @@ class SearchLineEdit(QLineEdit):
         actDel.setEnabled(index.isValid() and bool(self.cacheWords))
         actClear = menu.addAction("清空全部历史记录")
         actClear.setEnabled(bool(self.cacheWords))
-        act = menu.exec_(self.listView.viewport().mapToGlobal(pos))
+        self.isMenuShowing = True
+        try:
+            act = menu.exec_(self.listView.viewport().mapToGlobal(pos))
+        finally:
+            self.isMenuShowing = False
         if act == actDel and index.isValid():
-            text = index.data()
-            if text in self.cacheWords:
-                self.cacheWords.remove(text)
-            row = index.row()
-            self.listView.model().removeRow(row)
-            self.SaveCacheWord()
+            self.DeleteHistoryRow(index.row())
         elif act == actClear:
             self.cacheWords = []
             self.model.setStringList([])
             self.SaveCacheWord()
+            self.HideListView()
 
     def SaveCacheWord(self):
         path = os.path.join(Setting.GetDataPath(), "cache_word")

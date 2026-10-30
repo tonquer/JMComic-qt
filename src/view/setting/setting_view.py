@@ -122,6 +122,98 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
 
         # self.dohButton.clicked.connect(self.OpenDohView)
 
+        self.InitBackupSection()
+
+    def InitBackupSection(self):
+        """在设置页末尾追加「配置备份」区块
+
+        这里用代码追加而不是改 .ui 文件，避免与上游的界面改动冲突。
+        """
+        frame = QtWidgets.QFrame(self.scrollAreaWidgetContents)
+        frame.setObjectName("backupFrame")
+        hLayout = QtWidgets.QHBoxLayout(frame)
+        hLayout.setContentsMargins(0, 0, 0, 0)
+
+        self.backupLabel = QtWidgets.QLabel("配置备份", frame)
+        self.exportConfigButton = QtWidgets.QPushButton("导出配置", frame)
+        self.importConfigButton = QtWidgets.QPushButton("导入配置", frame)
+        self.exportConfigButton.setToolTip("把配置、搜索历史和下载记录打包成一个 zip 文件")
+        self.importConfigButton.setToolTip("从导出的 zip 文件恢复配置，恢复后需要重启程序")
+
+        self.exportConfigButton.clicked.connect(self.ExportConfig)
+        self.importConfigButton.clicked.connect(self.ImportConfig)
+
+        hLayout.addWidget(self.backupLabel)
+        hLayout.addWidget(self.exportConfigButton)
+        hLayout.addWidget(self.importConfigButton)
+        hLayout.addStretch(1)
+        self.verticalLayout_4.addWidget(frame)
+
+    @staticmethod
+    def GetBackupFileMap():
+        """配置备份包含的文件：{归档内路径: 实际路径}"""
+        fileMap = {
+            "config/config.ini": os.path.join(Setting.GetConfigPath(), "config.ini"),
+            "data/cache_word": os.path.join(Setting.GetDataPath(), "cache_word"),
+        }
+        for name in ("download.db", "favorite.db", "history.db",
+                     "local_read.db", "nas.db", "batch_sr_tool.db"):
+            fileMap["state/" + name] = os.path.join(Setting.GetStatePath(), name)
+        return fileMap
+
+    def ExportConfig(self):
+        import zipfile
+        path, _ = QFileDialog.getSaveFileName(self, "导出配置", "jmcomic-config.zip", "Zip(*.zip)")
+        if not path:
+            return
+        try:
+            count = 0
+            with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as zf:
+                for name, srcPath in self.GetBackupFileMap().items():
+                    if os.path.isfile(srcPath):
+                        zf.write(srcPath, name)
+                        count += 1
+            QtOwner().ShowMsgOne("已导出 {} 个配置文件到：\n{}\n\n注意：文件内含账号和代理设置，请妥善保管".format(count, path))
+        except Exception as es:
+            Log.Error(es)
+            QtOwner().ShowErrOne("导出配置失败：{}".format(es))
+
+    def ImportConfig(self):
+        import zipfile
+        path, _ = QFileDialog.getOpenFileName(self, "导入配置", "", "Zip(*.zip)")
+        if not path:
+            return
+        fileMap = self.GetBackupFileMap()
+        try:
+            with zipfile.ZipFile(path, "r") as zf:
+                names = zf.namelist()
+                if not any(n in fileMap for n in names):
+                    QtOwner().ShowErrOne("这个压缩包里没有可导入的配置文件")
+                    return
+                from PySide6.QtWidgets import QMessageBox
+                ret = QMessageBox.question(
+                    self, "导入配置",
+                    "导入会覆盖当前配置，程序需要重启。\n\n"
+                    "注意：压缩包只含配置和记录（账号、收藏、下载清单等），"
+                    "不含漫画文件本身；如果原来的下载目录在这台电脑上不存在，"
+                    "导入后请到「下载与缓存」里重新选择。\n\n是否继续？",
+                    QMessageBox.Yes | QMessageBox.No)
+                if ret != QMessageBox.Yes:
+                    return
+                count = 0
+                for name in names:
+                    if name not in fileMap:
+                        continue
+                    destPath = fileMap[name]
+                    os.makedirs(os.path.dirname(destPath), exist_ok=True)
+                    with zf.open(name) as src, open(destPath, "wb") as dst:
+                        dst.write(src.read())
+                    count += 1
+            QtOwner().ShowMsgOne("已导入 {} 个配置文件，请重启程序后生效".format(count))
+        except Exception as es:
+            Log.Error(es)
+            QtOwner().ShowErrOne("导入配置失败：{}".format(es))
+
     def MoveToLabel(self, label):
         p = label.pos()
         self.scrollArea.vScrollBar.ScrollTo(p.y())
