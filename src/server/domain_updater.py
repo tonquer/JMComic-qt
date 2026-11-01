@@ -87,10 +87,13 @@ def apply_api_domains(domains):
     if not domains:
         return
     GlobalConfig.Url2List.set_value(list(domains))
-    for name in ("ProxySelectIndex", "ProxyImgSelectIndex", "RegisterProsyIndex"):
-        item = getattr(Setting, name)
-        if item.value < 1 or item.value > len(domains):
-            item.SetValue(1)
+    # 只有「API 分流 1-4」是直接按下标取 Url2List 的，列表变短时才需要回落。
+    # 其余线路不能按 API 域名数量重置：
+    #   5/6（IP分流/US反代）和 7+（自定义）不依赖列表长度；
+    #   图片线路按下标取的是 PicUrlList；注册线路取 UrlList 且自带边界处理
+    item = Setting.ProxySelectIndex
+    if 1 <= item.value <= 4 and item.value > len(domains):
+        item.SetValue(1)
 
 
 def apply_saved_domains():
