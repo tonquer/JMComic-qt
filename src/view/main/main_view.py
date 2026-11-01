@@ -1,7 +1,8 @@
 import sys
+import time
 from functools import partial
 
-from PySide6.QtCore import Qt, QEvent, QPoint, Signal
+from PySide6.QtCore import Qt, QEvent, QPoint, QTimer, Signal
 from PySide6.QtGui import QIcon, QMouseEvent, QGuiApplication, QFont
 from PySide6.QtWidgets import QButtonGroup, QToolButton, QLabel
 
@@ -55,6 +56,14 @@ class MainView(Main, QtTaskBase):
         self.navigationWidget.helpButton.click()
         self.subStackWidget.setCurrentIndex(self.subStackWidget.indexOf(self.helpView))
         self.__initWidget()
+
+        # UI 线程心跳：每秒一次，实际间隔比 1 秒多出 1 秒以上说明主线程被堵住
+        # （大图解码、繁简转换、同步 IO 之类的活儿跑到主线程了），记录下来好定位
+        self.__heartTick = time.time()
+        self.heartTimer = QTimer(self)
+        self.heartTimer.setInterval(1000)
+        self.heartTimer.timeout.connect(self.CheckHeartBeat)
+        self.heartTimer.start()
 
         # 窗口切换相关
         self.toolButtons = []
@@ -332,6 +341,14 @@ class MainView(Main, QtTaskBase):
         #     self.navigationWidget.OpenLoginView()
         # else:
         #     self.LoginSucBack()
+
+    def CheckHeartBeat(self):
+        now = time.time()
+        lag = (now - self.__heartTick - 1.0) * 1000
+        self.__heartTick = now
+        if lag >= 1000:
+            Log.Warn("ui thread blocked, lag:{}ms".format(round(lag)))
+        return
 
     def LoginSucBack(self):
         self.SwitchWidgetAndClear(self.subStackWidget.indexOf(self.indexView))

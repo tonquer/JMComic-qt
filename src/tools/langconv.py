@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import threading
+
 from copy import deepcopy
 
 try:
@@ -175,6 +177,14 @@ class StatesMachine(object):
     __repr__ = __str__
 
 class Converter(object):
+    # 同一段短文本（标题/标签/搜索词）会被反复转换：每个条目渲染、
+    # 每次按键都来一遍，纯 Python 的逐字 FSM 是搜索和列表页卡顿的大头。
+    # 这里按 (目标编码, 原文) 缓存结果；长文本不缓存，避免撑内存。
+    # 各调用点都新建 Converter 实例，FSM 状态互不共享，缓存才需要加锁。
+    _cache = {}
+    _cacheMax = 8192
+    _cacheLock = threading.Lock()
+
     def __init__(self, to_encoding):
         self.to_encoding = to_encoding
         self.map = MAPS[to_encoding]
@@ -214,11 +224,23 @@ class Converter(object):
         self._clean()
 
     def convert(self, string):
+        key = (self.to_encoding, string)
+        cls = Converter
+        with cls._cacheLock:
+            cached = cls._cache.get(key)
+        if cached is not None:
+            return cached
         self.start()
         for char in string:
             self.feed(char)
         self.end()
-        return self.get_result()
+        result = self.get_result()
+        if len(string) <= 64:
+            with cls._cacheLock:
+                if len(cls._cache) >= cls._cacheMax:
+                    cls._cache.clear()
+                cls._cache[key] = result
+        return result
 
     def get_result(self):
         return self.final

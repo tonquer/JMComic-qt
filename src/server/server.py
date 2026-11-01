@@ -97,6 +97,9 @@ class Task(object):
         self.cacheAndLoadPath = cacheAndLoadPath
         self.loadPath = loadPath
         self.index=0
+        # 耗时分项（毫秒）：入队时刻、队列等待、网络、解析
+        self.timeEnqueue = 0.0
+        self.waitMs = -1
 
     @property
     def bakParam(self):
@@ -133,6 +136,11 @@ class Server(Singleton):
         from config.setting import Setting
         self.downloadNum = Setting.MultiNum.value
         self.allWaitThread = []
+        # 请求耗时统计：{请求类名: [次数, 等待合计, 网络合计, 解析合计, 网络最大]}
+        # 只记类名和耗时，不含 URL、账号等任何敏感字段
+        self.statsLock = threading.Lock()
+        self.stats = {}
+        threading.Thread(target=self._StatsLoop, daemon=True).start()
         # self.threadSession = []
         # self.downloadSession = []
         # self.oldSession = []
@@ -210,6 +218,9 @@ class Server(Singleton):
             self._inQueue.task_done()
             if task == "":
                 break
+            if isinstance(task, Task) and task.timeEnqueue:
+                # 排队等待太久说明线程数不够或线程被慢请求占住
+                task.waitMs = round((time.time() - task.timeEnqueue) * 1000)
             try:
                 if session is None or generation != self.sessionGeneration:
                     if session is not None:
@@ -419,12 +430,15 @@ class Server(Singleton):
                         return self._Send(Task(request, backParam), index, session)
 
             if isASync:
-                return self._inQueue.put(Task(request, backParam))
+                task = Task(request, backParam)
+                task.timeEnqueue = time.time()
+                return self._inQueue.put(task)
             else:
                 with requests2.Session() as session:
                     return self._Send(Task(request, backParam), index, session)
 
     def _Send(self, task, index, session):
+        netStart = time.time()
         try:
             task.req.resetCnt -= 1
             # 每次尝试都从干净的状态开始，否则重试成功后还带着上一次的错误
@@ -491,7 +505,10 @@ class Server(Singleton):
         except:
             Log.Error(f"error:{task.req.GetPri()}")
         finally:
-            Log.Info("response{}-> backId:{}, {}, st:{}, {}".format(index, task.backParam, task.req.__class__.__name__, task.status, task.res))
+            netMs = round((time.time() - netStart) * 1000)
+            Log.Info("response{}-> backId:{}, {}, st:{}, net:{}ms, wait:{}ms, {}".format(
+                index, task.backParam, task.req.__class__.__name__, task.status,
+                netMs, task.waitMs, task.res))
 
         if task.status != Status.Ok:
             # 先试 DoH 兜底：系统 DNS 被污染时，换备用线路也一样打不开
@@ -504,6 +521,7 @@ class Server(Singleton):
                 self._Send(task, index, session)
                 return
 
+        parseStart = time.time()
         try:
             self.handler.get(task.req.__class__.__name__)(task)
             # if isinstance(task.res.raw, requests2.Response):
@@ -515,7 +533,46 @@ class Server(Singleton):
             Log.Debug(es)
         finally:
             task.session = None
+            self._AddStats(task.req.__class__.__name__, task.waitMs,
+                           round((time.time() - netStart) * 1000),
+                           round((time.time() - parseStart) * 1000))
             return task.res
+
+    def _AddStats(self, name, waitMs, netMs, parseMs):
+        try:
+            with self.statsLock:
+                st = self.stats.setdefault(name, [0, 0.0, 0.0, 0.0, 0.0])
+                st[0] += 1
+                if waitMs > 0:
+                    st[1] += waitMs
+                if netMs > 0:
+                    st[2] += netMs
+                    if netMs > st[4]:
+                        st[4] = netMs
+                if parseMs > 0:
+                    st[3] += parseMs
+        except Exception:
+            pass
+
+    def _StatsLoop(self):
+        """每 5 分钟把累计耗时写进日志，和上一次相比没有新请求就不输出"""
+        lastCount = 0
+        while True:
+            time.sleep(300)
+            try:
+                with self.statsLock:
+                    total = sum(v[0] for v in self.stats.values())
+                    if total == lastCount:
+                        continue
+                    lastCount = total
+                    snapshot = {k: v[:] for k, v in self.stats.items()}
+                lines = []
+                for k, v in sorted(snapshot.items(), key=lambda x: -x[1][0]):
+                    lines.append("  {} x{}, wait {:.0f}ms, net {:.0f}ms(max {:.0f}), parse {:.0f}ms".format(
+                        k, v[0], v[1] / v[0], v[2] / v[0], v[4], v[3] / v[0]))
+                Log.Info("request stats since start:\n" + "\n".join(lines))
+            except Exception:
+                pass
 
     def Post(self, task, index=0):
         request = task.req

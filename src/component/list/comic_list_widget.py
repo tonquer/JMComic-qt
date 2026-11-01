@@ -1,8 +1,10 @@
+import concurrent.futures
+
 from functools import partial
 
 from PySide6 import QtWidgets
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QCursor
+from PySide6.QtCore import Qt, QBuffer, QIODevice, Signal
+from PySide6.QtGui import QCursor, QImageReader
 from PySide6.QtWidgets import QListWidgetItem, QMenu, QApplication, QFrame, QListWidget, QMessageBox
 
 from component.list.base_list_widget import BaseListWidget
@@ -15,10 +17,17 @@ from tools.status import Status
 from tools.str import Str
 from tools.tool import ToolUtil
 
+# 封面解码专用线程池：一页几十张封面在主线程逐张解码是切页卡顿的大头，
+# 两个线程足够消化，也不会和图片下载抢 CPU
+_decodePool = concurrent.futures.ThreadPoolExecutor(max_workers=2)
+
 
 class ComicListWidget(BaseListWidget):
+    decodeDone = Signal(int, object, str)
+
     def __init__(self, parent):
         BaseListWidget.__init__(self, parent)
+        self.decodeDone.connect(self.OnDecoded)
         self.resize(800, 600)
         # self.setMinimumHeight(400)
 
@@ -348,12 +357,8 @@ class ComicListWidget(BaseListWidget):
             if not widget:
                 return
             assert isinstance(widget, ComicItemWidget)
-            widget.SetPicture(data)
-            if Setting.CoverIsOpenWaifu.value:
-                item = self.item(index)
-                indexModel = self.indexFromItem(item)
-                self.Waifu2xPicture(indexModel, True)
-            pass
+            widget.picData = data
+            self.DecodePictureAsync(data, index, widget)
         else:
             item = self.item(index)
             widget = self.itemWidget(item)
@@ -361,6 +366,44 @@ class ComicListWidget(BaseListWidget):
                 return
             assert isinstance(widget, ComicItemWidget)
             widget.SetPictureErr(status)
+        return
+
+    def DecodePictureAsync(self, data, index, widget):
+        """封面解码+缩放交给后台线程，主线程只负责最后上屏"""
+        label = widget.picLabel
+        _decodePool.submit(self._DecodePicture, data,
+                           label.width(), label.height(), widget.devicePixelRatio(),
+                           index, widget.url)
+
+    def _DecodePicture(self, data, width, height, dpr, index, url):
+        # QImageReader 支持“边解码边缩放”，JPEG 不用先解出全尺寸再缩
+        reader = QImageReader()
+        reader.setDecideFormatFromContent(True)
+        buf = QBuffer()
+        buf.setData(data)
+        buf.open(QIODevice.ReadOnly)
+        reader.setDevice(buf)
+        size = reader.size()
+        if size.isValid() and size.width() > 0 and size.height() > 0 \
+                and width > 0 and height > 0:
+            reader.setScaledSize(size.scaled(width * dpr, height * dpr, Qt.KeepAspectRatio))
+        image = reader.read()
+        buf.close()
+        # 跨线程发信号会自动排队，槽函数回到主线程执行
+        self.decodeDone.emit(index, image, url)
+
+    def OnDecoded(self, index, image, url):
+        item = self.item(index)
+        if not item:
+            return
+        widget = self.itemWidget(item)
+        if not widget or widget.url != url:
+            # 页面已经重建，这张图不再属于现在的第 index 个位置
+            return
+        widget.SetPictureImage(image)
+        if Setting.CoverIsOpenWaifu.value:
+            indexModel = self.indexFromItem(item)
+            self.Waifu2xPicture(indexModel, True)
         return
 
     def SelectItem(self, item):
