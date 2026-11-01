@@ -38,6 +38,9 @@ class DnsResolver(Singleton):
         self._pins = {}  # host: (ip, expire)
         self._fails = {}  # host: expire
         self._inflight = {}  # host: threading.Event
+        # 代次：Clear()/Invalidate() 时 +1，让在途解析的结果作废，
+        # 避免旧线程在缓存清空之后又把刚判死的 IP 写回去
+        self._generation = 0
 
     def GetCached(self, host):
         if not host:
@@ -81,24 +84,33 @@ class DnsResolver(Singleton):
             return self.GetCached(host)
 
         ip = ""
+        cacheable = False
+        with self._lock:
+            generation = self._generation
         try:
-            ip = self._Query(host)
+            ip, cacheable = self._Query(host)
         except Exception as es:
             Log.Error(es)
         finally:
             with self._lock:
                 self._inflight.pop(host, None)
-                if ip:
-                    self._pins[host] = (ip, time.time() + PIN_TTL)
-                    self._fails.pop(host, None)
-                else:
-                    self._fails[host] = time.time() + FAIL_TTL
+                # 代次已变（期间发生过 Clear/Invalidate）就不再写回，
+                # 旧结果很可能已经不可信
+                if generation == self._generation:
+                    if ip and cacheable:
+                        self._pins[host] = (ip, time.time() + PIN_TTL)
+                        self._fails.pop(host, None)
+                    elif not ip:
+                        self._fails[host] = time.time() + FAIL_TTL
+                    # ip 存在但没通过探活（最后手段）时不写缓存：
+                    # 下一次失败会重新解析，而不是沿用这个死地址 30 分钟
             event.set()
         return ip
 
     def Invalidate(self, host):
         with self._lock:
             self._pins.pop(host, None)
+            self._generation += 1
 
     def GetPins(self):
         now = time.time()
@@ -109,6 +121,7 @@ class DnsResolver(Singleton):
         with self._lock:
             self._pins.clear()
             self._fails.clear()
+            self._generation += 1
 
     def _GetServers(self):
         servers = list(DEFAULT_DOH_SERVERS)
@@ -118,15 +131,29 @@ class DnsResolver(Singleton):
         return servers
 
     def _Query(self, host):
+        """依次问每个 DoH 源，返回 (ip, cacheable)。
+
+        候选必须通过 443 探活才采用（并缓存）；一个源的候选全不可达时
+        换下一个源。所有源都全军覆没时，把第一个源的首个候选当最后手段
+        交出去——但不缓存，本次失败后下一次会重新解析。
+        """
+        fallback = ""
         for server in self._GetServers():
             answers = self._QueryServer(server, host)
             if not answers:
                 continue
-            ip = self._PickFastest(answers)
-            Log.Info("doh resolve, host:{} -> {}, all:{}".format(host, ip, answers))
-            return ip
-        Log.Warn("doh resolve failed, host:{}".format(host))
-        return ""
+            ip = self._PickReachable(answers[:MAX_PROBE_NUM])
+            if ip:
+                Log.Info("doh resolve, host:{} -> {}, all:{}".format(host, ip, answers))
+                return ip, True
+            if not fallback:
+                fallback = answers[0]
+                Log.Warn("doh candidates all unreachable, try next server, host:{}, all:{}".format(host, answers))
+        if fallback:
+            Log.Warn("doh probe failed on every server, last resort, host:{}".format(host))
+        else:
+            Log.Warn("doh resolve failed, host:{}".format(host))
+        return fallback, False
 
     @staticmethod
     def _QueryServer(server, host):
@@ -158,10 +185,14 @@ class DnsResolver(Singleton):
         return answers
 
     @staticmethod
-    def _PickFastest(answers):
-        candidates = answers[:MAX_PROBE_NUM]
+    def _PickReachable(candidates):
+        """并发 TCP 探活，返回最快的可用 IP，全失败返回 ""。
+
+        注意这只证明 443 端口能握手，不代表 TLS/业务可用；
+        单个候选也要探——一个域名只解析出一个死 IP 很常见。
+        """
         if len(candidates) <= 1:
-            return candidates[0]
+            return candidates[0] if candidates and DnsResolver._Probe(candidates[0]) is not None else ""
 
         results = []
         pool = concurrent.futures.ThreadPoolExecutor(max_workers=len(candidates))
@@ -177,8 +208,7 @@ class DnsResolver(Singleton):
             pool.shutdown(wait=False)
 
         if not results:
-            # 全都连不上也把第一个交出去，让上层按原来的失败流程走
-            return candidates[0]
+            return ""
         results.sort()
         return results[0][1]
 
