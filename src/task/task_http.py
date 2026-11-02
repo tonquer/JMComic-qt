@@ -16,6 +16,9 @@ class TaskHttp(TaskBase):
         info = QtHttpTask(self.taskId)
         info.callBack = callBack
         info.backParam = backParam
+        # 记录入队时的请求代次；登出后代次变化，回调会被丢弃
+        from qt_owner import QtOwner
+        info.requestGen = QtOwner().requestGeneration
         self.tasks[self.taskId] = info
         if cleanFlag:
             info.cleanFlag = cleanFlag
@@ -42,7 +45,12 @@ class TaskHttp(TaskBase):
                 taskIds = self.flagToIds.get(info.cleanFlag, set())
                 taskIds.discard(info.taskId)
             if info.callBack:
-                if info.backParam is None:
+                from qt_owner import QtOwner
+                if info.requestGen != QtOwner().requestGeneration:
+                    # 会话已切换（登出）：请求发出后的返回值不能再交给界面，
+                    # 否则旧账号的数据会重新填回收藏/历史等列表
+                    Log.Info("[Task] drop stale callback after session switch, taskId:{}".format(taskId))
+                elif info.backParam is None:
                     info.callBack(data)
                 else:
                     info.callBack(data, info.backParam)

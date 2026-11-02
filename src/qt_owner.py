@@ -23,6 +23,17 @@ class QtOwner(Singleton):
         self.closeType = 1   # 1普通， 2关闭弹窗触发， 3任务栏触发
         self.isMaxSize = 0
         self.echConfig = ""
+        # 请求代次：登出时 +1，在途请求的回调随之作废（见 task_http.HandlerTask）
+        self.requestGeneration = 0
+
+    def NewRequestGeneration(self):
+        """作废所有在途 HTTP 请求的回调。
+
+        登出后，之前发出的账号类请求（收藏、历史、签到……）仍可能返回，
+        不能再把旧账号的数据填回界面。
+        """
+        self.requestGeneration += 1
+        return
 
     @property
     def cookie(self):

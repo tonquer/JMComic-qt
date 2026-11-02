@@ -18,7 +18,6 @@ from tools.langconv import Converter
 from tools.log import Log
 from tools.status import Status
 from tools.str import Str
-from tools.user import User
 from view.user.sign_view import SignView
 
 
@@ -177,7 +176,11 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
         return
 
     def Logout(self):
-        User().Logout()
+        # 清的是 QtOwner 持有的那个真实会话对象；User() 会新建一个
+        # 临时对象，清它等于什么都没做，token 和 cookie 都还在
+        QtOwner().user.Logout()
+        # 在途的账号请求返回后不再交给界面，避免把旧账号数据填回来
+        QtOwner().NewRequestGeneration()
         # 关闭自动登录并清掉保存的凭据，否则下次启动会立刻又登回去
         Setting.AutoLogin.SetValue(0)
         Setting.UserId.SetValue("")

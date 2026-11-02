@@ -137,7 +137,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.backupLabel = QtWidgets.QLabel("配置备份", frame)
         self.exportConfigButton = QtWidgets.QPushButton("导出配置", frame)
         self.importConfigButton = QtWidgets.QPushButton("导入配置", frame)
-        self.exportConfigButton.setToolTip("把配置、搜索历史和下载记录打包成一个 zip 文件")
+        self.exportConfigButton.setToolTip("把配置、搜索历史和下载记录打包成一个 zip 文件（内含账号登录凭据，请妥善保管）")
         self.importConfigButton.setToolTip("从导出的 zip 文件恢复配置，恢复后需要重启程序")
 
         self.exportConfigButton.clicked.connect(self.ExportConfig)
@@ -162,57 +162,154 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         return fileMap
 
     def ExportConfig(self):
-        import zipfile
         path, _ = QFileDialog.getSaveFileName(self, "导出配置", "jmcomic-config.zip", "Zip(*.zip)")
         if not path:
             return
         try:
-            count = 0
-            with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as zf:
-                for name, srcPath in self.GetBackupFileMap().items():
-                    if os.path.isfile(srcPath):
-                        zf.write(srcPath, name)
-                        count += 1
+            count = self.WriteBackupTo(path)
             QtOwner().ShowMsgOne("已导出 {} 个配置文件到：\n{}\n\n注意：文件内含账号和代理设置，请妥善保管".format(count, path))
         except Exception as es:
             Log.Error(es)
             QtOwner().ShowErrOne("导出配置失败：{}".format(es))
 
-    def ImportConfig(self):
+    def WriteBackupTo(self, path):
+        """把配置打包写到 path，返回打包的文件数。
+
+        先写临时文件再替换，避免中途失败留下半截 zip；
+        .db 文件用 SQLite backup API 取一致性快照，不复制正在写入的裸文件。
+        """
         import zipfile
+        tmpPath = path + ".tmp"
+        count = 0
+        try:
+            with zipfile.ZipFile(tmpPath, "w", zipfile.ZIP_DEFLATED) as zf:
+                for name, srcPath in self.GetBackupFileMap().items():
+                    if not os.path.isfile(srcPath):
+                        continue
+                    if name.endswith(".db"):
+                        snapPath = self.SnapshotSqlite(srcPath)
+                        if snapPath:
+                            zf.write(snapPath, name)
+                            os.remove(snapPath)
+                            count += 1
+                            continue
+                    zf.write(srcPath, name)
+                    count += 1
+            os.replace(tmpPath, path)
+        finally:
+            if os.path.isfile(tmpPath):
+                os.remove(tmpPath)
+        return count
+
+    @staticmethod
+    def SnapshotSqlite(srcPath):
+        """对 SQLite 文件取快照，失败返回 None（由调用方退回普通复制）"""
+        import sqlite3
+        import tempfile
+        snapPath = None
+        src = dst = None
+        try:
+            fd, snapPath = tempfile.mkstemp(suffix=".db")
+            os.close(fd)
+            src = sqlite3.connect(srcPath)
+            dst = sqlite3.connect(snapPath)
+            src.backup(dst)
+            return snapPath
+        except Exception as es:
+            Log.Warn("sqlite snapshot failed, fallback to raw copy, {}: {}".format(srcPath, es))
+            if snapPath and os.path.isfile(snapPath):
+                os.remove(snapPath)
+            return None
+        finally:
+            for con in (dst, src):
+                if con is not None:
+                    try:
+                        con.close()
+                    except Exception:
+                        pass
+
+    def ReadBackupFrom(self, path):
+        """解压并校验备份文件，返回 ({归档内路径: 临时文件路径}, 临时目录)。
+
+        在动任何现有文件之前，先确认压缩包完整、内容合法。
+        """
+        import zipfile
+        import tempfile
+        fileMap = self.GetBackupFileMap()
+        tmpDir = tempfile.mkdtemp(prefix="jmcomic-import-")
+        extracted = {}
+        try:
+            with zipfile.ZipFile(path, "r") as zf:
+                for name in zf.namelist():
+                    if name not in fileMap:
+                        continue
+                    data = zf.read(name)
+                    if name.endswith(".db") and data[:16] != b"SQLite format 3\x00":
+                        raise ValueError("{} 不是有效的数据库文件".format(name))
+                    dest = os.path.join(tmpDir, name.replace("/", "_"))
+                    with open(dest, "wb") as f:
+                        f.write(data)
+                    extracted[name] = dest
+            if not extracted:
+                raise ValueError("压缩包里没有可导入的配置文件")
+            return extracted, tmpDir
+        except Exception:
+            import shutil
+            shutil.rmtree(tmpDir, ignore_errors=True)
+            raise
+
+    def RestoreConfig(self, extracted):
+        """把解压好的文件替换到位；任一步失败，回滚所有已替换的文件"""
+        import shutil
+        fileMap = self.GetBackupFileMap()
+        backups = {}
+        try:
+            for name, tmpPath in extracted.items():
+                destPath = fileMap[name]
+                os.makedirs(os.path.dirname(destPath), exist_ok=True)
+                if os.path.isfile(destPath):
+                    with open(destPath, "rb") as f:
+                        backups[destPath] = f.read()
+                shutil.copyfile(tmpPath, destPath)
+        except Exception:
+            for destPath, data in backups.items():
+                try:
+                    with open(destPath, "wb") as f:
+                        f.write(data)
+                except Exception as es:
+                    Log.Error(es)
+            raise
+
+    def ImportConfig(self):
         path, _ = QFileDialog.getOpenFileName(self, "导入配置", "", "Zip(*.zip)")
         if not path:
             return
-        fileMap = self.GetBackupFileMap()
         try:
-            with zipfile.ZipFile(path, "r") as zf:
-                names = zf.namelist()
-                if not any(n in fileMap for n in names):
-                    QtOwner().ShowErrOne("这个压缩包里没有可导入的配置文件")
-                    return
-                from PySide6.QtWidgets import QMessageBox
-                ret = QMessageBox.question(
-                    self, "导入配置",
-                    "导入会覆盖当前配置，程序需要重启。\n\n"
-                    "注意：压缩包只含配置和记录（账号、收藏、下载清单等），"
-                    "不含漫画文件本身；如果原来的下载目录在这台电脑上不存在，"
-                    "导入后请到「下载与缓存」里重新选择。\n\n是否继续？",
-                    QMessageBox.Yes | QMessageBox.No)
-                if ret != QMessageBox.Yes:
-                    return
-                count = 0
-                for name in names:
-                    if name not in fileMap:
-                        continue
-                    destPath = fileMap[name]
-                    os.makedirs(os.path.dirname(destPath), exist_ok=True)
-                    with zf.open(name) as src, open(destPath, "wb") as dst:
-                        dst.write(src.read())
-                    count += 1
-            QtOwner().ShowMsgOne("已导入 {} 个配置文件，请重启程序后生效".format(count))
+            # 先完整解压校验，再询问，最后替换；替换失败会自动回滚
+            extracted, tmpDir = self.ReadBackupFrom(path)
         except Exception as es:
             Log.Error(es)
             QtOwner().ShowErrOne("导入配置失败：{}".format(es))
+            return
+        try:
+            from PySide6.QtWidgets import QMessageBox
+            ret = QMessageBox.question(
+                self, "导入配置",
+                "导入会覆盖当前配置，程序需要重启。\n\n"
+                "注意：压缩包只含配置和记录（账号、收藏、下载清单等），"
+                "不含漫画文件本身；如果原来的下载目录在这台电脑上不存在，"
+                "导入后请到「下载与缓存」里重新选择。\n\n是否继续？",
+                QMessageBox.Yes | QMessageBox.No)
+            if ret != QMessageBox.Yes:
+                return
+            self.RestoreConfig(extracted)
+            QtOwner().ShowMsgOne("已导入 {} 个配置文件，请重启程序后生效".format(len(extracted)))
+        except Exception as es:
+            Log.Error(es)
+            QtOwner().ShowErrOne("导入配置失败，已保留原配置：{}".format(es))
+        finally:
+            import shutil
+            shutil.rmtree(tmpDir, ignore_errors=True)
 
     def MoveToLabel(self, label):
         p = label.pos()
