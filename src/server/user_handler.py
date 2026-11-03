@@ -1008,6 +1008,7 @@ class DownloadBookHandler(object):
                 except exceptions.Timeout as es:
                     if "Connection was reset" in str(es):
                         task.status = Status.ResetErr
+                        Server.MarkHostFail(ToolUtil.GetUrlHost(task.req.url))
                     elif "ECH_REJECTED" in str(es):
                         task.status = Status.EchError
                     elif "TLSV1_ALERT_UNRECOGNIZED_NAME" in str(es):
@@ -1028,11 +1029,14 @@ class DownloadBookHandler(object):
                         task.status = Status.SNIError
                     else:
                         task.status = Status.NetError
+                    # 握手被掐：这个图片域名冷却，后续请求直接走备用 CDN
+                    Server.MarkHostFail(ToolUtil.GetUrlHost(task.req.url))
                     isFail = True
                     Log.Error(es)
                 except exceptions.ConnectionError as es:
                     isFail = True
                     task.status = Status.ConnectErr
+                    Server.MarkHostFail(ToolUtil.GetUrlHost(task.req.url))
                     Log.Error(es)
                 except exceptions.RequestException as es:
                     if "timed out" in str(es):

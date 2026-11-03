@@ -114,6 +114,29 @@ class Task(object):
 
 
 class Server(Singleton):
+    # 域名冷却表：host -> 冷却结束时刻。被 TLS 重置/掐断连接的域名先停用一会儿，
+    # 期间新请求直接从备用域名起步（见 __DealHeaders），省掉每个请求的失败延迟。
+    # 只存时间戳，GIL 下读写原子，不需要加锁
+    _hostCooldown = {}
+
+    @staticmethod
+    def MarkHostFail(host, ttl=120):
+        if not host:
+            return
+        Server._hostCooldown[host] = time.time() + ttl
+
+    @staticmethod
+    def IsHostCooling(host):
+        if not host:
+            return False
+        until = Server._hostCooldown.get(host)
+        if not until:
+            return False
+        if until < time.time():
+            Server._hostCooldown.pop(host, None)
+            return False
+        return True
+
     def __init__(self) -> None:
         Singleton.__init__(self)
         self.handler = {}
@@ -413,6 +436,11 @@ class Server(Singleton):
             if len(request.resetUrl) > 0:
                 request.resetCnt = min(len(request.resetUrl), 3)
 
+        # 域名刚被打断（TLS重置/连接失败）时，别再让每个请求都先在它身上
+        # 撞一遍：一页封面要付出几十次失败延迟。直接从备用域名起步
+        if request.resetUrl and Server.IsHostCooling(ToolUtil.GetUrlHost(request.url)):
+            request.ResetToSwitchNextUrl()
+
     def Send(self, request, token="", backParam="", isASync=True, index=0):
         self.__DealHeaders(request, token)
         if isinstance(request, req.SpeedTestReq):
@@ -473,14 +501,19 @@ class Server(Singleton):
         except exceptions.Timeout as es:
             if "Connection was reset" in str(es):
                 task.status = Status.ResetErr
+                Server.MarkHostFail(ToolUtil.GetUrlHost(task.req.url))
             elif "ECH_REJECTED" in str(es):
                 task.status = Status.EchError
             elif "TLSV1_ALERT_UNRECOGNIZED_NAME" in str(es):
                 task.status = Status.SNIError
+                Server.MarkHostFail(ToolUtil.GetUrlHost(task.req.url))
             else:
                 task.status = Status.TimeOut
                 if "too slow" in str(es):
                     task.req.isSlowFail = True
+                elif "with 0 " in str(es) or "Connection timed out" in str(es):
+                    # 一个字节都没等到：连接级失败，这域名先冷却一下
+                    Server.MarkHostFail(ToolUtil.GetUrlHost(task.req.url))
             Log.Warn(f"error:{task.req.GetPri()}")
             Log.Error(es)
         except exceptions.SSLError as es:
@@ -492,10 +525,13 @@ class Server(Singleton):
                 task.status = Status.SNIError
             else:
                 task.status = Status.NetError
+            # 握手阶段被掐（SSL_ERROR_SYSCALL / reset 等），域名冷却
+            Server.MarkHostFail(ToolUtil.GetUrlHost(task.req.url))
             Log.Warn(f"error:{task.req.GetPri()}")
             Log.Error(es)
         except exceptions.ConnectionError as es:
             task.status = Status.ConnectErr
+            Server.MarkHostFail(ToolUtil.GetUrlHost(task.req.url))
             Log.Warn(f"error:{task.req.GetPri()}")
             Log.Error(es)
         except Exception as es:
