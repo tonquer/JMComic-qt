@@ -15,6 +15,7 @@ from config.global_config import GlobalConfig
 from config.setting import Setting
 from qt_owner import QtOwner
 from server import req, Server
+from server.dns_resolver import DnsResolver
 from tools.log import Log
 from tools.str import Str
 
@@ -103,6 +104,12 @@ class LoginProxyNewWidget(object):
         self.owner.radioProxyGroup.setId(self.owner.proxy_1, 1)
         self.owner.radioProxyGroup.setId(self.owner.proxy_2, 2)
         self.owner.radioProxyGroup.setId(self.owner.proxy_3, 3)
+
+        # .ui 里没有这个开关，运行时补一个，放在 ECH 那一行
+        self.dohFallbackBox = QCheckBox("DNS 异常时用 DoH 兜底", self.owner)
+        self.dohFallbackBox.setToolTip("系统 DNS 被污染或解析出错导致请求失败时，"
+                                       "自动改用 DoH 重新解析并固定 IP 重试，不影响正常解析")
+        self.owner.horizontalLayout_22.insertWidget(2, self.dohFallbackBox)
 
         self.LoadSetting()
 
@@ -273,6 +280,13 @@ class LoginProxyNewWidget(object):
         # self.owner.cdn_img_ip.setText(Setting.PreferCDNIPImg.value)
         # self.uaEdit.setText(Setting.UerAgent.value)
         # self.loginProxy.setChecked(bool(Setting.IsLoginProxy.value))
+        # .ui 里 apiTimeout 只有 2/5/7 三项，配置里却有更多档位，
+        # 运行时补齐下拉项，否则 10 秒以上的超时在界面上根本选不中
+        for box, valueList in ((self.owner.apiTimeout, Setting.ApiTimeOut.des),
+                               (self.owner.imgTimeout, Setting.ImgTimeOut.des)):
+            while box.count() < len(valueList):
+                box.addItem(str(valueList[box.count()]))
+
         self.owner.apiTimeout.setCurrentIndex(Setting.ApiTimeOut.value)
         self.owner.imgTimeout.setCurrentIndex(Setting.ImgTimeOut.value)
         # self.owner.host_api_domain.setText(Setting.HostApiDomain.value)
@@ -280,6 +294,7 @@ class LoginProxyNewWidget(object):
         self.owner.echBox.setChecked(bool(Setting.EnableEch.value))
         # self.owner.dohBox.setChecked(bool(Setting.IsOpenDoh.value))
         self.owner.dohLine.setText(Setting.DohAddress.value)
+        self.dohFallbackBox.setChecked(bool(Setting.EnableDohFallback.value))
         self.owner.http3Box.setChecked(bool(Setting.IsOpenHTTP3.value))
         self.owner.ipListEdit.setText(Setting.PreferCDNList.value)
         self.owner.proxyIpEdit.setText(Setting.ProxyIpCountry.value)
@@ -301,10 +316,15 @@ class LoginProxyNewWidget(object):
         # Setting.IsOpenDoh.SetValue(bool(self.owner.dohBox.isChecked()))
         Setting.EnableEch.SetValue(bool(self.owner.echBox.isChecked()))
         Setting.DohAddress.SetValue((self.owner.dohLine.text()))
+        Setting.EnableDohFallback.SetValue(int(self.dohFallbackBox.isChecked()))
         Setting.IsOpenHTTP3.SetValue(bool(self.owner.http3Box.isChecked()))
         # Setting.DohAddress.SetValue(self.dohEdit.text())
         # Setting.IsOpenDoh.SetValue(int(self.dohBox.isChecked()))
         # self.UpdateServer()
+        # 网络设置变了，立即让所有工作线程丢弃旧连接重建，
+        # 否则复用的连接仍然沿用切换前的代理，改设置不会马上生效
+        Server().ResetSessions()
+        DnsResolver().Clear()
         QtOwner().ShowMsg(Str.GetStr(Str.SaveSuc))
         return
 
