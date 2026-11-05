@@ -25,6 +25,7 @@ from PySide6.QtWidgets import QApplication
 
 _app = QApplication.instance() or QApplication([])
 
+from config.global_config import GlobalConfig          # noqa: E402
 from config.setting import Setting                      # noqa: E402
 from qt_owner import QtOwner                            # noqa: E402
 import server.req as _req                               # noqa: E402
@@ -32,6 +33,9 @@ from server.server import Server                  # noqa: E402
 from tools.log import Log                               # noqa: E402
 from tools.tool import ToolUtil                         # noqa: E402
 
+Log.Init()                  # InitLoadSetting 里会调日志等级，需要先建好 handler
+Setting.InitLoadSetting()   # 读取 config.ini（下载目录/凭据/线路等，app 启动时同款）
+GlobalConfig.LoadSetting()
 QtOwner()  # 初始化空 owner（GUI 不存在，但登录态/请求构造需要它）
 
 STATE_DIR = Setting.GetStatePath()
@@ -39,9 +43,13 @@ STATE_DIR = Setting.GetStatePath()
 mcp = FastMCP(
     "jmcomic",
     instructions=(
-        "JMComic 客户端的只读工具：搜索漫画、查看详情/评论、查询本地下载库与阅读历史。"
-        "剧情总结请组合 get_book_detail（简介/标签）与 get_comments（热门评论）。"
-        "所有工具都是只读的，不下载、不收藏、不发评论。"
+        "JMComic 客户端工具：搜索、详情/评论、本地下载库与阅读历史，以及受控的下载。\n"
+        "剧情总结有两种模式：\n"
+        "  1. 元数据模式（默认，快）：get_book_detail 的简介/标签 + get_comments 的热门评论；\n"
+        "  2. 内容模式（慢，需要视觉能力）：fetch_pages 抓取前几页到本地，再用视觉读图总结。\n"
+        "先和用户确认用哪档；内容模式会向服务器请求图片，且图片会进入模型上下文。\n"
+        "download_book 是唯一有副作用的工具（写文件到「AI 下载区」），调用前务必先征得用户同意；"
+        "它不进客户端的下载管理器，整个「AI-Downloads」文件夹可以随时一键删除。"
     ),
 )
 
@@ -202,6 +210,212 @@ def local_read_books() -> dict:
     rows = _Db("local_read.db", "select id, title, path, picCnt, lastIndex, lastReadTime "
                "from local_book order by lastReadTime desc")
     return {"count": len(rows), "books": rows}
+
+
+# ---------------------------------------------------------------------------
+# 下载区（唯一有副作用的工具）
+#
+# 约定（和用户讨论定下的「第三条路」）：
+#   * 用主账号网络栈，不搞第二套账号
+#   * 文件落到 <客户端下载目录>/AI-Downloads/，与主库物理隔离
+#   * 不写 download.db —— 客户端下载管理器完全看不到
+#   * 不想留就删 AI-Downloads 文件夹；想要就挪进主库（结构兼容）
+# ---------------------------------------------------------------------------
+
+def _Sanitize(name, fallback="unnamed"):
+    name = str(name or "").strip()
+    for ch in '/\\:*?"<>|':
+        name = name.replace(ch, " ")
+    name = name.strip().rstrip(".")
+    return name or fallback
+
+
+def _GetDetail(book_id):
+    status, task = _Sync(_req.GetBookInfoReq2(str(book_id)))
+    if status != 1001:
+        return None
+    v = _Json(task)
+    b, _ = ToolUtil.ParseBookInfo2(task.req.ParseData(v.get("data")))
+    epsInfo = getattr(b.pageInfo, "epsInfo", {}) or {}
+    eps = [{"index": idx, "epsId": str(e.epsId), "title": e.epsName or e.title or "第{}话".format(idx + 1)}
+           for idx, e in sorted(epsInfo.items())]
+    return {"id": str(book_id), "title": b.baseInfo.title or book_id, "eps": eps}
+
+
+def _DownloadImage(urlPath, epsId, picName):
+    """下载一张图（备用CDN轮换 + 域名冷却），返回原始字节。"""
+    from curl_cffi import requests as curlRequests
+    primary = GlobalConfig.GetImgUrl().rstrip("/")
+    candidates = [(GlobalConfig.GetImgUrl(), primary + urlPath)]
+    for domain in GlobalConfig.ImgAutoUrl.value:
+        alt = "https://" + domain.rstrip("/")
+        if alt != primary:
+            candidates.append((domain, alt + urlPath))
+    lastError = None
+    for host, url in candidates:
+        hostOnly = ToolUtil.GetUrlHost(url)
+        if Server.IsHostCooling(hostOnly):
+            continue
+        try:
+            request = _req.DownloadBookReq(url)
+            session = curlRequests.Session(impersonate="chrome110")
+            try:
+                session.curl_options = dict(request.curl_opt)
+                r = session.get(url, proxies=request.proxy, headers=request.headers,
+                                timeout=max(5, Setting.ImgTimeOut.GetIndexV()))
+            finally:
+                try:
+                    session.close()
+                except Exception:
+                    pass
+            if r.status_code != 200:
+                raise RuntimeError("http {}".format(r.status_code))
+            if len(r.content) < 100:
+                raise RuntimeError("too small")
+            return r.content
+        except Exception as es:
+            lastError = es
+            # 连接层失败才冷却；HTTP 403/404 是服务端态度，换下一个就行
+            if not str(es).startswith("http "):
+                Server.MarkHostFail(hostOnly)
+    raise RuntimeError("image download failed after all cdns: {}".format(lastError))
+
+
+def _RestoreAndSave(imgData, epsId, scrambleId, picName, path):
+    """还原 JM 的切块乱序并落盘（与客户端阅读时的还原算法一致）"""
+    data = ToolUtil.SegmentationPicture(imgData, epsId, scrambleId, picName)
+    fileDir = os.path.dirname(path)
+    if fileDir and not os.path.isdir(fileDir):
+        os.makedirs(fileDir)
+    with open(path, "wb") as f:
+        f.write(data)
+    return len(data)
+
+
+def _EpsPageList(bookId, epsId):
+    """拉一章的图片清单，返回 (scrambleId, [{index, urlPath, picName}])"""
+    status, task = _Sync(_req.GetBookEpsInfoReq2(str(bookId), str(epsId), 0))
+    if status != 1001:
+        return None
+    v = _Json(task)
+    epsInfo = ToolUtil.ParseBookEpsInfo2(task.req.ParseData(v.get("data")))
+    pages = []
+    for idx in epsInfo.allIndex:
+        pages.append({
+            "index": idx,
+            "urlPath": epsInfo.pictureUrl[idx],
+            "picName": epsInfo.pictureName[idx],
+        })
+    return epsInfo.scrambleId, pages
+
+
+def _SavePathBase():
+    savePath = Setting.SavePath.value
+    if not savePath:
+        return None
+    base = os.path.join(savePath, "AI-Downloads")
+    if not os.path.isdir(base):
+        os.makedirs(base)
+    return base
+
+
+@mcp.tool()
+def download_book(book_id: str, eps_ids: list = None, max_pages_per_eps: int = 0,
+                  overwrite: bool = False) -> dict:
+    """下载漫画到「AI 下载区」：<客户端下载目录>/AI-Downloads/<书名>/<章节>/。
+
+    注意：这是唯一有副作用的工具，调用前必须先征得用户同意。
+    不会写进客户端的下载管理器；删除 = 删 AI-Downloads 文件夹；
+    想收入主库就把对应文件夹移动到客户端下载目录顶层。
+
+    eps_ids: 要下载的章节 epsId 列表（见 get_book_detail 的 eps 字段），空 = 全部章节。
+    max_pages_per_eps: >0 时每章只下前 N 页（试读）。
+    overwrite: 已存在的文件是否重新下载（默认跳过，可断点续传）。
+    """
+    _EnsureLogin()
+    base = _SavePathBase()
+    if not base:
+        return {"error": "客户端未设置下载目录（Setting.SavePath 为空）"}
+    detail = _GetDetail(book_id)
+    if not detail:
+        return {"error": "network failed"}
+    bookDir = os.path.join(base, _Sanitize(detail["title"], book_id))
+
+    want = [e for e in detail["eps"] if not eps_ids or str(e["epsId"]) in [str(x) for x in eps_ids]]
+    if not want:
+        return {"error": "no matching eps", "eps": detail["eps"]}
+
+    summary = {"book": detail["title"], "saved_to": bookDir, "eps": []}
+    totalFail = 0
+    for e in want:
+        fetched = _EpsPageList(book_id, e["epsId"])
+        if not fetched:
+            summary["eps"].append({"epsId": e["epsId"], "title": e["title"], "error": "chapter fetch failed"})
+            continue
+        scrambleId, pages = fetched
+        epsDir = os.path.join(bookDir, _Sanitize(e["title"], "eps-{}".format(e["index"] + 1)))
+        done, fail, skipped = 0, 0, 0
+        for i, p in enumerate(pages):
+            if max_pages_per_eps and i >= max_pages_per_eps:
+                break
+            path = os.path.join(epsDir, "{:05d}.jpg".format(i + 1))
+            if os.path.isfile(path) and not overwrite and os.path.getsize(path) > 0:
+                skipped += 1
+                continue
+            try:
+                img = _DownloadImage(p["urlPath"], e["epsId"], p["picName"])
+                _RestoreAndSave(img, e["epsId"], scrambleId, p["picName"], path)
+                done += 1
+            except Exception as es:
+                fail += 1
+                Log.Warn("mcp download pic failed: {}".format(es))
+        totalFail += fail
+        summary["eps"].append({"epsId": e["epsId"], "title": e["title"],
+                               "pages": len(pages), "downloaded": done,
+                               "skipped_existing": skipped, "failed": fail})
+    summary["failed_total"] = totalFail
+    return summary
+
+
+@mcp.tool()
+def fetch_pages(book_id: str, eps_id: str = "", page_count: int = 4) -> dict:
+    """抓取某章前 N 页到预览目录（AI-Downloads/_preview/<书id>/），返回图片文件路径列表。
+
+    供有视觉能力的模型先 Read 这些图片再做内容级总结；
+    纯元数据总结不需要调用本工具。页数建议 2-4 页，越多越慢也越贵。
+    """
+    _EnsureLogin()
+    page_count = max(1, min(int(page_count), 8))
+    base = _SavePathBase()
+    if not base:
+        return {"error": "客户端未设置下载目录（Setting.SavePath 为空）"}
+    detail = _GetDetail(book_id)
+    if not detail:
+        return {"error": "network failed"}
+    eps = detail["eps"][0]
+    if eps_id:
+        match = [e for e in detail["eps"] if str(e["epsId"]) == str(eps_id)]
+        if match:
+            eps = match[0]
+    fetched = _EpsPageList(book_id, eps["epsId"])
+    if not fetched:
+        return {"error": "chapter fetch failed"}
+    scrambleId, pages = fetched
+    outDir = os.path.join(base, "_preview", _Sanitize(detail["title"], book_id))
+    paths, fail = [], 0
+    for i, p in enumerate(pages):
+        if i >= page_count:
+            break
+        try:
+            img = _DownloadImage(p["urlPath"], eps["epsId"], p["picName"])
+            path = os.path.join(outDir, "{:05d}.jpg".format(i + 1))
+            _RestoreAndSave(img, eps["epsId"], scrambleId, p["picName"], path)
+            paths.append(path)
+        except Exception as es:
+            fail += 1
+            Log.Warn("mcp fetch page failed: {}".format(es))
+    return {"book": detail["title"], "eps": eps["title"], "paths": paths, "failed": fail,
+            "note": "这些图已经过乱序还原，可直接视觉阅读；不想留可删 _preview 目录"}
 
 
 if __name__ == "__main__":
