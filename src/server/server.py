@@ -441,6 +441,18 @@ class Server(Singleton):
         if request.resetUrl and Server.IsHostCooling(ToolUtil.GetUrlHost(request.url)):
             request.ResetToSwitchNextUrl()
 
+    def SendSync(self, request, token=""):
+        """在调用线程同步执行一个请求（不进队列），返回 Task。
+
+        与 Send(isASync=False) 一样会先做 __DealHeaders（备用线路等），
+        供 MCP server 这类无 GUI 的调用方使用。
+        """
+        self.__DealHeaders(request, token)
+        task = Task(request, "")
+        with requests2.Session() as session:
+            self._Send(task, 0, session)
+        return task
+
     def Send(self, request, token="", backParam="", isASync=True, index=0):
         self.__DealHeaders(request, token)
         if isinstance(request, req.SpeedTestReq):
