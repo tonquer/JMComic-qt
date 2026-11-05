@@ -1,7 +1,8 @@
 import sys
+import time
 from functools import partial
 
-from PySide6.QtCore import Qt, QEvent, QPoint, Signal
+from PySide6.QtCore import Qt, QEvent, QPoint, QTimer, Signal
 from PySide6.QtGui import QIcon, QMouseEvent, QGuiApplication, QFont
 from PySide6.QtWidgets import QButtonGroup, QToolButton, QLabel
 
@@ -56,6 +57,14 @@ class MainView(Main, QtTaskBase):
         self.subStackWidget.setCurrentIndex(self.subStackWidget.indexOf(self.helpView))
         self.__initWidget()
 
+        # UI 线程心跳：每秒一次，实际间隔比 1 秒多出 1 秒以上说明主线程被堵住
+        # （大图解码、繁简转换、同步 IO 之类的活儿跑到主线程了），记录下来好定位
+        self.__heartTick = time.time()
+        self.heartTimer = QTimer(self)
+        self.heartTimer.setInterval(1000)
+        self.heartTimer.timeout.connect(self.CheckHeartBeat)
+        self.heartTimer.start()
+
         # 窗口切换相关
         self.toolButtons = []
         self.toolLabels = []
@@ -69,6 +78,12 @@ class MainView(Main, QtTaskBase):
 
         self.settingView.LoadSetting()
         GlobalConfig.LoadSetting()
+        # 恢复上次从官方域名服务器拉取到的域名列表
+        try:
+            from server.domain_updater import apply_saved_domains
+            apply_saved_domains()
+        except Exception as es:
+            Log.Error(es)
 
         self.searchView.searchTab.hide()
         self.searchView2.bookList.isOpen2 = True
@@ -214,6 +229,9 @@ class MainView(Main, QtTaskBase):
         self.downloadView.Init()
         self.nasView.Init()
         Server().Init()
+        # 后台拉取禁漫官方的最新 API 域名，避免内置域名过期后全线连不上
+        import threading
+        threading.Thread(target=self.UpdateApiDomains, daemon=True).start()
         if config.CanWaifu2x:
             from sr_vulkan import sr_vulkan as sr
             stat = sr.init()
@@ -324,6 +342,14 @@ class MainView(Main, QtTaskBase):
         # else:
         #     self.LoginSucBack()
 
+    def CheckHeartBeat(self):
+        now = time.time()
+        lag = (now - self.__heartTick - 1.0) * 1000
+        self.__heartTick = now
+        if lag >= 1000:
+            Log.Warn("ui thread blocked, lag:{}ms".format(round(lag)))
+        return
+
     def LoginSucBack(self):
         self.SwitchWidgetAndClear(self.subStackWidget.indexOf(self.indexView))
 
@@ -340,6 +366,20 @@ class MainView(Main, QtTaskBase):
             bookList = getattr(view, "bookList", None)
             if bookList is not None:
                 bookList.clear()
+        return
+
+    def UpdateApiDomains(self):
+        """后台拉取禁漫官方的最新 API 域名列表
+
+        内置域名会过期，这个列表由禁漫自己的域名服务器提供，
+        拉取成功后立即生效（请求时按 GlobalConfig.Url2List 取域名）。
+        """
+        from server.domain_updater import update_api_domains
+        try:
+            if update_api_domains():
+                Log.Warn("已更新禁漫最新 API 域名")
+        except Exception as es:
+            Log.Error(es)
         return
 
     def SwitchWidgetNext(self):

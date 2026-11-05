@@ -17,7 +17,7 @@ from tools.status import Status
 from tools.log import Log
 from tools.str import Str
 from tools.tool import ToolUtil
-from .server import handler, Task, Server
+from .server import handler, Task, Server, TryDohPin
 from curl_cffi import requests as requests2
 
 @handler(req.CheckUpdateReq)
@@ -1008,12 +1008,16 @@ class DownloadBookHandler(object):
                 except exceptions.Timeout as es:
                     if "Connection was reset" in str(es):
                         task.status = Status.ResetErr
+                        Server.MarkHostFail(ToolUtil.GetUrlHost(task.req.url))
                     elif "ECH_REJECTED" in str(es):
                         task.status = Status.EchError
                     elif "TLSV1_ALERT_UNRECOGNIZED_NAME" in str(es):
                         task.status = Status.SNIError
                     else:
                         task.status = Status.TimeOut
+                        if "too slow" in str(es):
+                            # 连上了但拉不动数据，不是解析的问题
+                            task.req.isSlowFail = True
                     isFail = True
                     Log.Error(es)
                 except exceptions.SSLError as es:
@@ -1025,11 +1029,14 @@ class DownloadBookHandler(object):
                         task.status = Status.SNIError
                     else:
                         task.status = Status.NetError
+                    # 握手被掐：这个图片域名冷却，后续请求直接走备用 CDN
+                    Server.MarkHostFail(ToolUtil.GetUrlHost(task.req.url))
                     isFail = True
                     Log.Error(es)
                 except exceptions.ConnectionError as es:
                     isFail = True
                     task.status = Status.ConnectErr
+                    Server.MarkHostFail(ToolUtil.GetUrlHost(task.req.url))
                     Log.Error(es)
                 except exceptions.RequestException as es:
                     if "timed out" in str(es):
@@ -1049,6 +1056,12 @@ class DownloadBookHandler(object):
                 # 异常图片
                 if len(data) < 20 or isFail:
                     Log.Warn(f"download_error_picture, url:{backData.req.url}, data:{len(data)}, is_fail:{isFail}")
+                    ## DoH 兜底：系统 DNS 被污染时，换图片域名也没用
+                    if TryDohPin(backData.req):
+                        backData.req.isReset = True
+                        backData.req.resetCnt += 1
+                        Server().ReDownload(backData)
+                        return
                     ## 尝试切换图片地址
                     backData.req.ResetToSwitchNextUrl()
                     if backData.req.resetCnt >= 0:

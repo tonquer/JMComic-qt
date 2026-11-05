@@ -13,6 +13,7 @@ import server.res as res
 from config import config
 from config.global_config import GlobalConfig
 from qt_owner import QtOwner
+from server.dns_resolver import DnsResolver
 from task.qt_task import TaskBase
 from tools.log import Log
 from tools.singleton import Singleton
@@ -43,6 +44,33 @@ def handler(request):
     return generator
 
 
+def TryDohPin(request):
+    """请求失败后用 DoH 重新解析域名，并把结果固定到这条请求上。
+
+    返回 True 表示请求参数已经变了，值得用同一个 URL 再试一次。
+    系统 DNS 被污染时换线路是没用的，所以先走这条路。
+    """
+    if not request.CanDoHResolve():
+        return False
+    host = ToolUtil.GetUrlHost(request.url)
+    if host in request.dohFailHosts:
+        return False
+    if request.dohPinIp:
+        # 固定过的 IP 也没连上，缓存作废，换成新解析的结果再试
+        DnsResolver().Invalidate(host)
+        request.ClearDnsPin()
+        if host in request.dohTryHosts:
+            request.dohFailHosts.add(host)
+            return False
+    ip = DnsResolver().Resolve(host)
+    if not ip:
+        request.dohFailHosts.add(host)
+        return False
+    request.SetDnsPin(ip)
+    request.dohTryHosts.add(host)
+    return True
+
+
 # class NewSession(requests2.Session):
 #     def __init__(self, **kwargs):
 #         requests2.Session.__init__(self, **kwargs)
@@ -69,6 +97,9 @@ class Task(object):
         self.cacheAndLoadPath = cacheAndLoadPath
         self.loadPath = loadPath
         self.index=0
+        # 耗时分项（毫秒）：入队时刻、队列等待、网络、解析
+        self.timeEnqueue = 0.0
+        self.waitMs = -1
 
     @property
     def bakParam(self):
@@ -83,6 +114,29 @@ class Task(object):
 
 
 class Server(Singleton):
+    # 域名冷却表：host -> 冷却结束时刻。被 TLS 重置/掐断连接的域名先停用一会儿，
+    # 期间新请求直接从备用域名起步（见 __DealHeaders），省掉每个请求的失败延迟。
+    # 只存时间戳，GIL 下读写原子，不需要加锁
+    _hostCooldown = {}
+
+    @staticmethod
+    def MarkHostFail(host, ttl=120):
+        if not host:
+            return
+        Server._hostCooldown[host] = time.time() + ttl
+
+    @staticmethod
+    def IsHostCooling(host):
+        if not host:
+            return False
+        until = Server._hostCooldown.get(host)
+        if not until:
+            return False
+        if until < time.time():
+            Server._hostCooldown.pop(host, None)
+            return False
+        return True
+
     def __init__(self) -> None:
         Singleton.__init__(self)
         self.handler = {}
@@ -98,11 +152,18 @@ class Server(Singleton):
         # self._oldQueue = Queue()
         self._speedQueue = Queue()
         self.threadHandler = 0
+        # 网络配置（尤其代理）改变时自增，工作线程据此丢弃旧连接
+        self.sessionGeneration = 0
         self.threadNum = config.ThreadNum
 
         from config.setting import Setting
         self.downloadNum = Setting.MultiNum.value
         self.allWaitThread = []
+        # 请求耗时统计：{请求类名: [次数, 等待合计, 网络合计, 解析合计, 网络最大]}
+        # 只记类名和耗时，不含 URL、账号等任何敏感字段
+        self.statsLock = threading.Lock()
+        self.stats = {}
+        threading.Thread(target=self._StatsLoop, daemon=True).start()
         # self.threadSession = []
         # self.downloadSession = []
         # self.oldSession = []
@@ -171,17 +232,50 @@ class Server(Singleton):
     
     def Run(self, index):
         time.sleep(2)
+        # session 在线程内复用，才能保留 TCP/TLS 连接，避免每个请求都重新握手。
+        # 网络配置变化时（ResetSessions 自增 generation）重建，保证设置马上生效。
+        generation = -1
+        session = None
         while True:
             task = self._inQueue.get(True)
             self._inQueue.task_done()
+            if task == "":
+                break
+            if isinstance(task, Task) and task.timeEnqueue:
+                # 排队等待太久说明线程数不够或线程被慢请求占住
+                task.waitMs = round((time.time() - task.timeEnqueue) * 1000)
             try:
-                with requests2.Session() as session:
-                    if task == "":
-                        break
-                    self._Send(task, index, session)
+                if session is None or generation != self.sessionGeneration:
+                    if session is not None:
+                        try:
+                            session.close()
+                        except Exception:
+                            pass
+                    session = requests2.Session()
+                    generation = self.sessionGeneration
+                self._Send(task, index, session)
             except Exception as es:
                 Log.Error(es)
+            finally:
+                if session is not None:
+                    try:
+                        session.cookies.clear()
+                    except Exception:
+                        pass
+        if session is not None:
+            try:
+                session.close()
+            except Exception:
+                pass
         pass
+
+    def ResetSessions(self):
+        """让所有工作线程在下一次请求前重建 session
+
+        代理、超时等网络配置变化后调用，否则复用的连接仍沿用旧配置。
+        """
+        self.sessionGeneration += 1
+        Log.Info("http sessions reset, generation={0}".format(self.sessionGeneration))
 
     def RunSpeed(self, index):
         time.sleep(2)
@@ -229,16 +323,37 @@ class Server(Singleton):
 
     def RunDownload(self, index):
         time.sleep(2)
+        # 同上：session 复用保留连接，配置变化时重建
+        generation = -1
+        session = None
         while True:
             task = self._downloadQueue.get(True)
             self._downloadQueue.task_done()
+            if task == "":
+                break
             try:
-                with requests2.Session(impersonate="chrome110") as session:
-                    if task == "":
-                        break
-                    self._Download(task, index, session)
+                if session is None or generation != self.sessionGeneration:
+                    if session is not None:
+                        try:
+                            session.close()
+                        except Exception:
+                            pass
+                    session = requests2.Session(impersonate="chrome110")
+                    generation = self.sessionGeneration
+                self._Download(task, index, session)
             except Exception as es:
                 Log.Error(es)
+            finally:
+                if session is not None:
+                    try:
+                        session.cookies.clear()
+                    except Exception:
+                        pass
+        if session is not None:
+            try:
+                session.close()
+            except Exception:
+                pass
         pass
 
     def UpdateDns(self, address, imageAddress, loginProxy=""):
@@ -321,6 +436,23 @@ class Server(Singleton):
             if len(request.resetUrl) > 0:
                 request.resetCnt = min(len(request.resetUrl), 3)
 
+        # 域名刚被打断（TLS重置/连接失败）时，别再让每个请求都先在它身上
+        # 撞一遍：一页封面要付出几十次失败延迟。直接从备用域名起步
+        if request.resetUrl and Server.IsHostCooling(ToolUtil.GetUrlHost(request.url)):
+            request.ResetToSwitchNextUrl()
+
+    def SendSync(self, request, token=""):
+        """在调用线程同步执行一个请求（不进队列），返回 Task。
+
+        与 Send(isASync=False) 一样会先做 __DealHeaders（备用线路等），
+        供 MCP server 这类无 GUI 的调用方使用。
+        """
+        self.__DealHeaders(request, token)
+        task = Task(request, "")
+        with requests2.Session() as session:
+            self._Send(task, 0, session)
+        return task
+
     def Send(self, request, token="", backParam="", isASync=True, index=0):
         self.__DealHeaders(request, token)
         if isinstance(request, req.SpeedTestReq):
@@ -338,14 +470,20 @@ class Server(Singleton):
                         return self._Send(Task(request, backParam), index, session)
 
             if isASync:
-                return self._inQueue.put(Task(request, backParam))
+                task = Task(request, backParam)
+                task.timeEnqueue = time.time()
+                return self._inQueue.put(task)
             else:
                 with requests2.Session() as session:
                     return self._Send(Task(request, backParam), index, session)
 
     def _Send(self, task, index, session):
+        netStart = time.time()
         try:
             task.req.resetCnt -= 1
+            # 每次尝试都从干净的状态开始，否则重试成功后还带着上一次的错误
+            task.status = Status.Ok
+            task.req.isSlowFail = False
             Log.Info("request{}-> backId:{}, {}".format(index, task.bakParam, task.req))
             if QtOwner().isOfflineModel:
                 task.status = Status.OfflineModel
@@ -375,12 +513,19 @@ class Server(Singleton):
         except exceptions.Timeout as es:
             if "Connection was reset" in str(es):
                 task.status = Status.ResetErr
+                Server.MarkHostFail(ToolUtil.GetUrlHost(task.req.url))
             elif "ECH_REJECTED" in str(es):
                 task.status = Status.EchError
             elif "TLSV1_ALERT_UNRECOGNIZED_NAME" in str(es):
                 task.status = Status.SNIError
+                Server.MarkHostFail(ToolUtil.GetUrlHost(task.req.url))
             else:
                 task.status = Status.TimeOut
+                if "too slow" in str(es):
+                    task.req.isSlowFail = True
+                elif "with 0 " in str(es) or "Connection timed out" in str(es):
+                    # 一个字节都没等到：连接级失败，这域名先冷却一下
+                    Server.MarkHostFail(ToolUtil.GetUrlHost(task.req.url))
             Log.Warn(f"error:{task.req.GetPri()}")
             Log.Error(es)
         except exceptions.SSLError as es:
@@ -392,10 +537,13 @@ class Server(Singleton):
                 task.status = Status.SNIError
             else:
                 task.status = Status.NetError
+            # 握手阶段被掐（SSL_ERROR_SYSCALL / reset 等），域名冷却
+            Server.MarkHostFail(ToolUtil.GetUrlHost(task.req.url))
             Log.Warn(f"error:{task.req.GetPri()}")
             Log.Error(es)
         except exceptions.ConnectionError as es:
             task.status = Status.ConnectErr
+            Server.MarkHostFail(ToolUtil.GetUrlHost(task.req.url))
             Log.Warn(f"error:{task.req.GetPri()}")
             Log.Error(es)
         except Exception as es:
@@ -405,13 +553,23 @@ class Server(Singleton):
         except:
             Log.Error(f"error:{task.req.GetPri()}")
         finally:
-            Log.Info("response{}-> backId:{}, {}, st:{}, {}".format(index, task.backParam, task.req.__class__.__name__, task.status, task.res))
+            netMs = round((time.time() - netStart) * 1000)
+            Log.Info("response{}-> backId:{}, {}, st:{}, net:{}ms, wait:{}ms, {}".format(
+                index, task.backParam, task.req.__class__.__name__, task.status,
+                netMs, task.waitMs, task.res))
 
-        if task.status != Status.Ok and task.req.resetCnt > 0:
-            task.req.ResetToSwitchNextUrl()
-            self._Send(task, index, session)
-            return
+        if task.status != Status.Ok:
+            # 先试 DoH 兜底：系统 DNS 被污染时，换备用线路也一样打不开
+            if TryDohPin(task.req):
+                task.req.resetCnt += 1  # DoH 重试不占用备用线路的次数
+                self._Send(task, index, session)
+                return
+            if task.req.resetCnt > 0:
+                task.req.ResetToSwitchNextUrl()
+                self._Send(task, index, session)
+                return
 
+        parseStart = time.time()
         try:
             self.handler.get(task.req.__class__.__name__)(task)
             # if isinstance(task.res.raw, requests2.Response):
@@ -423,7 +581,46 @@ class Server(Singleton):
             Log.Debug(es)
         finally:
             task.session = None
+            self._AddStats(task.req.__class__.__name__, task.waitMs,
+                           round((time.time() - netStart) * 1000),
+                           round((time.time() - parseStart) * 1000))
             return task.res
+
+    def _AddStats(self, name, waitMs, netMs, parseMs):
+        try:
+            with self.statsLock:
+                st = self.stats.setdefault(name, [0, 0.0, 0.0, 0.0, 0.0])
+                st[0] += 1
+                if waitMs > 0:
+                    st[1] += waitMs
+                if netMs > 0:
+                    st[2] += netMs
+                    if netMs > st[4]:
+                        st[4] = netMs
+                if parseMs > 0:
+                    st[3] += parseMs
+        except Exception:
+            pass
+
+    def _StatsLoop(self):
+        """每 5 分钟把累计耗时写进日志，和上一次相比没有新请求就不输出"""
+        lastCount = 0
+        while True:
+            time.sleep(300)
+            try:
+                with self.statsLock:
+                    total = sum(v[0] for v in self.stats.values())
+                    if total == lastCount:
+                        continue
+                    lastCount = total
+                    snapshot = {k: v[:] for k, v in self.stats.items()}
+                lines = []
+                for k, v in sorted(snapshot.items(), key=lambda x: -x[1][0]):
+                    lines.append("  {} x{}, wait {:.0f}ms, net {:.0f}ms(max {:.0f}), parse {:.0f}ms".format(
+                        k, v[0], v[1] / v[0], v[2] / v[0], v[4], v[3] / v[0]))
+                Log.Info("request stats since start:\n" + "\n".join(lines))
+            except Exception:
+                pass
 
     def Post(self, task, index=0):
         request = task.req
@@ -537,6 +734,8 @@ class Server(Singleton):
     def _Download(self, task, index, session):
         try:
             task.req.resetCnt -= 1
+            task.status = Status.Ok
+            task.req.isSlowFail = False
             if not task.req.isReload:
                 if not isinstance(task.req, req.SpeedTestReq) and not task.req.savePath:
                     for cachePath in [task.req.loadPath, task.req.cachePath]:

@@ -162,6 +162,17 @@ class ComicItemWidget(QWidget, Ui_ComicItem):
                             Qt.SmoothTransformation)
         self.picLabel.setPixmap(newPic)
 
+    def SetPictureImage(self, image):
+        """上屏已在后台线程解码并缩放好的 QImage，主线程只剩 QPixmap 转换"""
+        self.isWaifu2x = False
+        self.isWaifu2xLoading = False
+        if image and not image.isNull():
+            pic = QPixmap.fromImage(image)
+            pic.setDevicePixelRatio(self.devicePixelRatio())
+            self.picLabel.setPixmap(pic)
+        else:
+            self.picLabel.setPixmap(QPixmap())
+
     def SetWaifu2xData(self, data):
         pic = QPixmap()
         if not data:
