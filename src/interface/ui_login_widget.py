@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_login_widget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.3
+## Created by: Qt User Interface Compiler version 6.9.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -27,7 +27,7 @@ class Ui_LoginWidget(object):
         self.verticalLayout_2 = QVBoxLayout(LoginWidget)
         self.verticalLayout_2.setSpacing(12)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_2.addItem(self.verticalSpacer)
 
@@ -78,7 +78,7 @@ class Ui_LoginWidget(object):
 
         self.verticalLayout_2.addLayout(self.horizontalLayout)
 
-        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_2.addItem(self.verticalSpacer_2)
 

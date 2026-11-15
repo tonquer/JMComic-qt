@@ -1,3 +1,4 @@
+from qt_owner import QtOwner
 from PySide6.QtCore import Qt, QSize, Signal
 from PySide6.QtGui import QPixmap, QIcon, QFont, QFontMetrics, QImage
 from PySide6.QtWidgets import QWidget
@@ -23,6 +24,7 @@ class ComicItemWidget(QWidget, Ui_ComicItem):
         self.category = ""
         self.tags = ""
         self.rawBook = None
+        self.cacheImageTaskId = 0
 
         self.index = 0
         self.url = ""
@@ -40,17 +42,14 @@ class ComicItemWidget(QWidget, Ui_ComicItem):
         width = baseW * rate / 100
         height = baseH * rate / 100
 
-        icon2 = QIcon()
-        icon2.addFile(u":/png/icon/new.svg", QSize(), QIcon.Normal, QIcon.Off)
-
         self.toolButton.setMinimumSize(QSize(0, 40))
         self.toolButton.setFocusPolicy(Qt.NoFocus)
-        self.toolButton.setIcon(icon2)
+        self.toolButton.setIcon(QtOwner().globalNewIcon)
         self.toolButton.setIconSize(QSize(32, 32))
 
         self.picLabel.setFixedSize(width, height)
         if self.isShiled:
-            pic = QImage(":/png/icon/shiled.svg")
+            pic = QtOwner().globalShieldImage
             radio = self.devicePixelRatio()
             pic.setDevicePixelRatio(radio)
             newPic = pic.scaled(self.picLabel.width() * radio, self.picLabel.height() * radio, Qt.KeepAspectRatio,
@@ -64,7 +63,7 @@ class ComicItemWidget(QWidget, Ui_ComicItem):
         # self.categoryLabel.setMinimumSize(210, 25)
         # self.categoryLabel.setMaximumSize(210, 150)
 
-        self.starButton.setIcon(QIcon(":/png/icon/icon_bookmark_on.png"))
+        self.starButton.setIcon(QtOwner().globalStarIcon)
         self.starButton.setIconSize(QSize(20, 20))
         self.starButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.starButton.setMinimumHeight(24)
@@ -151,28 +150,34 @@ class ComicItemWidget(QWidget, Ui_ComicItem):
 
     def SetPicture(self, data):
         self.picData = data
-        pic = QPixmap()
-        if data:
-            pic.loadFromData(data)
+        # pic = QPixmap()
+        # if data:
+        #     pic.loadFromData(data)
         self.isWaifu2x = False
         self.isWaifu2xLoading = False
-        radio = self.devicePixelRatio()
-        pic.setDevicePixelRatio(radio)
-        newPic = pic.scaled(self.picLabel.width() * radio, self.picLabel.height() * radio, Qt.KeepAspectRatio,
-                            Qt.SmoothTransformation)
-        self.picLabel.setPixmap(newPic)
+        if not data:
+            self.picLabel.setPixmap(QPixmap())
+        # radio = self.devicePixelRatio()
+        # pic.setDevicePixelRatio(radio)
+        # newPic = pic.scaled(self.picLabel.width() * radio, self.picLabel.height() * radio, Qt.KeepAspectRatio,
+        #                     Qt.SmoothTransformation)
+        # self.picLabel.setPixmap(newPic)
+
+    def SetQImage(self, image):
+        pic = QPixmap(image)
+        self.picLabel.setPixmap(pic)
 
     def SetWaifu2xData(self, data):
-        pic = QPixmap()
+        # pic = QPixmap()
         if not data:
             return
         self.isWaifu2x = True
         self.isWaifu2xLoading = False
-        pic.loadFromData(data)
-        radio = self.devicePixelRatio()
-        pic.setDevicePixelRatio(radio)
-        newPic = pic.scaled(self.picLabel.width()*radio, self.picLabel.height()*radio, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        self.picLabel.setPixmap(newPic)
+        # pic.loadFromData(data)
+        # radio = self.devicePixelRatio()
+        # pic.setDevicePixelRatio(radio)
+        # newPic = pic.scaled(self.picLabel.width()*radio, self.picLabel.height()*radio, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        # self.picLabel.setPixmap(newPic)
 
     def SetPictureErr(self, status):
         self.picLabel.setText(Str.GetStr(status))

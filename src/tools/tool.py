@@ -1,5 +1,6 @@
 import base64
 import hashlib
+import ipaddress
 import json
 import math
 import os
@@ -48,6 +49,9 @@ def time_me(fn):
 
 
 class ToolUtil(object):
+    AllUseFormat = [".jpg", ".png", ".gif", ".webp", ".bmp", ".apng", ".jpeg", ".jxl", ".avif"]
+    AllFormatStr = [v.replace(".", "") for v in AllUseFormat]
+    NeedConvertFormat = ["jxl", "avif"]
 
     @staticmethod
     def DictToUrl(paramDict):
@@ -160,14 +164,14 @@ class ToolUtil(object):
         try:
             from PIL import Image
             from io import BytesIO
-            a = BytesIO(data)
-            img = Image.open(a)
-
-            format = ""
-            if getattr(img, "is_animated", ""):
-                format = img.format
-            a.close()
-            return format
+            with (
+                BytesIO(data) as buffer,
+                Image.open(buffer) as img,
+            ):
+                format = ""
+                if getattr(img, "is_animated", ""):
+                    format = img.format
+                return format
         except Exception as es:
             Log.Error(es)
         return ""
@@ -176,25 +180,94 @@ class ToolUtil(object):
     def GetPictureSize(data):
         if not data:
             return 0, 0, "jpg", False
+
+        try:
+            import pillow_jxl
+            import pillow_avif
+        except Exception as es:
+            Log.Error(es)
+
         try:
             from PIL import Image
             from io import BytesIO
-            a = BytesIO(data)
-            img = Image.open(a)
-            isAnima = getattr(img, "is_animated", False)
-            if img.format == "PNG":
-                mat = "png"
-            elif img.format == "GIF":
-                mat = "gif"
-            elif img.format == "WEBP":
-                mat = "webp"
-            else:
-                mat = "jpg"
-            a.close()
-            return img.width, img.height, mat, isAnima
+            with (
+                BytesIO(data) as buffer,
+                Image.open(buffer) as img,
+            ):
+                isAnima = getattr(img, "is_animated", False)
+                if img.format.upper() == "PNG":
+                    mat = "png"
+                elif img.format.upper() == "GIF":
+                    mat = "gif"
+                elif img.format.upper() == "WEBP":
+                    mat = "webp"
+                elif img.format.upper() == "JXL":
+                    mat = "jxl"
+                elif img.format.upper() == "AVIF":
+                    mat = "avif"
+                else:
+                    mat = "jpg"
+                return img.width, img.height, mat, isAnima
         except Exception as es:
             Log.Error(es)
         return 0, 0, "jpg", False
+
+    @staticmethod
+    def GetCanUseData(data):
+        from qt_owner import QtOwner
+        try:
+            import pillow_jxl
+            import pillow_avif
+        except Exception as es:
+            Log.Error(es)
+
+        try:
+            from PIL import Image
+            from io import BytesIO
+            with (
+                BytesIO(data) as buffer,
+                Image.open(buffer) as img,
+            ):
+                if img.format.lower() in ToolUtil.NeedConvertFormat and img.format.lower() not in QtOwner().allSupportFmt:
+                    toMat = "PNG"
+                    newBuffer = BytesIO()
+                    img.save(newBuffer, format=toMat)
+                    newData = newBuffer.getvalue()
+                    newBuffer.close()
+                    return newData
+                else:
+                    return data
+        except Exception as es:
+            Log.Error(es)
+        return data
+
+    @staticmethod
+    def GetCanConvertUseData(data):
+        try:
+            import pillow_jxl
+            import pillow_avif
+        except Exception as es:
+            Log.Error(es)
+
+        try:
+            from PIL import Image
+            from io import BytesIO
+            with (
+                BytesIO(data) as buffer,
+                Image.open(buffer) as img,
+            ):
+                if img.format.lower() in ToolUtil.NeedConvertFormat:
+                    toMat = "PNG"
+                    newBuffer = BytesIO()
+                    img.save(newBuffer, format=toMat)
+                    newData = newBuffer.getvalue()
+                    newBuffer.close()
+                    return newData
+                else:
+                    return data
+        except Exception as es:
+            Log.Error(es)
+        return data
 
     # @staticmethod
     # def GetLookModel(category):
@@ -262,25 +335,27 @@ class ToolUtil(object):
     def LoadCachePicture(filePath):
         try:
             c = CTime()
-            formatList = [".jpg", ".png", ".gif", ".webp", ".bmp", ".apng"]
-            for mat in formatList:
-                if filePath[-4:] in formatList:
+            path = ""
+            for mat in ToolUtil.AllUseFormat:
+                if filePath[-4:] in ToolUtil.AllUseFormat:
                     path = filePath
-                elif filePath[-5:] in formatList:
+                    mat = filePath[-4:]
+                elif filePath[-5:] in ToolUtil.AllUseFormat:
                     path = filePath
+                    mat = filePath[-5:]
                 else:
                     path = filePath + mat
                 if not os.path.isfile(path):
                     continue
-
+                data = None
                 with open(path, "rb") as f:
                     data = f.read()
-                    c.Refresh("LoadCache", path)
                     if len(data) < 20:
                         Log.Debug(f"load_fail_picture, {path}")
                         continue
-                    return data
 
+                return data
+            c.Refresh("LoadCache", path)
         except Exception as es:
             Log.Error(es)
         return None
@@ -290,16 +365,90 @@ class ToolUtil(object):
         if path and not os.path.isdir(os.path.dirname(path)):
             os.makedirs(os.path.dirname(path))
 
-        formatList = [".jpg", ".png", ".gif", ".webp", ".bmp", ".apng", "jpeg"]
         if path and data:
-            if path[-4:] in formatList:
+            path = ToolUtil.GetPictureName(path, format)
+            with open(path, "wb+") as f:
+                f.write(data)
+
+    @staticmethod
+    def SaveConvertPicture(data, path, format):
+        if path and not os.path.isdir(os.path.dirname(path)):
+            os.makedirs(os.path.dirname(path))
+
+        from qt_owner import QtOwner
+        if path and data:
+            newFormat = QtOwner().GetConvertFmtRule(format)
+            if newFormat != format and newFormat in ToolUtil.AllFormatStr:
+                newData = ToolUtil.ConvertPicture(data, newFormat)
+                if path[-4:] in ToolUtil.AllUseFormat:
+                    path = path[:-4]
+                elif path[-5:] in ToolUtil.AllUseFormat:
+                    path = path[:-5]
+                path = ToolUtil.GetPictureName(path, format)
+            else:
+                newData = data
+                path = ToolUtil.GetPictureName(path, format)
+            with open(path, "wb+") as f:
+                f.write(newData)
+
+    @staticmethod
+    def SaveDownloadPicture(data, path, format):
+        if path and not os.path.isdir(os.path.dirname(path)):
+            os.makedirs(os.path.dirname(path))
+
+        from qt_owner import QtOwner
+        if path and data:
+            newFormat = QtOwner().GetDownFmtRule(format)
+            if newFormat != format and newFormat in ToolUtil.AllFormatStr:
+                newData = ToolUtil.ConvertPicture(data, newFormat)
+                if path[-4:] in ToolUtil.AllUseFormat:
+                    path = path[:-4]
+                elif path[-5:] in ToolUtil.AllUseFormat:
+                    path = path[:-5]
+                path = ToolUtil.GetPictureName(path, newFormat)
+            else:
+                newData = data
+                path = ToolUtil.GetPictureName(path, format)
+            with open(path, "wb+") as f:
+                f.write(newData)
+
+    @staticmethod
+    def ConvertPicture(data, fmt):
+        try:
+            import pillow_jxl
+            import pillow_avif
+        except Exception as es:
+            Log.Error(es)
+        try:
+            from PIL import Image
+            from io import BytesIO
+            with (
+                BytesIO(data) as buffer,
+                BytesIO() as output_io,
+                Image.open(buffer) as img,
+            ):
+                imgFmt = fmt
+                if fmt == "jpg" and img.mode in ("RGBA", "P"):
+                    img = img.convert("RGB")
+                    imgFmt = "JPEG"
+                img.save(output_io, format=imgFmt)
+                jpeg_bytes = output_io.getvalue()
+                return jpeg_bytes
+        except Exception as es:
+            Log.Error(es)
+        return data
+
+    @staticmethod
+    def GetPictureName(path, format):
+        if path:
+            if path[-4:] in ToolUtil.AllUseFormat:
                 pass
-            elif path[-5:] in formatList:
+            elif path[-5:] in ToolUtil.AllUseFormat:
                 pass
             else:
                 path = path + "." + format
-            with open(path, "wb+") as f:
-                f.write(data)
+        return path
+
 
     @staticmethod
     def IsHaveFile(filePath):
@@ -762,6 +911,8 @@ class ToolUtil(object):
     # 解析登录结果
     @staticmethod
     def ParseMsg(data):
+        if isinstance(data, bytes):
+            data = data.decode("utf-8")
         isSuc = False
         msg = ""
         errList = re.findall(r"(?<=toastr\[\'error\'\]\(\").*\"", data)
@@ -1295,15 +1446,22 @@ class ToolUtil(object):
             sock.close()
         return has_ipv6
 
-if __name__ == "__main__":
-    from server import req
-    reqs = req.GetLatestInfoReq2()
-
-    Text = "wV60pmqKsG5SWYgofUhsBQVFHVvxowZJ+Hp3GooM8NoZsL8g9klKHgeiNlXqVw9IXviwHxceBOQCYmkLulZNYEk6G\/rdv5Zif644m6s1EAcbdTpia1PqD3kOuCV9ny6AjmWGitpopiHs6OD+PWVASX28VD33Vh0ngIC1L2HX+gGqeDGtB5jboRoNyodsZe21aWVFP9FwYRvCT\/iTivjUrZ40ByRad1nFfuxqn5OHkWq983jFtsIeUCnJTFBjWOGq5XMA7XmxHmz9OJKT2PR5E0gD+HHcihbGfzMeck\/RSJtwZmospTfJL\/\/WFGzR993VpSbXNLANgd1x1dlkVWp7swQhhewQM\/uVgBNIW\/HIWfB9vFQ991YdJ4CAtS9h1\/oBE3qSo+F5szfGb7iWpKINeSyHzlYWMZDCCcFfz0EHG5iE2SsxtVz7Mm+66Gz4zT30V9vW46V9L4NL+D+kuLq8++VzAO15sR5s\/TiSk9j0eRNIA\/hx3IoWxn8zHnJP0UibLLdWv0yHvy2VJm1bFinjaBrK1pG9BZc6VigqnRGY4nh6eOfPcq\/r61rtT82EdmNpfbxUPfdWHSeAgLUvYdf6ARN6kqPhebM3xm+4lqSiDXmq5h0gTnH\/3xhi\/dFtGzydwXzuoPWzF9knUNkagjG8UXYZRRDP2IcQOYvkGz7ef119vFQ991YdJ4CAtS9h1\/oB+OqsJhSzDRAaElXmoPbbJlWWD4v2Ak8bImrFw29qy3uc2DYJF3Tr7BOEx+9YzMUTFiMWl5PFnV1QfWXIpnj3wk3KfxMefHAjKD7nnsv8tNdSTlAgBpC8fN0XhSC15b7kuRVrutJMShlFEwOG5LMu57exmt5PLtON\/51Oc7GHuW72D8xT4FVV9\/Rm0zUAjTpHn9bG7C\/aFfT9GKCcoxJxsljEn8suqOayO0s1o8RmcDbqO9+sKf3y3qZCHjK4BCJMBG8nPlEsniGb1ixZVJ9yBzhYxJrSMVXtOKVcmDeHM4qObRVLIOqAq+3OHjQYjVstCl2n6Fj5O+VvRU35tJNUB3pa7THCoIHXj\/kvW+fvabkl9fNqJb\/\/dCklWVg\/KAXtBo1wq+G5R9wu7ZfE7fnW4Gm+m8oVTTC0UTAkeFga+bIgT95r2+3biocmK3MiiafE9k7e3c94Ne+fL8jeSTjewvbtLHglDAM2GGb1cDcALEvGyH+AtmsTbz+l6UqZifXEiABBK\/6zaBkSw\/AWZVWUGpS7Pcgo5FRsUUkCvMRclRg0hMLqtQAh6JK2fFzZJYhX+8JmlmmAno63LodrXvE\/l9R5CysTMpRg+4QJ5G5wj0eKVE0dw6Qw8TS7ghhFENruLNLpTS0tH7LUKSS4APnuTDzwmWnFgTzhDHOcOzQNPH7SxJgqRHCLOoevbf9rkfHoDYhrhvhNiZhsYQ3fR1vvJ18Q2vFOkDuWcIm0+ngV10T3UgduENf3ob3hZeJdW2wUxYdDcXxvsIn\/CBOF+9k5Xi7s8AuhbNuUngXYQQVpY0cLjyiabMkckPW\/UewlY4pgBCRm4ZWkMZGQDzdNXLtZ2ZoGvp6pAGbRrLCFQZolndQe\/6DhvKirsmSdYUF+2UOZ2GlRrqW3C3VCp4OjiMpHF9Ds26eSlB5AhqQp\/f+f\/96iQTOJtwHpcsIRsuoKHXNBpKBxfuALnOqv9xwpOXC2OpjHKSP9CJdVDoPaWOUpAT5o181L5RWCvhsEzY8OIsm1A+S3dIHfeZPVcV8hwXBeaQ=="
-    reqs.now = 1640933310
-
-    # Text = "gj2Slw7zsER7I+7ve1GoMmSc4sPx98spX5fE\/UMNA7KJWGBkHGkHmTdzu+d9RBbtjyGLRSoem4CBpI8V88UxLYbZiPSbA7voN9ft8h78tlXyKAlLxfR4q43FeEOZ9iqhoaZzEXKobDbRAY3oVL12xf2rY1JoGRqD1Un+iZgEEe1knOLD8ffLKV+XxP1DDQOyiVhgZBxpB5k3c7vnfUQW7UkmyWUxo3LXMCe8zmOcgncm1jJto49dAVI1pqc5YJteOQcmHglyNS\/jBhf6er7v57zoBITHb2flKWD5DFA32GBZo\/LN5d3FlymLgKLHqelbdqnIOmmclKCW0Qj1h60N1yGg3i4CRDm2CQrLfKVSUrFubNyxxx83K5aIbvZ9NubWJ7fK3G+cYCwAUE18z2Rx9gMgOaef5pvHncrWJ5ItQ3dGVB1CxpVfSk5nmBNsYSO7HoQkg\/YuoD\/n5rB8210kK5sRzcYeaJ3VdySxoJuMC3+\/TF8KtbI+INY8XQFKWWOdTEMOpHdx50C5tVCDkuwzg+XaqnZoAlqhs7I9\/umInvhanEoUO2riA\/M9guiD\/5poRmW39EWpzD8e3QaHo1nCClI40vvsrkT6g4FSRdF1bZW\/1hxh06OYndviKtyYWn85no+GTqLOx4EqgRbHHzA+XhXlkx89fFI7PcocfzMfk8CVuG2LJud\/Znr8yQOVyoXO7GXHOmLA\/4aHwA9H9V9+X1BChE\/doxZtQy9KBoPaA0Q70+NFMpez0a901kNXo01j1torXqu4qBrPVxompGJK4TjuM0DfLsIqfaOZWmw4RXomhP6AWF+4Em5B\/qTEyq99C71uTH6t10DnLIxf1EscXwM7VXyP1QKGev3LVydfllL8cTWuqyPo\/yuHj\/JtESQnLvzwIvVF8K\/RasAti1J6L\/mXD1jYpSI0R\/JKi+Fjd\/kjOeK8qZ1nhHxQFMkr6wDBKKzW7TmXqj1UUSmLJcpwSDtIKEMeeVkaYW4NciqZhfI8BPJZcgHeVLrHT8pcu+nrTnRLEvVNrsvfaCIWWIlIimDLoICFlKi82r9UxJS+7y6tIOISGKEPHrjxq2BU1ggMitnqDeMP5EGO3dk84rgF2xkiaGKB76ZxYVmxxbnozK\/YBsMhUWG93I3yE3ZqG29f7zEexTVuwAzFMVMizp8rpYx1ClCY9ITp+w0n+u7NBNg6au+npFPzKta7Dw2eYQMwWggF3bQbIjx2YpoHvx\/uQHbV4E33VR1L54RaT5y4rv77qdAlBjnTQXc1X\/LEmxJ7+1WM0Cnk+qLQ3BkcqBTcnrKumzZZgGDZBPSTPUAnUsztwmNDYmK6azJHeEe5QQiVFQC91ZWznVeZArLfH7d1cOcGK2R2Tj4CFId2OHa5QuHwLy9\/Ylxp3h0qdn6r5tXDqbK3E6s9mjL7GwIXdxJt6ocBWGNPRvJkjzERZP9\/ffBpUs10FdcUxA2BYNR3lMvuCdg4CUVX7\/576cjCg9h8P1Pfet9QOFxlrUnr2j+Dfuutg1LOYHrUy\/b64R1nUfkFR1OfdChuAP+g3HmlOQByrd4lSMEX2yKpR0YGCXiSACpWh9N35eRt6\/cnd5L5g1X9wgmCfKVItkECrndJ04vzrY4XCZZZK486ZJxbl2GBI+q65xlWNLpQ7Kvkag9gsg\/35SyPFc+pKQg0YKRlBP5dgMzs48VwW3t3hBdQlvIQJg1rvSGk4qZWRpplUOPU5lN6A\/pFmceXXRkXlsOL5Zy5UDC1okLzGJzPJPUI\/lqIiy4="
-    # reqs.now = 1700559977
-
-    # Text2 = "X+bnzYIcwF6C7Rd3T7njPI8Ls+7WOpYMYB4Jo0v3EBUxajNiDbkp63V965sLWnuQ9fBoadXgN0Wra0p5YnchwW3+be1xjXtFkch0PChn9aDCLbwt24BPd/i5ZFXyr3nKhhpI1jM7k/KVNayWyuUAhX6XmowZHUD5fOJKWvUD761pNRTi9eq+vNh1XDr3dIWInkFeK7g5aXSGaSKux2z5jUIJzw69HQ300Nf0UJV3iyHbavraaKpGzXbkPhQAsM++"
-    reqs.ParseData(Text)
+    @staticmethod
+    def ExportIpsByStr(text):
+        _IPV4 = re.compile(
+            r'(?<![\w.])' r'(?:25[0-5]|2[0-4]\d|1?\d?\d)' r'(?:\.(?:25[0-5]|2[0-4]\d|1?\d?\d)){3}' r'(?![\w.])')
+        _IPV6 = re.compile(r'(?<![0-9A-Fa-f:])([0-9A-Fa-f:]{2,39})(?![0-9A-Fa-f:])')
+        found, seen = [], set()
+        for raw in _IPV4.findall(text) + _IPV6.findall(text):
+            if not raw or raw in seen:
+                continue
+            try:
+                ip = ipaddress.ip_address(raw)
+            except ValueError:
+                continue
+            if (ip.is_loopback or ip.is_link_local or ip.is_unspecified
+                    or ip.is_multicast or ip.is_reserved):
+                continue
+            seen.add(raw)
+            found.append(raw)
+        return found

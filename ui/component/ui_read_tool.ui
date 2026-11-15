@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>328</width>
+    <width>505</width>
     <height>750</height>
    </rect>
   </property>
@@ -41,9 +41,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-157</y>
-        <width>301</width>
-        <height>897</height>
+        <y>0</y>
+        <width>483</width>
+        <height>934</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -53,7 +53,7 @@
           <number>6</number>
          </property>
          <property name="sizeConstraint">
-          <enum>QLayout::SetDefaultConstraint</enum>
+          <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
          </property>
          <property name="leftMargin">
           <number>0</number>
@@ -70,7 +70,7 @@
          <item>
           <widget class="Line" name="line_6">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
           </widget>
          </item>
@@ -83,7 +83,7 @@
             <string>图片信息</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignCenter</set>
+            <set>Qt::AlignmentFlag::AlignCenter</set>
            </property>
           </widget>
          </item>
@@ -183,7 +183,7 @@
          <item>
           <widget class="Line" name="line">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
           </widget>
          </item>
@@ -196,7 +196,7 @@
             <string>Waifu2x参数</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignCenter</set>
+            <set>Qt::AlignmentFlag::AlignCenter</set>
            </property>
           </widget>
          </item>
@@ -401,7 +401,7 @@
          <item>
           <widget class="Line" name="line_2">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
           </widget>
          </item>
@@ -414,7 +414,7 @@
             <string>翻页设置</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignCenter</set>
+            <set>Qt::AlignmentFlag::AlignCenter</set>
            </property>
           </widget>
          </item>
@@ -435,7 +435,7 @@
               <string>翻页模式：</string>
              </property>
              <property name="alignment">
-              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+              <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
              </property>
             </widget>
            </item>
@@ -473,17 +473,7 @@
              </item>
              <item>
               <property name="text">
-               <string>右左双页(滚轮正序)</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
                <string>等宽模式</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>右左滚动(滚轮正序)</string>
               </property>
              </item>
             </widget>
@@ -517,7 +507,28 @@
               <number>120</number>
              </property>
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QCheckBox" name="animeBox">
+             <property name="text">
+              <string>启用翻页动画</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="switchDouble">
+             <property name="text">
+              <string>切换双页对齐</string>
              </property>
             </widget>
            </item>
@@ -526,7 +537,7 @@
          <item>
           <widget class="Line" name="line_3">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
           </widget>
          </item>
@@ -539,7 +550,7 @@
             <string>自动滚动/翻页</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignCenter</set>
+            <set>Qt::AlignmentFlag::AlignCenter</set>
            </property>
           </widget>
          </item>
@@ -553,7 +564,7 @@
             </widget>
            </item>
            <item>
-            <widget class="WheelSpinBox" name="scrollInitSpeed">
+            <widget class="QSpinBox" name="scrollInitSpeed">
              <property name="minimum">
               <number>1</number>
              </property>
@@ -578,7 +589,7 @@
               </size>
              </property>
              <property name="text">
-              <string>滚动速度（像素）：</string>
+              <string>自动滚动（像素）：</string>
              </property>
             </widget>
            </item>
@@ -592,30 +603,6 @@
              </property>
              <property name="value">
               <number>200</number>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <item>
-            <widget class="QLabel" name="label_2">
-             <property name="text">
-              <string>滚动时间（毫秒）：</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="WheelSpinBox" name="scrollTime">
-             <property name="minimum">
-              <number>50</number>
-             </property>
-             <property name="maximum">
-              <number>2000</number>
-             </property>
-             <property name="value">
-              <number>500</number>
              </property>
             </widget>
            </item>
@@ -654,7 +641,14 @@
          <item>
           <widget class="Line" name="line_8">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="openGLBox">
+           <property name="text">
+            <string>打开OpenGL加速</string>
            </property>
           </widget>
          </item>
@@ -694,7 +688,7 @@
          <item>
           <widget class="Line" name="line_5">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
           </widget>
          </item>
@@ -722,7 +716,7 @@
          <item>
           <widget class="Line" name="line_7">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
           </widget>
          </item>
@@ -771,7 +765,7 @@
          <item>
           <spacer name="verticalSpacer">
            <property name="orientation">
-            <enum>Qt::Vertical</enum>
+            <enum>Qt::Orientation::Vertical</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -784,7 +778,7 @@
          <item>
           <widget class="Line" name="line_4">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
           </widget>
          </item>
@@ -834,7 +828,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>294</x>
-     <y>674</y>
+     <y>792</y>
     </hint>
     <hint type="destinationlabel">
      <x>278</x>
@@ -850,7 +844,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>125</x>
-     <y>715</y>
+     <y>833</y>
     </hint>
     <hint type="destinationlabel">
      <x>181</x>
@@ -866,7 +860,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>294</x>
-     <y>715</y>
+     <y>833</y>
     </hint>
     <hint type="destinationlabel">
      <x>181</x>
@@ -882,7 +876,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>95</x>
-     <y>674</y>
+     <y>792</y>
     </hint>
     <hint type="destinationlabel">
      <x>278</x>
@@ -898,7 +892,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>175</x>
-     <y>566</y>
+     <y>684</y>
     </hint>
     <hint type="destinationlabel">
      <x>105</x>
@@ -914,7 +908,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>212</x>
-     <y>626</y>
+     <y>744</y>
     </hint>
     <hint type="destinationlabel">
      <x>181</x>
@@ -929,8 +923,8 @@
    <slot>OpenWaifu()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>116</x>
-     <y>34</y>
+     <x>101</x>
+     <y>182</y>
     </hint>
     <hint type="destinationlabel">
      <x>181</x>
@@ -946,7 +940,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>123</x>
-     <y>596</y>
+     <y>714</y>
     </hint>
     <hint type="destinationlabel">
      <x>278</x>
@@ -962,7 +956,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>116</x>
-     <y>91</y>
+     <y>248</y>
     </hint>
     <hint type="destinationlabel">
      <x>296</x>
@@ -978,7 +972,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>283</x>
-     <y>91</y>
+     <y>248</y>
     </hint>
     <hint type="destinationlabel">
      <x>298</x>
@@ -994,27 +988,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>294</x>
-     <y>344</y>
+     <y>500</y>
     </hint>
     <hint type="destinationlabel">
      <x>298</x>
      <y>433</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>comboBox</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>ReadImg</receiver>
-   <slot>ChangeReadMode()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>294</x>
-     <y>322</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>402</x>
-     <y>361</y>
     </hint>
    </hints>
   </connection>

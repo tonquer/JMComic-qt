@@ -1,10 +1,13 @@
-from PySide6.QtGui import QImage
-from PySide6.QtCore import Qt
+import threading
+import time
+
+from PySide6.QtGui import QImage, QImageReader
+from PySide6.QtCore import Qt, QBuffer, QIODevice
 
 from task.qt_task import TaskBase
-from task.task_multi import TaskMulti
 from tools.log import Log
-from tools.tool import ToolUtil, time_me
+from tools.tool import ToolUtil
+from view.read.read_perf_probe import Timer
 
 
 class QtQImageTask(object):
@@ -18,7 +21,6 @@ class QtQImageTask(object):
         self.toH = 0
         self.toW = 0
         self.model = 0
-        self.saveParams = None
 
 
 class TaskQImage(TaskBase):
@@ -26,7 +28,19 @@ class TaskQImage(TaskBase):
     def __init__(self):
         TaskBase.__init__(self)
         self.taskObj.imageBack.connect(self.HandlerTask)
-        self.thread.start()
+        self.threadNum = 4
+        self.threadList = []
+        for i in range(self.threadNum+1):
+            thread = threading.Thread(target=self.Run)
+            thread.name = "Task-" + str(self.__class__.__name__)+str(i)
+            thread.daemon = True
+            thread.start()
+            self.threadList.append(thread)
+
+    def Stop(self):
+        for i in range(self.threadNum+1):
+            self._inQueue.put("")
+        return
 
     def Run(self):
         while True:
@@ -42,37 +56,41 @@ class TaskQImage(TaskBase):
             if taskId < 0:
                 break
 
+            info = self._GetTask(taskId)
+            if not info:
+                continue
+            newQ = QImage()
             try:
-                info = self.tasks.get(taskId)
-                if not info:
-                    continue
+                newData = ToolUtil.GetCanUseData(info.data)
+                buf = QBuffer()
+                buf.setData(newData)
+                buf.open(QIODevice.ReadOnly)
+                reader = QImageReader(buf)
+                reader.setAutoTransform(True)
 
-                if not info.data:
-                    return
-                if isinstance(info.saveParams, tuple) and len(info.saveParams) > 1:
-                    epsId, scrambleId, pitureName = info.saveParams
-                    info.data = TaskMulti().GetJmPicResultsResult(info.data, epsId, scrambleId, pitureName)
-                newQ = self.ConverQImage(info)
+                # 该函数会释放GIL锁, 如果使用loadFromData, 会占用GIL依然卡顿
+                q = reader.read()
+                q.setDevicePixelRatio(info.radio)
 
+                # q.loadFromData(newData)
+                # q.setDevicePixelRatio(info.radio)
+                if info.model:
+                    model = info.model
+                else:
+                    model = Qt.KeepAspectRatio
+                if 0 < info.toW < q.width() and info.toH == 0:
+                    newQ = q.scaledToWidth(info.toW, Qt.SmoothTransformation)
+                elif info.toW > 0 and info.toH > 0:
+                    newQ = q.scaled(round(info.toW * info.radio), round(info.toH * info.radio), model, Qt.SmoothTransformation)
+                else:
+                    newQ = q
             except Exception as es:
                 Log.Error(es)
             finally:
                 self.taskObj.imageBack.emit(taskId, newQ)
 
-    @time_me
-    def ConverQImage(self, info):
-        q = QImage()
-        q.loadFromData(info.data)
-        q.setDevicePixelRatio(info.radio)
-        if info.toW > 0:
-            newQ = q.scaled(info.toW * info.radio, info.toH * info.radio, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        else:
-            newQ = q
-        return newQ
-
-    def AddQImageTask(self, data, radio, toW, toH, model, saveParams, callBack=None, backParam=None, cleanFlag=None):
-        self.taskId += 1
-        info = QtQImageTask(self.taskId)
+    def AddQImageTask(self, data, radio, toW, toH, model, callBack=None, backParam=None, cleanFlag=None):
+        info = QtQImageTask(0)
         info.callBack = callBack
         info.backParam = backParam
         info.data = data
@@ -80,36 +98,24 @@ class TaskQImage(TaskBase):
         info.toW = toW
         info.toH = toH
         info.model = model
-        info.saveParams = saveParams
 
-        self.tasks[self.taskId] = info
-        if cleanFlag:
-            info.cleanFlag = cleanFlag
-            taskIds = self.flagToIds.setdefault(cleanFlag, set())
-            taskIds.add(self.taskId)
-        self._inQueue.put(self.taskId)
-        return self.taskId
+        taskId = self._RegisterTask(info, cleanFlag)
+        self._inQueue.put(taskId)
+        return taskId
 
     def ClearQImageTaskById(self, taskId):
-        if taskId in self.tasks:
-            self.tasks.pop(taskId)
+        self._TakeTask(taskId)
 
     def HandlerTask(self, taskId, newData):
         try:
-            info = self.tasks.get(taskId)
+            info = self._TakeTask(taskId)
             if not info:
-                Log.Warn("[Task] not find taskId:{}".format(taskId))
                 return
             assert isinstance(info, QtQImageTask)
-            if info.cleanFlag:
-                taskIds = self.flagToIds.get(info.cleanFlag, set())
-                taskIds.discard(info.taskId)
             if info.callBack:
                 if info.backParam is None:
                     info.callBack(newData)
                 else:
                     info.callBack(newData, info.backParam)
-                del info.callBack
-            del self.tasks[taskId]
         except Exception as es:
             Log.Error(es)

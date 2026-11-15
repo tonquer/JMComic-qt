@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_download.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.3
+## Created by: Qt User Interface Compiler version 6.9.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -63,14 +63,9 @@ class Ui_Download(object):
 
         self.horizontalLayout_3 = QHBoxLayout()
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
-        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_3.addItem(self.horizontalSpacer_2)
-
-        self.webp2Png = QCheckBox(Download)
-        self.webp2Png.setObjectName(u"webp2Png")
-
-        self.horizontalLayout_3.addWidget(self.webp2Png)
 
         self.redownloadRadio = QCheckBox(Download)
         self.redownloadRadio.setObjectName(u"redownloadRadio")
@@ -112,9 +107,14 @@ class Ui_Download(object):
 
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout.addItem(self.horizontalSpacer)
+
+        self.formatButton = QPushButton(Download)
+        self.formatButton.setObjectName(u"formatButton")
+
+        self.horizontalLayout.addWidget(self.formatButton)
 
         self.someDownButton = QPushButton(Download)
         self.someDownButton.setObjectName(u"someDownButton")
@@ -179,7 +179,6 @@ class Ui_Download(object):
         ___qtablewidgetitem9.setText(QCoreApplication.translate("Download", u"\u8f6c\u6362\u8017\u65f6", None));
         ___qtablewidgetitem10 = self.tableWidget.horizontalHeaderItem(10)
         ___qtablewidgetitem10.setText(QCoreApplication.translate("Download", u"\u8f6c\u6362\u72b6\u6001", None));
-        self.webp2Png.setText(QCoreApplication.translate("Download", u"Webp\u8f6cPng", None))
         self.redownloadRadio.setText(QCoreApplication.translate("Download", u"\u5931\u8d25\u540e\u81ea\u52a8\u91cd\u8bd5", None))
         self.skipPic.setText(QCoreApplication.translate("Download", u"\u8d85\u5206\u8df3\u8fc7\u635f\u574f", None))
         self.radioButton.setText(QCoreApplication.translate("Download", u"\u4e0b\u8f7d\u81ea\u52a8\u8fdb\u884c\u8d85\u5206", None))
@@ -187,6 +186,7 @@ class Ui_Download(object):
         self.comboBox.setItemText(1, QCoreApplication.translate("Download", u"\u672a\u5b8c\u6210", None))
         self.comboBox.setItemText(2, QCoreApplication.translate("Download", u"\u5df2\u5b8c\u6210", None))
 
+        self.formatButton.setText(QCoreApplication.translate("Download", u"\u683c\u5f0f\u8f6c\u6362", None))
         self.someDownButton.setText(QCoreApplication.translate("Download", u"\u6279\u91cf\u4e0b\u8f7d", None))
         self.pushButton.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u5f00\u59cb", None))
         self.pushButton_3.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u6682\u505c", None))

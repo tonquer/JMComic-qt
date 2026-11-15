@@ -53,6 +53,7 @@ class UserListWidget(BaseListWidget):
         widget.levelLabel.setText("Lv{}".format(info.level))
         widget.titleLabel.setText(" " + info.title + " ")
         widget.url = info.headUrl
+        widget.path = ToolUtil.GetRealPath(info.id, "user")
         widget.dateLabel.setText(info.date)
         widget.starButton.setText("({})".format(info.like))
         widget.adjustSize()
@@ -72,7 +73,7 @@ class UserListWidget(BaseListWidget):
         from component.widget.comment_item_widget import CommentItemWidget
         assert isinstance(widget, CommentItemWidget)
         if widget.url:
-            self.AddDownloadTask(widget.url, completeCallBack=self.LoadingPictureComplete, backParam=index)
+            self.AddDownloadTask(widget.url, widget.path, completeCallBack=self.LoadingPictureComplete, backParam=index)
 
     def LoadingPictureComplete(self, data, status, index):
 

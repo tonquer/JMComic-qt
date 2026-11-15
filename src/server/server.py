@@ -3,10 +3,11 @@ import json
 import pickle
 import threading
 import time
+from collections import Counter
 from queue import Queue
 
 import curl_cffi.requests.exceptions as exceptions
-from curl_cffi import requests as requests2, CurlOpt, CurlHttpVersion, CurlSslVersion, Session
+from curl_cffi import requests as requests2, CurlOpt, CurlInfo
 
 import server.req as req
 import server.res as res
@@ -17,58 +18,35 @@ from task.qt_task import TaskBase
 from tools.log import Log
 from tools.singleton import Singleton
 from tools.status import Status
+from tools.str import Str
 from tools.tool import ToolUtil
-import socket
-import urllib
-
 
 host_table = {}
-# _orig_getaddrinfo = socket.getaddrinfo
-# # 如果使用代理，無法使用自定義dns
-# def getaddrinfo2(host, port, *args, **kwargs):
-#     if host in host_table:
-#         address = host_table[host]
-#         Log.Info("dns parse, host:{}->{}".format(host, address))
-#     else:
-#         address = host
-#     results = _orig_getaddrinfo(address, port, *args, **kwargs)
-#     return results
-# socket.getaddrinfo = getaddrinfo2
 
 
 def handler(request):
     def generator(handler):
         Server().handler[request.__name__] = handler()
         return handler
+
     return generator
-
-
-# class NewSession(requests2.Session):
-#     def __init__(self, **kwargs):
-#         requests2.Session.__init__(self, **kwargs)
-
-    # def _set_curl_options(self, *args, **kwargs):
-    #     c = args[0]
-    #     if GlobalConfig.WebDnsList.value:
-    #         c.setopt(CurlOpt.RESOLVE, GlobalConfig.WebDnsList.value)
-    #     # c.setopt(CurlOpt.SSL_OPTIONS, CurlOpt.ALLO)
-    #     # c.setopt(CurlOpt.SSLVERSION, 6)
-    #     # c.setopt(CurlOpt.SSL_VERIFYHOST, False)
-    #     # c.setopt(CurlOpt.SSL_VERIFYPEER, False)
-    #     return requests2.Session._set_curl_options(self, *args, **kwargs)
 
 
 class Task(object):
     def __init__(self, request, backParam="", cacheAndLoadPath="", loadPath=""):
         self.req = request
-        self.session = None
         self.res = None
+        self.localParam = None
         self.timeout = request.timeout
         self.backParam = backParam
         self.status = Status.Ok
         self.cacheAndLoadPath = cacheAndLoadPath
         self.loadPath = loadPath
-        self.index=0
+        self.index = 0
+
+    @property
+    def session(self):
+        return self.localParam.session
 
     @property
     def bakParam(self):
@@ -82,13 +60,59 @@ class Task(object):
         return ""
 
 
+# 一个线程里的局部变量
+class ThreadLocalParam:
+    def __init__(self, index=0, impersonate=None):
+        self.session: requests2.Session = None
+        self.impersonate = impersonate
+        self.oldIpList = []
+        self.index = index
+        self.isH3 = False
+
+    def __del__(self):
+        self.Close()
+
+    def Create(self):
+        curlInfos = [
+            CurlInfo.NAMELOOKUP_TIME,
+            CurlInfo.CONNECT_TIME,
+            CurlInfo.APPCONNECT_TIME,
+            CurlInfo.PRETRANSFER_TIME,
+            CurlInfo.STARTTRANSFER_TIME,
+            CurlInfo.TOTAL_TIME
+        ]
+        if self.impersonate:
+            # return requests2.Session(impersonate=self.impersonate, curl_infos=curlInfos,debug=True)
+            return requests2.Session(impersonate=self.impersonate, curl_infos=curlInfos)
+        else:
+            return requests2.Session(curl_infos=curlInfos)
+
+    def IsNeedSwitch(self, request: req.ServerReq):
+        if not self.session:
+            return True
+        return Counter(self.oldIpList) != Counter(request.ipList) or self.isH3 != request.isH3
+
+    def CheckSwitchSession(self, request: req.ServerReq):
+        # 如果curl_opts的RESOLVE出现修改，必须重新创建session，不然自定义dns无效
+        if self.IsNeedSwitch(request):
+            self.Close()
+            self.session = self.Create()
+            self.oldIpList = copy.deepcopy(request.ipList)
+            self.isH3 = request.isH3
+            Log.Info(f"create new session, index:{self.index}, ip:{self.oldIpList}, isH3:{self.isH3}")
+        # 复制curl_opts
+        self.session.curl_options = copy.deepcopy(request.curl_opt)
+
+    def Close(self):
+        if self.session:
+            self.session.close()
+            self.session = None
+
+
 class Server(Singleton):
     def __init__(self) -> None:
         Singleton.__init__(self)
         self.handler = {}
-        # self.session = NewSession()
-        # self.session2 = NewSession()
-        # self.session2 = cloudscraper.session()
         self.address = ""
         self.imageServer = ""
 
@@ -99,103 +123,65 @@ class Server(Singleton):
         self._speedQueue = Queue()
         self.threadHandler = 0
         self.threadNum = config.ThreadNum
-
+        self.speedThreadNum = 8
         from config.setting import Setting
         self.downloadNum = Setting.MultiNum.value
         self.allWaitThread = []
-        # self.threadSession = []
-        # self.downloadSession = []
-        # self.oldSession = []
 
     def Init(self):
-        # self.UpdateProxy()
-        # for i in range(1):
-            # self.oldSession.append(requests2.Session())
-            # thread = threading.Thread(target=self.RunOld, args=[i])
-            # thread.setName("HTTP-Old-"+str(i))
-            # thread.setDaemon(True)
-            # thread.start()
 
         for i in range(self.threadNum):
             # self.threadSession.append(self.GetNewSession())
             thread = threading.Thread(target=self.Run, args=[i])
-            thread.setName("HTTP-"+str(i))
-            thread.setDaemon(True)
+            thread.name = "HTTP-" + str(i)
+            thread.daemon = True
             thread.start()
             self.allWaitThread.append(thread)
 
         for i in range(self.downloadNum):
             # self.downloadSession.append(self.GetNewSession())
             thread = threading.Thread(target=self.RunDownload, args=[i])
-            thread.setName("Download-" + str(i))
-            thread.setDaemon(True)
+            thread.name = "Download-" + str(i)
+            thread.daemon = True
             thread.start()
             self.allWaitThread.append(thread)
 
-        for i in range(8):
+        for i in range(self.speedThreadNum):
             # self.threadSession.append(self.GetNewSession())
             thread = threading.Thread(target=self.RunSpeed, args=[i])
-            thread.setName("Speed-" + str(i))
-            thread.setDaemon(True)
+            thread.name = "Speed-" + str(i)
+            thread.daemon = True
             thread.start()
             self.allWaitThread.append(thread)
 
-    # def GetNewSession(self, isOpenHttp3=False, isOpenEch=False, isOpenDoh=False, dohUrl=""):
-    #     curlDict = {}
-    #
-    #     if host_table:
-    #         resolve_list = []
-    #         for k, v in host_table.items():
-    #             resolve_list.append(f"{k}:443:{v}")
-    #
-    #         curlDict[CurlOpt.RESOLVE] = resolve_list
-    #
-    #     if isOpenEch:
-    #         curlDict[CurlOpt.ECH] = "true"
-    #     if isOpenDoh and dohUrl:
-    #         curlDict[CurlOpt.DOH_URL] = dohUrl
-    #
-    #     curlDict[CurlOpt.DNS_CACHE_TIMEOUT] = 300
-    #     if isOpenHttp3:
-    #         ver = CurlHttpVersion.V3
-    #     else:
-    #         ver = CurlHttpVersion.V2_0
-    #     curlDict[CurlOpt.SSLVERSION] = CurlSslVersion.TLSv1_3
-    #
-    #     return requests2.Session(curl_options=curlDict, http_version=ver, impersonate="chrome110")
-        # try:
-        #     return httpx.Client(http2=True, verify=False, trust_env=False, proxy=proxy)
-        # except Exception as es:
-        #     Log.Error(es)
-        #     return httpx.Client(http2=True, verify=False, trust_env=False)
-    
     def Run(self, index):
-        time.sleep(2)
+        time.sleep(1)
+        localParam =  ThreadLocalParam(index)
         while True:
             task = self._inQueue.get(True)
             self._inQueue.task_done()
             try:
-                with requests2.Session() as session:
-                    if task == "":
-                        break
-                    self._Send(task, index, session)
+                if task == "":
+                    break
+                self._Send(task, localParam)
             except Exception as es:
                 Log.Error(es)
+        localParam.Close()
         pass
 
     def RunSpeed(self, index):
         time.sleep(2)
+        localParam =  ThreadLocalParam(index)
         while True:
             task = self._speedQueue.get(True)
             self._speedQueue.task_done()
             try:
-                with requests2.Session() as session:
-                    if task == "":
-                        break
-                    self._Send(task, index, session)
+                if task == "":
+                    break
+                self._Send(task, localParam)
             except Exception as es:
                 Log.Error(es)
-        pass
+        localParam.Close()
 
     # def RunOld(self, index):
     #     while True:
@@ -219,7 +205,7 @@ class Server(Singleton):
             self._inQueue.put("")
         for i in range(self.downloadNum):
             self._downloadQueue.put("")
-        for i in range(8):
+        for i in range(self.speedThreadNum):
             self._speedQueue.put("")
 
         for thread in self.allWaitThread:
@@ -229,69 +215,18 @@ class Server(Singleton):
 
     def RunDownload(self, index):
         time.sleep(2)
+        localParam =  ThreadLocalParam(index, impersonate="chrome110")
         while True:
             task = self._downloadQueue.get(True)
             self._downloadQueue.task_done()
             try:
-                with requests2.Session(impersonate="chrome110") as session:
-                    if task == "":
-                        break
-                    self._Download(task, index, session)
+                if task == "":
+                    break
+                self._Download(task, localParam)
             except Exception as es:
                 Log.Error(es)
-        pass
+        localParam.Close()
 
-    def UpdateDns(self, address, imageAddress, loginProxy=""):
-        for domain in GlobalConfig.Url2List.value:
-            domain = ToolUtil.GetUrlHost(domain)
-            if ToolUtil.IsipAddress(address):
-                host_table[domain] = address
-            elif not address and domain in host_table:
-                host_table.pop(domain)
-
-        for domain in GlobalConfig.PicUrlList.value:
-            domain = ToolUtil.GetUrlHost(domain)
-            if ToolUtil.IsipAddress(imageAddress):
-                host_table[domain] = imageAddress
-            elif not imageAddress and domain in host_table:
-                host_table.pop(domain)
-        domain = ToolUtil.GetUrlHost(GlobalConfig.Url.value)
-        if loginProxy:
-            host_table[domain] = loginProxy
-        else:
-            if loginProxy in host_table:
-                host_table.pop(domain)
-
-        # 换一个，清空pool
-        # self.session = requests.session()
-        return
-
-    def ClearDns(self):
-        host_table.clear()
-
-    # def UpdateProxy(self):
-    #     from config.setting import Setting
-    #     self.UpdateProxy2(Setting.IsOpenHTTP3.value,
-    #                     Setting.EnableEch.value,
-    #                       Setting.IsOpenDoh.value,
-    #                       Setting.DohAddress.value)
-    #
-    # def UpdateProxy2(self, isOpenHttp3=False, isOpenEch=False, isOpenDoh=False, dohUrl=""):
-    #     from tools.str import Str
-    #
-    #     for i in range(self.threadNum):
-    #         if i+1 > len(self.threadSession):
-    #             self.threadSession.append(self.GetNewSession(isOpenHttp3, isOpenEch, isOpenDoh, dohUrl))
-    #         else:
-    #             self.threadSession[i] = self.GetNewSession(isOpenHttp3, isOpenEch, isOpenDoh, dohUrl)
-    #
-    #     for i in range(self.downloadNum):
-    #         if i+1 > len(self.downloadSession):
-    #             self.downloadSession.append(self.GetNewSession(isOpenHttp3, isOpenEch, isOpenDoh, dohUrl))
-    #         else:
-    #             self.downloadSession[i] = self.GetNewSession(isOpenHttp3, isOpenEch, isOpenDoh, dohUrl)
-    #     return
-    
     def __DealHeaders(self, request, token):
         # if not request.isUseHttps:
         #     request.url = request.url.replace("https://", "http://")
@@ -300,10 +235,11 @@ class Server(Singleton):
         if request.proxyUrl:
             host = ToolUtil.GetUrlHost(request.url)
             request.url = request.url.replace(host, request.proxyUrl+"/"+host)
-        elif request.isApi and not request.resetUrl:
+        elif request.isApi and not request.resetUrl and not request.ipList and not  isinstance(request, (req.SpeedTestReq, req.SpeedTestPingReq, req.SpeedTestPing2Req)) :
             # 为API请求准备备用线路，请求失败时自动切换到其他域名重试
             # (此前 resetUrl 始终为空，重试只会用同一个url再撞一次，
             #  导致某条线路被墙时整个应用都无法使用)
+            # 如果是固定ip，换域名没有意义
             host = ToolUtil.GetUrlHost(request.url)
             for url in GlobalConfig.Url2List.value:
                 if ToolUtil.GetUrlHost(url) == host:
@@ -311,8 +247,9 @@ class Server(Singleton):
                 request.resetUrl.append(request.url.replace(host, ToolUtil.GetUrlHost(url)))
             if len(request.resetUrl) > 0:
                 request.resetCnt = min(len(request.resetUrl), 3)
-        elif request.isImg and not request.resetUrl:
+        elif request.isImg and not request.resetUrl and not request.ipList and not  isinstance(request, (req.SpeedTestReq, req.SpeedTestPingReq, req.SpeedTestPing2Req)) :
             # 为图片请求准备备用图片域名，图片下载失败时自动切换到其他CDN重试
+            # 如果是固定ip，换域名没有意义
             host = ToolUtil.GetUrlHost(request.url)
             for domain in GlobalConfig.ImgAutoUrl.value:
                 if domain == host:
@@ -327,23 +264,51 @@ class Server(Singleton):
             if isASync:
                 return self._downloadQueue.put(Task(request, backParam))
             else:
-                with requests2.Session() as session:
-                    return self._Download(Task(request, backParam), index, session)
+                return self._Download(Task(request, backParam), ThreadLocalParam(index))
         else:
             if isinstance(request, (req.SpeedTestPingReq, req.SpeedTestPing2Req)):
                 if isASync:
                     return self._speedQueue.put(Task(request, backParam))
                 else:
-                    with requests2.Session() as session:
-                        return self._Send(Task(request, backParam), index, session)
+                    return self._Send(Task(request, backParam), ThreadLocalParam(index))
 
             if isASync:
                 return self._inQueue.put(Task(request, backParam))
             else:
-                with requests2.Session() as session:
-                    return self._Send(Task(request, backParam), index, session)
+                return self._Send(Task(request, backParam), ThreadLocalParam(index))
 
-    def _Send(self, task, index, session):
+    def _Send(self, task, localParam):
+        index = localParam.index
+        while True:
+            # 每次尝试独立记录结果，避免成功重试仍携带上次失败状态。
+            task.status = Status.Ok
+            task.res = res.BaseRes("", False)# 复制curl_opts
+
+            localParam.CheckSwitchSession(task.req)
+            task.localParam = localParam
+
+            self._SendAttempt(task, index)
+            if task.status == Status.OfflineModel:
+                return task.res
+            if task.status == Status.Ok or task.req.resetCnt < 0:
+                break
+            task.req.ResetToSwitchNextUrl()
+
+        try:
+            self.handler.get(task.req.__class__.__name__)(task)
+        except Exception as es:
+            task.status = Status.NetError
+            Log.Warn(task.req.url + " " + es.__repr__())
+            Log.Debug(es)
+        finally:
+            respose = task.res
+            task.res = None
+            task.localParam = None
+            return respose
+
+    def _SendAttempt(self, task, index):
+        ttfb_time = 0
+        addSize = 0
         try:
             task.req.resetCnt -= 1
             Log.Info("request{}-> backId:{}, {}".format(index, task.bakParam, task.req))
@@ -352,9 +317,6 @@ class Server(Singleton):
                 data = {"st": Status.OfflineModel, "data": ""}
                 TaskBase.taskObj.taskBack.emit(task.bakParam, pickle.dumps(data))
                 return
-            # 复制curl_opts
-            session.curl_options = copy.deepcopy(task.req.curl_opt)
-            task.session = session
 
             if task.req.method.lower() == "post":
                 self.Post(task, index)
@@ -368,6 +330,14 @@ class Server(Singleton):
                 self.Put(task, index)
             else:
                 return
+            ttfb_time = task.res.raw.infos.get(CurlInfo.STARTTRANSFER_TIME)
+            addSize = len(task.res.raw.content)
+            # print(f"DNS 解析 (namelookup):   {task.res.raw.infos.get(CurlInfo.NAMELOOKUP_TIME):.4f} s")
+            # print(f"TCP 握手 (connect):      {task.res.raw.infos.get(CurlInfo.CONNECT_TIME):.4f} s")
+            # print(f"SSL 握手 (appconnect):   {task.res.raw.infos.get(CurlInfo.APPCONNECT_TIME):.4f} s")
+            # print(f"准备传输 (pretransfer):  {task.res.raw.infos.get(CurlInfo.PRETRANSFER_TIME):.4f} s")
+            # print(f"首字节响应 (starttransfer): {task.res.raw.infos.get(CurlInfo.STARTTRANSFER_TIME):.4f} s")
+
         except exceptions.DNSError as es:
             task.status = Status.DnsError
             Log.Warn(f"error:{task.req.GetPri()}")
@@ -405,25 +375,16 @@ class Server(Singleton):
         except:
             Log.Error(f"error:{task.req.GetPri()}")
         finally:
-            Log.Info("response{}-> backId:{}, {}, st:{}, {}".format(index, task.backParam, task.req.__class__.__name__, task.status, task.res))
+            if task.req.isApi and not isinstance(task.req, (req.SpeedTestReq, req.SpeedTestPingReq, req.SpeedTestPing2Req)) :
+                if task.res.raw:
+                    status_code = task.res.raw.status_code
+                else:
+                    status_code = 0
+                if isinstance(ttfb_time, (int, float)):
+                    TaskBase.taskObj.statuApiBack.emit(ttfb_time, task.status, status_code, addSize)
 
-        if task.status != Status.Ok and task.req.resetCnt > 0:
-            task.req.ResetToSwitchNextUrl()
-            self._Send(task, index, session)
-            return
-
-        try:
-            self.handler.get(task.req.__class__.__name__)(task)
-            # if isinstance(task.res.raw, requests2.Response):
-            #     task.res.raw.close()
-        except Exception as es:
-            task.status = Status.NetError
-            # Log.Error(es)
-            Log.Warn(task.req.url + " " + es.__repr__())
-            Log.Debug(es)
-        finally:
-            task.session = None
-            return task.res
+            Log.Info("response{}-> backId:{}, {}, st:{}, {}".format(index, task.backParam, task.req.__class__.__name__,
+                                                                    task.status, task.res))
 
     def Post(self, task, index=0):
         request = task.req
@@ -443,7 +404,7 @@ class Server(Singleton):
                                   timeout=task.timeout, cookies=task.req.cookies)
         else:
             r = task.session.post(request.url, proxies=request.proxy, headers=request.headers, data=request.params,
-                                  timeout=task.timeout, cookies=task.req.cookies)
+                                  timeout=task.timeout)
         task.res = res.BaseRes(r, request.isParseRes)
         return task
 
@@ -498,7 +459,7 @@ class Server(Singleton):
         #     session = self.threadSession[index]
         if task.req.cookies:
             r = task.session.get(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout,
-                            cookies=task.req.cookies)
+                                 cookies=task.req.cookies)
         else:
             r = task.session.get(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout)
         task.res = res.BaseRes(r, request.isParseRes)
@@ -520,21 +481,21 @@ class Server(Singleton):
     #     task.res = res.BaseRes(r, request.isParseRes)
     #     return task
 
-    def Download(self, request, token="", backParams="", cacheAndLoadPath="", loadPath= "", isASync=True):
+    def Download(self, request, token="", backParams="", cacheAndLoadPath="", loadPath="", isASync=True):
         self.__DealHeaders(request, token)
         task = Task(request, backParams, cacheAndLoadPath, loadPath)
         if isASync:
             self._downloadQueue.put(task)
         else:
-            with requests2.Session() as session:
-                self._Download(task, 0, session)
+            self._Download(task, ThreadLocalParam())
 
     def ReDownload(self, task):
-        task.res = ""
-        task.status = Status.Ok
-        self._downloadQueue.put(task)
+        task.localParam = None
+        newTask = Task(task.req, task.backParam)
+        self._downloadQueue.put(newTask)
 
-    def _Download(self, task, index, session):
+    def _Download(self, task, localParam):
+        index = localParam.index
         try:
             task.req.resetCnt -= 1
             if not task.req.isReload:
@@ -543,8 +504,8 @@ class Server(Singleton):
                         if cachePath and task.bakParam:
                             data = ToolUtil.LoadCachePicture(cachePath)
                             if data:
-                                TaskBase.taskObj.downloadBack.emit(task.bakParam, 0, len(data), b"")
-                                TaskBase.taskObj.downloadBack.emit(task.bakParam, 0, 0, data)
+                                TaskBase.taskObj.downloadBack.emit(task.bakParam, len(data), len(data), b"")
+                                TaskBase.taskObj.downloadBack.emit(task.bakParam, 0, len(data), data)
                                 Log.Info("request{} cache -> backId:{}, {}".format(index, task.bakParam, task.req))
                                 return
 
@@ -554,8 +515,8 @@ class Server(Singleton):
                 return
 
             # 复制curl_opts
-            session.curl_options = copy.deepcopy(task.req.curl_opt)
-            task.session = session
+            localParam.CheckSwitchSession(task.req)
+            task.localParam = localParam
 
             request = task.req
             if request.params == None:
@@ -566,7 +527,8 @@ class Server(Singleton):
             if not request.isReset:
                 Log.Info("request{}-> backId:{}, {}".format(index, task.bakParam, task.req))
             else:
-                Log.Info("request{} reset:{} -> backId:{}, {}".format(index, task.req.resetCnt, task.bakParam, task.req))
+                Log.Info(
+                    "request{} reset:{} -> backId:{}, {}".format(index, task.req.resetCnt, task.bakParam, task.req))
             # task.res = res.BaseRes(r)
             # print(r.elapsed.total_seconds())
             task.res = None
@@ -585,7 +547,8 @@ class Server(Singleton):
             Log.Warn(task.req.url + " " + es.__repr__())
             Log.Debug(es)
         finally:
-            task.session = None
+            task.res = None
+            task.localParam = None
 
     def TestSpeed(self, request, bakParams=""):
         self.__DealHeaders(request, "")

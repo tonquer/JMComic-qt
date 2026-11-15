@@ -15,6 +15,7 @@ from interface.ui_book_info import Ui_BookInfo
 from qt_owner import QtOwner
 from server import req, ToolUtil, config, Status
 from task.qt_task import QtTaskBase
+from task.task_cache import TaskCache
 from tools.book import BookMgr, BookInfo
 from tools.str import Str
 
@@ -157,7 +158,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             self.localButton.setIcon(QIcon(":/png/icon/icon_like.png"))
         else:
             self.localButton.setIcon(QIcon(":/png/icon/icon_like_off.png"))
-        path = os.path.join(Setting.GetCachePath(), "book/{}".format(self.bookId))
+        path = os.path.join(Setting.GetCachePath(), "book_new/{}".format(self.bookId))
         waifuPath = os.path.join(Setting.GetCachePath(), "waifu2x/book/{}".format(self.bookId))
         if os.path.isdir(path) or os.path.isdir(waifuPath):
             self.clearButton.setIcon(QIcon(":/png/icon/clear_on.png"))
@@ -260,11 +261,12 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             self.path = ToolUtil.GetRealPath(self.bookId, "cover")
             # dayStr = ToolUtil.GetUpdateStr(info.pageInfo.createDate)
             # self.updateTick.setText(str(dayStr) + Str.GetStr(Str.Updated))
+            otherParams = {"bookId": self.bookId, "type": "cover"}
             if config.IsLoadingPicture:
                 if QtOwner().isOfflineModel:
-                    self.AddDownloadTask(self.url, self.path, completeCallBack=self.UpdatePicture)
+                    self.AddDownloadTask(self.url, self.path, completeCallBack=self.UpdatePicture, otherParams=otherParams)
                 else:
-                    self.AddDownloadTask(self.url, self.path, completeCallBack=self.UpdatePicture, isReload=True)
+                    self.AddDownloadTask(self.url, self.path, completeCallBack=self.UpdatePicture, isReload=True, otherParams=otherParams)
             self.UpdateEpsData()
             self.lastEpsId = -1
             self.LoadHistory()
@@ -454,7 +456,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.AddHttpTask(req.AddAndDelFavoritesReq2(self.bookId), self.AddFavoriteBack)
 
     def ClearCache(self):
-        path = os.path.join(Setting.GetCachePath(), "book/{}".format(self.bookId))
+        path = os.path.join(Setting.GetCachePath(), "book_new/{}".format(self.bookId))
         waifuPath = os.path.join(Setting.GetCachePath(), "waifu2x/book/{}".format(self.bookId))
         isClear = QMessageBox.information(self, Str.GetStr(Str.ClearCache), Str.GetStr(Str.ConfirmClearBookCache).format(path, waifuPath), QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
         if isClear == QtWidgets.QMessageBox.Yes:
@@ -465,6 +467,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             if os.path.isdir(waifuPath):
                 shutil.rmtree(waifuPath, True)
         self.UpdateFavoriteIcon()
+        TaskCache().ClearMemData(self.bookId)
 
     def DelFavoriteBack(self, raw):
         if not config.LoginUserName:
@@ -552,6 +555,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         info = QtOwner().historyView.GetHistory(self.bookId)
         if not info:
             self.startRead.setText(Str.GetStr(Str.LookFirst))
+            self.readOffline.setText(Str.GetStr(Str.LookFirst))
             return
         if self.lastEpsId == info.epsId:
             self.lastIndex = info.picIndex

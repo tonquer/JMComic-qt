@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>722</width>
-    <height>690</height>
+    <width>808</width>
+    <height>790</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -44,7 +44,7 @@
          <item>
           <spacer name="horizontalSpacer_2">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -60,7 +60,7 @@
             <item>
              <spacer name="verticalSpacer">
               <property name="orientation">
-               <enum>Qt::Vertical</enum>
+               <enum>Qt::Orientation::Vertical</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
@@ -90,7 +90,7 @@
             <item>
              <widget class="QLineEdit" name="passwdEdit_2">
               <property name="echoMode">
-               <enum>QLineEdit::Password</enum>
+               <enum>QLineEdit::EchoMode::Password</enum>
               </property>
              </widget>
             </item>
@@ -129,7 +129,7 @@
             <item>
              <spacer name="verticalSpacer_2">
               <property name="orientation">
-               <enum>Qt::Vertical</enum>
+               <enum>Qt::Orientation::Vertical</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
@@ -145,7 +145,7 @@
          <item>
           <spacer name="horizontalSpacer">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -169,7 +169,7 @@
          <item>
           <spacer name="horizontalSpacer_3">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -190,7 +190,7 @@
               <x>0</x>
               <y>0</y>
               <width>306</width>
-              <height>234</height>
+              <height>722</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -221,13 +221,13 @@
                   </size>
                  </property>
                  <property name="layoutDirection">
-                  <enum>Qt::LeftToRight</enum>
+                  <enum>Qt::LayoutDirection::LeftToRight</enum>
                  </property>
                  <property name="text">
                   <string>邮箱：</string>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
                  </property>
                 </widget>
                </item>
@@ -263,7 +263,7 @@
                   <string>用户名：</string>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
                  </property>
                 </widget>
                </item>
@@ -292,7 +292,7 @@
                   <string>密码：</string>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
                  </property>
                 </widget>
                </item>
@@ -381,7 +381,7 @@
          <item>
           <spacer name="horizontalSpacer_4">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -403,7 +403,7 @@
        <item>
         <spacer name="horizontalSpacer_5">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -426,7 +426,7 @@
               <x>0</x>
               <y>0</y>
               <width>390</width>
-              <height>537</height>
+              <height>722</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -461,7 +461,7 @@
              <item>
               <widget class="Line" name="line">
                <property name="orientation">
-                <enum>Qt::Horizontal</enum>
+                <enum>Qt::Orientation::Horizontal</enum>
                </property>
               </widget>
              </item>
@@ -510,10 +510,10 @@
              <item>
               <spacer name="verticalSpacer_5">
                <property name="orientation">
-                <enum>Qt::Vertical</enum>
+                <enum>Qt::Orientation::Vertical</enum>
                </property>
                <property name="sizeType">
-                <enum>QSizePolicy::Minimum</enum>
+                <enum>QSizePolicy::Policy::Minimum</enum>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
@@ -526,7 +526,7 @@
              <item>
               <widget class="Line" name="line_2">
                <property name="orientation">
-                <enum>Qt::Horizontal</enum>
+                <enum>Qt::Orientation::Horizontal</enum>
                </property>
               </widget>
              </item>
@@ -561,10 +561,10 @@
              <item>
               <spacer name="verticalSpacer_6">
                <property name="orientation">
-                <enum>Qt::Vertical</enum>
+                <enum>Qt::Orientation::Vertical</enum>
                </property>
                <property name="sizeType">
-                <enum>QSizePolicy::Minimum</enum>
+                <enum>QSizePolicy::Policy::Minimum</enum>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
@@ -577,7 +577,7 @@
              <item>
               <widget class="Line" name="line_3">
                <property name="orientation">
-                <enum>Qt::Horizontal</enum>
+                <enum>Qt::Orientation::Horizontal</enum>
                </property>
               </widget>
              </item>
@@ -618,7 +618,7 @@
        <item>
         <spacer name="horizontalSpacer_6">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -649,7 +649,7 @@
            <item>
             <spacer name="verticalSpacer_9">
              <property name="orientation">
-              <enum>Qt::Vertical</enum>
+              <enum>Qt::Orientation::Vertical</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -670,9 +670,9 @@
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>-224</y>
-              <width>479</width>
-              <height>3281</height>
+              <y>0</y>
+              <width>570</width>
+              <height>3283</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -711,7 +711,7 @@
                <item>
                 <widget class="Line" name="line_4">
                  <property name="orientation">
-                  <enum>Qt::Vertical</enum>
+                  <enum>Qt::Orientation::Vertical</enum>
                  </property>
                 </widget>
                </item>
@@ -721,7 +721,7 @@
                   <string>代理地址</string>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignCenter</set>
+                  <set>Qt::AlignmentFlag::AlignCenter</set>
                  </property>
                 </widget>
                </item>
@@ -758,7 +758,7 @@
                <item>
                 <widget class="Line" name="line_5">
                  <property name="orientation">
-                  <enum>Qt::Vertical</enum>
+                  <enum>Qt::Orientation::Vertical</enum>
                  </property>
                 </widget>
                </item>
@@ -818,7 +818,7 @@
                <item>
                 <spacer name="horizontalSpacer_7">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -833,7 +833,7 @@
              <item>
               <widget class="Line" name="line_6">
                <property name="orientation">
-                <enum>Qt::Horizontal</enum>
+                <enum>Qt::Orientation::Horizontal</enum>
                </property>
               </widget>
              </item>
@@ -904,7 +904,7 @@
                <item>
                 <spacer name="horizontalSpacer_8">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -921,7 +921,7 @@
                <item>
                 <spacer name="horizontalSpacer_9">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -966,7 +966,7 @@
                <item>
                 <spacer name="horizontalSpacer_10">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -1005,7 +1005,7 @@
              <item>
               <widget class="Line" name="line_8">
                <property name="orientation">
-                <enum>Qt::Horizontal</enum>
+                <enum>Qt::Orientation::Horizontal</enum>
                </property>
               </widget>
              </item>
@@ -1022,7 +1022,7 @@
              <item>
               <widget class="Line" name="line_7">
                <property name="orientation">
-                <enum>Qt::Horizontal</enum>
+                <enum>Qt::Orientation::Horizontal</enum>
                </property>
               </widget>
              </item>
@@ -1034,7 +1034,7 @@
                   <string>延迟</string>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignCenter</set>
+                  <set>Qt::AlignmentFlag::AlignCenter</set>
                  </property>
                 </widget>
                </item>
@@ -1044,7 +1044,7 @@
                   <string>速度</string>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignCenter</set>
+                  <set>Qt::AlignmentFlag::AlignCenter</set>
                  </property>
                 </widget>
                </item>
@@ -1147,7 +1147,7 @@
                   <string>Api分流</string>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignCenter</set>
+                  <set>Qt::AlignmentFlag::AlignCenter</set>
                  </property>
                 </widget>
                </item>
@@ -1225,7 +1225,7 @@
                   <string>图片分流</string>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignCenter</set>
+                  <set>Qt::AlignmentFlag::AlignCenter</set>
                  </property>
                 </widget>
                </item>
@@ -1255,7 +1255,7 @@
              <item>
               <widget class="Line" name="line_9">
                <property name="orientation">
-                <enum>Qt::Horizontal</enum>
+                <enum>Qt::Orientation::Horizontal</enum>
                </property>
               </widget>
              </item>
@@ -1307,7 +1307,7 @@
              <item>
               <widget class="Line" name="line_10">
                <property name="orientation">
-                <enum>Qt::Horizontal</enum>
+                <enum>Qt::Orientation::Horizontal</enum>
                </property>
               </widget>
              </item>
@@ -1363,7 +1363,7 @@
                <item>
                 <spacer name="horizontalSpacer_11">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -1394,7 +1394,7 @@
                <item>
                 <widget class="Line" name="line_11">
                  <property name="orientation">
-                  <enum>Qt::Vertical</enum>
+                  <enum>Qt::Orientation::Vertical</enum>
                  </property>
                 </widget>
                </item>
@@ -1489,14 +1489,56 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>proxyIpEdit</tabstop>
-  <tabstop>ipListEdit</tabstop>
-  <tabstop>passwdEdit_2</tabstop>
+  <tabstop>commandLinkButton2</tabstop>
   <tabstop>saveBox</tabstop>
-  <tabstop>autoBox</tabstop>
-  <tabstop>autoSign</tabstop>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>commandLinkButton</tabstop>
+  <tabstop>radioButton_1</tabstop>
+  <tabstop>radioButton_2</tabstop>
+  <tabstop>radioButton_3</tabstop>
+  <tabstop>radioButton_6</tabstop>
+  <tabstop>userEdit_2</tabstop>
+  <tabstop>passwdEdit_2</tabstop>
   <tabstop>loginButton</tabstop>
+  <tabstop>testIpButton</tabstop>
+  <tabstop>radio_img_5</tabstop>
+  <tabstop>radio_img_6</tabstop>
+  <tabstop>radio_img_4</tabstop>
+  <tabstop>radio_img_2</tabstop>
+  <tabstop>proxyIpEdit</tabstop>
+  <tabstop>sockEdit</tabstop>
+  <tabstop>echBox</tabstop>
+  <tabstop>resetEdit</tabstop>
+  <tabstop>resetButton</tabstop>
+  <tabstop>testSpeedButton</tabstop>
+  <tabstop>sendEdit</tabstop>
+  <tabstop>sendButton</tabstop>
+  <tabstop>commandLinkButton_3</tabstop>
+  <tabstop>proxy_0</tabstop>
+  <tabstop>proxy_3</tabstop>
+  <tabstop>httpLine</tabstop>
+  <tabstop>proxy_2</tabstop>
+  <tabstop>dohLine</tabstop>
+  <tabstop>proxy_1</tabstop>
+  <tabstop>ipListEdit</tabstop>
+  <tabstop>scrollArea_3</tabstop>
+  <tabstop>apiTimeout</tabstop>
+  <tabstop>imgTimeout</tabstop>
+  <tabstop>http3Box</tabstop>
+  <tabstop>verfyEdit</tabstop>
+  <tabstop>verfyPsEdit</tabstop>
+  <tabstop>verfyButton</tabstop>
+  <tabstop>dohTool</tabstop>
+  <tabstop>radioButton_4</tabstop>
+  <tabstop>cdnLinkButton</tabstop>
+  <tabstop>tableWidget</tabstop>
+  <tabstop>radioButton_5</tabstop>
+  <tabstop>tabWidget</tabstop>
   <tabstop>scrollArea_2</tabstop>
+  <tabstop>radio_img_1</tabstop>
+  <tabstop>autoSign</tabstop>
+  <tabstop>autoBox</tabstop>
+  <tabstop>radio_img_3</tabstop>
   <tabstop>userEdit</tabstop>
   <tabstop>nameEdit</tabstop>
   <tabstop>passwdEdit</tabstop>
@@ -1504,57 +1546,15 @@
   <tabstop>gender_Male</tabstop>
   <tabstop>gender_Female</tabstop>
   <tabstop>registerButton</tabstop>
-  <tabstop>scrollArea</tabstop>
-  <tabstop>commandLinkButton</tabstop>
-  <tabstop>commandLinkButton2</tabstop>
-  <tabstop>verfyEdit</tabstop>
-  <tabstop>verfyPsEdit</tabstop>
-  <tabstop>verfyButton</tabstop>
-  <tabstop>resetEdit</tabstop>
-  <tabstop>resetButton</tabstop>
-  <tabstop>sendEdit</tabstop>
-  <tabstop>sendButton</tabstop>
-  <tabstop>commandLinkButton_3</tabstop>
-  <tabstop>scrollArea_3</tabstop>
-  <tabstop>proxy_0</tabstop>
-  <tabstop>proxy_1</tabstop>
-  <tabstop>httpLine</tabstop>
-  <tabstop>proxy_2</tabstop>
-  <tabstop>sockEdit</tabstop>
-  <tabstop>proxy_3</tabstop>
-  <tabstop>apiTimeout</tabstop>
-  <tabstop>imgTimeout</tabstop>
-  <tabstop>http3Box</tabstop>
-  <tabstop>echBox</tabstop>
-  <tabstop>dohLine</tabstop>
-  <tabstop>dohTool</tabstop>
-  <tabstop>testSpeedButton</tabstop>
-  <tabstop>radioButton_3</tabstop>
-  <tabstop>radio_img_4</tabstop>
-  <tabstop>radio_img_6</tabstop>
-  <tabstop>radio_img_2</tabstop>
-  <tabstop>radioButton_4</tabstop>
-  <tabstop>radioButton_6</tabstop>
-  <tabstop>radio_img_1</tabstop>
-  <tabstop>radioButton_2</tabstop>
-  <tabstop>radioButton_1</tabstop>
-  <tabstop>radio_img_3</tabstop>
-  <tabstop>radioButton_5</tabstop>
-  <tabstop>radio_img_5</tabstop>
-  <tabstop>testIpButton</tabstop>
-  <tabstop>tabWidget</tabstop>
-  <tabstop>userEdit_2</tabstop>
-  <tabstop>tableWidget</tabstop>
-  <tabstop>cdnLinkButton</tabstop>
  </tabstops>
  <resources>
   <include location="../res/images.qrc"/>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="radioApiGroup"/>
   <buttongroup name="radioProxyGroup"/>
   <buttongroup name="sexGroup"/>
+  <buttongroup name="radioApiGroup"/>
   <buttongroup name="radioImgGroup"/>
  </buttongroups>
 </ui>

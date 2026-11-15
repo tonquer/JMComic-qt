@@ -6,6 +6,7 @@ from queue import Queue
 
 from qt_owner import QtOwner
 from task.qt_task import TaskBase, QtTaskBase
+from task.task_download import FileData
 from tools.log import Log
 from tools.singleton import Singleton
 import os
@@ -13,12 +14,14 @@ from natsort import natsorted
 
 from tools.status import Status
 from tools.str import Str
+from tools.tool import ToolUtil
 
 
 class QLocalTask(object):
     def __init__(self, taskId=0):
         self.taskId = taskId
-        self.callBack = None       # addData, laveSize
+        self.callBack = None  # addData, laveSize
+        self.callBack2 = None
         self.backParam = None
         self.cleanFlag = ""
         self.status = Status.Ok
@@ -34,35 +37,35 @@ class QLocalTask(object):
 
 
 class LocalData(object):
-    Type1 = 1    # 加载目录
-    Type2 = 2    # 加载文件
-    Type3 = 3    # 加载目录所有
-    Type4 = 4    #
-    Type5 = 5    # 批量加载
-    Type6 = 6    # 批量加载目录列表
+    Type1 = 1  # 加载目录
+    Type2 = 2  # 加载文件
+    Type3 = 3  # 加载目录所有
+    Type4 = 4  #
+    Type5 = 5  # 批量加载
+    Type6 = 6  # 批量加载目录列表
 
     TypeLoadPicFile = 7  # 加载所以图片资源
 
-    AllPictureFormat = ["jpg", "jpeg", "webp", "gif", "apng", "png", "bmp"]
+    # AllPictureFormat = ["jpg", "jpeg", "webp", "gif", "apng", "png", "bmp"]
 
     def __init__(self) -> None:
-        self.id     = ""   # md5 或者 生成Id
+        self.id = ""  # md5 或者 生成Id
         self.main_id = ""  # 父节点
-        self.epsId = 1     # 章节ID
-        self.title  = ""   # 名称
-        self.file = ""     # 文件名
-        self.path   = ""   # 路径
-        self.cover  = ""   # 封面缓存
+        self.epsId = 1  # 章节ID
+        self.title = ""  # 名称
+        self.file = ""  # 文件名
+        self.path = ""  # 路径
+        self.cover = ""  # 封面缓存
         self.isZipFile = True
         self.lastIndex = 0
         self.lastEpsId = 0
         self.category = ""
         self.desc = ""
-        self.addTime = 0       # 添加时间
+        self.addTime = 0  # 添加时间
         self.lastReadTime = 0  # 上次阅读时间
-        self.picCnt = 0        # 图片数
-        self.pic = []          # 图片数
-        self.eps = []          # 多章节
+        self.picCnt = 0  # 图片数
+        self.pic = []  # 图片数
+        self.eps = []  # 多章节
 
     @property
     def isWaifu2x(self):
@@ -104,7 +107,7 @@ class LocalData(object):
         return
 
     def SortEps(self):
-        self.eps = natsorted(self.eps, key=lambda a:a.title)
+        self.eps = natsorted(self.eps, key=lambda a: a.title)
         if self.eps:
             first = self.eps[0]
             path = first.file.replace(self.file, "").strip("\\").strip("/")
@@ -112,6 +115,7 @@ class LocalData(object):
             for v in self.eps:
                 v.main_id = self.id
         return
+
 
 class TaskLocal(TaskBase, QtTaskBase):
     def __init__(self) -> None:
@@ -127,8 +131,8 @@ class TaskLocal(TaskBase, QtTaskBase):
         self.thread.start()
 
         self.thread2 = threading.Thread(target=self.RunLoad2)
-        self.thread2.setName("Task-" + str("Waifu2x"))
-        self.thread2.setDaemon(True)
+        self.thread2.name = "Task-" + str("Waifu2x")
+        self.thread2.daemon = True
         self.thread2.start()
 
         self.taskObj.localBack.connect(self.HandlerTask)
@@ -147,6 +151,7 @@ class TaskLocal(TaskBase, QtTaskBase):
                 self._LoadRead(taskId)
             except Exception as es:
                 Log.Error(es)
+                self.taskObj.localBack.emit(taskId, Str.Error, [])
         pass
 
     def RunLoad2(self):
@@ -159,59 +164,50 @@ class TaskLocal(TaskBase, QtTaskBase):
                 self._LoadRead2(task)
             except Exception as es:
                 Log.Error(es)
+                self.taskObj.localReadBack.emit(task, Str.Error, b"")
         pass
 
     def Stop(self):
         self._inQueue.put("")
 
     def ClearQImageTaskById(self, taskId):
-        if taskId in self.tasks:
-            self.tasks.pop(taskId)
+        self._TakeTask(taskId)
 
     def HandlerTask(self, taskId, st, newData):
         try:
-            info = self.tasks.get(taskId)
+            info = self._GetTask(taskId) if st == Str.Waiting else self._TakeTask(taskId)
             if not info:
-                Log.Warn("[TaskLocal] not find taskId:{}, {}".format(taskId, len(newData)))
                 return
             assert isinstance(info, QLocalTask)
-            if info.cleanFlag:
-                if st != Str.Waiting:
-                    taskIds = self.flagToIds.get(info.cleanFlag, set())
-                    taskIds.discard(info.taskId)
             if info.callBack:
                 if info.backParam is None:
                     info.callBack(st, newData)
                 else:
                     info.callBack(st, newData, info.backParam)
-            if st != Str.Waiting:
-                del info.callBack
-                del self.tasks[taskId]
         except Exception as es:
             Log.Error(es)
 
     def HandlerTask2(self, taskId, st, newData):
         try:
-            info = self.tasks.get(taskId)
+            info = self._TakeTask(taskId)
             if not info:
-                Log.Warn("[TaskLocal] not find taskId:{}, {}".format(taskId, len(newData)))
                 return
             assert isinstance(info, QLocalTask)
-            if info.cleanFlag:
-                taskIds = self.flagToIds.get(info.cleanFlag, set())
-                taskIds.discard(info.taskId)
             if info.callBack:
                 if info.backParam is None:
                     info.callBack(newData, st)
                 else:
                     info.callBack(newData, st, info.backParam)
-                del info.callBack
-            del self.tasks[taskId]
+            if info.callBack2:
+                if info.backParam is None:
+                    info.callBack2(FileData(newData), st)
+                else:
+                    info.callBack2(FileData(newData), st, info.backParam)
         except Exception as es:
             Log.Error(es)
 
     def _LoadRead(self, taskId):
-        task = self.tasks.get(taskId)
+        task = self._GetTask(taskId)
         if not task:
             return
         type = task.type
@@ -238,41 +234,37 @@ class TaskLocal(TaskBase, QtTaskBase):
             st = Str.Ok
         elif type == LocalData.TypeLoadPicFile:
             return self.ParseAllPicPath(taskId, dir)
+
         self.taskObj.localBack.emit(taskId, st, datas)
 
     def _LoadRead2(self, taskId):
-        task = self.tasks.get(taskId)
+        task = self._GetTask(taskId)
         if not task:
             return
         st, data = self.GetBookPicture(task)
         self.taskObj.localReadBack.emit(taskId, st, data)
 
     def AddLoadRead(self, type, path, backParam, callBack, cleanFlag):
-        self.taskId += 1
-        info = QLocalTask(self.taskId)
+        info = QLocalTask(0)
         info.callBack = callBack
         info.backParam = backParam
         info.type = type
         info.path = path
 
-        self.tasks[self.taskId] = info
-        if cleanFlag:
-            info.cleanFlag = cleanFlag
-            taskIds = self.flagToIds.setdefault(cleanFlag, set())
-            taskIds.add(self.taskId)
-        self._inQueue.put(self.taskId)
-        return self.taskId
+        taskId = self._RegisterTask(info, cleanFlag)
+        self._inQueue.put(taskId)
+        return taskId
 
-    def AddLoadReadPicture(self, v2, index, backParam, callBack, cleanFlag):
-        self.taskId += 1
+    def AddLoadReadPicture(self, v2, index, backParam, callBack, cleanFlag, completeCallBack2):
         assert isinstance(v2, LocalData)
         if index == -1 and v2.eps:
             v = v2.eps[0]
         else:
             v = v2
 
-        info = QLocalTask(self.taskId)
+        info = QLocalTask(0)
         info.callBack = callBack
+        info.callBack2 = completeCallBack2
         info.backParam = backParam
         info.bookId = v.id
         info.index = index
@@ -287,13 +279,9 @@ class TaskLocal(TaskBase, QtTaskBase):
         info.isZip = v.isZipFile
         info.path = v.file
 
-        self.tasks[self.taskId] = info
-        if cleanFlag:
-            info.cleanFlag = cleanFlag
-            taskIds = self.flagToIds.setdefault(cleanFlag, set())
-            taskIds.add(self.taskId)
-        self._loadQueue.put(self.taskId)
-        return self.taskId
+        taskId = self._RegisterTask(info, cleanFlag)
+        self._loadQueue.put(taskId)
+        return taskId
 
     def ParseBookInfoByDir(self, dirName):
         # 解析目录
@@ -321,7 +309,7 @@ class TaskLocal(TaskBase, QtTaskBase):
                     if len(data) < 2:
                         continue
                     mat = data[-1]
-                    if mat not in LocalData.AllPictureFormat:
+                    if mat not in ToolUtil.AllFormatStr:
                         continue
                     isNotPicture = False
                     allPictureName.append(v.name)
@@ -364,7 +352,7 @@ class TaskLocal(TaskBase, QtTaskBase):
             allData = self.ParseBookInfoByDirRecursion2(dirName)
             if not allData:
                 return Str.ErrorPath, ""
-            if len(allData) <= 1 :
+            if len(allData) <= 1:
                 return self.ParseBookInfoByDir(dirName)
             l = LocalData()
             l.eps = allData
@@ -403,7 +391,7 @@ class TaskLocal(TaskBase, QtTaskBase):
                     mat = data[-1]
                     if mat == "zip" or mat == "cbz":
                         zipFile.append(v.name)
-                    if mat in LocalData.AllPictureFormat:
+                    if mat in ToolUtil.AllFormatStr:
                         picNum += 1
             for zipName in zipFile:
                 st, l = self.ParseBookInfoByFile(os.path.join(dirName, zipName))
@@ -420,7 +408,6 @@ class TaskLocal(TaskBase, QtTaskBase):
         except Exception as es:
             Log.Error(es)
         return allData
-
 
     def ParseBookInfoByFile(self, fileName):
         # 解析
@@ -445,7 +432,7 @@ class TaskLocal(TaskBase, QtTaskBase):
                     if len(data) < 2:
                         continue
                     mat = data[-1]
-                    if mat not in LocalData.AllPictureFormat:
+                    if mat not in ToolUtil.AllFormatStr:
                         continue
                     path = os.path.dirname(v.filename)
                     name = os.path.basename(v.filename)
@@ -511,8 +498,17 @@ class TaskLocal(TaskBase, QtTaskBase):
         #         return Str.NotFoundEps, ""
         #     v = v.eps[epsId-1]
         try:
+            from task.task_cache import TaskCache
             if v.isZip:
                 if self.cacheBookId == v.bookId and self.cacheBookZip:
+                    if v.filePath:
+                        fullPath = os.path.join(v.path, os.path.join(v.filePath, v.fileName))
+                    else:
+                        fullPath = os.path.join(v.path, v.fileName)
+                    imgData = TaskCache().GetMemDataByKey(TaskCache().GetPathCacheKey(fullPath))
+                    if imgData:
+                        return Status.Ok, imgData
+
                     f = self.cacheBookZip
                     if v.filePath:
                         data = f.read(v.filePath + "/" + v.fileName)
@@ -520,6 +516,11 @@ class TaskLocal(TaskBase, QtTaskBase):
                         data = f.read(v.fileName)
                 else:
                     f = zipfile.ZipFile(v.path, 'r')
+                    if v.filePath:
+                        fullPath = os.path.join(v.path, os.path.join(v.filePath, v.fileName))
+                    else:
+                        fullPath = os.path.join(v.path, v.fileName)
+
                     if self.cacheBookZip:
                         self.cacheBookZip.close()
                         self.cacheBookZip = None
@@ -527,19 +528,35 @@ class TaskLocal(TaskBase, QtTaskBase):
                     if v.index != -1:
                         self.cacheBookZip = f
                         self.cacheBookId = v.bookId
+
+                    imgData = TaskCache().GetMemDataByKey(TaskCache().GetPathCacheKey(fullPath))
+                    if imgData:
+                        if v.index == -1:
+                            f.close()
+                        return Status.Ok, imgData
+
                     if v.filePath:
-                        data = f.read(v.filePath+"/"+v.fileName)
+                        data = f.read(v.filePath + "/" + v.fileName)
                     else:
                         data = f.read(v.fileName)
                     if v.index == -1:
                         f.close()
             else:
                 filePath = os.path.join(v.path, os.path.join(v.filePath, v.fileName))
+                fullPath = filePath
+                imgData = TaskCache().GetMemDataByKey(TaskCache().GetPathCacheKey(fullPath))
+                if imgData:
+                    return Status.Ok, imgData
+
                 if not os.path.isfile(filePath):
                     return Str.NotFoundPicture, ""
                 f = open(filePath, "rb")
                 data = f.read()
                 f.close()
+
+            ## 添加cache缓存
+            TaskCache().LoadDataSuc(fullPath, data, v.bookId)
+
         except RuntimeError as es:
             if 'encrypted' in str(es):
                 return Str.FileLock, b""
@@ -564,11 +581,11 @@ class TaskLocal(TaskBase, QtTaskBase):
                     if len(data) < 2:
                         continue
                     mat = data[-1]
-                    if mat not in LocalData.AllPictureFormat:
+                    if mat not in ToolUtil.AllFormatStr:
                         continue
                     subPath = filepath.replace(dirName, "").lstrip("\\").lstrip("/")
                     self.taskObj.localBack.emit(taskId, Str.Waiting, [(subPath, filename)])
             self.taskObj.localBack.emit(taskId, Str.Ok, [])
         except Exception as es:
             Log.Error(es)
-            return Str.ErrorPath, ""
+            self.taskObj.localBack.emit(taskId, Str.ErrorPath, [])

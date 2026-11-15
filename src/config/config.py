@@ -4,6 +4,9 @@ ProjectName = "JMComic"
 ThreadNum = 5                  # 线程
 DownloadThreadNum = 5          # 下载线程
 ConvertThreadNum = 3           # 转换线程
+ResetDownloadCnt = 3           # 下载图片重试次数
+ResetDownloadCntDefault = 2           # 下载封面重试次数
+
 ChatSavePath = "chat"
 SavePathDir = "commies"        # 下载目录
 ResetCnt = 5                   # 下载重试次数
@@ -22,15 +25,16 @@ AppUrl3 = "https://app3.jpacg.cc/JMComic"
 
 UpdateUrlBack = "https://github.com/tonquer/JMComic-qt/"
 
-UpdateVersion = "v1.3.7"
-RealVersion = "v1.3.7"
-VersionTime = "2026-10-7"
+UpdateVersion = "v1.3.8"
+RealVersion = "v1.3.8"
+VersionTime = "2026-11-15"
 
 Waifu2xVersion = "2.0.1"
 LoginUserName = ""
 
 
 # waifu2x
+CloseWaifu2x = False
 CanWaifu2x = True
 ErrorMsg = ""
 
@@ -44,6 +48,9 @@ IsTips = 1
 
 # 代理与分流相关
 ProxyUrl1 = "https://github.com/tonquer/picacg-qt/discussions/48"
+
+# Waifu2x相关
+Waifu2xUrl = "https://github.com/tonquer/picacg-qt/discussions/76"
 
 # ISSUES
 Issues1 = "https://github.com/tonquer/JMComic-qt/issues"

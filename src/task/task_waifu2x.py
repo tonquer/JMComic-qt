@@ -7,7 +7,7 @@ from zlib import crc32
 from config import config
 from config.setting import Setting
 from task.qt_task import TaskBase
-from task.task_multi import TaskMulti
+from task.task_download import FileData
 from tools.log import Log
 from tools.status import Status
 from tools.str import Str
@@ -18,18 +18,22 @@ class QConvertTask(object):
     def __init__(self, taskId=0):
         self.taskId = taskId
         self.callBack = None       # addData, laveSize
+        self.callBack2 = None
         self.backParam = None
         self.cleanFlag = ""
         self.status = Status.Ok
+        self.bookId = ""
+        self.convertType = ""
+        self.path = ""
         self.tick = 0
         self.loadPath = ""  #
         self.preDownPath = ""  #
-        self.saveParams = ""  #
         self.noSaveCache = False
         self.cachePath = ""  #
         self.savePath = ""  #
         self.imgData = b""
         self.saveData = b""
+        self.isCacheFetch = False
 
         self.model = {
             "isForce":0,
@@ -43,12 +47,14 @@ class TaskWaifu2x(TaskBase):
 
     def __init__(self):
         TaskBase.__init__(self)
+        from task.task_cache import TaskCache
+        TaskCache().InitWaifu2x()
         self.taskObj.convertBack.connect(self.HandlerTask)
         self.thread.start()
 
         self.thread2 = threading.Thread(target=self.RunLoad2)
-        self.thread2.setName("Task-" + str("Waifu2x"))
-        self.thread2.setDaemon(True)
+        self.thread2.name = "Task-" + str("Waifu2x")
+        self.thread2.daemon = True
 
     def Start(self):
         self.thread2.start()
@@ -61,7 +67,7 @@ class TaskWaifu2x(TaskBase):
             if taskId == "":
                 break
 
-            task = self.tasks.get(taskId)
+            task = self._GetTask(taskId)
             if not task:
                 continue
             assert isinstance(task, QConvertTask)
@@ -102,22 +108,29 @@ class TaskWaifu2x(TaskBase):
                     self.taskObj.convertBack.emit(taskId)
                     continue
 
+                w, h, mat, _ = ToolUtil.GetPictureSize(task.imgData)
+                if mat.lower() in ToolUtil.NeedConvertFormat:
+                    task.imgData = ToolUtil.GetCanConvertUseData(task.imgData)
+
+                if task.convertType ==  "download":
+                    from qt_owner import QtOwner
+                    newFormat = QtOwner().GetConvertFmtRule(mat)
+                    if newFormat != mat and newFormat not in ToolUtil.NeedConvertFormat:
+                        task.model['format'] = newFormat
+
                 if isFind:
                     continue
 
                 err = ""
                 if config.CanWaifu2x:
-                    if task.saveParams:
-                        task.imgData = TaskMulti().GetJmPicResultsResult(task.imgData, task.saveParams[0], task.saveParams[1], task.saveParams[2])
-
                     from sr_vulkan import sr_vulkan as sr
                     scale = task.model.get("scale", 0)
-                    mat = task.model.get("format", "")
+                    toMat = task.model.get("format", "")
                     tileSize = Setting.Waifu2xTileSize.GetIndexV()
                     if scale <= 0:
-                        sts = sr.add(task.imgData, task.model.get('model', 0), task.taskId, task.model.get("width", 0), task.model.get("high", 0), format=mat, tileSize=tileSize)
+                        sts = sr.add(task.imgData, task.model.get('model', 0), task.taskId, task.model.get("width", 0), task.model.get("high", 0), format=toMat, tileSize=tileSize)
                     else:
-                        sts = sr.add(task.imgData, task.model.get('model', 0), task.taskId, scale, format=mat, tileSize=tileSize)
+                        sts = sr.add(task.imgData, task.model.get('model', 0), task.taskId, scale, format=toMat, tileSize=tileSize)
 
                     if sts <= 0:
                         err = sr.getLastError()
@@ -150,7 +163,7 @@ class TaskWaifu2x(TaskBase):
                 break
             t1 = CTime()
             data, format, taskId, tick = info
-            info = self.tasks.get(taskId)
+            info = self._GetTask(taskId)
             tick = round(tick, 2)
             if not info:
                 continue
@@ -160,9 +173,11 @@ class TaskWaifu2x(TaskBase):
                 lenData = len(data)
             if lenData <= 0:
                 info.status = Status.FileFormatError
-                Log.Warn("convert error, taskId: {}, dataLen:{}, sts:{} tick:{}, skip:{}".format(str(taskId), lenData,
+                from sr_vulkan import sr_vulkan as sr
+                err = sr.getLastError()
+                Log.Warn("convert error, taskId: {}, dataLen:{}, sts:{} tick:{}, skip:{}, err:{}".format(str(taskId), lenData,
                                                                                           str(format),
-                                                                                          str(tick), str(Setting.IsSkipPic.value)))
+                                                                                          str(tick), str(Setting.IsSkipPic.value), err))
                 if info.savePath and Setting.IsSkipPic.value:
                     info.status = Status.Ok
                     data = info.imgData
@@ -172,20 +187,12 @@ class TaskWaifu2x(TaskBase):
             info.tick = tick
             try:
                 if not info.noSaveCache:
-                    for path in [info.cachePath, info.savePath]:
-                        if path and not os.path.isdir(os.path.dirname(path)):
-                            os.makedirs(os.path.dirname(path))
+                    if info.cachePath:
+                        from task.task_cache import TaskCache
+                        TaskCache().AddCacheDiskPath(ToolUtil.GetPictureName(info.cachePath, format), data)
 
-                        formatList = [".jpg", ".png", ".gif", ".webp", ".bmp", ".apng"]
-                        if path and data:
-                            if path[-4:] in formatList:
-                                pass
-                            elif path[-5:] in formatList:
-                                pass
-                            else:
-                                path = path + "." + format
-                            with open(path, "wb+") as f:
-                                f.write(data)
+                    for path in [info.savePath]:
+                        ToolUtil.SaveConvertPicture(data, path, format)
             except Exception as es:
                 info.status = Status.SaveError
                 Log.Error(es)
@@ -193,48 +200,44 @@ class TaskWaifu2x(TaskBase):
             self.taskObj.convertBack.emit(taskId)
             t1.Refresh("RunLoad")
 
-    def AddConvertTaskByData(self, path, imgData, model, callBack, backParam=None, preDownPath=None, noSaveCache=False, saveParams=None, cleanFlag=None):
+    def AddConvertTaskByData(self, path, imgData, model, callBack, backParam=None, preDownPath=None, noSaveCache=False, cleanFlag=None, completeCallBack2=None, otherParams=None):
         info = QConvertTask()
         info.callBack = callBack
+        info.callBack2 = completeCallBack2
         info.backParam = backParam
-        self.taskId += 1
-        self.tasks[self.taskId] = info
-        info.taskId = self.taskId
         info.imgData = imgData
         info.model = model
+        info.path = path
         info.preDownPath = preDownPath
         info.noSaveCache = noSaveCache
-        info.saveParams = saveParams
+        if isinstance(otherParams, dict):
+            info.bookId = otherParams.get("bookId", "")
         if not noSaveCache and path and Setting.SavePath.value:
-            a = crc32(json.dumps(model).encode("utf-8"))
-            if Setting.SavePath.value:
-                path = os.path.join(Setting.GetCachePath(), config.Waifu2xPath, path)
-                info.cachePath = path + "-{}".format(a)
+            info.cachePath = os.path.join(Setting.GetCachePath(), os.path.join("waifu2x", path))
 
-        if cleanFlag:
-            info.cleanFlag = cleanFlag
-            taskIds = self.flagToIds.setdefault(cleanFlag, set())
-            taskIds.add(self.taskId)
+        taskId = self._RegisterTask(info, cleanFlag)
         Log.Debug("add convert info, taskId:{}, cachePath:{}".format(info.taskId, info.cachePath))
-        self._inQueue.put(self.taskId)
-        return self.taskId
 
-    def AddConvertTaskByPath(self, loadPath, savePath, callBack, backParam=None, cleanFlag=None):
+        from task.task_cache import TaskCache
+        isCache = TaskCache().AddConvertFromCache(info)
+        if not isCache:
+            self._inQueue.put(taskId)
+            return taskId
+        return 0
+
+    def AddConvertTaskByPath(self, loadPath, savePath, callBack, backParam=None, cleanFlag=None, otherParams = None):
         info = QConvertTask()
         info.loadPath = loadPath
         info.savePath = savePath
         info.callBack = callBack
         info.backParam = backParam
-        self.taskId += 1
-        self.tasks[self.taskId] = info
-        info.taskId = self.taskId
-        if cleanFlag:
-            info.cleanFlag = cleanFlag
-            taskIds = self.flagToIds.setdefault(cleanFlag, set())
-            taskIds.add(self.taskId)
+        taskId = self._RegisterTask(info, cleanFlag)
+        if isinstance(otherParams, dict):
+            info.bookId = otherParams.get("bookId", "")
+            info.convertType = otherParams.get("type", "")
         Log.Debug("add convert info, loadPath:{}, savePath:{}".format(info.loadPath, info.savePath))
-        self._inQueue.put(self.taskId)
-        return self.taskId
+        self._inQueue.put(taskId)
+        return taskId
 
     def AddConvertTaskByPathSetModel(self, loadPath, savePath, callBack, backParam=None, model=None, cleanFlag=None):
         info = QConvertTask()
@@ -243,54 +246,39 @@ class TaskWaifu2x(TaskBase):
         info.callBack = callBack
         info.backParam = backParam
         info.model = model
-        self.taskId += 1
-        self.tasks[self.taskId] = info
-        info.taskId = self.taskId
-        if cleanFlag:
-            info.cleanFlag = cleanFlag
-            taskIds = self.flagToIds.setdefault(cleanFlag, set())
-            taskIds.add(self.taskId)
+        taskId = self._RegisterTask(info, cleanFlag)
         Log.Debug("add convert info, loadPath:{}, savePath:{}".format(info.loadPath, info.savePath))
-        self._inQueue.put(self.taskId)
-        return self.taskId
+        self._inQueue.put(taskId)
+        return taskId
 
     def HandlerTask(self, taskId, isCallBack=True):
         try:
-            info = self.tasks.get(taskId)
+            info = self._TakeTask(taskId)
             if not info:
                 return
 
             assert isinstance(info, QConvertTask)
-            info.callBack(info.saveData, info.status, info.backParam, info.tick)
-            if info.cleanFlag:
-                taskIds = self.flagToIds.get(info.cleanFlag, set())
-                taskIds.discard(info.taskId)
-            del self.tasks[taskId]
+            if info.callBack:
+                info.callBack(info.saveData, info.status, info.backParam, info.tick)
+            if info.callBack2:
+                info.callBack2(FileData(info.saveData), info.status, info.backParam, info.tick)
         except Exception as es:
             Log.Error(es)
 
     def ClearWaitConvertIds(self, taskIds):
         if not taskIds:
             return
-        for taskId in taskIds:
-            if taskId in self.tasks:
-                del self.tasks[taskId]
+        self._RemoveTasksByIds(taskIds)
         Log.Info("cancel wait convert taskId, {}".format(taskIds))
         if config.CanWaifu2x:
             from sr_vulkan import sr_vulkan as sr
             sr.removeWaitProc(list(taskIds))
 
     def Cancel(self, cleanFlag):
-        taskIds = self.flagToIds.get(cleanFlag, set())
-        if not taskIds:
+        removeIds = self._RemoveTasksByFlag(cleanFlag)
+        if not removeIds:
             return
-        removeIds = []
-        for taskId in taskIds:
-            if taskId in self.tasks:
-                del self.tasks[taskId]
-                removeIds.append(taskId)
         Log.Info("cancel convert taskId, {}".format(removeIds))
-        self.flagToIds.pop(cleanFlag)
         if config.CanWaifu2x:
             from sr_vulkan import sr_vulkan as sr
             sr.remove(removeIds)

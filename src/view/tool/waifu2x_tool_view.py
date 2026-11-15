@@ -57,7 +57,7 @@ class Waifu2xToolView(QtWidgets.QWidget, Ui_Waifu2xTool, QtTaskBase):
         self.graphicsItem = ReadQGraphicsProxyWidget()
         self.graphicsItem.setFlags(QGraphicsPixmapItem.ItemIsFocusable |
                                    QGraphicsPixmapItem.ItemIsMovable)
-        # self.graphicsView.setDragMode(QGraphicsView.RubberBandDrag)
+        self.graphicsView.setDragMode(QGraphicsView.DragMode.ScrollHandDrag)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.CopyPicture)
         self.graphicsScene = QGraphicsScene(self)  # 场景
@@ -325,20 +325,26 @@ class Waifu2xToolView(QtWidgets.QWidget, Ui_Waifu2xTool, QtTaskBase):
         self.zoom(1.1)
         return
 
+
     def OpenPicture(self):
         try:
-            filename = QFileDialog.getOpenFileName(self, "Open Image", ".", "Image Files(*.jpg *.png *.gif *.webp)")
+            filename = QFileDialog.getOpenFileName(self, "Open Image", ".", "Image Files(*)")
             if filename and len(filename) >= 1:
                 name = filename[0]
                 if os.path.isfile(name):
                     f = open(name, "rb")
                     data = f.read()
                     f.close()
-                    self.data = data
+                    data2 = ToolUtil.GetCanUseData(data)
+                    width, height, mat, isAnima = ToolUtil.GetPictureSize(data2)
+                    if not width or not height:
+                        QtOwner().ShowError(Str.GetStr(Str.NotSupportFmt))
+                        return
+                    self.data = data2
                     self.waifu2xData = None
                     self.ClearConvert()
                     self.backStatus = ""
-                    self.ShowImg(data)
+                    self.ShowImg(data2)
         except Exception as ex:
             Log.Error(ex)
         return
@@ -489,6 +495,6 @@ class Waifu2xToolView(QtWidgets.QWidget, Ui_Waifu2xTool, QtTaskBase):
         data = self.waifu2xData if self.waifu2xData else self.data
         if not data:
             return
-        # QtOwner().owner.navigationWidget.UpdatePictureData(data)
-        # QtOwner().ShowMsg(Str.GetStr(Str.HeadUpload))
+        QtOwner().owner.navigationWidget.UpdatePictureData(data)
+        QtOwner().ShowMsg(Str.GetStr(Str.HeadUpload))
         # QtImgMgr().SetHeadStatus(not self.isHeadUp)

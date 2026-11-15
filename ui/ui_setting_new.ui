@@ -17,7 +17,7 @@
    <string notr="true"/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
-   <item alignment="Qt::AlignLeft">
+   <item alignment="Qt::AlignmentFlag::AlignLeft">
     <widget class="QLabel" name="msgLabel">
      <property name="enabled">
       <bool>true</bool>
@@ -65,7 +65,7 @@
        <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Orientation::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -95,9 +95,9 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>0</y>
-          <width>661</width>
-          <height>2927</height>
+          <y>-2038</y>
+          <width>666</width>
+          <height>3333</height>
          </rect>
         </property>
         <property name="styleSheet">
@@ -158,10 +158,10 @@
          <item>
           <widget class="QFrame" name="frame_16">
            <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
+            <enum>QFrame::Shape::StyledPanel</enum>
            </property>
            <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
+            <enum>QFrame::Shadow::Raised</enum>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
             <item>
@@ -291,7 +291,7 @@
               <item>
                <spacer name="horizontalSpacer_5">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -378,10 +378,10 @@
          <item>
           <widget class="QFrame" name="frame_7">
            <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
+            <enum>QFrame::Shape::StyledPanel</enum>
            </property>
            <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
+            <enum>QFrame::Shadow::Raised</enum>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_18">
             <item>
@@ -423,7 +423,7 @@
               <item>
                <spacer name="horizontalSpacer_23">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -517,7 +517,7 @@
               <item>
                <spacer name="horizontalSpacer_24">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -581,7 +581,7 @@
               <item>
                <spacer name="horizontalSpacer_25">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -662,10 +662,10 @@
          <item>
           <widget class="QFrame" name="frame_17">
            <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
+            <enum>QFrame::Shape::StyledPanel</enum>
            </property>
            <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
+            <enum>QFrame::Shadow::Raised</enum>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_21">
             <item>
@@ -754,7 +754,7 @@
               <item>
                <spacer name="horizontalSpacer_13">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -806,7 +806,7 @@
               <item>
                <spacer name="horizontalSpacer_21">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -865,7 +865,7 @@
               <item>
                <spacer name="horizontalSpacer_28">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -909,7 +909,7 @@
               <item>
                <spacer name="horizontalSpacer_29">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -1012,17 +1012,273 @@
          <item>
           <widget class="Line" name="line">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
           </widget>
          </item>
          <item>
           <spacer name="verticalSpacer_3">
            <property name="orientation">
-            <enum>Qt::Vertical</enum>
+            <enum>Qt::Orientation::Vertical</enum>
            </property>
            <property name="sizeType">
-            <enum>QSizePolicy::Minimum</enum>
+            <enum>QSizePolicy::Policy::Minimum</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QLabel" name="prefetchLabel">
+           <property name="font">
+            <font>
+             <pointsize>18</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>图片预取</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QFrame" name="prefetchFrame">
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <layout class="QVBoxLayout" name="prefetchLayout">
+            <item>
+             <layout class="QHBoxLayout" name="prefetchCountLayout">
+              <item>
+               <widget class="QLabel" name="prefetchCountLabel">
+                <property name="text">
+                 <string>预下载图片数量：</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_30">
+                <property name="text">
+                 <string>前：</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="WheelSpinBox" name="prefetchFrontCount">
+                <property name="value">
+                 <number>3</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_44">
+                <property name="text">
+                 <string>-</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_45">
+                <property name="text">
+                 <string>后：</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="WheelSpinBox" name="prefetchCount">
+                <property name="minimum">
+                 <number>1</number>
+                </property>
+                <property name="maximum">
+                 <number>100</number>
+                </property>
+                <property name="value">
+                 <number>5</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="prefetchCountHelp">
+                <property name="maximumSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="toolTip">
+                 <string>设置当前页之后预取的图片数量，下载并发数固定为5</string>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">color: rgb(110, 110, 110); font-size: 16px;</string>
+                </property>
+                <property name="text">
+                 <string>ⓘ</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="prefetchCountSpacer">
+                <property name="orientation">
+                 <enum>Qt::Orientation::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_35">
+              <item>
+               <widget class="QLabel" name="label_46">
+                <property name="text">
+                 <string>滚动模式显示范围：</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_47">
+                <property name="text">
+                 <string>前：</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="WheelSpinBox" name="showFrontCount">
+                <property name="maximum">
+                 <number>10</number>
+                </property>
+                <property name="value">
+                 <number>2</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_48">
+                <property name="text">
+                 <string>-</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_53">
+                <property name="text">
+                 <string>后：</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="WheelSpinBox" name="showCount">
+                <property name="minimum">
+                 <number>2</number>
+                </property>
+                <property name="maximum">
+                 <number>20</number>
+                </property>
+                <property name="value">
+                 <number>4</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="showCountHelp">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;滚动模式下，显示的范围，需小于预下载数量，调大滚动时可减少加载图的闪烁&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">color: rgb(110, 110, 110); font-size: 16px;</string>
+                </property>
+                <property name="text">
+                 <string>ⓘ</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_10">
+                <property name="orientation">
+                 <enum>Qt::Orientation::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="crossChapterPrefetchLayout"/>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="prefetchWholeChapterLayout">
+              <item>
+               <widget class="QCheckBox" name="prefetchWholeChapter">
+                <property name="text">
+                 <string>预取当前章节剩余全部图片</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="prefetchWholeChapterHelp">
+                <property name="maximumSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="toolTip">
+                 <string>忽略预取数量限制，预取当前页之后直到本章末尾的全部图片</string>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">color: rgb(110, 110, 110); font-size: 16px;</string>
+                </property>
+                <property name="text">
+                 <string>ⓘ</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="prefetchWholeChapterSpacer">
+                <property name="orientation">
+                 <enum>Qt::Orientation::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <spacer name="prefetchSpacer">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Policy::Minimum</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -1104,7 +1360,7 @@
               <item>
                <widget class="Line" name="line_5">
                 <property name="orientation">
-                 <enum>Qt::Vertical</enum>
+                 <enum>Qt::Orientation::Vertical</enum>
                 </property>
                </widget>
               </item>
@@ -1114,7 +1370,7 @@
                  <string>代理地址</string>
                 </property>
                 <property name="alignment">
-                 <set>Qt::AlignCenter</set>
+                 <set>Qt::AlignmentFlag::AlignCenter</set>
                 </property>
                </widget>
               </item>
@@ -1124,7 +1380,7 @@
               <item>
                <spacer name="horizontalSpacer">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -1157,7 +1413,7 @@
               <item>
                <widget class="Line" name="line_6">
                 <property name="orientation">
-                 <enum>Qt::Vertical</enum>
+                 <enum>Qt::Orientation::Vertical</enum>
                 </property>
                </widget>
               </item>
@@ -1174,7 +1430,7 @@
               <item>
                <spacer name="horizontalSpacer_22">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -1212,7 +1468,7 @@
               <item>
                <spacer name="horizontalSpacer_26">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -1272,24 +1528,24 @@
          <item>
           <widget class="Line" name="line_2">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
           </widget>
          </item>
          <item>
           <widget class="Line" name="line_3">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
           </widget>
          </item>
          <item>
           <spacer name="verticalSpacer_2">
            <property name="orientation">
-            <enum>Qt::Vertical</enum>
+            <enum>Qt::Orientation::Vertical</enum>
            </property>
            <property name="sizeType">
-            <enum>QSizePolicy::Minimum</enum>
+            <enum>QSizePolicy::Policy::Minimum</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -1355,7 +1611,7 @@
               <item>
                <spacer name="horizontalSpacer_14">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -1396,7 +1652,7 @@
                  </size>
                 </property>
                 <property name="focusPolicy">
-                 <enum>Qt::StrongFocus</enum>
+                 <enum>Qt::FocusPolicy::StrongFocus</enum>
                 </property>
                 <item>
                  <property name="text">
@@ -1408,7 +1664,7 @@
               <item>
                <spacer name="horizontalSpacer_15">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -1461,7 +1717,85 @@
               <item>
                <spacer name="horizontalSpacer_27">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_58">
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>线程数，过大可能超显存，配合调低tile设置（需重启生效）</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_37">
+              <item>
+               <widget class="WheelComboBox" name="procThreadNum">
+                <item>
+                 <property name="text">
+                  <string>Auto</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>1</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>2</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>3</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>4</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>5</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>6</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>7</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>8</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_34">
+                <property name="orientation">
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -1550,7 +1884,7 @@
               <item>
                <spacer name="horizontalSpacer_20">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -1593,7 +1927,7 @@
               <item>
                <spacer name="horizontalSpacer_3">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -1651,7 +1985,7 @@
               <item>
                <spacer name="horizontalSpacer_4">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -1733,7 +2067,7 @@
               <item>
                <spacer name="horizontalSpacer_9">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -1776,7 +2110,7 @@
               <item>
                <spacer name="horizontalSpacer_11">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -1834,7 +2168,7 @@
               <item>
                <spacer name="horizontalSpacer_12">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -1919,7 +2253,7 @@
               <item>
                <spacer name="horizontalSpacer_6">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -1977,7 +2311,7 @@
               <item>
                <spacer name="horizontalSpacer_7">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -1995,17 +2329,17 @@
          <item>
           <widget class="Line" name="line_4">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
           </widget>
          </item>
          <item>
           <spacer name="verticalSpacer_4">
            <property name="orientation">
-            <enum>Qt::Vertical</enum>
+            <enum>Qt::Orientation::Vertical</enum>
            </property>
            <property name="sizeType">
-            <enum>QSizePolicy::Minimum</enum>
+            <enum>QSizePolicy::Policy::Minimum</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -2030,10 +2364,10 @@
          <item>
           <widget class="QFrame" name="frame_15">
            <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
+            <enum>QFrame::Shape::StyledPanel</enum>
            </property>
            <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
+            <enum>QFrame::Shadow::Raised</enum>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_19">
             <item>
@@ -2093,10 +2427,10 @@
          <item>
           <widget class="QFrame" name="frame">
            <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
+            <enum>QFrame::Shape::StyledPanel</enum>
            </property>
            <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
+            <enum>QFrame::Shadow::Raised</enum>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_14">
             <item>
@@ -2136,7 +2470,7 @@
               <item>
                <spacer name="horizontalSpacer_2">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -2181,6 +2515,181 @@
              </widget>
             </item>
             <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_32">
+              <item>
+               <widget class="QCheckBox" name="openMemBox">
+                <property name="text">
+                 <string>内存缓存</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_50">
+                <property name="text">
+                 <string>当前</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="memLabel">
+                <property name="text">
+                 <string>0</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_51">
+                <property name="text">
+                 <string>MB，</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_52">
+                <property name="text">
+                 <string>设置最大值(MB)：</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="WheelSpinBox" name="memBox">
+                <property name="minimumSize">
+                 <size>
+                  <width>100</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximum">
+                 <number>8192</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_30">
+                <property name="orientation">
+                 <enum>Qt::Orientation::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_36">
+              <item>
+               <widget class="QPushButton" name="diskRefreshButton">
+                <property name="text">
+                 <string>刷新磁盘缓存统计</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_49">
+                <property name="text">
+                 <string>(如果自行删除了缓存文件，或者修改了目录请点击刷新)</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_31">
+                <property name="orientation">
+                 <enum>Qt::Orientation::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_33">
+              <item>
+               <widget class="QCheckBox" name="openDiskBox">
+                <property name="text">
+                 <string>磁盘缓存</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_54">
+                <property name="text">
+                 <string>当前</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="diskLabel">
+                <property name="text">
+                 <string>0</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_56">
+                <property name="text">
+                 <string>MB，</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_57">
+                <property name="text">
+                 <string>设置最大值(MB)：</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="WheelSpinBox" name="diskBox">
+                <property name="minimumSize">
+                 <size>
+                  <width>100</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximum">
+                 <number>102400</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_55">
+                <property name="text">
+                 <string>缓存天数：</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="WheelSpinBox" name="diskDayBox">
+                <property name="maximum">
+                 <number>9999</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_32">
+                <property name="orientation">
+                 <enum>Qt::Orientation::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
              <layout class="QHBoxLayout" name="horizontalLayout_10">
               <item>
                <widget class="QPushButton" name="setDirButton">
@@ -2190,9 +2699,16 @@
                </widget>
               </item>
               <item>
+               <widget class="QPushButton" name="setLogDirButton">
+                <property name="text">
+                 <string>设置日志目录</string>
+                </property>
+               </widget>
+              </item>
+              <item>
                <spacer name="horizontalSpacer_8">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -2242,7 +2758,7 @@
               <item>
                <spacer name="horizontalSpacer_16">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -2292,7 +2808,7 @@
               <item>
                <spacer name="horizontalSpacer_17">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -2342,7 +2858,7 @@
               <item>
                <spacer name="horizontalSpacer_18">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -2392,7 +2908,57 @@
               <item>
                <spacer name="horizontalSpacer_19">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_34">
+              <item>
+               <widget class="QLabel" name="label_43">
+                <property name="minimumSize">
+                 <size>
+                  <width>80</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>日志</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="logLabel">
+                <property name="minimumSize">
+                 <size>
+                  <width>150</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="openLogDir">
+                <property name="text">
+                 <string>打开目录</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_33">
+                <property name="orientation">
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -2441,11 +3007,11 @@
  <resources/>
  <connections/>
  <buttongroups>
+  <buttongroup name="showCloseButtonGroup"/>
   <buttongroup name="proxyGroup"/>
   <buttongroup name="saveNameGroup"/>
   <buttongroup name="languageGroup"/>
-  <buttongroup name="themeGroup"/>
-  <buttongroup name="showCloseButtonGroup"/>
   <buttongroup name="logGroup"/>
+  <buttongroup name="themeGroup"/>
  </buttongroups>
 </ui>

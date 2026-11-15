@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_read_tool.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.3
+## Created by: Qt User Interface Compiler version 6.9.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -17,7 +17,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QCheckBox, QFrame, QGridLayout,
     QHBoxLayout, QLabel, QLayout, QPushButton,
-    QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
+    QSizePolicy, QSpacerItem, QSpinBox, QVBoxLayout,
+    QWidget)
 
 from component.box.wheel_combo_box import WheelComboBox
 from component.box.wheel_double_spin_box import WheelDoubleSpinBox
@@ -29,7 +30,7 @@ class Ui_ReadImg(object):
     def setupUi(self, ReadImg):
         if not ReadImg.objectName():
             ReadImg.setObjectName(u"ReadImg")
-        ReadImg.resize(328, 750)
+        ReadImg.resize(505, 750)
         ReadImg.setAutoFillBackground(False)
         ReadImg.setStyleSheet(u"")
         self.gridLayout_2 = QGridLayout(ReadImg)
@@ -40,25 +41,25 @@ class Ui_ReadImg(object):
         self.scrollArea22.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, -157, 301, 897))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 483, 934))
         self.verticalLayout_2 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.verticalLayout = QVBoxLayout()
         self.verticalLayout.setSpacing(6)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalLayout.setSizeConstraint(QLayout.SetDefaultConstraint)
+        self.verticalLayout.setSizeConstraint(QLayout.SizeConstraint.SetDefaultConstraint)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.line_6 = QFrame(self.scrollAreaWidgetContents)
         self.line_6.setObjectName(u"line_6")
-        self.line_6.setFrameShape(QFrame.HLine)
-        self.line_6.setFrameShadow(QFrame.Sunken)
+        self.line_6.setFrameShape(QFrame.Shape.HLine)
+        self.line_6.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.verticalLayout.addWidget(self.line_6)
 
         self.label_4 = QLabel(self.scrollAreaWidgetContents)
         self.label_4.setObjectName(u"label_4")
         self.label_4.setStyleSheet(u"color: #ee2a24")
-        self.label_4.setAlignment(Qt.AlignCenter)
+        self.label_4.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.verticalLayout.addWidget(self.label_4)
 
@@ -117,15 +118,15 @@ class Ui_ReadImg(object):
 
         self.line = QFrame(self.scrollAreaWidgetContents)
         self.line.setObjectName(u"line")
-        self.line.setFrameShape(QFrame.HLine)
-        self.line.setFrameShadow(QFrame.Sunken)
+        self.line.setFrameShape(QFrame.Shape.HLine)
+        self.line.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.verticalLayout.addWidget(self.line)
 
         self.label = QLabel(self.scrollAreaWidgetContents)
         self.label.setObjectName(u"label")
         self.label.setStyleSheet(u"color: #ee2a24")
-        self.label.setAlignment(Qt.AlignCenter)
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.verticalLayout.addWidget(self.label)
 
@@ -264,15 +265,15 @@ class Ui_ReadImg(object):
 
         self.line_2 = QFrame(self.scrollAreaWidgetContents)
         self.line_2.setObjectName(u"line_2")
-        self.line_2.setFrameShape(QFrame.HLine)
-        self.line_2.setFrameShadow(QFrame.Sunken)
+        self.line_2.setFrameShape(QFrame.Shape.HLine)
+        self.line_2.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.verticalLayout.addWidget(self.line_2)
 
         self.label_6 = QLabel(self.scrollAreaWidgetContents)
         self.label_6.setObjectName(u"label_6")
         self.label_6.setStyleSheet(u"color: #ee2a24")
-        self.label_6.setAlignment(Qt.AlignCenter)
+        self.label_6.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.verticalLayout.addWidget(self.label_6)
 
@@ -282,13 +283,11 @@ class Ui_ReadImg(object):
         self.label_5.setObjectName(u"label_5")
         self.label_5.setMaximumSize(QSize(90, 16777215))
         self.label_5.setStyleSheet(u"")
-        self.label_5.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+        self.label_5.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
 
         self.horizontalLayout_11.addWidget(self.label_5)
 
         self.comboBox = WheelComboBox(self.scrollAreaWidgetContents)
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
@@ -317,24 +316,40 @@ class Ui_ReadImg(object):
         self.zoomSlider.setMaximum(200)
         self.zoomSlider.setSingleStep(10)
         self.zoomSlider.setValue(120)
-        self.zoomSlider.setOrientation(Qt.Horizontal)
+        self.zoomSlider.setOrientation(Qt.Orientation.Horizontal)
 
         self.horizontalLayout_10.addWidget(self.zoomSlider)
 
 
         self.verticalLayout.addLayout(self.horizontalLayout_10)
 
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.animeBox = QCheckBox(self.scrollAreaWidgetContents)
+        self.animeBox.setObjectName(u"animeBox")
+        self.animeBox.setChecked(True)
+
+        self.horizontalLayout_2.addWidget(self.animeBox)
+
+        self.switchDouble = QCheckBox(self.scrollAreaWidgetContents)
+        self.switchDouble.setObjectName(u"switchDouble")
+
+        self.horizontalLayout_2.addWidget(self.switchDouble)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
+
         self.line_3 = QFrame(self.scrollAreaWidgetContents)
         self.line_3.setObjectName(u"line_3")
-        self.line_3.setFrameShape(QFrame.HLine)
-        self.line_3.setFrameShadow(QFrame.Sunken)
+        self.line_3.setFrameShape(QFrame.Shape.HLine)
+        self.line_3.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.verticalLayout.addWidget(self.line_3)
 
         self.label_7 = QLabel(self.scrollAreaWidgetContents)
         self.label_7.setObjectName(u"label_7")
         self.label_7.setStyleSheet(u"color: #ee2a24")
-        self.label_7.setAlignment(Qt.AlignCenter)
+        self.label_7.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.verticalLayout.addWidget(self.label_7)
 
@@ -345,7 +360,7 @@ class Ui_ReadImg(object):
 
         self.horizontalLayout_3.addWidget(self.label_12)
 
-        self.scrollInitSpeed = WheelSpinBox(self.scrollAreaWidgetContents)
+        self.scrollInitSpeed = QSpinBox(self.scrollAreaWidgetContents)
         self.scrollInitSpeed.setObjectName(u"scrollInitSpeed")
         self.scrollInitSpeed.setMinimum(1)
         self.scrollInitSpeed.setMaximum(4000)
@@ -375,24 +390,6 @@ class Ui_ReadImg(object):
 
         self.verticalLayout.addLayout(self.horizontalLayout_12)
 
-        self.horizontalLayout_2 = QHBoxLayout()
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.label_2 = QLabel(self.scrollAreaWidgetContents)
-        self.label_2.setObjectName(u"label_2")
-
-        self.horizontalLayout_2.addWidget(self.label_2)
-
-        self.scrollTime = WheelSpinBox(self.scrollAreaWidgetContents)
-        self.scrollTime.setObjectName(u"scrollTime")
-        self.scrollTime.setMinimum(50)
-        self.scrollTime.setMaximum(2000)
-        self.scrollTime.setValue(500)
-
-        self.horizontalLayout_2.addWidget(self.scrollTime)
-
-
-        self.verticalLayout.addLayout(self.horizontalLayout_2)
-
         self.horizontalLayout_13 = QHBoxLayout()
         self.horizontalLayout_13.setObjectName(u"horizontalLayout_13")
         self.label_11 = QLabel(self.scrollAreaWidgetContents)
@@ -414,10 +411,15 @@ class Ui_ReadImg(object):
 
         self.line_8 = QFrame(self.scrollAreaWidgetContents)
         self.line_8.setObjectName(u"line_8")
-        self.line_8.setFrameShape(QFrame.HLine)
-        self.line_8.setFrameShadow(QFrame.Sunken)
+        self.line_8.setFrameShape(QFrame.Shape.HLine)
+        self.line_8.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.verticalLayout.addWidget(self.line_8)
+
+        self.openGLBox = QCheckBox(self.scrollAreaWidgetContents)
+        self.openGLBox.setObjectName(u"openGLBox")
+
+        self.verticalLayout.addWidget(self.openGLBox)
 
         self.pushButton_2 = QPushButton(self.scrollAreaWidgetContents)
         self.pushButton_2.setObjectName(u"pushButton_2")
@@ -438,8 +440,8 @@ class Ui_ReadImg(object):
 
         self.line_5 = QFrame(self.scrollAreaWidgetContents)
         self.line_5.setObjectName(u"line_5")
-        self.line_5.setFrameShape(QFrame.HLine)
-        self.line_5.setFrameShadow(QFrame.Sunken)
+        self.line_5.setFrameShape(QFrame.Shape.HLine)
+        self.line_5.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.verticalLayout.addWidget(self.line_5)
 
@@ -465,8 +467,8 @@ class Ui_ReadImg(object):
 
         self.line_7 = QFrame(self.scrollAreaWidgetContents)
         self.line_7.setObjectName(u"line_7")
-        self.line_7.setFrameShape(QFrame.HLine)
-        self.line_7.setFrameShadow(QFrame.Sunken)
+        self.line_7.setFrameShape(QFrame.Shape.HLine)
+        self.line_7.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.verticalLayout.addWidget(self.line_7)
 
@@ -489,14 +491,14 @@ class Ui_ReadImg(object):
 
         self.verticalLayout.addLayout(self.horizontalLayout)
 
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout.addItem(self.verticalSpacer)
 
         self.line_4 = QFrame(self.scrollAreaWidgetContents)
         self.line_4.setObjectName(u"line_4")
-        self.line_4.setFrameShape(QFrame.HLine)
-        self.line_4.setFrameShadow(QFrame.Sunken)
+        self.line_4.setFrameShape(QFrame.Shape.HLine)
+        self.line_4.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.verticalLayout.addWidget(self.line_4)
 
@@ -520,7 +522,6 @@ class Ui_ReadImg(object):
         self.waifu2xSave.clicked.connect(ReadImg.Waifu2xSave)
         self.waifu2xCancle.clicked.connect(ReadImg.Waifu2xCancle)
         self.zoomSlider.valueChanged.connect(ReadImg.ScalePicture)
-        self.comboBox.currentIndexChanged.connect(ReadImg.ChangeReadMode)
 
         QMetaObject.connectSlotsByName(ReadImg)
     # setupUi
@@ -564,16 +565,16 @@ class Ui_ReadImg(object):
         self.comboBox.setItemText(3, QCoreApplication.translate("ReadImg", u"\u53f3\u5de6\u53cc\u9875", None))
         self.comboBox.setItemText(4, QCoreApplication.translate("ReadImg", u"\u5de6\u53f3\u6eda\u52a8", None))
         self.comboBox.setItemText(5, QCoreApplication.translate("ReadImg", u"\u53f3\u5de6\u6eda\u52a8", None))
-        self.comboBox.setItemText(6, QCoreApplication.translate("ReadImg", u"\u53f3\u5de6\u53cc\u9875(\u6eda\u8f6e\u6b63\u5e8f)", None))
-        self.comboBox.setItemText(7, QCoreApplication.translate("ReadImg", u"\u7b49\u5bbd\u6a21\u5f0f", None))
-        self.comboBox.setItemText(8, QCoreApplication.translate("ReadImg", u"\u53f3\u5de6\u6eda\u52a8(\u6eda\u8f6e\u6b63\u5e8f)", None))
+        self.comboBox.setItemText(6, QCoreApplication.translate("ReadImg", u"\u7b49\u5bbd\u6a21\u5f0f", None))
 
         self.zoomLabel.setText(QCoreApplication.translate("ReadImg", u"\u7f29\u653e\uff08120%\uff09", None))
+        self.animeBox.setText(QCoreApplication.translate("ReadImg", u"\u542f\u7528\u7ffb\u9875\u52a8\u753b", None))
+        self.switchDouble.setText(QCoreApplication.translate("ReadImg", u"\u5207\u6362\u53cc\u9875\u5bf9\u9f50", None))
         self.label_7.setText(QCoreApplication.translate("ReadImg", u"\u81ea\u52a8\u6eda\u52a8/\u7ffb\u9875", None))
         self.label_12.setText(QCoreApplication.translate("ReadImg", u"\u624b\u52a8\u6eda\u52a8\uff08\u50cf\u7d20\uff09\uff1a", None))
-        self.label_10.setText(QCoreApplication.translate("ReadImg", u"\u6eda\u52a8\u901f\u5ea6\uff08\u50cf\u7d20\uff09\uff1a", None))
-        self.label_2.setText(QCoreApplication.translate("ReadImg", u"\u6eda\u52a8\u65f6\u95f4\uff08\u6beb\u79d2\uff09\uff1a", None))
+        self.label_10.setText(QCoreApplication.translate("ReadImg", u"\u81ea\u52a8\u6eda\u52a8\uff08\u50cf\u7d20\uff09\uff1a", None))
         self.label_11.setText(QCoreApplication.translate("ReadImg", u"\u7ffb\u9875\u901f\u5ea6\uff08\u79d2\uff09\uff1a", None))
+        self.openGLBox.setText(QCoreApplication.translate("ReadImg", u"\u6253\u5f00OpenGL\u52a0\u901f", None))
         self.pushButton_2.setText(QCoreApplication.translate("ReadImg", u"\u9690\u85cf", None))
         self.fullButton.setText(QCoreApplication.translate("ReadImg", u"\u5168\u5c4f", None))
         self.returePage.setText(QCoreApplication.translate("ReadImg", u"\u8fd4\u56de", None))

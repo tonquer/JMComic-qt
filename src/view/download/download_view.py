@@ -19,6 +19,7 @@ from tools.status import Status
 from tools.str import Str
 from tools.tool import ToolUtil
 from view.download.download_db import DownloadDb
+from view.download.download_format_widget import DownloadFormatWidget
 from view.download.download_item import DownloadItem
 from view.download.download_status import DownloadStatus
 
@@ -62,7 +63,7 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
         datas = self.db.LoadDownload(self)
         self.redownloadRadio.clicked.connect(self.SwitchReDownload)
         self.skipPic.clicked.connect(self.SwitchSkipPic)
-        self.webp2Png.clicked.connect(self.SwitchWebp2png)
+        # self.webp2Png.clicked.connect(self.SwitchWebp2png)
         for task in datas.values():
             self.downloadDict[task.bookId] = task
             if not task.epsIds:
@@ -85,6 +86,11 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
         self.comboBox.currentIndexChanged.connect(self.CheckHideItem)
         self.lineEdit.textChanged.connect(self.SearchTextChange)
         self.searchText = ""
+        self.formatButton.clicked.connect(self.OpenFormatWidget)
+
+    def OpenFormatWidget(self):
+        widget = DownloadFormatWidget(QtOwner().owner)
+        widget.exec()
 
     # 修复下数据
     def RepairData(self, task):
@@ -124,18 +130,18 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
         self.failTimer.start()
         self.redownloadRadio.setCheckable(True)
         self.redownloadRadio.setChecked(bool(Setting.IsReDownload.value))
-        self.webp2Png.setCheckable(True)
-        self.webp2Png.setChecked(bool(Setting.WebpToPng.value))
+        # self.webp2Png.setCheckable(True)
+        # self.webp2Png.setChecked(bool(Setting.WebpToPng.value))
         self.skipPic.setCheckable(True)
         self.skipPic.setChecked(bool(Setting.IsSkipPic.value))
 
-    def GetDownloadEpsInfo(self, bookId, epsId):
+    def GetDownloadEpsInfo(self, bookId, epsId) :
         info = self.GetDownloadInfo(bookId)
         if not info:
             return False
         return info.epsInfo.get(epsId)
 
-    def GetDownloadInfo(self, bookId):
+    def GetDownloadInfo(self, bookId) -> DownloadItem:
         return self.downloadDict.get(bookId)
 
     def IsDownloadEpsId(self, bookId, epsId):
@@ -641,8 +647,8 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
     def SwitchSkipPic(self):
         Setting.IsSkipPic.SetValue(int(self.skipPic.isChecked()))
 
-    def SwitchWebp2png(self):
-        Setting.WebpToPng.SetValue(int(self.webp2Png.isChecked()))
+    # def SwitchWebp2png(self):
+    #     Setting.WebpToPng.SetValue(int(self.webp2Png.isChecked()))
 
     def CheckFailReDownload(self):
         if not Setting.IsReDownload.value:

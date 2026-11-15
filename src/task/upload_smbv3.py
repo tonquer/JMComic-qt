@@ -35,10 +35,10 @@ class SmbV3Client(UpLoadBase):
         try:
             if self.port:
                 smbclient.listdir(rf"\\{self.address}\{self.service_name}", port=self.port, username=self.username,
-                              password=self.password)
+                              password=self.password, connection_timeout=5)
             else:
                 smbclient.listdir(rf"\\{self.address}\{self.service_name}", username=self.username,
-                                  password=self.password)
+                                  password=self.password, connection_timeout=5)
             self.isLink = True
         except Exception as es:
             Log.Error(es)
@@ -49,10 +49,10 @@ class SmbV3Client(UpLoadBase):
         try:
             if self.port:
                 dirs = smbclient.listdir(rf"\\{self.address}\{self.service_name}", port=self.port, username=self.username,
-                              password=self.password)
+                              password=self.password, connection_timeout=5)
             else:
                 dirs = smbclient.listdir(rf"\\{self.address}\{self.service_name}", username=self.username,
-                                  password=self.password)
+                                  password=self.password, connection_timeout=5)
             self.isLink = True
         except Exception as es:
             Log.Error(es)
@@ -73,11 +73,11 @@ class SmbV3Client(UpLoadBase):
         try:
             if self.port:
                 dirs = smbclient.listdir(rf"\\{self.address}\{self.service_name}\{lastPath}", port=self.port, username=self.username,
-                              password=self.password)
+                              password=self.password, connection_timeout=5)
             else:
                 dirs = smbclient.listdir(rf"\\{self.address}\{self.service_name}\{lastPath}",
                                          username=self.username,
-                                         password=self.password)
+                                         password=self.password, connection_timeout=5)
         except SmbEx.SMBOSError as es:
             return False
         return name in dirs
@@ -93,11 +93,11 @@ class SmbV3Client(UpLoadBase):
                 if self.port:
                     smbclient.mkdir(rf"\\{self.address}\{self.service_name}\{current_dir}", port=self.port,
                                          username=self.username,
-                                         password=self.password)
+                                         password=self.password, connection_timeout=5)
                 else:
                     smbclient.mkdir(rf"\\{self.address}\{self.service_name}\{current_dir}",
                                     username=self.username,
-                                    password=self.password)
+                                    password=self.password, connection_timeout=5)
             current_dir  += "/"
         return Str.Ok
 
@@ -118,13 +118,13 @@ class SmbV3Client(UpLoadBase):
                                     mode="wb+",
                                     port=self.port,
                                     username=self.username,
-                                    password=self.password) as fd:
+                                    password=self.password, connection_timeout=5) as fd:
                         fd.write(data)
                 else:
                     with smbclient.open_file(rf"\\{self.address}\{self.service_name}\{remotePath}" + "/" + fileName,
                                              mode="wb+",
                                              username=self.username,
-                                             password=self.password) as fd:
+                                             password=self.password, connection_timeout=5) as fd:
                         fd.write(data)
             os.remove(localPath)
         except Exception as es:

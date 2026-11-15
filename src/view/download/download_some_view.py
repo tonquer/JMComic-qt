@@ -183,7 +183,7 @@ class DownloadSomeView(QWidget, Ui_DownloadSome, QtTaskBase):
         info = BookMgr().GetBook(bookId)
         item = self.allBookInfo[bookId]
         if info and info.pageInfo.epsInfo:
-            item.st = Str.Success
+            item.st = Str.Ok
             item.title = info.baseInfo.title
             item.epsLen = len(info.pageInfo.epsInfo)
             self.completeNum -= 1

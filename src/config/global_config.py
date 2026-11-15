@@ -86,9 +86,19 @@ class GlobalConfig:
     DohUrlList = GlobalItem(["https://parse.jpacg.cc/parse",
                              "https://doh.pub/dns-query",
                              "https://parse2.jpacg.cc/parse",
+                             "https://parse3.jpacg.cc/parse",
                              "https://dot.pub/dns-query"])
+
     EchDomain = GlobalItem("cloudflare-ech.com")
-    
+
+    # 其他cloudflare域名，启用ech和ip分流
+    OtherCloudflareDomain = GlobalItem([
+        "raw3.jpacg.cc",
+        "app3.jpacg.cc",
+        "check.jpacg.cc",
+        "parse3.jpacg.cc"
+        "macapi1.com"])
+
     ProxyIpList = GlobalItem([
 "158.180.231.216",
 "163.47.42.64",

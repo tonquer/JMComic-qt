@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_login_new.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.3
+## Created by: Qt User Interface Compiler version 6.9.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -31,7 +31,7 @@ class Ui_LoginNew(object):
     def setupUi(self, LoginNew):
         if not LoginNew.objectName():
             LoginNew.setObjectName(u"LoginNew")
-        LoginNew.resize(722, 690)
+        LoginNew.resize(808, 790)
         self.horizontalLayout_3 = QHBoxLayout(LoginNew)
         self.horizontalLayout_3.setSpacing(0)
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
@@ -45,7 +45,7 @@ class Ui_LoginNew(object):
         self.verticalLayout_3.setContentsMargins(-1, 9, 9, 9)
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout.addItem(self.horizontalSpacer_2)
 
@@ -53,7 +53,7 @@ class Ui_LoginNew(object):
         self.widget.setObjectName(u"widget")
         self.verticalLayout = QVBoxLayout(self.widget)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout.addItem(self.verticalSpacer)
 
@@ -74,7 +74,7 @@ class Ui_LoginNew(object):
 
         self.passwdEdit_2 = QLineEdit(self.widget)
         self.passwdEdit_2.setObjectName(u"passwdEdit_2")
-        self.passwdEdit_2.setEchoMode(QLineEdit.Password)
+        self.passwdEdit_2.setEchoMode(QLineEdit.EchoMode.Password)
 
         self.verticalLayout.addWidget(self.passwdEdit_2)
 
@@ -103,14 +103,14 @@ class Ui_LoginNew(object):
 
         self.verticalLayout.addWidget(self.loginButton)
 
-        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout.addItem(self.verticalSpacer_2)
 
 
         self.horizontalLayout.addWidget(self.widget)
 
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout.addItem(self.horizontalSpacer)
 
@@ -124,7 +124,7 @@ class Ui_LoginNew(object):
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.horizontalLayout_4 = QHBoxLayout()
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
-        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_4.addItem(self.horizontalSpacer_3)
 
@@ -133,7 +133,7 @@ class Ui_LoginNew(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollAreaWidgetContents_2 = QWidget()
         self.scrollAreaWidgetContents_2.setObjectName(u"scrollAreaWidgetContents_2")
-        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 306, 234))
+        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 306, 722))
         self.verticalLayout_8 = QVBoxLayout(self.scrollAreaWidgetContents_2)
         self.verticalLayout_8.setObjectName(u"verticalLayout_8")
         self.label = QLabel(self.scrollAreaWidgetContents_2)
@@ -152,8 +152,8 @@ class Ui_LoginNew(object):
         self.user.setObjectName(u"user")
         self.user.setMinimumSize(QSize(80, 0))
         self.user.setMaximumSize(QSize(60, 16777215))
-        self.user.setLayoutDirection(Qt.LeftToRight)
-        self.user.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+        self.user.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+        self.user.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
 
         self.horizontalLayout_5.addWidget(self.user)
 
@@ -172,7 +172,7 @@ class Ui_LoginNew(object):
         self.name.setObjectName(u"name")
         self.name.setMinimumSize(QSize(80, 0))
         self.name.setMaximumSize(QSize(60, 16777215))
-        self.name.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+        self.name.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
 
         self.horizontalLayout_6.addWidget(self.name)
 
@@ -190,7 +190,7 @@ class Ui_LoginNew(object):
         self.passwd.setObjectName(u"passwd")
         self.passwd.setMinimumSize(QSize(80, 0))
         self.passwd.setMaximumSize(QSize(60, 16777215))
-        self.passwd.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+        self.passwd.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
 
         self.horizontalLayout_19.addWidget(self.passwd)
 
@@ -254,7 +254,7 @@ class Ui_LoginNew(object):
 
         self.horizontalLayout_4.addWidget(self.scrollArea_2)
 
-        self.horizontalSpacer_4 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_4 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_4.addItem(self.horizontalSpacer_4)
 
@@ -266,7 +266,7 @@ class Ui_LoginNew(object):
         self.tab_3.setObjectName(u"tab_3")
         self.horizontalLayout_8 = QHBoxLayout(self.tab_3)
         self.horizontalLayout_8.setObjectName(u"horizontalLayout_8")
-        self.horizontalSpacer_5 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_5 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_8.addItem(self.horizontalSpacer_5)
 
@@ -277,7 +277,7 @@ class Ui_LoginNew(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 390, 537))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 390, 722))
         self.verticalLayout_7 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_7.setObjectName(u"verticalLayout_7")
         self.label_7 = QLabel(self.scrollAreaWidgetContents)
@@ -302,8 +302,8 @@ class Ui_LoginNew(object):
 
         self.line = QFrame(self.scrollAreaWidgetContents)
         self.line.setObjectName(u"line")
-        self.line.setFrameShape(QFrame.HLine)
-        self.line.setFrameShadow(QFrame.Sunken)
+        self.line.setFrameShape(QFrame.Shape.HLine)
+        self.line.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.verticalLayout_7.addWidget(self.line)
 
@@ -347,14 +347,14 @@ class Ui_LoginNew(object):
 
         self.verticalLayout_7.addWidget(self.verfyButton)
 
-        self.verticalSpacer_5 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Minimum)
+        self.verticalSpacer_5 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
 
         self.verticalLayout_7.addItem(self.verticalSpacer_5)
 
         self.line_2 = QFrame(self.scrollAreaWidgetContents)
         self.line_2.setObjectName(u"line_2")
-        self.line_2.setFrameShape(QFrame.HLine)
-        self.line_2.setFrameShadow(QFrame.Sunken)
+        self.line_2.setFrameShape(QFrame.Shape.HLine)
+        self.line_2.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.verticalLayout_7.addWidget(self.line_2)
 
@@ -383,14 +383,14 @@ class Ui_LoginNew(object):
 
         self.verticalLayout_7.addWidget(self.resetButton)
 
-        self.verticalSpacer_6 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Minimum)
+        self.verticalSpacer_6 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
 
         self.verticalLayout_7.addItem(self.verticalSpacer_6)
 
         self.line_3 = QFrame(self.scrollAreaWidgetContents)
         self.line_3.setObjectName(u"line_3")
-        self.line_3.setFrameShape(QFrame.HLine)
-        self.line_3.setFrameShadow(QFrame.Sunken)
+        self.line_3.setFrameShape(QFrame.Shape.HLine)
+        self.line_3.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.verticalLayout_7.addWidget(self.line_3)
 
@@ -426,7 +426,7 @@ class Ui_LoginNew(object):
 
         self.horizontalLayout_8.addLayout(self.verticalLayout_6)
 
-        self.horizontalSpacer_6 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_6 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_8.addItem(self.horizontalSpacer_6)
 
@@ -444,7 +444,7 @@ class Ui_LoginNew(object):
 
         self.verticalLayout_14.addWidget(self.commandLinkButton_3)
 
-        self.verticalSpacer_9 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_9 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_14.addItem(self.verticalSpacer_9)
 
@@ -456,7 +456,7 @@ class Ui_LoginNew(object):
         self.scrollArea_3.setWidgetResizable(True)
         self.scrollAreaWidgetContents_3 = QWidget()
         self.scrollAreaWidgetContents_3.setObjectName(u"scrollAreaWidgetContents_3")
-        self.scrollAreaWidgetContents_3.setGeometry(QRect(0, -224, 479, 3281))
+        self.scrollAreaWidgetContents_3.setGeometry(QRect(0, 0, 570, 3283))
         self.verticalLayout_10 = QVBoxLayout(self.scrollAreaWidgetContents_3)
         self.verticalLayout_10.setObjectName(u"verticalLayout_10")
         self.horizontalLayout_15 = QHBoxLayout()
@@ -483,14 +483,14 @@ class Ui_LoginNew(object):
 
         self.line_4 = QFrame(self.scrollAreaWidgetContents_3)
         self.line_4.setObjectName(u"line_4")
-        self.line_4.setFrameShape(QFrame.VLine)
-        self.line_4.setFrameShadow(QFrame.Sunken)
+        self.line_4.setFrameShape(QFrame.Shape.VLine)
+        self.line_4.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.horizontalLayout_16.addWidget(self.line_4)
 
         self.label_13 = QLabel(self.scrollAreaWidgetContents_3)
         self.label_13.setObjectName(u"label_13")
-        self.label_13.setAlignment(Qt.AlignCenter)
+        self.label_13.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.horizontalLayout_16.addWidget(self.label_13)
 
@@ -513,8 +513,8 @@ class Ui_LoginNew(object):
 
         self.line_5 = QFrame(self.scrollAreaWidgetContents_3)
         self.line_5.setObjectName(u"line_5")
-        self.line_5.setFrameShape(QFrame.VLine)
-        self.line_5.setFrameShadow(QFrame.Sunken)
+        self.line_5.setFrameShape(QFrame.Shape.VLine)
+        self.line_5.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.horizontalLayout_17.addWidget(self.line_5)
 
@@ -553,7 +553,7 @@ class Ui_LoginNew(object):
 
         self.horizontalLayout_18.addWidget(self.proxyLabel)
 
-        self.horizontalSpacer_7 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_7 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_18.addItem(self.horizontalSpacer_7)
 
@@ -562,8 +562,8 @@ class Ui_LoginNew(object):
 
         self.line_6 = QFrame(self.scrollAreaWidgetContents_3)
         self.line_6.setObjectName(u"line_6")
-        self.line_6.setFrameShape(QFrame.HLine)
-        self.line_6.setFrameShadow(QFrame.Sunken)
+        self.line_6.setFrameShape(QFrame.Shape.HLine)
+        self.line_6.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.verticalLayout_10.addWidget(self.line_6)
 
@@ -597,7 +597,7 @@ class Ui_LoginNew(object):
 
         self.horizontalLayout_20.addWidget(self.imgTimeout)
 
-        self.horizontalSpacer_8 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_8 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_20.addItem(self.horizontalSpacer_8)
 
@@ -606,7 +606,7 @@ class Ui_LoginNew(object):
 
         self.horizontalLayout_21 = QHBoxLayout()
         self.horizontalLayout_21.setObjectName(u"horizontalLayout_21")
-        self.horizontalSpacer_9 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_9 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_21.addItem(self.horizontalSpacer_9)
 
@@ -636,7 +636,7 @@ class Ui_LoginNew(object):
 
         self.horizontalLayout_22.addWidget(self.echTick)
 
-        self.horizontalSpacer_10 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_10 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_22.addItem(self.horizontalSpacer_10)
 
@@ -670,8 +670,8 @@ class Ui_LoginNew(object):
 
         self.line_8 = QFrame(self.scrollAreaWidgetContents_3)
         self.line_8.setObjectName(u"line_8")
-        self.line_8.setFrameShape(QFrame.HLine)
-        self.line_8.setFrameShadow(QFrame.Sunken)
+        self.line_8.setFrameShape(QFrame.Shape.HLine)
+        self.line_8.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.verticalLayout_10.addWidget(self.line_8)
 
@@ -687,8 +687,8 @@ class Ui_LoginNew(object):
 
         self.line_7 = QFrame(self.scrollAreaWidgetContents_3)
         self.line_7.setObjectName(u"line_7")
-        self.line_7.setFrameShape(QFrame.HLine)
-        self.line_7.setFrameShadow(QFrame.Sunken)
+        self.line_7.setFrameShape(QFrame.Shape.HLine)
+        self.line_7.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.verticalLayout_10.addWidget(self.line_7)
 
@@ -696,13 +696,13 @@ class Ui_LoginNew(object):
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.label_20 = QLabel(self.scrollAreaWidgetContents_3)
         self.label_20.setObjectName(u"label_20")
-        self.label_20.setAlignment(Qt.AlignCenter)
+        self.label_20.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.gridLayout_2.addWidget(self.label_20, 1, 1, 1, 1)
 
         self.label_19 = QLabel(self.scrollAreaWidgetContents_3)
         self.label_19.setObjectName(u"label_19")
-        self.label_19.setAlignment(Qt.AlignCenter)
+        self.label_19.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.gridLayout_2.addWidget(self.label_19, 1, 3, 1, 1)
 
@@ -765,7 +765,7 @@ class Ui_LoginNew(object):
 
         self.label_18 = QLabel(self.scrollAreaWidgetContents_3)
         self.label_18.setObjectName(u"label_18")
-        self.label_18.setAlignment(Qt.AlignCenter)
+        self.label_18.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.gridLayout_2.addWidget(self.label_18, 1, 0, 1, 1)
 
@@ -815,7 +815,7 @@ class Ui_LoginNew(object):
 
         self.label_21 = QLabel(self.scrollAreaWidgetContents_3)
         self.label_21.setObjectName(u"label_21")
-        self.label_21.setAlignment(Qt.AlignCenter)
+        self.label_21.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.gridLayout_2.addWidget(self.label_21, 1, 2, 1, 1)
 
@@ -839,8 +839,8 @@ class Ui_LoginNew(object):
 
         self.line_9 = QFrame(self.scrollAreaWidgetContents_3)
         self.line_9.setObjectName(u"line_9")
-        self.line_9.setFrameShape(QFrame.HLine)
-        self.line_9.setFrameShadow(QFrame.Sunken)
+        self.line_9.setFrameShape(QFrame.Shape.HLine)
+        self.line_9.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.verticalLayout_10.addWidget(self.line_9)
 
@@ -878,8 +878,8 @@ class Ui_LoginNew(object):
 
         self.line_10 = QFrame(self.scrollAreaWidgetContents_3)
         self.line_10.setObjectName(u"line_10")
-        self.line_10.setFrameShape(QFrame.HLine)
-        self.line_10.setFrameShadow(QFrame.Sunken)
+        self.line_10.setFrameShape(QFrame.Shape.HLine)
+        self.line_10.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.verticalLayout_10.addWidget(self.line_10)
 
@@ -918,7 +918,7 @@ class Ui_LoginNew(object):
 
         self.horizontalLayout_30.addWidget(self.proxyIpLabel)
 
-        self.horizontalSpacer_11 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_11 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_30.addItem(self.horizontalSpacer_11)
 
@@ -944,8 +944,8 @@ class Ui_LoginNew(object):
         self.horizontalLayout_28.setObjectName(u"horizontalLayout_28")
         self.line_11 = QFrame(self.scrollAreaWidgetContents_3)
         self.line_11.setObjectName(u"line_11")
-        self.line_11.setFrameShape(QFrame.VLine)
-        self.line_11.setFrameShadow(QFrame.Sunken)
+        self.line_11.setFrameShape(QFrame.Shape.VLine)
+        self.line_11.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.horizontalLayout_28.addWidget(self.line_11)
 
@@ -996,62 +996,62 @@ class Ui_LoginNew(object):
 
         self.horizontalLayout_3.addWidget(self.tabWidget)
 
-        QWidget.setTabOrder(self.proxyIpEdit, self.ipListEdit)
-        QWidget.setTabOrder(self.ipListEdit, self.passwdEdit_2)
-        QWidget.setTabOrder(self.passwdEdit_2, self.saveBox)
-        QWidget.setTabOrder(self.saveBox, self.autoBox)
-        QWidget.setTabOrder(self.autoBox, self.autoSign)
-        QWidget.setTabOrder(self.autoSign, self.loginButton)
-        QWidget.setTabOrder(self.loginButton, self.scrollArea_2)
-        QWidget.setTabOrder(self.scrollArea_2, self.userEdit)
+        QWidget.setTabOrder(self.commandLinkButton2, self.saveBox)
+        QWidget.setTabOrder(self.saveBox, self.scrollArea)
+        QWidget.setTabOrder(self.scrollArea, self.commandLinkButton)
+        QWidget.setTabOrder(self.commandLinkButton, self.radioButton_1)
+        QWidget.setTabOrder(self.radioButton_1, self.radioButton_2)
+        QWidget.setTabOrder(self.radioButton_2, self.radioButton_3)
+        QWidget.setTabOrder(self.radioButton_3, self.radioButton_6)
+        QWidget.setTabOrder(self.radioButton_6, self.userEdit_2)
+        QWidget.setTabOrder(self.userEdit_2, self.passwdEdit_2)
+        QWidget.setTabOrder(self.passwdEdit_2, self.loginButton)
+        QWidget.setTabOrder(self.loginButton, self.testIpButton)
+        QWidget.setTabOrder(self.testIpButton, self.radio_img_5)
+        QWidget.setTabOrder(self.radio_img_5, self.radio_img_6)
+        QWidget.setTabOrder(self.radio_img_6, self.radio_img_4)
+        QWidget.setTabOrder(self.radio_img_4, self.radio_img_2)
+        QWidget.setTabOrder(self.radio_img_2, self.proxyIpEdit)
+        QWidget.setTabOrder(self.proxyIpEdit, self.sockEdit)
+        QWidget.setTabOrder(self.sockEdit, self.echBox)
+        QWidget.setTabOrder(self.echBox, self.resetEdit)
+        QWidget.setTabOrder(self.resetEdit, self.resetButton)
+        QWidget.setTabOrder(self.resetButton, self.testSpeedButton)
+        QWidget.setTabOrder(self.testSpeedButton, self.sendEdit)
+        QWidget.setTabOrder(self.sendEdit, self.sendButton)
+        QWidget.setTabOrder(self.sendButton, self.commandLinkButton_3)
+        QWidget.setTabOrder(self.commandLinkButton_3, self.proxy_0)
+        QWidget.setTabOrder(self.proxy_0, self.proxy_3)
+        QWidget.setTabOrder(self.proxy_3, self.httpLine)
+        QWidget.setTabOrder(self.httpLine, self.proxy_2)
+        QWidget.setTabOrder(self.proxy_2, self.dohLine)
+        QWidget.setTabOrder(self.dohLine, self.proxy_1)
+        QWidget.setTabOrder(self.proxy_1, self.ipListEdit)
+        QWidget.setTabOrder(self.ipListEdit, self.scrollArea_3)
+        QWidget.setTabOrder(self.scrollArea_3, self.apiTimeout)
+        QWidget.setTabOrder(self.apiTimeout, self.imgTimeout)
+        QWidget.setTabOrder(self.imgTimeout, self.http3Box)
+        QWidget.setTabOrder(self.http3Box, self.verfyEdit)
+        QWidget.setTabOrder(self.verfyEdit, self.verfyPsEdit)
+        QWidget.setTabOrder(self.verfyPsEdit, self.verfyButton)
+        QWidget.setTabOrder(self.verfyButton, self.dohTool)
+        QWidget.setTabOrder(self.dohTool, self.radioButton_4)
+        QWidget.setTabOrder(self.radioButton_4, self.cdnLinkButton)
+        QWidget.setTabOrder(self.cdnLinkButton, self.tableWidget)
+        QWidget.setTabOrder(self.tableWidget, self.radioButton_5)
+        QWidget.setTabOrder(self.radioButton_5, self.tabWidget)
+        QWidget.setTabOrder(self.tabWidget, self.scrollArea_2)
+        QWidget.setTabOrder(self.scrollArea_2, self.radio_img_1)
+        QWidget.setTabOrder(self.radio_img_1, self.autoSign)
+        QWidget.setTabOrder(self.autoSign, self.autoBox)
+        QWidget.setTabOrder(self.autoBox, self.radio_img_3)
+        QWidget.setTabOrder(self.radio_img_3, self.userEdit)
         QWidget.setTabOrder(self.userEdit, self.nameEdit)
         QWidget.setTabOrder(self.nameEdit, self.passwdEdit)
         QWidget.setTabOrder(self.passwdEdit, self.verEdit)
         QWidget.setTabOrder(self.verEdit, self.gender_Male)
         QWidget.setTabOrder(self.gender_Male, self.gender_Female)
         QWidget.setTabOrder(self.gender_Female, self.registerButton)
-        QWidget.setTabOrder(self.registerButton, self.scrollArea)
-        QWidget.setTabOrder(self.scrollArea, self.commandLinkButton)
-        QWidget.setTabOrder(self.commandLinkButton, self.commandLinkButton2)
-        QWidget.setTabOrder(self.commandLinkButton2, self.verfyEdit)
-        QWidget.setTabOrder(self.verfyEdit, self.verfyPsEdit)
-        QWidget.setTabOrder(self.verfyPsEdit, self.verfyButton)
-        QWidget.setTabOrder(self.verfyButton, self.resetEdit)
-        QWidget.setTabOrder(self.resetEdit, self.resetButton)
-        QWidget.setTabOrder(self.resetButton, self.sendEdit)
-        QWidget.setTabOrder(self.sendEdit, self.sendButton)
-        QWidget.setTabOrder(self.sendButton, self.commandLinkButton_3)
-        QWidget.setTabOrder(self.commandLinkButton_3, self.scrollArea_3)
-        QWidget.setTabOrder(self.scrollArea_3, self.proxy_0)
-        QWidget.setTabOrder(self.proxy_0, self.proxy_1)
-        QWidget.setTabOrder(self.proxy_1, self.httpLine)
-        QWidget.setTabOrder(self.httpLine, self.proxy_2)
-        QWidget.setTabOrder(self.proxy_2, self.sockEdit)
-        QWidget.setTabOrder(self.sockEdit, self.proxy_3)
-        QWidget.setTabOrder(self.proxy_3, self.apiTimeout)
-        QWidget.setTabOrder(self.apiTimeout, self.imgTimeout)
-        QWidget.setTabOrder(self.imgTimeout, self.http3Box)
-        QWidget.setTabOrder(self.http3Box, self.echBox)
-        QWidget.setTabOrder(self.echBox, self.dohLine)
-        QWidget.setTabOrder(self.dohLine, self.dohTool)
-        QWidget.setTabOrder(self.dohTool, self.testSpeedButton)
-        QWidget.setTabOrder(self.testSpeedButton, self.radioButton_3)
-        QWidget.setTabOrder(self.radioButton_3, self.radio_img_4)
-        QWidget.setTabOrder(self.radio_img_4, self.radio_img_6)
-        QWidget.setTabOrder(self.radio_img_6, self.radio_img_2)
-        QWidget.setTabOrder(self.radio_img_2, self.radioButton_4)
-        QWidget.setTabOrder(self.radioButton_4, self.radioButton_6)
-        QWidget.setTabOrder(self.radioButton_6, self.radio_img_1)
-        QWidget.setTabOrder(self.radio_img_1, self.radioButton_2)
-        QWidget.setTabOrder(self.radioButton_2, self.radioButton_1)
-        QWidget.setTabOrder(self.radioButton_1, self.radio_img_3)
-        QWidget.setTabOrder(self.radio_img_3, self.radioButton_5)
-        QWidget.setTabOrder(self.radioButton_5, self.radio_img_5)
-        QWidget.setTabOrder(self.radio_img_5, self.testIpButton)
-        QWidget.setTabOrder(self.testIpButton, self.tabWidget)
-        QWidget.setTabOrder(self.tabWidget, self.userEdit_2)
-        QWidget.setTabOrder(self.userEdit_2, self.tableWidget)
-        QWidget.setTabOrder(self.tableWidget, self.cdnLinkButton)
 
         self.retranslateUi(LoginNew)
 

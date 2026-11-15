@@ -72,7 +72,7 @@
             <item>
              <spacer name="horizontalSpacer">
               <property name="orientation">
-               <enum>Qt::Horizontal</enum>
+               <enum>Qt::Orientation::Horizontal</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
@@ -120,19 +120,13 @@
         </item>
        </layout>
       </widget>
-      <widget class="ReadView" name="readView"/>
+      <widget class="ReadNewView" name="readView"/>
      </widget>
     </item>
    </layout>
   </widget>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>ReadView</class>
-   <extends>QWidget</extends>
-   <header location="global">view.read.read_view.h</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>SettingView</class>
    <extends>QWidget</extends>
@@ -299,6 +293,12 @@
    <class>LoginNewView</class>
    <extends>QWidget</extends>
    <header location="global">view.user.login_new_view.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ReadNewView</class>
+   <extends>QWidget</extends>
+   <header location="global">view.read.read_new_view.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

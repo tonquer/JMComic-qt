@@ -11,6 +11,7 @@ from qt_owner import QtOwner
 from server import req, Status, GlobalConfig, Setting
 from task.qt_task import QtTaskBase
 from tools.str import Str
+from tools.tool import ToolUtil
 
 
 class RegisterNewWidget:
@@ -32,6 +33,9 @@ class RegisterNewWidget:
         # self.userEdit.setValidator(validator)
         self.owner.verPicture.installEventFilter(self.owner)
         self.isInit = False
+        self.jump301Url = ""
+        self.jumpRadionId = 0
+        self.jumpLinkButton = None
 
     def eventFilter(self, obj, event):
         if event.type() == QEvent.MouseButtonPress:
@@ -48,7 +52,10 @@ class RegisterNewWidget:
 
     def SwitchButton(self):
         Setting.RegisterProsyIndex.SetValue(self.regGroup.checkedId())
-        GlobalConfig.SetSetting("Url", GlobalConfig.UrlList.value[self.regGroup.checkedId()-1])
+        if Setting.RegisterProsyIndex.value > len(GlobalConfig.UrlList.value):
+            GlobalConfig.SetSetting("Url", self.jump301Url)
+        else:
+            GlobalConfig.SetSetting("Url", GlobalConfig.UrlList.value[self.regGroup.checkedId()-1])
         # self.AddHttpTask(req.LoginCheck301Req(), callBack=self.LoginCheckBack)
         self.LoadVer()
         return
@@ -98,6 +105,7 @@ class RegisterNewWidget:
             layout = QHBoxLayout()
             button = QRadioButton(self.owner)
             if i == index:
+                GlobalConfig.SetSetting("Url", url)
                 button.setChecked(True)
             self.regGroup.addButton(button)
             self.regGroup.setId(button, i+1)
@@ -144,6 +152,10 @@ class RegisterNewWidget:
         QtOwner().CloseLoading()
         st = raw["st"]
         msg = raw.get("msg")
+        destUrl = raw.get("desUrl")
+        if destUrl:
+            self.AddUrl(destUrl)
+
         if st == Status.Ok:
             content = raw["content"]
             p = QPixmap()
@@ -162,3 +174,32 @@ class RegisterNewWidget:
             QtOwner().ShowError(msg if msg else Str.GetStr(Str.RegisterSuc))
         else:
             QtOwner().ShowError(msg if msg else Str.GetStr(st))
+            destUrl = raw.get("desUrl")
+            if destUrl:
+                self.AddUrl(destUrl)
+
+    def AddUrl(self, url):
+        newUrl = "https://" + ToolUtil.GetUrlHost(url)
+        if newUrl in GlobalConfig.UrlList.value:
+            return
+        self.jump301Url = newUrl
+        if self.jumpRadionId > 0:
+            self.jumpLinkButton.setText(newUrl)
+            if self.regGroup.checkedId() == self.jumpRadionId:
+                GlobalConfig.SetSetting("Url", newUrl)
+            return
+        layout = QHBoxLayout()
+        button = QRadioButton(self.owner)
+        i = len(self.regGroup.buttons())
+        self.regGroup.addButton(button)
+        self.regGroup.setId(button, i + 1)
+        self.jumpRadionId = i + 1
+        link = QCommandLinkButton(self.owner)
+        link.clicked.connect(partial(self.OpenUrl, newUrl))
+        link.setText(newUrl)
+        self.jumpLinkButton = link
+        horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        layout.addWidget(button)
+        layout.addWidget(link)
+        layout.addItem(horizontalSpacer)
+        self.owner.linkLayout.addLayout(layout)

@@ -6,7 +6,6 @@ from PySide6.QtWidgets import QTableWidgetItem, QVBoxLayout, QCalendarWidget, QL
 from component.dialog.base_mask_dialog import BaseMaskDialog
 from interface.ui_doh_dns import Ui_DohDns
 from interface.ui_sign_widget import Ui_SignWidget
-from tools.qt_domain import QtDomainMgr
 
 
 class SignView(BaseMaskDialog, Ui_SignWidget):

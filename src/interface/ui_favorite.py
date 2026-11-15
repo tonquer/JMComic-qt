@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_favorite.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.3
+## Created by: Qt User Interface Compiler version 6.9.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -61,14 +61,14 @@ class Ui_Favorite(object):
 
         self.horizontalLayout.addWidget(self.sortCombox)
 
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout.addItem(self.horizontalSpacer)
 
         self.line_2 = QFrame(Favorite)
         self.line_2.setObjectName(u"line_2")
-        self.line_2.setFrameShape(QFrame.VLine)
-        self.line_2.setFrameShadow(QFrame.Sunken)
+        self.line_2.setFrameShape(QFrame.Shape.VLine)
+        self.line_2.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.horizontalLayout.addWidget(self.line_2)
 
@@ -85,15 +85,15 @@ class Ui_Favorite(object):
 
         self.line = QFrame(Favorite)
         self.line.setObjectName(u"line")
-        self.line.setFrameShape(QFrame.VLine)
-        self.line.setFrameShadow(QFrame.Sunken)
+        self.line.setFrameShape(QFrame.Shape.VLine)
+        self.line.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.horizontalLayout.addWidget(self.line)
 
         self.line_4 = QFrame(Favorite)
         self.line_4.setObjectName(u"line_4")
-        self.line_4.setFrameShape(QFrame.VLine)
-        self.line_4.setFrameShadow(QFrame.Sunken)
+        self.line_4.setFrameShape(QFrame.Shape.VLine)
+        self.line_4.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.horizontalLayout.addWidget(self.line_4)
 
@@ -107,8 +107,8 @@ class Ui_Favorite(object):
 
         self.line_3 = QFrame(Favorite)
         self.line_3.setObjectName(u"line_3")
-        self.line_3.setFrameShape(QFrame.VLine)
-        self.line_3.setFrameShadow(QFrame.Sunken)
+        self.line_3.setFrameShape(QFrame.Shape.VLine)
+        self.line_3.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.horizontalLayout.addWidget(self.line_3)
 

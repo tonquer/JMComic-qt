@@ -12,8 +12,14 @@ class Universal2Bundler:
 
     def build(self, dest_dir, package, version=None):
         with tempfile.TemporaryDirectory() as tmp_dir:
-
-            amd64_binary = "macosx_10_10_x86_64"
+            if package == "cffi":
+                amd64_binary = "macosx_10_15_x86_64"
+            elif package == "pyyaml":
+                amd64_binary = "macosx_10_13_x86_64"
+            elif package == "pillow_jxl_plugin":
+                amd64_binary = "macosx_10_12_x86_64"
+            else:
+                amd64_binary = "macosx_10_10_x86_64"
             arm64_binary = "macosx_11_0_arm64"
             if version:
                 subprocess.check_call(['python', '-m', 'pip', 'download', '--only-binary=:all:','--no-deps','--platform', amd64_binary, package+"=="+version, '-d', tmp_dir])

@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_category.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.3
+## Created by: Qt User Interface Compiler version 6.9.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -54,14 +54,14 @@ class Ui_Category(object):
 
         self.horizontalLayout.addWidget(self.subBox)
 
-        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout.addItem(self.horizontalSpacer_2)
 
         self.line_4 = QFrame(Category)
         self.line_4.setObjectName(u"line_4")
-        self.line_4.setFrameShape(QFrame.VLine)
-        self.line_4.setFrameShadow(QFrame.Sunken)
+        self.line_4.setFrameShape(QFrame.Shape.VLine)
+        self.line_4.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.horizontalLayout.addWidget(self.line_4)
 
@@ -74,8 +74,8 @@ class Ui_Category(object):
 
         self.line_5 = QFrame(Category)
         self.line_5.setObjectName(u"line_5")
-        self.line_5.setFrameShape(QFrame.VLine)
-        self.line_5.setFrameShadow(QFrame.Sunken)
+        self.line_5.setFrameShape(QFrame.Shape.VLine)
+        self.line_5.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.horizontalLayout.addWidget(self.line_5)
 
@@ -90,8 +90,8 @@ class Ui_Category(object):
 
         self.line_6 = QFrame(Category)
         self.line_6.setObjectName(u"line_6")
-        self.line_6.setFrameShape(QFrame.VLine)
-        self.line_6.setFrameShadow(QFrame.Sunken)
+        self.line_6.setFrameShape(QFrame.Shape.VLine)
+        self.line_6.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.horizontalLayout.addWidget(self.line_6)
 

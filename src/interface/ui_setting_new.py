@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_setting_new.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.3
+## Created by: Qt User Interface Compiler version 6.9.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -38,7 +38,7 @@ class Ui_SettingNew(object):
         self.msgLabel.setEnabled(True)
         self.msgLabel.setStyleSheet(u"color: rgb(255, 0, 0);")
 
-        self.verticalLayout_2.addWidget(self.msgLabel, 0, Qt.AlignLeft)
+        self.verticalLayout_2.addWidget(self.msgLabel, 0, Qt.AlignmentFlag.AlignLeft)
 
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
@@ -64,7 +64,7 @@ class Ui_SettingNew(object):
 
         self.verticalLayout.addWidget(self.downloadButton)
 
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout.addItem(self.verticalSpacer)
 
@@ -83,7 +83,7 @@ class Ui_SettingNew(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 661, 2927))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, -2038, 666, 3333))
         self.scrollAreaWidgetContents.setStyleSheet(u"")
         self.verticalLayout_4 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
@@ -120,8 +120,8 @@ class Ui_SettingNew(object):
 
         self.frame_16 = QFrame(self.scrollAreaWidgetContents)
         self.frame_16.setObjectName(u"frame_16")
-        self.frame_16.setFrameShape(QFrame.StyledPanel)
-        self.frame_16.setFrameShadow(QFrame.Raised)
+        self.frame_16.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_16.setFrameShadow(QFrame.Shadow.Raised)
         self.verticalLayout_20 = QVBoxLayout(self.frame_16)
         self.verticalLayout_20.setObjectName(u"verticalLayout_20")
         self.label_37 = QLabel(self.frame_16)
@@ -189,7 +189,7 @@ class Ui_SettingNew(object):
 
         self.horizontalLayout_12.addWidget(self.colorBox)
 
-        self.horizontalSpacer_5 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_5 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_12.addItem(self.horizontalSpacer_5)
 
@@ -243,8 +243,8 @@ class Ui_SettingNew(object):
 
         self.frame_7 = QFrame(self.scrollAreaWidgetContents)
         self.frame_7.setObjectName(u"frame_7")
-        self.frame_7.setFrameShape(QFrame.StyledPanel)
-        self.frame_7.setFrameShadow(QFrame.Raised)
+        self.frame_7.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_7.setFrameShadow(QFrame.Shadow.Raised)
         self.verticalLayout_18 = QVBoxLayout(self.frame_7)
         self.verticalLayout_18.setObjectName(u"verticalLayout_18")
         self.label_8 = QLabel(self.frame_7)
@@ -267,7 +267,7 @@ class Ui_SettingNew(object):
 
         self.horizontalLayout_3.addWidget(self.fontBox)
 
-        self.horizontalSpacer_23 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_23 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_3.addItem(self.horizontalSpacer_23)
 
@@ -299,7 +299,7 @@ class Ui_SettingNew(object):
 
         self.horizontalLayout_25.addWidget(self.fontSize)
 
-        self.horizontalSpacer_24 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_24 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_25.addItem(self.horizontalSpacer_24)
 
@@ -325,7 +325,7 @@ class Ui_SettingNew(object):
 
         self.horizontalLayout_26.addWidget(self.fontStyle)
 
-        self.horizontalSpacer_25 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_25 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_26.addItem(self.horizontalSpacer_25)
 
@@ -376,8 +376,8 @@ class Ui_SettingNew(object):
 
         self.frame_17 = QFrame(self.scrollAreaWidgetContents)
         self.frame_17.setObjectName(u"frame_17")
-        self.frame_17.setFrameShape(QFrame.StyledPanel)
-        self.frame_17.setFrameShadow(QFrame.Raised)
+        self.frame_17.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_17.setFrameShadow(QFrame.Shadow.Raised)
         self.verticalLayout_21 = QVBoxLayout(self.frame_17)
         self.verticalLayout_21.setObjectName(u"verticalLayout_21")
         self.label_38 = QLabel(self.frame_17)
@@ -430,7 +430,7 @@ class Ui_SettingNew(object):
 
         self.horizontalLayout_15.addWidget(self.coverSize)
 
-        self.horizontalSpacer_13 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_13 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_15.addItem(self.horizontalSpacer_13)
 
@@ -455,7 +455,7 @@ class Ui_SettingNew(object):
 
         self.horizontalLayout_22.addWidget(self.categorySize)
 
-        self.horizontalSpacer_21 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_21 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_22.addItem(self.horizontalSpacer_21)
 
@@ -480,7 +480,7 @@ class Ui_SettingNew(object):
 
         self.horizontalLayout_30.addWidget(self.titleLineBox)
 
-        self.horizontalSpacer_28 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_28 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_30.addItem(self.horizontalSpacer_28)
 
@@ -502,7 +502,7 @@ class Ui_SettingNew(object):
 
         self.horizontalLayout_31.addWidget(self.categoryBox)
 
-        self.horizontalSpacer_29 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_29 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_31.addItem(self.horizontalSpacer_29)
 
@@ -562,14 +562,160 @@ class Ui_SettingNew(object):
 
         self.line = QFrame(self.scrollAreaWidgetContents)
         self.line.setObjectName(u"line")
-        self.line.setFrameShape(QFrame.HLine)
-        self.line.setFrameShadow(QFrame.Sunken)
+        self.line.setFrameShape(QFrame.Shape.HLine)
+        self.line.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.verticalLayout_4.addWidget(self.line)
 
-        self.verticalSpacer_3 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Minimum)
+        self.verticalSpacer_3 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
 
         self.verticalLayout_4.addItem(self.verticalSpacer_3)
+
+        self.prefetchLabel = QLabel(self.scrollAreaWidgetContents)
+        self.prefetchLabel.setObjectName(u"prefetchLabel")
+        self.prefetchLabel.setFont(font)
+
+        self.verticalLayout_4.addWidget(self.prefetchLabel)
+
+        self.prefetchFrame = QFrame(self.scrollAreaWidgetContents)
+        self.prefetchFrame.setObjectName(u"prefetchFrame")
+        self.prefetchFrame.setFont(font1)
+        self.prefetchLayout = QVBoxLayout(self.prefetchFrame)
+        self.prefetchLayout.setObjectName(u"prefetchLayout")
+        self.prefetchCountLayout = QHBoxLayout()
+        self.prefetchCountLayout.setObjectName(u"prefetchCountLayout")
+        self.prefetchCountLabel = QLabel(self.prefetchFrame)
+        self.prefetchCountLabel.setObjectName(u"prefetchCountLabel")
+
+        self.prefetchCountLayout.addWidget(self.prefetchCountLabel)
+
+        self.label_30 = QLabel(self.prefetchFrame)
+        self.label_30.setObjectName(u"label_30")
+
+        self.prefetchCountLayout.addWidget(self.label_30)
+
+        self.prefetchFrontCount = WheelSpinBox(self.prefetchFrame)
+        self.prefetchFrontCount.setObjectName(u"prefetchFrontCount")
+        self.prefetchFrontCount.setValue(3)
+
+        self.prefetchCountLayout.addWidget(self.prefetchFrontCount)
+
+        self.label_44 = QLabel(self.prefetchFrame)
+        self.label_44.setObjectName(u"label_44")
+
+        self.prefetchCountLayout.addWidget(self.label_44)
+
+        self.label_45 = QLabel(self.prefetchFrame)
+        self.label_45.setObjectName(u"label_45")
+
+        self.prefetchCountLayout.addWidget(self.label_45)
+
+        self.prefetchCount = WheelSpinBox(self.prefetchFrame)
+        self.prefetchCount.setObjectName(u"prefetchCount")
+        self.prefetchCount.setMinimum(1)
+        self.prefetchCount.setMaximum(100)
+        self.prefetchCount.setValue(5)
+
+        self.prefetchCountLayout.addWidget(self.prefetchCount)
+
+        self.prefetchCountHelp = QLabel(self.prefetchFrame)
+        self.prefetchCountHelp.setObjectName(u"prefetchCountHelp")
+        self.prefetchCountHelp.setMaximumSize(QSize(24, 24))
+        self.prefetchCountHelp.setStyleSheet(u"color: rgb(110, 110, 110); font-size: 16px;")
+        self.prefetchCountHelp.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.prefetchCountLayout.addWidget(self.prefetchCountHelp)
+
+        self.prefetchCountSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.prefetchCountLayout.addItem(self.prefetchCountSpacer)
+
+
+        self.prefetchLayout.addLayout(self.prefetchCountLayout)
+
+        self.horizontalLayout_35 = QHBoxLayout()
+        self.horizontalLayout_35.setObjectName(u"horizontalLayout_35")
+        self.label_46 = QLabel(self.prefetchFrame)
+        self.label_46.setObjectName(u"label_46")
+
+        self.horizontalLayout_35.addWidget(self.label_46)
+
+        self.label_47 = QLabel(self.prefetchFrame)
+        self.label_47.setObjectName(u"label_47")
+
+        self.horizontalLayout_35.addWidget(self.label_47)
+
+        self.showFrontCount = WheelSpinBox(self.prefetchFrame)
+        self.showFrontCount.setObjectName(u"showFrontCount")
+        self.showFrontCount.setMaximum(10)
+        self.showFrontCount.setValue(2)
+
+        self.horizontalLayout_35.addWidget(self.showFrontCount)
+
+        self.label_48 = QLabel(self.prefetchFrame)
+        self.label_48.setObjectName(u"label_48")
+
+        self.horizontalLayout_35.addWidget(self.label_48)
+
+        self.label_53 = QLabel(self.prefetchFrame)
+        self.label_53.setObjectName(u"label_53")
+
+        self.horizontalLayout_35.addWidget(self.label_53)
+
+        self.showCount = WheelSpinBox(self.prefetchFrame)
+        self.showCount.setObjectName(u"showCount")
+        self.showCount.setMinimum(2)
+        self.showCount.setMaximum(20)
+        self.showCount.setValue(4)
+
+        self.horizontalLayout_35.addWidget(self.showCount)
+
+        self.showCountHelp = QLabel(self.prefetchFrame)
+        self.showCountHelp.setObjectName(u"showCountHelp")
+        self.showCountHelp.setStyleSheet(u"color: rgb(110, 110, 110); font-size: 16px;")
+
+        self.horizontalLayout_35.addWidget(self.showCountHelp)
+
+        self.horizontalSpacer_10 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_35.addItem(self.horizontalSpacer_10)
+
+
+        self.prefetchLayout.addLayout(self.horizontalLayout_35)
+
+        self.crossChapterPrefetchLayout = QHBoxLayout()
+        self.crossChapterPrefetchLayout.setObjectName(u"crossChapterPrefetchLayout")
+
+        self.prefetchLayout.addLayout(self.crossChapterPrefetchLayout)
+
+        self.prefetchWholeChapterLayout = QHBoxLayout()
+        self.prefetchWholeChapterLayout.setObjectName(u"prefetchWholeChapterLayout")
+        self.prefetchWholeChapter = QCheckBox(self.prefetchFrame)
+        self.prefetchWholeChapter.setObjectName(u"prefetchWholeChapter")
+
+        self.prefetchWholeChapterLayout.addWidget(self.prefetchWholeChapter)
+
+        self.prefetchWholeChapterHelp = QLabel(self.prefetchFrame)
+        self.prefetchWholeChapterHelp.setObjectName(u"prefetchWholeChapterHelp")
+        self.prefetchWholeChapterHelp.setMaximumSize(QSize(24, 24))
+        self.prefetchWholeChapterHelp.setStyleSheet(u"color: rgb(110, 110, 110); font-size: 16px;")
+        self.prefetchWholeChapterHelp.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.prefetchWholeChapterLayout.addWidget(self.prefetchWholeChapterHelp)
+
+        self.prefetchWholeChapterSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.prefetchWholeChapterLayout.addItem(self.prefetchWholeChapterSpacer)
+
+
+        self.prefetchLayout.addLayout(self.prefetchWholeChapterLayout)
+
+
+        self.verticalLayout_4.addWidget(self.prefetchFrame)
+
+        self.prefetchSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+
+        self.verticalLayout_4.addItem(self.prefetchSpacer)
 
         self.proxyLabel = QLabel(self.scrollAreaWidgetContents)
         self.proxyLabel.setObjectName(u"proxyLabel")
@@ -609,14 +755,14 @@ class Ui_SettingNew(object):
 
         self.line_5 = QFrame(self.frame_5)
         self.line_5.setObjectName(u"line_5")
-        self.line_5.setFrameShape(QFrame.VLine)
-        self.line_5.setFrameShadow(QFrame.Sunken)
+        self.line_5.setFrameShape(QFrame.Shape.VLine)
+        self.line_5.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.horizontalLayout_23.addWidget(self.line_5)
 
         self.label_31 = QLabel(self.frame_5)
         self.label_31.setObjectName(u"label_31")
-        self.label_31.setAlignment(Qt.AlignCenter)
+        self.label_31.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.horizontalLayout_23.addWidget(self.label_31)
 
@@ -625,7 +771,7 @@ class Ui_SettingNew(object):
 
         self.horizontalLayout_23.addWidget(self.httpEdit)
 
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_23.addItem(self.horizontalSpacer)
 
@@ -643,8 +789,8 @@ class Ui_SettingNew(object):
 
         self.line_6 = QFrame(self.frame_5)
         self.line_6.setObjectName(u"line_6")
-        self.line_6.setFrameShape(QFrame.VLine)
-        self.line_6.setFrameShadow(QFrame.Sunken)
+        self.line_6.setFrameShape(QFrame.Shape.VLine)
+        self.line_6.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.horizontalLayout_24.addWidget(self.line_6)
 
@@ -658,7 +804,7 @@ class Ui_SettingNew(object):
 
         self.horizontalLayout_24.addWidget(self.sockEdit)
 
-        self.horizontalSpacer_22 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_22 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_24.addItem(self.horizontalSpacer_22)
 
@@ -683,7 +829,7 @@ class Ui_SettingNew(object):
 
         self.horizontalLayout_28.addWidget(self.openProxy)
 
-        self.horizontalSpacer_26 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_26 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_28.addItem(self.horizontalSpacer_26)
 
@@ -717,19 +863,19 @@ class Ui_SettingNew(object):
 
         self.line_2 = QFrame(self.scrollAreaWidgetContents)
         self.line_2.setObjectName(u"line_2")
-        self.line_2.setFrameShape(QFrame.HLine)
-        self.line_2.setFrameShadow(QFrame.Sunken)
+        self.line_2.setFrameShape(QFrame.Shape.HLine)
+        self.line_2.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.verticalLayout_4.addWidget(self.line_2)
 
         self.line_3 = QFrame(self.scrollAreaWidgetContents)
         self.line_3.setObjectName(u"line_3")
-        self.line_3.setFrameShape(QFrame.HLine)
-        self.line_3.setFrameShadow(QFrame.Sunken)
+        self.line_3.setFrameShape(QFrame.Shape.HLine)
+        self.line_3.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.verticalLayout_4.addWidget(self.line_3)
 
-        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Minimum)
+        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
 
         self.verticalLayout_4.addItem(self.verticalSpacer_2)
 
@@ -760,7 +906,7 @@ class Ui_SettingNew(object):
 
         self.horizontalLayout_17.addWidget(self.encodeSelect)
 
-        self.horizontalSpacer_14 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_14 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_17.addItem(self.horizontalSpacer_14)
 
@@ -780,11 +926,11 @@ class Ui_SettingNew(object):
         self.threadSelect.addItem("")
         self.threadSelect.setObjectName(u"threadSelect")
         self.threadSelect.setMinimumSize(QSize(150, 0))
-        self.threadSelect.setFocusPolicy(Qt.StrongFocus)
+        self.threadSelect.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
 
         self.horizontalLayout_16.addWidget(self.threadSelect)
 
-        self.horizontalSpacer_15 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_15 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_16.addItem(self.horizontalSpacer_15)
 
@@ -808,12 +954,41 @@ class Ui_SettingNew(object):
 
         self.horizontalLayout_29.addWidget(self.tileComboBox)
 
-        self.horizontalSpacer_27 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_27 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_29.addItem(self.horizontalSpacer_27)
 
 
         self.verticalLayout_12.addLayout(self.horizontalLayout_29)
+
+        self.label_58 = QLabel(self.frame_10)
+        self.label_58.setObjectName(u"label_58")
+        self.label_58.setFont(font1)
+
+        self.verticalLayout_12.addWidget(self.label_58)
+
+        self.horizontalLayout_37 = QHBoxLayout()
+        self.horizontalLayout_37.setObjectName(u"horizontalLayout_37")
+        self.procThreadNum = WheelComboBox(self.frame_10)
+        self.procThreadNum.addItem("")
+        self.procThreadNum.addItem("")
+        self.procThreadNum.addItem("")
+        self.procThreadNum.addItem("")
+        self.procThreadNum.addItem("")
+        self.procThreadNum.addItem("")
+        self.procThreadNum.addItem("")
+        self.procThreadNum.addItem("")
+        self.procThreadNum.addItem("")
+        self.procThreadNum.setObjectName(u"procThreadNum")
+
+        self.horizontalLayout_37.addWidget(self.procThreadNum)
+
+        self.horizontalSpacer_34 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_37.addItem(self.horizontalSpacer_34)
+
+
+        self.verticalLayout_12.addLayout(self.horizontalLayout_37)
 
 
         self.verticalLayout_4.addWidget(self.frame_10)
@@ -857,7 +1032,7 @@ class Ui_SettingNew(object):
 
         self.horizontalLayout_21.addWidget(self.lookMaxBox)
 
-        self.horizontalSpacer_20 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_20 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_21.addItem(self.horizontalSpacer_20)
 
@@ -878,7 +1053,7 @@ class Ui_SettingNew(object):
 
         self.horizontalLayout_5.addWidget(self.readModelName)
 
-        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_5.addItem(self.horizontalSpacer_3)
 
@@ -904,7 +1079,7 @@ class Ui_SettingNew(object):
 
         self.horizontalLayout_6.addWidget(self.readScale)
 
-        self.horizontalSpacer_4 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_4 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_6.addItem(self.horizontalSpacer_4)
 
@@ -948,7 +1123,7 @@ class Ui_SettingNew(object):
 
         self.horizontalLayout_11.addWidget(self.coverMaxBox)
 
-        self.horizontalSpacer_9 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_9 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_11.addItem(self.horizontalSpacer_9)
 
@@ -969,7 +1144,7 @@ class Ui_SettingNew(object):
 
         self.horizontalLayout_13.addWidget(self.coverModelName)
 
-        self.horizontalSpacer_11 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_11 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_13.addItem(self.horizontalSpacer_11)
 
@@ -995,7 +1170,7 @@ class Ui_SettingNew(object):
 
         self.horizontalLayout_14.addWidget(self.coverScale)
 
-        self.horizontalSpacer_12 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_12 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_14.addItem(self.horizontalSpacer_12)
 
@@ -1038,7 +1213,7 @@ class Ui_SettingNew(object):
 
         self.horizontalLayout_9.addWidget(self.downModelName)
 
-        self.horizontalSpacer_6 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_6 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_9.addItem(self.horizontalSpacer_6)
 
@@ -1064,7 +1239,7 @@ class Ui_SettingNew(object):
 
         self.horizontalLayout_7.addWidget(self.downScale)
 
-        self.horizontalSpacer_7 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_7 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_7.addItem(self.horizontalSpacer_7)
 
@@ -1076,12 +1251,12 @@ class Ui_SettingNew(object):
 
         self.line_4 = QFrame(self.scrollAreaWidgetContents)
         self.line_4.setObjectName(u"line_4")
-        self.line_4.setFrameShape(QFrame.HLine)
-        self.line_4.setFrameShadow(QFrame.Sunken)
+        self.line_4.setFrameShape(QFrame.Shape.HLine)
+        self.line_4.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.verticalLayout_4.addWidget(self.line_4)
 
-        self.verticalSpacer_4 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Minimum)
+        self.verticalSpacer_4 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
 
         self.verticalLayout_4.addItem(self.verticalSpacer_4)
 
@@ -1093,8 +1268,8 @@ class Ui_SettingNew(object):
 
         self.frame_15 = QFrame(self.scrollAreaWidgetContents)
         self.frame_15.setObjectName(u"frame_15")
-        self.frame_15.setFrameShape(QFrame.StyledPanel)
-        self.frame_15.setFrameShadow(QFrame.Raised)
+        self.frame_15.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_15.setFrameShadow(QFrame.Shadow.Raised)
         self.verticalLayout_19 = QVBoxLayout(self.frame_15)
         self.verticalLayout_19.setObjectName(u"verticalLayout_19")
         self.label_36 = QLabel(self.frame_15)
@@ -1130,8 +1305,8 @@ class Ui_SettingNew(object):
 
         self.frame = QFrame(self.scrollAreaWidgetContents)
         self.frame.setObjectName(u"frame")
-        self.frame.setFrameShape(QFrame.StyledPanel)
-        self.frame.setFrameShadow(QFrame.Raised)
+        self.frame.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame.setFrameShadow(QFrame.Shadow.Raised)
         self.verticalLayout_14 = QVBoxLayout(self.frame)
         self.verticalLayout_14.setObjectName(u"verticalLayout_14")
         self.label_17 = QLabel(self.frame)
@@ -1154,7 +1329,7 @@ class Ui_SettingNew(object):
 
         self.horizontalLayout_8.addWidget(self.threadSpin)
 
-        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_8.addItem(self.horizontalSpacer_2)
 
@@ -1177,6 +1352,118 @@ class Ui_SettingNew(object):
 
         self.verticalLayout_13.addWidget(self.label_21)
 
+        self.horizontalLayout_32 = QHBoxLayout()
+        self.horizontalLayout_32.setObjectName(u"horizontalLayout_32")
+        self.openMemBox = QCheckBox(self.frame_11)
+        self.openMemBox.setObjectName(u"openMemBox")
+
+        self.horizontalLayout_32.addWidget(self.openMemBox)
+
+        self.label_50 = QLabel(self.frame_11)
+        self.label_50.setObjectName(u"label_50")
+
+        self.horizontalLayout_32.addWidget(self.label_50)
+
+        self.memLabel = QLabel(self.frame_11)
+        self.memLabel.setObjectName(u"memLabel")
+
+        self.horizontalLayout_32.addWidget(self.memLabel)
+
+        self.label_51 = QLabel(self.frame_11)
+        self.label_51.setObjectName(u"label_51")
+
+        self.horizontalLayout_32.addWidget(self.label_51)
+
+        self.label_52 = QLabel(self.frame_11)
+        self.label_52.setObjectName(u"label_52")
+
+        self.horizontalLayout_32.addWidget(self.label_52)
+
+        self.memBox = WheelSpinBox(self.frame_11)
+        self.memBox.setObjectName(u"memBox")
+        self.memBox.setMinimumSize(QSize(100, 0))
+        self.memBox.setMaximum(8192)
+
+        self.horizontalLayout_32.addWidget(self.memBox)
+
+        self.horizontalSpacer_30 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_32.addItem(self.horizontalSpacer_30)
+
+
+        self.verticalLayout_13.addLayout(self.horizontalLayout_32)
+
+        self.horizontalLayout_36 = QHBoxLayout()
+        self.horizontalLayout_36.setObjectName(u"horizontalLayout_36")
+        self.diskRefreshButton = QPushButton(self.frame_11)
+        self.diskRefreshButton.setObjectName(u"diskRefreshButton")
+
+        self.horizontalLayout_36.addWidget(self.diskRefreshButton)
+
+        self.label_49 = QLabel(self.frame_11)
+        self.label_49.setObjectName(u"label_49")
+
+        self.horizontalLayout_36.addWidget(self.label_49)
+
+        self.horizontalSpacer_31 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_36.addItem(self.horizontalSpacer_31)
+
+
+        self.verticalLayout_13.addLayout(self.horizontalLayout_36)
+
+        self.horizontalLayout_33 = QHBoxLayout()
+        self.horizontalLayout_33.setObjectName(u"horizontalLayout_33")
+        self.openDiskBox = QCheckBox(self.frame_11)
+        self.openDiskBox.setObjectName(u"openDiskBox")
+
+        self.horizontalLayout_33.addWidget(self.openDiskBox)
+
+        self.label_54 = QLabel(self.frame_11)
+        self.label_54.setObjectName(u"label_54")
+
+        self.horizontalLayout_33.addWidget(self.label_54)
+
+        self.diskLabel = QLabel(self.frame_11)
+        self.diskLabel.setObjectName(u"diskLabel")
+
+        self.horizontalLayout_33.addWidget(self.diskLabel)
+
+        self.label_56 = QLabel(self.frame_11)
+        self.label_56.setObjectName(u"label_56")
+
+        self.horizontalLayout_33.addWidget(self.label_56)
+
+        self.label_57 = QLabel(self.frame_11)
+        self.label_57.setObjectName(u"label_57")
+
+        self.horizontalLayout_33.addWidget(self.label_57)
+
+        self.diskBox = WheelSpinBox(self.frame_11)
+        self.diskBox.setObjectName(u"diskBox")
+        self.diskBox.setMinimumSize(QSize(100, 0))
+        self.diskBox.setMaximum(102400)
+
+        self.horizontalLayout_33.addWidget(self.diskBox)
+
+        self.label_55 = QLabel(self.frame_11)
+        self.label_55.setObjectName(u"label_55")
+
+        self.horizontalLayout_33.addWidget(self.label_55)
+
+        self.diskDayBox = WheelSpinBox(self.frame_11)
+        self.diskDayBox.setObjectName(u"diskDayBox")
+        self.diskDayBox.setMaximum(9999)
+
+        self.horizontalLayout_33.addWidget(self.diskDayBox)
+
+        self.horizontalSpacer_32 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_33.addItem(self.horizontalSpacer_32)
+
+
+        self.verticalLayout_13.addLayout(self.horizontalLayout_33)
+
         self.horizontalLayout_10 = QHBoxLayout()
         self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
         self.setDirButton = QPushButton(self.frame_11)
@@ -1184,7 +1471,12 @@ class Ui_SettingNew(object):
 
         self.horizontalLayout_10.addWidget(self.setDirButton)
 
-        self.horizontalSpacer_8 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.setLogDirButton = QPushButton(self.frame_11)
+        self.setLogDirButton.setObjectName(u"setLogDirButton")
+
+        self.horizontalLayout_10.addWidget(self.setLogDirButton)
+
+        self.horizontalSpacer_8 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_10.addItem(self.horizontalSpacer_8)
 
@@ -1210,7 +1502,7 @@ class Ui_SettingNew(object):
 
         self.horizontalLayout_2.addWidget(self.openDownloadDir)
 
-        self.horizontalSpacer_16 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_16 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_2.addItem(self.horizontalSpacer_16)
 
@@ -1236,7 +1528,7 @@ class Ui_SettingNew(object):
 
         self.horizontalLayout_18.addWidget(self.openCacheDir)
 
-        self.horizontalSpacer_17 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_17 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_18.addItem(self.horizontalSpacer_17)
 
@@ -1262,7 +1554,7 @@ class Ui_SettingNew(object):
 
         self.horizontalLayout_20.addWidget(self.openChatDir)
 
-        self.horizontalSpacer_18 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_18 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_20.addItem(self.horizontalSpacer_18)
 
@@ -1288,12 +1580,38 @@ class Ui_SettingNew(object):
 
         self.horizontalLayout_19.addWidget(self.openWaifu2xDir)
 
-        self.horizontalSpacer_19 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_19 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_19.addItem(self.horizontalSpacer_19)
 
 
         self.verticalLayout_13.addLayout(self.horizontalLayout_19)
+
+        self.horizontalLayout_34 = QHBoxLayout()
+        self.horizontalLayout_34.setObjectName(u"horizontalLayout_34")
+        self.label_43 = QLabel(self.frame_11)
+        self.label_43.setObjectName(u"label_43")
+        self.label_43.setMinimumSize(QSize(80, 0))
+
+        self.horizontalLayout_34.addWidget(self.label_43)
+
+        self.logLabel = QLabel(self.frame_11)
+        self.logLabel.setObjectName(u"logLabel")
+        self.logLabel.setMinimumSize(QSize(150, 0))
+
+        self.horizontalLayout_34.addWidget(self.logLabel)
+
+        self.openLogDir = QPushButton(self.frame_11)
+        self.openLogDir.setObjectName(u"openLogDir")
+
+        self.horizontalLayout_34.addWidget(self.openLogDir)
+
+        self.horizontalSpacer_33 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_34.addItem(self.horizontalSpacer_33)
+
+
+        self.verticalLayout_13.addLayout(self.horizontalLayout_34)
 
 
         self.verticalLayout_4.addWidget(self.frame_11)
@@ -1387,6 +1705,28 @@ class Ui_SettingNew(object):
         self.logutton0.setText(QCoreApplication.translate("SettingNew", u"Warn", None))
         self.logutton1.setText(QCoreApplication.translate("SettingNew", u"Info", None))
         self.logutton2.setText(QCoreApplication.translate("SettingNew", u"Debug", None))
+        self.prefetchLabel.setText(QCoreApplication.translate("SettingNew", u"\u56fe\u7247\u9884\u53d6", None))
+        self.prefetchCountLabel.setText(QCoreApplication.translate("SettingNew", u"\u9884\u4e0b\u8f7d\u56fe\u7247\u6570\u91cf\uff1a", None))
+        self.label_30.setText(QCoreApplication.translate("SettingNew", u"\u524d\uff1a", None))
+        self.label_44.setText(QCoreApplication.translate("SettingNew", u"-", None))
+        self.label_45.setText(QCoreApplication.translate("SettingNew", u"\u540e\uff1a", None))
+#if QT_CONFIG(tooltip)
+        self.prefetchCountHelp.setToolTip(QCoreApplication.translate("SettingNew", u"\u8bbe\u7f6e\u5f53\u524d\u9875\u4e4b\u540e\u9884\u53d6\u7684\u56fe\u7247\u6570\u91cf\uff0c\u4e0b\u8f7d\u5e76\u53d1\u6570\u56fa\u5b9a\u4e3a5", None))
+#endif // QT_CONFIG(tooltip)
+        self.prefetchCountHelp.setText(QCoreApplication.translate("SettingNew", u"\u24d8", None))
+        self.label_46.setText(QCoreApplication.translate("SettingNew", u"\u6eda\u52a8\u6a21\u5f0f\u663e\u793a\u8303\u56f4\uff1a", None))
+        self.label_47.setText(QCoreApplication.translate("SettingNew", u"\u524d\uff1a", None))
+        self.label_48.setText(QCoreApplication.translate("SettingNew", u"-", None))
+        self.label_53.setText(QCoreApplication.translate("SettingNew", u"\u540e\uff1a", None))
+#if QT_CONFIG(tooltip)
+        self.showCountHelp.setToolTip(QCoreApplication.translate("SettingNew", u"<html><head/><body><p>\u6eda\u52a8\u6a21\u5f0f\u4e0b\uff0c\u663e\u793a\u7684\u8303\u56f4\uff0c\u9700\u5c0f\u4e8e\u9884\u4e0b\u8f7d\u6570\u91cf\uff0c\u8c03\u5927\u6eda\u52a8\u65f6\u53ef\u51cf\u5c11\u52a0\u8f7d\u56fe\u7684\u95ea\u70c1</p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
+        self.showCountHelp.setText(QCoreApplication.translate("SettingNew", u"\u24d8", None))
+        self.prefetchWholeChapter.setText(QCoreApplication.translate("SettingNew", u"\u9884\u53d6\u5f53\u524d\u7ae0\u8282\u5269\u4f59\u5168\u90e8\u56fe\u7247", None))
+#if QT_CONFIG(tooltip)
+        self.prefetchWholeChapterHelp.setToolTip(QCoreApplication.translate("SettingNew", u"\u5ffd\u7565\u9884\u53d6\u6570\u91cf\u9650\u5236\uff0c\u9884\u53d6\u5f53\u524d\u9875\u4e4b\u540e\u76f4\u5230\u672c\u7ae0\u672b\u5c3e\u7684\u5168\u90e8\u56fe\u7247", None))
+#endif // QT_CONFIG(tooltip)
+        self.prefetchWholeChapterHelp.setText(QCoreApplication.translate("SettingNew", u"\u24d8", None))
         self.proxyLabel.setText(QCoreApplication.translate("SettingNew", u"\u4ee3\u7406", None))
         self.label_7.setText(QCoreApplication.translate("SettingNew", u"Http\u4ee3\u7406\uff1a", None))
         self.proxy0.setText(QCoreApplication.translate("SettingNew", u"\u65e0\u4ee3\u7406", None))
@@ -1408,6 +1748,17 @@ class Ui_SettingNew(object):
         self.tileComboBox.setItemText(1, QCoreApplication.translate("SettingNew", u"200", None))
         self.tileComboBox.setItemText(2, QCoreApplication.translate("SettingNew", u"100", None))
         self.tileComboBox.setItemText(3, QCoreApplication.translate("SettingNew", u"32", None))
+
+        self.label_58.setText(QCoreApplication.translate("SettingNew", u"\u7ebf\u7a0b\u6570\uff0c\u8fc7\u5927\u53ef\u80fd\u8d85\u663e\u5b58\uff0c\u914d\u5408\u8c03\u4f4etile\u8bbe\u7f6e\uff08\u9700\u91cd\u542f\u751f\u6548\uff09", None))
+        self.procThreadNum.setItemText(0, QCoreApplication.translate("SettingNew", u"Auto", None))
+        self.procThreadNum.setItemText(1, QCoreApplication.translate("SettingNew", u"1", None))
+        self.procThreadNum.setItemText(2, QCoreApplication.translate("SettingNew", u"2", None))
+        self.procThreadNum.setItemText(3, QCoreApplication.translate("SettingNew", u"3", None))
+        self.procThreadNum.setItemText(4, QCoreApplication.translate("SettingNew", u"4", None))
+        self.procThreadNum.setItemText(5, QCoreApplication.translate("SettingNew", u"5", None))
+        self.procThreadNum.setItemText(6, QCoreApplication.translate("SettingNew", u"6", None))
+        self.procThreadNum.setItemText(7, QCoreApplication.translate("SettingNew", u"7", None))
+        self.procThreadNum.setItemText(8, QCoreApplication.translate("SettingNew", u"8", None))
 
         self.label_12.setText(QCoreApplication.translate("SettingNew", u"Waifu2x\u770b\u56fe\u6a21\u5f0f", None))
         self.readCheckBox.setText(QCoreApplication.translate("SettingNew", u"\u662f\u5426\u542f\u7528", None))
@@ -1434,7 +1785,21 @@ class Ui_SettingNew(object):
         self.saveNameButton2.setText(QCoreApplication.translate("SettingNew", u"\u4f5c\u8005\u540d\u5355\u72ec\u76ee\u5f55\uff08\u5982\u65e0\u4f5c\u8005\u540d\u5c06\u653e\u5165default\u76ee\u5f55\uff09", None))
         self.label_17.setText(QCoreApplication.translate("SettingNew", u"JM\u56fe\u7247\u89e3\u5bc6\u8fdb\u7a0b\u6570\u91cf\uff08\u5bf9\u5e94\u4e0b\u8f7d\u7ebf\u7a0b\u6570\u91cf\uff0c\u9700\u91cd\u542f\uff09", None))
         self.label_21.setText(QCoreApplication.translate("SettingNew", u"\u4e0b\u8f7d\u548c\u7f13\u5b58\u8def\u5f84\uff08\u7f13\u5b58\u6587\u4ef6\u9700\u81ea\u5df1\u624b\u52a8\u6e05\u9664\uff09", None))
+        self.openMemBox.setText(QCoreApplication.translate("SettingNew", u"\u5185\u5b58\u7f13\u5b58", None))
+        self.label_50.setText(QCoreApplication.translate("SettingNew", u"\u5f53\u524d", None))
+        self.memLabel.setText(QCoreApplication.translate("SettingNew", u"0", None))
+        self.label_51.setText(QCoreApplication.translate("SettingNew", u"MB\uff0c", None))
+        self.label_52.setText(QCoreApplication.translate("SettingNew", u"\u8bbe\u7f6e\u6700\u5927\u503c(MB)\uff1a", None))
+        self.diskRefreshButton.setText(QCoreApplication.translate("SettingNew", u"\u5237\u65b0\u78c1\u76d8\u7f13\u5b58\u7edf\u8ba1", None))
+        self.label_49.setText(QCoreApplication.translate("SettingNew", u"(\u5982\u679c\u81ea\u884c\u5220\u9664\u4e86\u7f13\u5b58\u6587\u4ef6\uff0c\u6216\u8005\u4fee\u6539\u4e86\u76ee\u5f55\u8bf7\u70b9\u51fb\u5237\u65b0)", None))
+        self.openDiskBox.setText(QCoreApplication.translate("SettingNew", u"\u78c1\u76d8\u7f13\u5b58", None))
+        self.label_54.setText(QCoreApplication.translate("SettingNew", u"\u5f53\u524d", None))
+        self.diskLabel.setText(QCoreApplication.translate("SettingNew", u"0", None))
+        self.label_56.setText(QCoreApplication.translate("SettingNew", u"MB\uff0c", None))
+        self.label_57.setText(QCoreApplication.translate("SettingNew", u"\u8bbe\u7f6e\u6700\u5927\u503c(MB)\uff1a", None))
+        self.label_55.setText(QCoreApplication.translate("SettingNew", u"\u7f13\u5b58\u5929\u6570\uff1a", None))
         self.setDirButton.setText(QCoreApplication.translate("SettingNew", u"\u8bbe\u7f6e\u76ee\u5f55", None))
+        self.setLogDirButton.setText(QCoreApplication.translate("SettingNew", u"\u8bbe\u7f6e\u65e5\u5fd7\u76ee\u5f55", None))
         self.label_3.setText(QCoreApplication.translate("SettingNew", u"\u4e0b\u8f7d", None))
         self.downloadDir.setText("")
         self.openDownloadDir.setText(QCoreApplication.translate("SettingNew", u"\u6253\u5f00\u76ee\u5f55", None))
@@ -1447,5 +1812,8 @@ class Ui_SettingNew(object):
         self.label_5.setText(QCoreApplication.translate("SettingNew", u"Waifu2x\u7f13\u5b58", None))
         self.waifu2xDir.setText("")
         self.openWaifu2xDir.setText(QCoreApplication.translate("SettingNew", u"\u6253\u5f00\u76ee\u5f55", None))
+        self.label_43.setText(QCoreApplication.translate("SettingNew", u"\u65e5\u5fd7", None))
+        self.logLabel.setText("")
+        self.openLogDir.setText(QCoreApplication.translate("SettingNew", u"\u6253\u5f00\u76ee\u5f55", None))
     # retranslateUi
 

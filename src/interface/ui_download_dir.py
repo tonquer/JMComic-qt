@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_download_dir.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.3
+## Created by: Qt User Interface Compiler version 6.9.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -15,18 +15,18 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QGridLayout, QHBoxLayout, QLabel,
-    QLineEdit, QPushButton, QSizePolicy, QSpacerItem,
-    QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QGridLayout, QHBoxLayout,
+    QLabel, QLineEdit, QPushButton, QSizePolicy,
+    QSpacerItem, QSpinBox, QVBoxLayout, QWidget)
 
 class Ui_DownloadDir(object):
     def setupUi(self, DownloadDir):
         if not DownloadDir.objectName():
             DownloadDir.setObjectName(u"DownloadDir")
-        DownloadDir.resize(401, 300)
+        DownloadDir.resize(464, 330)
         self.verticalLayout = QVBoxLayout(DownloadDir)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout.addItem(self.verticalSpacer_2)
 
@@ -58,45 +58,108 @@ class Ui_DownloadDir(object):
 
         self.gridLayout = QGridLayout()
         self.gridLayout.setObjectName(u"gridLayout")
-        self.waifu2xDir = QLabel(DownloadDir)
-        self.waifu2xDir.setObjectName(u"waifu2xDir")
+        self.label_3 = QLabel(DownloadDir)
+        self.label_3.setObjectName(u"label_3")
 
-        self.gridLayout.addWidget(self.waifu2xDir, 2, 1, 1, 1)
-
-        self.cacheDir = QLabel(DownloadDir)
-        self.cacheDir.setObjectName(u"cacheDir")
-
-        self.gridLayout.addWidget(self.cacheDir, 1, 1, 1, 1)
+        self.gridLayout.addWidget(self.label_3, 0, 0, 1, 1)
 
         self.downloadDir = QLabel(DownloadDir)
         self.downloadDir.setObjectName(u"downloadDir")
 
         self.gridLayout.addWidget(self.downloadDir, 0, 1, 1, 1)
 
-        self.label_3 = QLabel(DownloadDir)
-        self.label_3.setObjectName(u"label_3")
-
-        self.gridLayout.addWidget(self.label_3, 0, 0, 1, 1)
-
         self.label_5 = QLabel(DownloadDir)
         self.label_5.setObjectName(u"label_5")
 
         self.gridLayout.addWidget(self.label_5, 1, 0, 1, 1)
 
+        self.cacheDir = QLabel(DownloadDir)
+        self.cacheDir.setObjectName(u"cacheDir")
+
+        self.gridLayout.addWidget(self.cacheDir, 1, 1, 1, 1)
+
+        self.label_7 = QLabel(DownloadDir)
+        self.label_7.setObjectName(u"label_7")
+
+        self.gridLayout.addWidget(self.label_7, 2, 0, 1, 1)
+
+        self.chatDir = QLabel(DownloadDir)
+        self.chatDir.setObjectName(u"chatDir")
+
+        self.gridLayout.addWidget(self.chatDir, 2, 1, 1, 1)
+
         self.label_4 = QLabel(DownloadDir)
         self.label_4.setObjectName(u"label_4")
 
-        self.gridLayout.addWidget(self.label_4, 2, 0, 1, 1)
+        self.gridLayout.addWidget(self.label_4, 3, 0, 1, 1)
+
+        self.waifu2xDir = QLabel(DownloadDir)
+        self.waifu2xDir.setObjectName(u"waifu2xDir")
+
+        self.gridLayout.addWidget(self.waifu2xDir, 3, 1, 1, 1)
 
 
         self.verticalLayout.addLayout(self.gridLayout)
+
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.openMemBox = QCheckBox(DownloadDir)
+        self.openMemBox.setObjectName(u"openMemBox")
+
+        self.horizontalLayout_2.addWidget(self.openMemBox)
+
+        self.label_6 = QLabel(DownloadDir)
+        self.label_6.setObjectName(u"label_6")
+
+        self.horizontalLayout_2.addWidget(self.label_6)
+
+        self.memBox = QSpinBox(DownloadDir)
+        self.memBox.setObjectName(u"memBox")
+        self.memBox.setMaximum(8192)
+
+        self.horizontalLayout_2.addWidget(self.memBox)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
+
+        self.horizontalLayout_3 = QHBoxLayout()
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.openDiskBox = QCheckBox(DownloadDir)
+        self.openDiskBox.setObjectName(u"openDiskBox")
+
+        self.horizontalLayout_3.addWidget(self.openDiskBox)
+
+        self.label_8 = QLabel(DownloadDir)
+        self.label_8.setObjectName(u"label_8")
+
+        self.horizontalLayout_3.addWidget(self.label_8)
+
+        self.diskBox = QSpinBox(DownloadDir)
+        self.diskBox.setObjectName(u"diskBox")
+        self.diskBox.setMaximum(102400)
+
+        self.horizontalLayout_3.addWidget(self.diskBox)
+
+        self.label_9 = QLabel(DownloadDir)
+        self.label_9.setObjectName(u"label_9")
+
+        self.horizontalLayout_3.addWidget(self.label_9)
+
+        self.diskDayBox = QSpinBox(DownloadDir)
+        self.diskDayBox.setObjectName(u"diskDayBox")
+        self.diskDayBox.setMaximum(9999)
+
+        self.horizontalLayout_3.addWidget(self.diskDayBox)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout_3)
 
         self.saveDir = QPushButton(DownloadDir)
         self.saveDir.setObjectName(u"saveDir")
 
         self.verticalLayout.addWidget(self.saveDir)
 
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout.addItem(self.verticalSpacer)
 
@@ -111,12 +174,19 @@ class Ui_DownloadDir(object):
         self.label.setText(QCoreApplication.translate("DownloadDir", u"\u4f60\u5fc5\u987b\u8bbe\u7f6e\u4e0b\u8f7d\u4e0e\u7f13\u5b58\u7684\u8def\u5f84\u624d\u80fd\u4f7f\u7528", None))
         self.label_2.setText(QCoreApplication.translate("DownloadDir", u"\u76ee\u5f55", None))
         self.selectDir.setText(QCoreApplication.translate("DownloadDir", u"...", None))
-        self.waifu2xDir.setText("")
-        self.cacheDir.setText("")
-        self.downloadDir.setText("")
         self.label_3.setText(QCoreApplication.translate("DownloadDir", u"\u4e0b\u8f7d:", None))
+        self.downloadDir.setText("")
         self.label_5.setText(QCoreApplication.translate("DownloadDir", u"\u7f13\u5b58:", None))
+        self.cacheDir.setText("")
+        self.label_7.setText(QCoreApplication.translate("DownloadDir", u"\u804a\u5929:", None))
+        self.chatDir.setText("")
         self.label_4.setText(QCoreApplication.translate("DownloadDir", u"waifu2x\u7f13\u5b58:", None))
+        self.waifu2xDir.setText("")
+        self.openMemBox.setText(QCoreApplication.translate("DownloadDir", u"\u5f00\u542f\u5185\u5b58\u7f13\u5b58", None))
+        self.label_6.setText(QCoreApplication.translate("DownloadDir", u"\u5927\u5c0f(MB)\uff1a", None))
+        self.openDiskBox.setText(QCoreApplication.translate("DownloadDir", u"\u5f00\u542f\u78c1\u76d8\u7f13\u5b58", None))
+        self.label_8.setText(QCoreApplication.translate("DownloadDir", u"\u5927\u5c0f(MB)\uff1a", None))
+        self.label_9.setText(QCoreApplication.translate("DownloadDir", u"\u5929\u6570\uff1a", None))
         self.saveDir.setText(QCoreApplication.translate("DownloadDir", u"\u4fdd\u5b58", None))
     # retranslateUi
 

@@ -8,8 +8,6 @@ from PySide6.QtCore import QSize, Qt
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QTableWidgetItem, QHeaderView, QAbstractItemView, QCheckBox, QButtonGroup, QLabel
 
-from component.layout.flow_layout import FlowLayout
-from component.widget.proxy_ip_item_widget import ProxyIpWidget
 from config import config
 from config.global_config import GlobalConfig
 from config.setting import Setting
@@ -17,6 +15,7 @@ from qt_owner import QtOwner
 from server import req, Server
 from tools.log import Log
 from tools.str import Str
+from tools.tool import ToolUtil
 
 
 class IpItem(object):
@@ -55,7 +54,7 @@ class IpItem(object):
             leIsFail = self.isFail or self.downloadFail
             rtIsFail = other.isFail or other.downloadFail
             if leIsFail == rtIsFail:
-                return self.delay*0.8 + self.downloadDelay*0.2 < other.delay*0.8 + other.downloadDelay*0.2
+                return self.delay * 0.8 + self.downloadDelay * 0.2 < other.delay * 0.8 + other.downloadDelay * 0.2
             else:
                 if leIsFail:
                     return False
@@ -67,12 +66,12 @@ class IpItem(object):
             else:
                 return False
 
+
 class LoginProxyNewWidget(object):
     def __init__(self, owner):
         from view.user.login_new_view import LoginNewView
         assert isinstance(owner, LoginNewView)
         self.owner = owner
-
 
         self.speedTest = []
         self.speedPingNum = 0
@@ -143,6 +142,10 @@ class LoginProxyNewWidget(object):
         if not self.otherProxyIps:
             self.otherProxyIps = GlobalConfig.ProxyIpList.value[:]
 
+        self.otherCDNIps = Setting.BestCfIpLastList.value.split(",")
+        if not self.otherCDNIps:
+            self.otherCDNIps = GlobalConfig.BestCfIpList.value[:]
+
         self.ShowAllItem()
         self.LoadHistory()
         self.Sort()
@@ -203,7 +206,6 @@ class LoginProxyNewWidget(object):
             partial(QtOwner().settingView.LineEditEvent, Setting.PreferCDNList, self.owner.ipListEdit))
         self.owner.proxyIpEdit.editingFinished.connect(
             partial(QtOwner().settingView.LineEditEvent, Setting.ProxyIpCountry, self.owner.proxyIpEdit))
-
         self.owner.dohLine.editingFinished.connect(
             partial(QtOwner().settingView.LineEditEvent, Setting.DohAddress, self.owner.dohLine))
 
@@ -218,7 +220,7 @@ class LoginProxyNewWidget(object):
             if Setting.LastProxyResult.value:
                 for k, v in Setting.LastProxyResult.value.items():
                     if hasattr(self.owner, k):
-                        widget = getattr(self.owner, k)
+                        widget = getattr(self.owner, k, None)
                         if isinstance(widget, QLabel):
                             widget.setText(str(v))
             if Setting.LastIpResult.value:
@@ -246,8 +248,12 @@ class LoginProxyNewWidget(object):
             self.__InitSetting()
         self.LoadSetting()
         proxy = urllib.request.getproxies()
-        if isinstance(proxy, dict) and proxy.get("http"):
-            self.owner.proxyLabel.setText(proxy.get("http", ""))
+        httpProxyStr = proxy.get("http") if isinstance(proxy, dict) else None
+        httpsProxyStr = proxy.get("https") if isinstance(proxy, dict) else None
+        socksProxyStr = proxy.get("socks") if isinstance(proxy, dict) else None
+        if httpProxyStr or httpsProxyStr or socksProxyStr:
+            text = httpProxyStr if httpProxyStr else httpsProxyStr if httpsProxyStr else socksProxyStr
+            self.owner.proxyLabel.setText(text)
             self.owner.checkLabel.setVisible(False)
         else:
             self.owner.checkLabel.setVisible(True)
@@ -386,8 +392,7 @@ class LoginProxyNewWidget(object):
         if st == Str.Ok:
             ipList = raw.get("list", [])
             self.otherProxyIps = ipList
-
-            self.owner.proxyIpLabel.setText(f"<font color=#d71345>成功获取{len(ipList)}个节点</font>")
+            self.owner.proxyIpLabel.setText(f"<font color=#d71345>成功获取{len(ipList)}个proxyip节点</font>")
             Setting.ProxyIpLastList.SetValue(",".join(self.otherProxyIps))
         else:
 
@@ -395,6 +400,26 @@ class LoginProxyNewWidget(object):
             Setting.ProxyIpLastList.SetValue("")
         if not self.otherProxyIps:
             self.otherProxyIps = GlobalConfig.ProxyIpList.value[:]
+        self.GetBestCfIp()
+
+    def GetBestCfIp(self):
+        request = req.GetBestCfIpReq()
+        self.owner.AddHttpTask(request, self.GetBestCfIpBack)
+
+    def GetBestCfIpBack(self, raw):
+        st = raw["st"]
+        if st == Str.Ok:
+            ipList = raw.get("list", [])
+            self.otherCDNIps = ipList
+            self.owner.proxyIpLabel.setText(
+                self.owner.proxyIpLabel.text() + f" <font color=#d71345>成功获取{len(ipList)}个CDN节点</font>")
+            Setting.BestCfIpLastList.SetValue(",".join(self.otherCDNIps))
+        else:
+            self.owner.proxyIpLabel.setText(
+                self.owner.proxyIpLabel.text() + " <font color=#d71345>{}</font>".format(Str.GetStr(st)))
+            Setting.BestCfIpLastList.SetValue("")
+        if not self.otherCDNIps:
+            self.otherCDNIps = GlobalConfig.BestCfIpList.value[:]
         self.StartTestIp2()
 
     def StartTestIp2(self):
@@ -462,7 +487,7 @@ class LoginProxyNewWidget(object):
             try:
                 data2 = json.loads(data)
                 if data2.get("code") == 200:
-                    country = data2.get('data',{}).get("country", "")
+                    country = data2.get('data', {}).get("country", "")
                     province = data2.get('data', {}).get("province", "")
                     isp = data2.get('data', {}).get("isp", "")
                     item.country = f"{country}·{province}"
@@ -475,6 +500,7 @@ class LoginProxyNewWidget(object):
                     #     w.Update(item)
             except Exception as es:
                 Log.Error(es)
+
     #
     # def GetRawCountry(self, data):
     #     if data.get("country", {}).get("names"):
@@ -558,7 +584,6 @@ class LoginProxyNewWidget(object):
             else:
                 item.isSelect = False
 
-
     def ShowAllItem(self):
         self.ClearAllItem()
         oldItems = {}
@@ -585,13 +610,13 @@ class LoginProxyNewWidget(object):
             self.UpdateRow(item)
             index += 1
 
-        for j, ip in enumerate(re.split(r'[、，；;,\s]\s*', Setting.PreferCDNList.value)):
+        for j, ip in enumerate(ToolUtil.ExportIpsByStr(Setting.PreferCDNList.value)):
             if not ip:
                 continue
             if ip in allips:
                 continue
             allips.add(ip)
-            item = IpItem(index, j+1, ip,False, True)
+            item = IpItem(index, j + 1, ip, False, True)
             item.isSelect = ip == Setting.ProxyIpValue.value
             self.allItems[index] = item
             if ip in oldItems:
@@ -599,10 +624,15 @@ class LoginProxyNewWidget(object):
             self.AddRow(index)
             self.UpdateRow(item)
             index += 1
-        for j, ip in enumerate(GlobalConfig.BestCfIpList.value):
+        for j, ip in enumerate(self.otherCDNIps):
             if not ip:
                 continue
-            item = IpItem(index, j+1, ip,False, False)
+
+            if ip in allips:
+                continue
+            allips.add(ip)
+
+            item = IpItem(index, j + 1, ip, False, False)
             item.isSelect = ip == Setting.ProxyIpValue.value
             self.allItems[index] = item
             if ip in oldItems:
@@ -610,6 +640,7 @@ class LoginProxyNewWidget(object):
             self.AddRow(index)
             self.UpdateRow(item)
             index += 1
+
         # self.owner.tableWidget.resizeColumnsToContents()
         # self.owner.tableWidget.resizeRowsToContents()
 
@@ -637,7 +668,7 @@ class LoginProxyNewWidget(object):
         if info.isFail:
             speed = Str.GetStr(info.st)
         if info.downloadDelay:
-             speed += "/" + str(int(float(info.downloadDelay))) + "ms"
+            speed += "/" + str(int(float(info.downloadDelay))) + "ms"
         if info.downloadFail:
             speed += "/" + Str.GetStr(info.downloadSt)
 
@@ -657,19 +688,19 @@ class LoginProxyNewWidget(object):
         return Setting.ProxyIpValue.value
 
     def ClearAllItem(self):
-        for i in range(self.owner.tableWidget.rowCount()-1, -1, -1):
+        for i in range(self.owner.tableWidget.rowCount() - 1, -1, -1):
             widget = self.owner.tableWidget.cellWidget(i, 0)
             if isinstance(widget, QCheckBox):
                 self.proxyIpGroup.removeButton(widget)
             self.owner.tableWidget.removeRow(i)
 
         # while 1:
-            # child = self.flowLayout.takeAt(0)
-            # if not child:
-            #     break
-            # if child.widget():
-            #     child.widget().setParent(None)
-            # del child
+        # child = self.flowLayout.takeAt(0)
+        # if not child:
+        #     break
+        # if child.widget():
+        #     child.widget().setParent(None)
+        # del child
         return
 
     def Sort(self):
@@ -692,12 +723,13 @@ class LoginProxyNewWidget(object):
         self.speedTest = []
         self.SetEnabled(False)
         for i in range(1, self.maxNum):
-            if i == self.cdnIndex:
-                continue
             label = getattr(self.owner, "label_api_" + str(i))
             label.setText("")
             label = getattr(self.owner, "label_img_" + str(i))
             label.setText("")
+            if i == self.cdnIndex:
+                continue
+
             img = GlobalConfig.GetImgUrl2(i)
             api = GlobalConfig.GetApiUrl2(i)
             request = req.SpeedTestPingReq(api)
@@ -731,6 +763,7 @@ class LoginProxyNewWidget(object):
             self.SaveHistory()
             return
         if self.speedDownNum == self.cdnIndex:
+            # 跳过ip分流
             self.StartSpeedTest()
             return
         i = self.speedDownNum

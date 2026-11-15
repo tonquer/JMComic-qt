@@ -1,3 +1,12 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+
+    from view.read.read_new_frame import ReadNewFrame
+    from view.read.read_new_view import ReadNewView
+    from view.read.read_new_task import ReadNewTask
+
 import sys
 import weakref
 
@@ -12,10 +21,10 @@ from config import config
 from config.setting import Setting
 from interface.ui_read_tool import Ui_ReadImg
 from qt_owner import QtOwner
-from tools.book import BookMgr
 from tools.str import Str
 from tools.tool import CTime, ToolUtil
 from view.read.read_enum import ReadMode, QtFileData
+from view.read.read_new_graphics import ReadNewGraphics
 
 
 class QtCustomSlider(QtWidgets.QSlider):
@@ -37,7 +46,7 @@ class QtCustomSlider(QtWidgets.QSlider):
         self.setPageStep(0)
 
     @property
-    def qtTool(self):
+    def qtTool(self) -> ReadNewTool:
         return self._qtTool()
 
     def mousePressEvent(self, event):
@@ -50,7 +59,7 @@ class QtCustomSlider(QtWidgets.QSlider):
         size = int(w * self.value() / (self.maximum()))
         x2 = self.sliderPosition()
 
-        if not (size-5 <= x <= size+5):
+        if not (size - 5 <= x <= size + 5):
             self.setValue(int(pos * (self.maximum()) + self.minimum()))
             self.label.setText(str(self.value()))
             size = int((self.width() - self.label.width()) * self.value() / (self.maximum()))
@@ -60,7 +69,7 @@ class QtCustomSlider(QtWidgets.QSlider):
     def mouseReleaseEvent(self, event):
         if self.label.isVisible():
             self.label.setVisible(False)
-            self.qtTool.SkipPicture()
+            self.qtTool.SkipPicture(self.value())
         super(self.__class__, self).mouseReleaseEvent(event)
 
     def mouseMoveEvent(self, event):
@@ -79,7 +88,7 @@ class QtCustomSlider(QtWidgets.QSlider):
         return
 
 
-class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
+class ReadNewTool(QtWidgets.QWidget, Ui_ReadImg):
 
     def __init__(self, imgFrame):
         QtWidgets.QWidget.__init__(self, imgFrame)
@@ -87,32 +96,15 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
         self.setupUi(self)
         self.resize(100, 400)
         self._imgFrame = weakref.ref(imgFrame)
-        # self.setWindowFlags(
-        #     Qt.Window | Qt.Tool | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.X11BypassWindowManagerHint)
-        # self.setStyleSheet("background-color:white;")
-        # self.setAttribute(Qt.WA_StyledBackground, False)
-        # palette = QPalette(self.palette())
-        # palette.setColor(QPalette.Background, Qt.white)
-        # self.setAutoFillBackground(True)
-        # self.setPalette(palette)
-        # self.setAttribute(Qt.WA_TranslucentBackground, False)
         self.downloadMaxSize = 0
         self.downloadSize = 0
         self.slider = QtCustomSlider(self)
         self.horizontalLayout_7.addWidget(self.slider)
         self.SetWaifu2xCancle()
         self.scaleBox.installEventFilter(self)
-        self.zoomSlider.setMaximum(500)
-        # self.buttonGroup.buttonClicked.connect(self.SwitchPicture)
-        # self.buttonGroup.setId(self.radioButton, 1)
-        # self.buttonGroup.setId(self.radioButton_2, 2)
-        # self.buttonGroup.setId(self.radioButton_3, 3)
-        # self.buttonGroup.setId(self.radioButton_4, 4)
-        # self.buttonGroup.setId(self.radioButton_5, 5)
-        # self.buttonGroup.setId(self.radioButton_6, 6)
-        self.timerOut = QTimer()
-        self.timerOut.setInterval(1000)
-        self.timerOut.timeout.connect(self.TimeOut)
+        self.zoomSlider.setMinimum(int(100*ReadNewGraphics.MIN_ZOOM))
+        self.zoomSlider.setMaximum(int(100*ReadNewGraphics.MAX_ZOOM))
+
         self.isMaxFull = False
         self.gpuLabel.setMaximumWidth(250)
         self.curWaifu2x.clicked.connect(self.OpenCurWaifu)
@@ -121,6 +113,23 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
         self.modelNameButton.setToolTip(Setting.LookModelName.value)
         self.modelNameButton.clicked.connect(self.OpenSrSelect)
         self.modelNameButton.setEnabled(False)
+        self.openGLBox.setChecked(bool(Setting.IsOpenOpenGL.value))
+        self.openGLBox.clicked.connect(self.SwitchOpenGL)
+        self.animeBox.setChecked(bool(Setting.IsOpenReadAnime.value))
+        self.animeBox.clicked.connect(self.SwitchAnime)
+        self.switchDouble.clicked.connect(self.SwitchDouble)
+
+    def SwitchDouble(self):
+        self.scrollArea.change_double_page()
+        self.switchDouble.setChecked(self.scrollArea._is_cover_mode)
+
+    def SwitchAnime(self):
+        Setting.IsOpenReadAnime.SetValue(int(self.animeBox.isChecked()))
+        self.scrollArea.set_page_animation_enabled(self.animeBox.isChecked())
+
+    def SwitchOpenGL(self, value):
+        Setting.IsOpenOpenGL.SetValue(int(value))
+        self.scrollArea.set_opengl(bool(value))
 
     def OpenSrSelect(self):
         QtOwner().OpenSrSelectModel(self.modelNameButton.toolTip(), self.OpenSrSelectBack)
@@ -131,24 +140,24 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
         self.modelNameButton.setToolTip(Setting.LookModelName.value)
 
     @property
-    def imgFrame(self):
+    def imgFrame(self) -> ReadNewFrame:
         return self._imgFrame()
 
     @property
-    def scrollArea(self):
+    def scrollArea(self) -> ReadNewGraphics:
         return self.readImg.scrollArea
 
     @property
-    def readImg(self):
+    def readImg(self) -> ReadNewView:
         return self.imgFrame.readImg
 
     @property
-    def curIndex(self):
-        return self.readImg.curIndex
+    def readTask(self) -> ReadNewTask:
+        return self.scrollArea.read_task
 
-    @curIndex.setter
-    def curIndex(self, value):
-        self.readImg.curIndex = value
+    @property
+    def curIndex(self):
+        return self.scrollArea._cur_idx
 
     @property
     def maxPic(self):
@@ -156,11 +165,7 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
 
     @property
     def stripModel(self):
-        return self.readImg.stripModel
-
-    @stripModel.setter
-    def stripModel(self, value):
-        self.readImg.stripModel = value
+        return self.scrollArea._mode
 
     def Show(self, size):
         self.show()
@@ -181,13 +186,16 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
             self._LastPage()
         else:
             self._NextPage()
-        self.curWaifu2x.setChecked(bool(self.readImg.GetIsWaifu2x()))
+        # self.curWaifu2x.setChecked(bool(self.readImg.GetIsWaifu2x()))
 
     def _NextPage(self):
         epsId = self.readImg.epsId
-        bookId = self.readImg.bookId
+        if ReadMode.isDouble(self.stripModel):
+            index = self.scrollArea._cur_idx + 2
+        else:
+            index = self.scrollArea._cur_idx + 1
 
-        if self.curIndex >= self.maxPic - 1:
+        if index >= self.maxPic:
             if self.readImg.isLocal:
                 self.OpenNextEps()
                 QtOwner().ShowMsg(Str.GetStr(Str.AutoSkipNext))
@@ -196,36 +204,17 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
                 if not QtOwner().downloadView.IsDownloadEpsId(self.readImg.bookId, self.readImg.epsId + 1):
                     QtOwner().ShowMsg(Str.GetStr(Str.NotDownload))
                     return
+                QtOwner().ShowMsg(Str.GetStr(Str.AutoSkipNext))
                 self.OpenNextEps()
             else:
-
-                bookInfo = BookMgr().GetBook(bookId)
-                if not bookInfo:
-                    return
-                nextEps = bookInfo.pageInfo.nextEps(epsId)
-                if not (nextEps == self.readImg.epsId or nextEps not in bookInfo.pageInfo.epsInfo):
+                if not self.readTask.IsMaxBookEps(epsId+1):
                     QtOwner().ShowMsg(Str.GetStr(Str.AutoSkipNext))
                     self.OpenNextEps()
                 return
-            self.CloseScrollAndTurn()
-            QtOwner().ShowMsg(Str.GetStr(Str.AlreadyNextPage))
+            # QtOwner().ShowMsg(Str.GetStr(Str.AlreadyNextPage))
             return
-        t = CTime()
 
-        if ReadMode.isDouble(self.stripModel):
-            self.curIndex += 2
-            self.curIndex = min(self.curIndex, self.maxPic-1)
-        else:
-            self.curIndex += 1
-
-        self.imgFrame.oldValue = 0
-        self.SetData(isInit=True)
-        # self.readImg.CheckLoadPicture()
-        # self.readImg.ShowImg()
-        # self.readImg.ShowOtherPage()
-        self.scrollArea.ResetScrollValue(self.curIndex)
-        self.scrollArea.changeNextPage.emit(self.curIndex)
-        t.Refresh(self.__class__.__name__)
+        self.scrollArea.jump_to_index(index)
         return
 
     def LastPage(self):
@@ -233,11 +222,10 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
             self._NextPage()
         else:
             self._LastPage()
-        self.curWaifu2x.setChecked(bool(self.readImg.GetIsWaifu2x()))
+        # self.curWaifu2x.setChecked(bool(self.readImg.GetIsWaifu2x()))
 
     def _LastPage(self):
         epsId = self.readImg.epsId
-        bookId = self.readImg.bookId
 
         if self.curIndex <= 0:
             if self.readImg.isLocal:
@@ -256,18 +244,10 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
             return
 
         if ReadMode.isDouble(self.stripModel):
-            self.curIndex -= 2
-            self.curIndex = max(self.curIndex, 0)
+            index = self.scrollArea._cur_idx - 2
         else:
-            self.curIndex -= 1
-
-        self.imgFrame.oldValue = 0
-        self.SetData(isInit=True)
-        # self.readImg.CheckLoadPicture()
-        # self.readImg.ShowImg()
-        # self.readImg.ShowOtherPage()
-        self.scrollArea.ResetScrollValue(self.curIndex)
-        self.scrollArea.changeLastPage.emit(self.curIndex)
+            index = self.scrollArea._cur_idx - 1
+        self.scrollArea.jump_to_index(index)
         return
 
     def ReturnPage(self):
@@ -279,9 +259,14 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
         # self.readImg.Clear()
         return
 
-    def SetData(self, pSize=None, dataLen=0, state="", waifuSize=None, waifuDataLen=0, waifuState="", waifuTick=0, isInit=False):
-        self.UpdateSlider()
-        self.epsLabel2.setText("{}/{}({})".format(self.readImg.curIndex + 1, self.readImg.maxPic, self.readImg.epsName))
+    def SetData(self, pSize=None, dataLen=0, state="",
+                waifuSize=None, waifuDataLen=0,
+                waifuState="", waifuTick=0,
+                isInit=False):
+        if self.readImg.epsName:
+            QtOwner().SetSubTitle(self.readImg.epsName + "（{}/{}）".format(self.slider.value(), self.slider.maximum()))
+
+        self.epsLabel2.setText("{}/{}({}_{})".format(self.slider.value(), self.slider.maximum(), self.readImg.epsId+1, self.readImg.epsName))
         if pSize or isInit:
             if not pSize:
                 pSize = QSize(0, 0)
@@ -314,24 +299,25 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
         if waifuTick or isInit:
             self.waifu2xTick.setText(str(waifuTick) + "s")
 
-    def CopyPicture(self):
-        owner = self.readImg
-        p = owner.pictureData.get(owner.curIndex)
-        if not p or not p.data:
-            MsgLabel.ShowErrorEx(owner, Str.GetStr(Str.DownloadNot))
-            return
-        # TODO
-        # QtOwner().OpenWaifu2xTool(p.data)
-        return
+    # def CopyPicture(self):
+    #     owner = self.readImg
+    #     p = owner.pictureData.get(owner.curIndex)
+    #     if not p or not p.data:
+    #         MsgLabel.ShowErrorEx(owner, Str.GetStr(Str.DownloadNot))
+    #         return
+    #     # TODO
+    #     # QtOwner().OpenWaifu2xTool(p.data)
+    #     return
 
     def OpenCurWaifu(self):
-        if self.curWaifu2x.isChecked():
-            self.readImg.SetIsWaifu2x(1)
-        else:
-            self.readImg.SetIsWaifu2x(0)
-        # self.scrollArea.changeScale.emit(self.scaleCnt)
-        self.readImg.ShowImgAll()
-        self.readImg.CheckLoadPicture()
+        self.scrollArea.switch_cur_waifu2x_state()
+        # if self.curWaifu2x.isChecked():
+        #     self.readImg.SetIsWaifu2x(1)
+        # else:
+        #     self.readImg.SetIsWaifu2x(0)
+        # # self.scrollArea.changeScale.emit(self.scaleCnt)
+        # self.readImg.ShowImgAll()
+        # self.readImg.CheckLoadPicture()
         return
 
     def OpenPreDownloadWaifu2x(self):
@@ -346,9 +332,8 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
         else:
             Setting.IsOpenWaifu.SetValue(0)
 
-        self.readImg.ShowImgAll()
-        # self.readImg.CheckLoadPicture()
-        # self.scrollArea.changeScale.emit(self.scaleCnt)
+        # self.readImg.ShowImgAll()
+        self.scrollArea.check_waifu2x_state()
         return
 
     def UpdateText(self, model):
@@ -362,10 +347,6 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
             self.scaleLabel.setText(str(scale))
             self.modelNameButton.setText(ToolUtil.GetShowModelName(modelName))
             self.modelNameButton.setToolTip(modelName)
-        # model, noise, scale = ToolUtil.GetModelAndScale(model)
-        # self.modelLabel.setText(model)
-        # self.noiseLabel.setText(str(noise))
-        # self.scaleLabel.setText(str(scale))
         self.gpuLabel.setText(QtOwner().settingView.GetGpuName())
 
     def OpenLastEps(self):
@@ -374,7 +355,7 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
 
         lasEps = epsId - 1
         if self.readImg.isLocal:
-            if epsId < 0:
+            if lasEps < 0:
                 QtOwner().ShowMsg(Str.GetStr(Str.AlreadyLastChapter))
                 return
             self.readImg.OpenLocalPage(self.readImg._cacheBook, lasEps, 9999)
@@ -384,11 +365,7 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
                 QtOwner().ShowMsg(Str.GetStr(Str.NotDownload))
                 return
         else:
-            bookInfo = BookMgr().GetBook(bookId)
-            if not bookInfo:
-                return
-            lasEps = bookInfo.pageInfo.lastEps(epsId)
-            if lasEps >= bookInfo.pageInfo.maxEps():
+            if self.readTask.IsMaxBookEps(lasEps):
                 return
 
         if lasEps < 0:
@@ -396,8 +373,8 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
             return
 
         self.readImg.AddHistory()
-        QtOwner().bookInfoView.LoadHistory()
-        self.readImg.OpenPage(bookId, lasEps, 9999)
+        QtOwner().ReloadBookInfoHistory()
+        self.readImg.OpenPage(bookId, lasEps, 9999, self.readImg.isOffline)
         return
 
     def OpenNextEps(self):
@@ -415,44 +392,26 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
                 QtOwner().ShowMsg(Str.GetStr(Str.NotDownload))
                 return
         else:
-            bookInfo = BookMgr().GetBook(bookId)
-            if not bookInfo:
-                return
-            nextEps = bookInfo.pageInfo.nextEps(epsId)
-            if nextEps == self.readImg.epsId or nextEps not in bookInfo.pageInfo.epsInfo:
+            if self.readTask.IsMaxBookEps(nextEps):
                 QtOwner().ShowMsg(Str.GetStr(Str.AlreadyNextChapter))
                 return
 
         # title = bookInfo.GetEpsTitle(epsId)
         self.readImg.AddHistory()
-        QtOwner().bookInfoView.LoadHistory()
-        self.readImg.OpenPage(bookId, nextEps)
+        QtOwner().ReloadBookInfoHistory()
+        self.readImg.OpenPage(bookId, nextEps, isOffline=self.readImg.isOffline)
         return
 
     def SkipPicture(self, index=0):
-        value = self.slider.value()
-        if value <= 0:
-            return
-        oldValue = self.curIndex
-        if self.curIndex == value-1:
-            return
-        if value-1 > self.maxPic -1:
-            return
-        self.curIndex = value - 1
-        self.SetData(isInit=True)
-        # self.readImg.CheckLoadPicture()
-        # self.readImg.ShowImg()
-        # self.readImg.ShowOtherPage()
-        self.scrollArea.changePage.emit(oldValue, self.curIndex)
+        self.scrollArea.jump_to_index(index)
 
     def InitSlider(self, maxIndex):
         self.slider.setMinimum(1)
         self.slider.setMaximum(maxIndex)
 
     def UpdateSlider(self):
-        self.slider.setValue(self.readImg.curIndex+1)
-        if self.readImg.epsName:
-            QtOwner().SetSubTitle(self.readImg.epsName + "（{}/{}）".format(self.slider.value(), self.slider.maximum()))
+        return
+        # self.slider.setValue(self.readImg.curIndex + 1)
 
     def FullScreen(self, isClear=False):
         if QtOwner().owner.windowState() == Qt.WindowFullScreen:
@@ -484,35 +443,6 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
             Setting.LookModelName.SetValue(self.modelNameButton.toolTip())
         # Setting.LookNoise.SetValue(self.noiseBox.currentIndex() -1)
         Setting.LookScale.SetValue(self.scaleBox.value())
-        # Setting.LookModel.SetValue(self.modelBox.currentIndex())
-
-        for data in self.readImg.pictureData.values():
-
-            model = ToolUtil.GetLookScaleModel(self.readImg.category, data.w, data.h, data.mat)
-            if data.model.get("model") == model.get("model") and data.model.get("scale") == model.get("scale"):
-                continue
-            data.model = model
-            data.waifuData = None
-            data.cacheWaifu2xImage = None
-
-            w, h, _, isAnima = ToolUtil.GetPictureSize(data.data)
-            if max(w, h) <= Setting.LookMaxNum.value:
-               data.waifuState = data.WaifuWait
-            else:
-                if data._isWaifu2x == -1:
-                    data.waifuState = data.OverResolution
-                else:
-                    data.waifuState = data.WaifuWait
-
-            if data._isWaifu2x == -1 and isAnima:
-                data.waifuState = data.AnimationNotAuto
-
-            data.waifuDataSize = 0
-            data.scaleW, data.scaleH = 0, 0
-            data.waifuTick = 0
-
-        self.readImg.ShowImgAll()
-        # self.readImg.CheckLoadPicture()
 
         self.SetWaifu2xCancle(False)
 
@@ -532,18 +462,8 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
         self.zoomSlider.setValue(value)
 
     def ScalePicture(self, value):
-        self.zoomLabel.setText(Str.GetStr(Str.Scale)+"（{}%）".format(str(value)))
-        scaleV = value//10-10
-        oldV = self.imgFrame.scaleCnt
-        if self.imgFrame.scaleCnt == scaleV:
-            return
-        self.imgFrame.scaleCnt = scaleV
-
-        changeV = scaleV - oldV
-        if scaleV == 0:
-            self.scrollArea.ScaleReset(changeV)
-
-        self.readImg.scrollArea.changeScale.emit(changeV)
+        self.zoomLabel.setText(Str.GetStr(Str.Scale) + f"({value}%)")
+        self.scrollArea.set_zoom(value/100, None)
 
     def eventFilter(self, obj, ev):
         if ev.type() == QEvent.KeyRelease:
@@ -553,73 +473,14 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
         return False
 
     def ChangeReadMode(self, index):
-        self.ChangeReadMode2(index)
+        self.comboBox.setCurrentIndex(index)
         self.imgFrame.InitHelp()
-        
+        self.imgFrame.ShowHelp()
+
     def ChangeReadMode2(self, index):
-        self.imgFrame.isLastPageMode = False
-        self.stripModel = ReadMode(index)
-        self.scrollArea.initReadMode = self.stripModel
-        self.scrollArea.allItemsState.clear()
-
-        self.ScalePicture2(100)
-        if self.stripModel in [ReadMode.UpDown, ReadMode.Samewight]:
-            self.ScalePicture2(80)
-        elif self.stripModel == ReadMode.LeftRight:
-            pass
-            # self.zoomSlider.setValue(100)
-            # properties = QScroller.scroller(self.readImg.scrollArea).scrollerProperties()
-            # properties.setScrollMetric(QScrollerProperties.HorizontalOvershootPolicy, 2)
-            # properties.setScrollMetric(QScrollerProperties.VerticalOvershootPolicy, 2)
-            # QScroller.scroller(self.readImg.scrollArea).setScrollerProperties(properties)
-        elif ReadMode.isDouble(self.stripModel):
-            pass
-            # self.zoomSlider.setValue(100)
-            # properties = QScroller.scroller(self.readImg.scrollArea).scrollerProperties()
-            # properties.setScrollMetric(QScrollerProperties.HorizontalOvershootPolicy, 2)
-            # properties.setScrollMetric(QScrollerProperties.VerticalOvershootPolicy, 2)
-            # QScroller.scroller(self.readImg.scrollArea).setScrollerProperties(properties)
-        elif self.stripModel in [ReadMode.RightLeftScroll, ReadMode.LeftRightScroll, ReadMode.RightLeftScroll2]:
-            pass
-            # self.zoomSlider.setValue(100)
-            # properties = QScroller.scroller(self.readImg.scrollArea).scrollerProperties()
-            # properties.setScrollMetric(QScrollerProperties.HorizontalOvershootPolicy, 2)
-            # properties.setScrollMetric(QScrollerProperties.VerticalOvershootPolicy, 1)
-            # QScroller.scroller(self.readImg.scrollArea).setScrollerProperties(properties)
-            # self.imgFrame.graphicsView.verticalScrollBar().blockSignals(True)
-            # self.imgFrame.graphicsView.horizontalScrollBar().blockSignals(False)
-
-        else:
-            pass
-            # self.zoomSlider.setValue(100)
-            # properties = QScroller.scroller(self.readImg.scrollArea).scrollerProperties()
-            # properties.setScrollMetric(QScrollerProperties.HorizontalOvershootPolicy, 1)
-            # properties.setScrollMetric(QScrollerProperties.VerticalOvershootPolicy, 2)
-            # QScroller.scroller(self.readImg.scrollArea).setScrollerProperties(properties)
-            # self.imgFrame.graphicsView.verticalScrollBar().blockSignals(False)
-            # self.imgFrame.graphicsView.horizontalScrollBar().blockSignals(True)
-        self.ClearQImage()
-        self.readImg.scrollArea.InitAllQLabel(self.readImg.maxPic, self.readImg.curIndex)
-        # self.readImg.CheckLoadPicture()
-        self.readImg.ShowImgAll()
-
         Setting.LookReadMode.SetValue(index)
-        # QtOwner().SetV("Read/LookReadMode", config.LookReadMode)
-
-    def ClearQImage(self):
-        for index, v in self.readImg.pictureData.items():
-            assert isinstance(v, QtFileData)
-            v.cacheWaifu2xImage = None
-            v.cacheImage = None
-            if v.cacheImageTaskId:
-                self.readImg.ClearQImageTaskById(v.cacheImageTaskId)
-                v.cacheImageTaskId = 0
-            if v.cacheWaifu2xImageTaskId:
-                self.readImg.ClearQImageTaskById(v.cacheWaifu2xImageTaskId)
-                v.cacheWaifu2xImageTaskId = 0
-
-            # self.readImg.CheckToQImage(index, v, False)
-            # self.readImg.CheckToQImage(index, v, True)
+        self.scrollArea.set_mode(index)
+        return
 
     def SwitchScrollAndTurn(self):
         if self.IsStartScrollAndTurn():
@@ -628,64 +489,19 @@ class ReadTool(QtWidgets.QWidget, Ui_ReadImg):
             self.StartScrollAndTurn()
         return
 
-    def IsStartScrollAndTurn(self):
-        if self.timerOut.isActive():
-            return True
-        return False
-
     def StartScrollAndTurn(self):
         self.CloseScrollAndTurn()
-        if self.stripModel in [ReadMode.LeftRightScroll, ReadMode.RightLeftScroll, ReadMode.UpDown, ReadMode.RightLeftScroll2]:
-            self.AutoScroll()
+        if ReadMode.isScroll(self.scrollArea._mode):
+            self.scrollArea.set_auto_scroll(Setting.ScrollSpeed.value)
         else:
-            self.AutoTurn()
+            self.scrollArea.set_auto_scroll(Setting.TurnSpeed.value/ 1000)
 
     def CloseScrollAndTurn(self):
-        if self.timerOut.isActive():
+        if self.IsStartScrollAndTurn():
             QtOwner().ShowMsg(Str.GetStr(Str.StopAutoScroll))
-            self.timerOut.stop()
-        self.imgFrame.scrollArea.vScrollBar.StopScroll()
-        self.imgFrame.scrollArea.hScrollBar.StopScroll()
+            self.scrollArea.stop_auto()
         pass
 
-    def GetScrollValue(self):
-        if self.timerOut.isActive():
-            return int(self.scrollSpeed.value())
-        else:
-            return int(self.scrollInitSpeed.value())
+    def IsStartScrollAndTurn(self):
+        return self.scrollArea.is_auto
 
-    def AutoScroll(self):
-        self.timerOut.setInterval(self.scrollTime.value())
-        self.timerOut.start()
-        pass
-
-    def AutoTurn(self):
-        tick = int(self.turnSpeed.value()*1000)
-        self.timerOut.setInterval(tick)
-        self.timerOut.start()
-        pass
-
-    def TimeOut(self):
-        if self.stripModel in [ReadMode.LeftRightScroll, ReadMode.RightLeftScroll, ReadMode.UpDown, ReadMode.RightLeftScroll2]:
-            value = int(self.scrollSpeed.value())
-            if self.stripModel == ReadMode.UpDown:
-                if self.imgFrame.scrollArea.vScrollBar.value() >= self.imgFrame.scrollArea.vScrollBar.maximum():
-                    self.CloseScrollAndTurn()
-                else:
-                    self.scrollArea.GetScrollBar().Finished()
-                self.imgFrame.scrollArea.vScrollBar.scrollValue(value)
-            elif self.stripModel == ReadMode.LeftRightScroll:
-                if self.imgFrame.scrollArea.hScrollBar.value() >= self.imgFrame.scrollArea.hScrollBar.maximum():
-                    self.CloseScrollAndTurn()
-                else:
-                    self.scrollArea.GetScrollBar().Finished()
-                self.imgFrame.scrollArea.hScrollBar.scrollValue(value)
-            elif self.stripModel in [ReadMode.RightLeftScroll, ReadMode.RightLeftScroll2]:
-                if self.imgFrame.scrollArea.hScrollBar.value() <= self.imgFrame.scrollArea.hScrollBar.minimum():
-                    self.CloseScrollAndTurn()
-                else:
-                    self.scrollArea.GetScrollBar().Finished()
-                self.imgFrame.scrollArea.hScrollBar.scrollValue(-value)
-        else:
-            self._NextPage()
-        pass

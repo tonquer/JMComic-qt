@@ -339,7 +339,8 @@ class ComicListWidget(BaseListWidget):
         item = self.item(index)
         widget = self.itemWidget(item)
         assert isinstance(widget, ComicItemWidget)
-        self.AddDownloadTask(widget.url, widget.path, completeCallBack=self.LoadingPictureComplete, backParam=index)
+        otherParams = {"bookId": widget.id, "type": "cover"}
+        self.AddDownloadTask(widget.url, widget.path, completeCallBack=self.LoadingPictureComplete, backParam=index, otherParams=otherParams)
 
     def LoadingPictureComplete(self, data, status, index):
         if status == Status.Ok:
@@ -349,9 +350,9 @@ class ComicListWidget(BaseListWidget):
                 return
             assert isinstance(widget, ComicItemWidget)
             widget.SetPicture(data)
+            indexModel = self.indexFromItem(item)
+            self.ConvertQImage(widget, data, indexModel)
             if Setting.CoverIsOpenWaifu.value:
-                item = self.item(index)
-                indexModel = self.indexFromItem(item)
                 self.Waifu2xPicture(indexModel, True)
             pass
         else:
@@ -361,6 +362,23 @@ class ComicListWidget(BaseListWidget):
                 return
             assert isinstance(widget, ComicItemWidget)
             widget.SetPictureErr(status)
+        return
+
+    def ConvertQImage(self, widget: ComicItemWidget, data, indexModel):
+        toW = widget.picLabel.width()
+        toH = widget.picLabel.height()
+        widget.cacheImageTaskId = self.AddQImageTask(data, self.devicePixelRatio(), toW, toH, 0,
+                                                self.ConvertQImageBack, indexModel)
+
+    def ConvertQImageBack(self, data, indexModel):
+        # item = self.item(index)
+        # widget = self.itemWidget(item)
+        widget = self.indexWidget(indexModel)
+        if not widget:
+            return
+        assert isinstance(widget, ComicItemWidget)
+        widget.cacheImageTaskId = 0
+        widget.SetQImage(data)
         return
 
     def SelectItem(self, item):
@@ -415,7 +433,8 @@ class ComicListWidget(BaseListWidget):
                 item = self.itemFromIndex(index)
                 count = self.row(item)
                 widget.picLabel.setText(Str.GetStr(Str.LoadingPicture))
-                self.AddDownloadTask(widget.url, widget.path, completeCallBack=self.LoadingPictureComplete, backParam=count, isReload=True)
+                otherParams = {"bookId": widget.id, "type": "cover"}
+                self.AddDownloadTask(widget.url, widget.path, completeCallBack=self.LoadingPictureComplete, backParam=count, isReload=True, otherParams=otherParams)
                 pass
 
     def Waifu2xPicture(self, index, isIfSize=False):
@@ -426,22 +445,26 @@ class ComicListWidget(BaseListWidget):
             if max(w, h) <= Setting.CoverMaxNum.value or not isIfSize:
                 model = ToolUtil.GetModelByIndex(Setting.CoverLookModelName.value, Setting.CoverLookScale.value, mat)
                 widget.isWaifu2xLoading = True
-                if self.isLocal:
-                    self.AddConvertTask(widget.path, widget.picData, model, self.Waifu2xPictureBack, index, noSaveCache=True)
-                else:
-                    self.AddConvertTask(widget.path, widget.picData, model, self.Waifu2xPictureBack, index)
 
-    def CancleWaifu2xPicture(self, index):
-        widget = self.indexWidget(index)
+                otherParams = {"bookId": widget.id, "type": "cover"}
+                if self.isLocal:
+                    self.AddConvertTask(widget.path, widget.picData, model, self.Waifu2xPictureBack, index, noSaveCache=True, otherParams=otherParams)
+                else:
+                    self.AddConvertTask(widget.path, widget.picData, model, self.Waifu2xPictureBack, index, otherParams=otherParams)
+
+    def CancleWaifu2xPicture(self, indexModel):
+        widget = self.indexWidget(indexModel)
         assert isinstance(widget, ComicItemWidget)
         if widget.isWaifu2x and widget.picData:
             widget.SetPicture(widget.picData)
+            self.ConvertQImage(widget, widget.picData, indexModel)
 
-    def Waifu2xPictureBack(self, data, waifuId, index, tick):
-        widget = self.indexWidget(index)
+    def Waifu2xPictureBack(self, data, waifuId, indexModel, tick):
+        widget = self.indexWidget(indexModel)
         if data and widget:
             assert isinstance(widget, ComicItemWidget)
             widget.SetWaifu2xData(data)
+            self.ConvertQImage(widget, data, indexModel)
         return
 
     def CopyHandler(self, index):

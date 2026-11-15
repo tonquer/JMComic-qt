@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_index.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.3
+## Created by: Qt User Interface Compiler version 6.9.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -70,7 +70,7 @@ class Ui_Index(object):
 
         self.horizontalLayout.addWidget(self.weekBox)
 
-        self.horizontalSpacer = QSpacerItem(383, 27, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer = QSpacerItem(383, 27, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout.addItem(self.horizontalSpacer)
 
@@ -81,8 +81,8 @@ class Ui_Index(object):
 
         self.line_3 = QFrame(self.widget)
         self.line_3.setObjectName(u"line_3")
-        self.line_3.setFrameShape(QFrame.VLine)
-        self.line_3.setFrameShadow(QFrame.Sunken)
+        self.line_3.setFrameShape(QFrame.Shape.VLine)
+        self.line_3.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.horizontalLayout.addWidget(self.line_3)
 
@@ -96,8 +96,8 @@ class Ui_Index(object):
 
         self.line = QFrame(self.widget)
         self.line.setObjectName(u"line")
-        self.line.setFrameShape(QFrame.VLine)
-        self.line.setFrameShadow(QFrame.Sunken)
+        self.line.setFrameShape(QFrame.Shape.VLine)
+        self.line.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.horizontalLayout.addWidget(self.line)
 

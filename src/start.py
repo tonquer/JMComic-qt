@@ -36,6 +36,11 @@ if __name__ == "__main__":
         from sr_vulkan import sr_vulkan as sr
 
         config.CanWaifu2x = True
+    except ModuleNotFoundError as es:
+        config.CanWaifu2x = False
+        config.CloseWaifu2x = True
+        if hasattr(es, "msg"):
+            config.ErrorMsg = es.msg
     except Exception as es:
         config.CanWaifu2x = False
         if hasattr(es, "msg"):
@@ -91,6 +96,7 @@ if __name__ == "__main__":
         QtOwner().SetApp(app)
         QtOwner().SetLocalServer(localServer)
         QtOwner().SetFont()
+        QtOwner().InitIcons()
         from view.main.main_view import MainView
         main = MainView()
         main.show()  # 显示窗体

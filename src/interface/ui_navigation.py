@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_navigation.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.3
+## Created by: Qt User Interface Compiler version 6.9.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -15,18 +15,20 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QButtonGroup, QCommandLinkButton, QFrame,
+from PySide6.QtWidgets import (QApplication, QButtonGroup, QFrame, QGridLayout,
     QHBoxLayout, QLabel, QPushButton, QSizePolicy,
     QSpacerItem, QToolButton, QVBoxLayout, QWidget)
 
+from component.button.switch_button import SwitchButton
 from component.label.head_label import HeadLabel
 from component.scroll_area.smooth_scroll_area import SmoothScrollArea
+from component.widget.mini_node_title_frame import MiniNodeTileFrame
 
 class Ui_Navigation(object):
     def setupUi(self, Navigation):
         if not Navigation.objectName():
             Navigation.setObjectName(u"Navigation")
-        Navigation.resize(440, 694)
+        Navigation.resize(408, 1043)
         self.verticalLayout = QVBoxLayout(Navigation)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.topWidget = QWidget(Navigation)
@@ -40,18 +42,18 @@ class Ui_Navigation(object):
         self.picLabel.setPixmap(QPixmap(u":/png/icon/placeholder_avatar.png"))
         self.picLabel.setScaledContents(True)
 
-        self.verticalLayout_4.addWidget(self.picLabel, 0, Qt.AlignHCenter)
+        self.verticalLayout_4.addWidget(self.picLabel, 0, Qt.AlignmentFlag.AlignHCenter)
 
         self.horizontalLayout_4 = QHBoxLayout()
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
         self.pushButton = QPushButton(self.topWidget)
         self.pushButton.setObjectName(u"pushButton")
-        sizePolicy = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.pushButton.sizePolicy().hasHeightForWidth())
         self.pushButton.setSizePolicy(sizePolicy)
-        self.pushButton.setFocusPolicy(Qt.NoFocus)
+        self.pushButton.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.horizontalLayout_4.addWidget(self.pushButton)
 
@@ -59,7 +61,7 @@ class Ui_Navigation(object):
         self.signButton.setObjectName(u"signButton")
         sizePolicy.setHeightForWidth(self.signButton.sizePolicy().hasHeightForWidth())
         self.signButton.setSizePolicy(sizePolicy)
-        self.signButton.setFocusPolicy(Qt.NoFocus)
+        self.signButton.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.horizontalLayout_4.addWidget(self.signButton)
 
@@ -85,107 +87,107 @@ class Ui_Navigation(object):
 
         self.verticalLayout_4.addLayout(self.horizontalLayout_3)
 
-        self.horizontalLayout_2 = QHBoxLayout()
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.label_6 = QLabel(self.topWidget)
-        self.label_6.setObjectName(u"label_6")
-
-        self.horizontalLayout_2.addWidget(self.label_6)
-
-        self.coins = QLabel(self.topWidget)
-        self.coins.setObjectName(u"coins")
-
-        self.horizontalLayout_2.addWidget(self.coins)
-
-
-        self.verticalLayout_4.addLayout(self.horizontalLayout_2)
-
-        self.horizontalLayout = QHBoxLayout()
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.expLabel = QLabel(self.topWidget)
-        self.expLabel.setObjectName(u"expLabel")
-
-        self.horizontalLayout.addWidget(self.expLabel)
-
-        self.levelLabel = QLabel(self.topWidget)
-        self.levelLabel.setObjectName(u"levelLabel")
-
-        self.horizontalLayout.addWidget(self.levelLabel)
-
-
-        self.verticalLayout_4.addLayout(self.horizontalLayout)
-
-        self.horizontalLayout_5 = QHBoxLayout()
-        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
-        self.label_8 = QLabel(self.topWidget)
-        self.label_8.setObjectName(u"label_8")
-
-        self.horizontalLayout_5.addWidget(self.label_8)
-
-        self.favorite = QLabel(self.topWidget)
-        self.favorite.setObjectName(u"favorite")
-
-        self.horizontalLayout_5.addWidget(self.favorite)
-
-
-        self.verticalLayout_4.addLayout(self.horizontalLayout_5)
-
-        self.horizontalLayout_6 = QHBoxLayout()
-        self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
-        self.label_4 = QLabel(self.topWidget)
-        self.label_4.setObjectName(u"label_4")
-
-        self.horizontalLayout_6.addWidget(self.label_4)
-
-        self.proxyName = QCommandLinkButton(self.topWidget)
+        self.gridLayout_2 = QGridLayout()
+        self.gridLayout_2.setObjectName(u"gridLayout_2")
+        self.proxyName = MiniNodeTileFrame(self.topWidget)
         self.proxyName.setObjectName(u"proxyName")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.proxyName.sizePolicy().hasHeightForWidth())
+        self.proxyName.setSizePolicy(sizePolicy1)
+        self.proxyName.setFrameShape(QFrame.Shape.StyledPanel)
+        self.proxyName.setFrameShadow(QFrame.Shadow.Raised)
 
-        self.horizontalLayout_6.addWidget(self.proxyName)
+        self.gridLayout_2.addWidget(self.proxyName, 3, 1, 1, 1)
 
+        self.offlineButton = SwitchButton(self.topWidget)
+        self.offlineButton.setObjectName(u"offlineButton")
 
-        self.verticalLayout_4.addLayout(self.horizontalLayout_6)
+        self.gridLayout_2.addWidget(self.offlineButton, 5, 1, 1, 1)
 
-        self.horizontalLayout_7 = QHBoxLayout()
-        self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
-        self.label_5 = QLabel(self.topWidget)
-        self.label_5.setObjectName(u"label_5")
-
-        self.horizontalLayout_7.addWidget(self.label_5)
-
-        self.proxyImgName = QCommandLinkButton(self.topWidget)
-        self.proxyImgName.setObjectName(u"proxyImgName")
-
-        self.horizontalLayout_7.addWidget(self.proxyImgName)
-
-
-        self.verticalLayout_4.addLayout(self.horizontalLayout_7)
-
-        self.horizontalLayout_9 = QHBoxLayout()
-        self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
         self.label_9 = QLabel(self.topWidget)
         self.label_9.setObjectName(u"label_9")
 
-        self.horizontalLayout_9.addWidget(self.label_9)
+        self.gridLayout_2.addWidget(self.label_9, 6, 0, 1, 1)
+
+        self.label_5 = QLabel(self.topWidget)
+        self.label_5.setObjectName(u"label_5")
+
+        self.gridLayout_2.addWidget(self.label_5, 5, 0, 1, 1)
+
+        self.expLabel = QLabel(self.topWidget)
+        self.expLabel.setObjectName(u"expLabel")
+
+        self.gridLayout_2.addWidget(self.expLabel, 1, 0, 1, 1)
+
+        self.label_8 = QLabel(self.topWidget)
+        self.label_8.setObjectName(u"label_8")
+
+        self.gridLayout_2.addWidget(self.label_8, 2, 0, 1, 1)
 
         self.hideButton = QPushButton(self.topWidget)
         self.hideButton.setObjectName(u"hideButton")
 
-        self.horizontalLayout_9.addWidget(self.hideButton)
+        self.gridLayout_2.addWidget(self.hideButton, 6, 1, 1, 1)
+
+        self.favorite = QLabel(self.topWidget)
+        self.favorite.setObjectName(u"favorite")
+
+        self.gridLayout_2.addWidget(self.favorite, 2, 1, 1, 1)
+
+        self.label_7 = QLabel(self.topWidget)
+        self.label_7.setObjectName(u"label_7")
+        self.label_7.setMinimumSize(QSize(60, 0))
+
+        self.gridLayout_2.addWidget(self.label_7, 4, 0, 1, 1)
+
+        self.label_4 = QLabel(self.topWidget)
+        self.label_4.setObjectName(u"label_4")
+        self.label_4.setMinimumSize(QSize(60, 0))
+
+        self.gridLayout_2.addWidget(self.label_4, 3, 0, 1, 1)
+
+        self.levelLabel = QLabel(self.topWidget)
+        self.levelLabel.setObjectName(u"levelLabel")
+
+        self.gridLayout_2.addWidget(self.levelLabel, 1, 1, 1, 1)
+
+        self.proxyImgName = MiniNodeTileFrame(self.topWidget)
+        self.proxyImgName.setObjectName(u"proxyImgName")
+        sizePolicy1.setHeightForWidth(self.proxyImgName.sizePolicy().hasHeightForWidth())
+        self.proxyImgName.setSizePolicy(sizePolicy1)
+        self.proxyImgName.setFrameShape(QFrame.Shape.StyledPanel)
+        self.proxyImgName.setFrameShadow(QFrame.Shadow.Raised)
+
+        self.gridLayout_2.addWidget(self.proxyImgName, 4, 1, 1, 1)
+
+        self.label_6 = QLabel(self.topWidget)
+        self.label_6.setObjectName(u"label_6")
+
+        self.gridLayout_2.addWidget(self.label_6, 0, 0, 1, 1)
+
+        self.coins = QLabel(self.topWidget)
+        self.coins.setObjectName(u"coins")
+
+        self.gridLayout_2.addWidget(self.coins, 0, 1, 1, 1)
 
 
-        self.verticalLayout_4.addLayout(self.horizontalLayout_9)
+        self.verticalLayout_4.addLayout(self.gridLayout_2)
 
 
         self.verticalLayout.addWidget(self.topWidget)
 
         self.scrollArea = SmoothScrollArea(Navigation)
         self.scrollArea.setObjectName(u"scrollArea")
+        self.scrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
+        self.scrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 403, 792))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 376, 692))
         self.verticalLayout_3 = QVBoxLayout(self.scrollAreaWidgetContents)
-        self.verticalLayout_3.setSpacing(6)
+        self.verticalLayout_3.setSpacing(1)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.verticalLayout_3.setContentsMargins(0, 9, 0, 9)
         self.label = QLabel(self.scrollAreaWidgetContents)
@@ -198,82 +200,82 @@ class Ui_Navigation(object):
         self.buttonGroup.setObjectName(u"buttonGroup")
         self.buttonGroup.addButton(self.collectButton)
         self.collectButton.setObjectName(u"collectButton")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        sizePolicy1.setHorizontalStretch(0)
-        sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.collectButton.sizePolicy().hasHeightForWidth())
-        self.collectButton.setSizePolicy(sizePolicy1)
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.collectButton.sizePolicy().hasHeightForWidth())
+        self.collectButton.setSizePolicy(sizePolicy2)
         self.collectButton.setMinimumSize(QSize(150, 40))
-        self.collectButton.setFocusPolicy(Qt.NoFocus)
+        self.collectButton.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         icon = QIcon()
-        icon.addFile(u":/images/menu/Contact.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile(u":/images/menu/Contact.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.collectButton.setIcon(icon)
         self.collectButton.setIconSize(QSize(32, 32))
         self.collectButton.setCheckable(True)
-        self.collectButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.collectButton.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
 
         self.verticalLayout_3.addWidget(self.collectButton)
 
         self.myCommentButton = QToolButton(self.scrollAreaWidgetContents)
         self.buttonGroup.addButton(self.myCommentButton)
         self.myCommentButton.setObjectName(u"myCommentButton")
-        sizePolicy1.setHeightForWidth(self.myCommentButton.sizePolicy().hasHeightForWidth())
-        self.myCommentButton.setSizePolicy(sizePolicy1)
+        sizePolicy2.setHeightForWidth(self.myCommentButton.sizePolicy().hasHeightForWidth())
+        self.myCommentButton.setSizePolicy(sizePolicy2)
         self.myCommentButton.setMinimumSize(QSize(150, 40))
-        self.myCommentButton.setFocusPolicy(Qt.NoFocus)
+        self.myCommentButton.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.myCommentButton.setIcon(icon)
         self.myCommentButton.setIconSize(QSize(32, 32))
         self.myCommentButton.setCheckable(True)
-        self.myCommentButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.myCommentButton.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
 
         self.verticalLayout_3.addWidget(self.myCommentButton)
 
         self.remoteHistoryButton = QToolButton(self.scrollAreaWidgetContents)
         self.buttonGroup.addButton(self.remoteHistoryButton)
         self.remoteHistoryButton.setObjectName(u"remoteHistoryButton")
-        sizePolicy1.setHeightForWidth(self.remoteHistoryButton.sizePolicy().hasHeightForWidth())
-        self.remoteHistoryButton.setSizePolicy(sizePolicy1)
+        sizePolicy2.setHeightForWidth(self.remoteHistoryButton.sizePolicy().hasHeightForWidth())
+        self.remoteHistoryButton.setSizePolicy(sizePolicy2)
         self.remoteHistoryButton.setMinimumSize(QSize(150, 40))
-        self.remoteHistoryButton.setFocusPolicy(Qt.NoFocus)
+        self.remoteHistoryButton.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.remoteHistoryButton.setIcon(icon)
         self.remoteHistoryButton.setIconSize(QSize(32, 32))
         self.remoteHistoryButton.setCheckable(True)
-        self.remoteHistoryButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.remoteHistoryButton.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
 
         self.verticalLayout_3.addWidget(self.remoteHistoryButton)
 
         self.localCollectButton = QToolButton(self.scrollAreaWidgetContents)
         self.buttonGroup.addButton(self.localCollectButton)
         self.localCollectButton.setObjectName(u"localCollectButton")
-        sizePolicy1.setHeightForWidth(self.localCollectButton.sizePolicy().hasHeightForWidth())
-        self.localCollectButton.setSizePolicy(sizePolicy1)
+        sizePolicy2.setHeightForWidth(self.localCollectButton.sizePolicy().hasHeightForWidth())
+        self.localCollectButton.setSizePolicy(sizePolicy2)
         self.localCollectButton.setMinimumSize(QSize(150, 40))
-        self.localCollectButton.setFocusPolicy(Qt.NoFocus)
+        self.localCollectButton.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.localCollectButton.setIcon(icon)
         self.localCollectButton.setIconSize(QSize(32, 32))
         self.localCollectButton.setCheckable(True)
-        self.localCollectButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.localCollectButton.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
 
         self.verticalLayout_3.addWidget(self.localCollectButton)
 
         self.historyButton = QToolButton(self.scrollAreaWidgetContents)
         self.buttonGroup.addButton(self.historyButton)
         self.historyButton.setObjectName(u"historyButton")
-        sizePolicy1.setHeightForWidth(self.historyButton.sizePolicy().hasHeightForWidth())
-        self.historyButton.setSizePolicy(sizePolicy1)
+        sizePolicy2.setHeightForWidth(self.historyButton.sizePolicy().hasHeightForWidth())
+        self.historyButton.setSizePolicy(sizePolicy2)
         self.historyButton.setMinimumSize(QSize(150, 40))
-        self.historyButton.setFocusPolicy(Qt.NoFocus)
+        self.historyButton.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.historyButton.setIcon(icon)
         self.historyButton.setIconSize(QSize(32, 32))
         self.historyButton.setCheckable(True)
-        self.historyButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.historyButton.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
 
         self.verticalLayout_3.addWidget(self.historyButton)
 
         self.line = QFrame(self.scrollAreaWidgetContents)
         self.line.setObjectName(u"line")
-        self.line.setFrameShape(QFrame.HLine)
-        self.line.setFrameShadow(QFrame.Sunken)
+        self.line.setFrameShape(QFrame.Shape.HLine)
+        self.line.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.verticalLayout_3.addWidget(self.line)
 
@@ -285,88 +287,88 @@ class Ui_Navigation(object):
         self.indexButton = QToolButton(self.scrollAreaWidgetContents)
         self.buttonGroup.addButton(self.indexButton)
         self.indexButton.setObjectName(u"indexButton")
-        sizePolicy1.setHeightForWidth(self.indexButton.sizePolicy().hasHeightForWidth())
-        self.indexButton.setSizePolicy(sizePolicy1)
+        sizePolicy2.setHeightForWidth(self.indexButton.sizePolicy().hasHeightForWidth())
+        self.indexButton.setSizePolicy(sizePolicy2)
         self.indexButton.setMinimumSize(QSize(150, 40))
-        self.indexButton.setFocusPolicy(Qt.NoFocus)
+        self.indexButton.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.indexButton.setIcon(icon)
         self.indexButton.setIconSize(QSize(32, 32))
         self.indexButton.setCheckable(True)
         self.indexButton.setChecked(True)
-        self.indexButton.setPopupMode(QToolButton.DelayedPopup)
-        self.indexButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.indexButton.setArrowType(Qt.NoArrow)
+        self.indexButton.setPopupMode(QToolButton.ToolButtonPopupMode.DelayedPopup)
+        self.indexButton.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
+        self.indexButton.setArrowType(Qt.ArrowType.NoArrow)
 
         self.verticalLayout_3.addWidget(self.indexButton)
 
         self.searchButton = QToolButton(self.scrollAreaWidgetContents)
         self.buttonGroup.addButton(self.searchButton)
         self.searchButton.setObjectName(u"searchButton")
-        sizePolicy1.setHeightForWidth(self.searchButton.sizePolicy().hasHeightForWidth())
-        self.searchButton.setSizePolicy(sizePolicy1)
+        sizePolicy2.setHeightForWidth(self.searchButton.sizePolicy().hasHeightForWidth())
+        self.searchButton.setSizePolicy(sizePolicy2)
         self.searchButton.setMinimumSize(QSize(150, 40))
-        self.searchButton.setFocusPolicy(Qt.NoFocus)
+        self.searchButton.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.searchButton.setIcon(icon)
         self.searchButton.setIconSize(QSize(32, 32))
         self.searchButton.setCheckable(True)
-        self.searchButton.setPopupMode(QToolButton.DelayedPopup)
-        self.searchButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.searchButton.setArrowType(Qt.NoArrow)
+        self.searchButton.setPopupMode(QToolButton.ToolButtonPopupMode.DelayedPopup)
+        self.searchButton.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
+        self.searchButton.setArrowType(Qt.ArrowType.NoArrow)
 
         self.verticalLayout_3.addWidget(self.searchButton)
 
         self.categoryButton = QToolButton(self.scrollAreaWidgetContents)
         self.buttonGroup.addButton(self.categoryButton)
         self.categoryButton.setObjectName(u"categoryButton")
-        sizePolicy1.setHeightForWidth(self.categoryButton.sizePolicy().hasHeightForWidth())
-        self.categoryButton.setSizePolicy(sizePolicy1)
+        sizePolicy2.setHeightForWidth(self.categoryButton.sizePolicy().hasHeightForWidth())
+        self.categoryButton.setSizePolicy(sizePolicy2)
         self.categoryButton.setMinimumSize(QSize(150, 40))
-        self.categoryButton.setFocusPolicy(Qt.NoFocus)
+        self.categoryButton.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.categoryButton.setIcon(icon)
         self.categoryButton.setIconSize(QSize(32, 32))
         self.categoryButton.setCheckable(True)
-        self.categoryButton.setPopupMode(QToolButton.DelayedPopup)
-        self.categoryButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.categoryButton.setArrowType(Qt.NoArrow)
+        self.categoryButton.setPopupMode(QToolButton.ToolButtonPopupMode.DelayedPopup)
+        self.categoryButton.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
+        self.categoryButton.setArrowType(Qt.ArrowType.NoArrow)
 
         self.verticalLayout_3.addWidget(self.categoryButton)
 
         self.weekButton = QToolButton(self.scrollAreaWidgetContents)
         self.buttonGroup.addButton(self.weekButton)
         self.weekButton.setObjectName(u"weekButton")
-        sizePolicy1.setHeightForWidth(self.weekButton.sizePolicy().hasHeightForWidth())
-        self.weekButton.setSizePolicy(sizePolicy1)
+        sizePolicy2.setHeightForWidth(self.weekButton.sizePolicy().hasHeightForWidth())
+        self.weekButton.setSizePolicy(sizePolicy2)
         self.weekButton.setMinimumSize(QSize(150, 40))
-        self.weekButton.setFocusPolicy(Qt.NoFocus)
+        self.weekButton.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.weekButton.setIcon(icon)
         self.weekButton.setIconSize(QSize(32, 32))
         self.weekButton.setCheckable(True)
-        self.weekButton.setPopupMode(QToolButton.DelayedPopup)
-        self.weekButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.weekButton.setArrowType(Qt.NoArrow)
+        self.weekButton.setPopupMode(QToolButton.ToolButtonPopupMode.DelayedPopup)
+        self.weekButton.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
+        self.weekButton.setArrowType(Qt.ArrowType.NoArrow)
 
         self.verticalLayout_3.addWidget(self.weekButton)
 
         self.commentButton = QToolButton(self.scrollAreaWidgetContents)
         self.buttonGroup.addButton(self.commentButton)
         self.commentButton.setObjectName(u"commentButton")
-        sizePolicy1.setHeightForWidth(self.commentButton.sizePolicy().hasHeightForWidth())
-        self.commentButton.setSizePolicy(sizePolicy1)
+        sizePolicy2.setHeightForWidth(self.commentButton.sizePolicy().hasHeightForWidth())
+        self.commentButton.setSizePolicy(sizePolicy2)
         self.commentButton.setMinimumSize(QSize(150, 40))
-        self.commentButton.setFocusPolicy(Qt.NoFocus)
+        self.commentButton.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.commentButton.setIcon(icon)
         self.commentButton.setIconSize(QSize(32, 32))
         self.commentButton.setCheckable(True)
-        self.commentButton.setPopupMode(QToolButton.DelayedPopup)
-        self.commentButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.commentButton.setArrowType(Qt.NoArrow)
+        self.commentButton.setPopupMode(QToolButton.ToolButtonPopupMode.DelayedPopup)
+        self.commentButton.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
+        self.commentButton.setArrowType(Qt.ArrowType.NoArrow)
 
         self.verticalLayout_3.addWidget(self.commentButton)
 
         self.line_2 = QFrame(self.scrollAreaWidgetContents)
         self.line_2.setObjectName(u"line_2")
-        self.line_2.setFrameShape(QFrame.HLine)
-        self.line_2.setFrameShadow(QFrame.Sunken)
+        self.line_2.setFrameShape(QFrame.Shape.HLine)
+        self.line_2.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.verticalLayout_3.addWidget(self.line_2)
 
@@ -378,74 +380,74 @@ class Ui_Navigation(object):
         self.downloadButton = QToolButton(self.scrollAreaWidgetContents)
         self.buttonGroup.addButton(self.downloadButton)
         self.downloadButton.setObjectName(u"downloadButton")
-        sizePolicy1.setHeightForWidth(self.downloadButton.sizePolicy().hasHeightForWidth())
-        self.downloadButton.setSizePolicy(sizePolicy1)
+        sizePolicy2.setHeightForWidth(self.downloadButton.sizePolicy().hasHeightForWidth())
+        self.downloadButton.setSizePolicy(sizePolicy2)
         self.downloadButton.setMinimumSize(QSize(150, 40))
-        self.downloadButton.setFocusPolicy(Qt.NoFocus)
+        self.downloadButton.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.downloadButton.setIcon(icon)
         self.downloadButton.setIconSize(QSize(32, 32))
         self.downloadButton.setCheckable(True)
-        self.downloadButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.downloadButton.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
 
         self.verticalLayout_3.addWidget(self.downloadButton)
 
         self.nasButton = QToolButton(self.scrollAreaWidgetContents)
         self.buttonGroup.addButton(self.nasButton)
         self.nasButton.setObjectName(u"nasButton")
-        sizePolicy1.setHeightForWidth(self.nasButton.sizePolicy().hasHeightForWidth())
-        self.nasButton.setSizePolicy(sizePolicy1)
+        sizePolicy2.setHeightForWidth(self.nasButton.sizePolicy().hasHeightForWidth())
+        self.nasButton.setSizePolicy(sizePolicy2)
         self.nasButton.setMinimumSize(QSize(150, 40))
-        self.nasButton.setFocusPolicy(Qt.NoFocus)
+        self.nasButton.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.nasButton.setIcon(icon)
         self.nasButton.setIconSize(QSize(32, 32))
         self.nasButton.setCheckable(True)
-        self.nasButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.nasButton.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
 
         self.verticalLayout_3.addWidget(self.nasButton)
 
         self.localReadButton = QToolButton(self.scrollAreaWidgetContents)
         self.buttonGroup.addButton(self.localReadButton)
         self.localReadButton.setObjectName(u"localReadButton")
-        sizePolicy1.setHeightForWidth(self.localReadButton.sizePolicy().hasHeightForWidth())
-        self.localReadButton.setSizePolicy(sizePolicy1)
+        sizePolicy2.setHeightForWidth(self.localReadButton.sizePolicy().hasHeightForWidth())
+        self.localReadButton.setSizePolicy(sizePolicy2)
         self.localReadButton.setMinimumSize(QSize(0, 40))
-        self.localReadButton.setFocusPolicy(Qt.NoFocus)
+        self.localReadButton.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.localReadButton.setIcon(icon)
         self.localReadButton.setIconSize(QSize(32, 32))
         self.localReadButton.setCheckable(True)
-        self.localReadButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.localReadButton.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
 
         self.verticalLayout_3.addWidget(self.localReadButton)
 
         self.waifu2xButton = QToolButton(self.scrollAreaWidgetContents)
         self.buttonGroup.addButton(self.waifu2xButton)
         self.waifu2xButton.setObjectName(u"waifu2xButton")
-        sizePolicy1.setHeightForWidth(self.waifu2xButton.sizePolicy().hasHeightForWidth())
-        self.waifu2xButton.setSizePolicy(sizePolicy1)
+        sizePolicy2.setHeightForWidth(self.waifu2xButton.sizePolicy().hasHeightForWidth())
+        self.waifu2xButton.setSizePolicy(sizePolicy2)
         self.waifu2xButton.setMinimumSize(QSize(150, 40))
-        self.waifu2xButton.setFocusPolicy(Qt.NoFocus)
+        self.waifu2xButton.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.waifu2xButton.setIcon(icon)
         self.waifu2xButton.setIconSize(QSize(32, 32))
         self.waifu2xButton.setCheckable(True)
-        self.waifu2xButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.waifu2xButton.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
 
         self.verticalLayout_3.addWidget(self.waifu2xButton)
 
         self.batchSrButton = QToolButton(self.scrollAreaWidgetContents)
         self.buttonGroup.addButton(self.batchSrButton)
         self.batchSrButton.setObjectName(u"batchSrButton")
-        sizePolicy1.setHeightForWidth(self.batchSrButton.sizePolicy().hasHeightForWidth())
-        self.batchSrButton.setSizePolicy(sizePolicy1)
+        sizePolicy2.setHeightForWidth(self.batchSrButton.sizePolicy().hasHeightForWidth())
+        self.batchSrButton.setSizePolicy(sizePolicy2)
         self.batchSrButton.setMinimumSize(QSize(150, 40))
-        self.batchSrButton.setFocusPolicy(Qt.NoFocus)
+        self.batchSrButton.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.batchSrButton.setIcon(icon)
         self.batchSrButton.setIconSize(QSize(32, 32))
         self.batchSrButton.setCheckable(True)
-        self.batchSrButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.batchSrButton.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
 
         self.verticalLayout_3.addWidget(self.batchSrButton)
 
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_3.addItem(self.verticalSpacer)
 
@@ -460,29 +462,29 @@ class Ui_Navigation(object):
         self.helpButton = QToolButton(self.tailWidget)
         self.buttonGroup.addButton(self.helpButton)
         self.helpButton.setObjectName(u"helpButton")
-        sizePolicy1.setHeightForWidth(self.helpButton.sizePolicy().hasHeightForWidth())
-        self.helpButton.setSizePolicy(sizePolicy1)
+        sizePolicy2.setHeightForWidth(self.helpButton.sizePolicy().hasHeightForWidth())
+        self.helpButton.setSizePolicy(sizePolicy2)
         self.helpButton.setMinimumSize(QSize(0, 40))
-        self.helpButton.setFocusPolicy(Qt.NoFocus)
+        self.helpButton.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.helpButton.setIcon(icon)
         self.helpButton.setIconSize(QSize(32, 32))
         self.helpButton.setCheckable(True)
-        self.helpButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.helpButton.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
 
         self.verticalLayout_5.addWidget(self.helpButton)
 
         self.settingButton = QToolButton(self.tailWidget)
         self.buttonGroup.addButton(self.settingButton)
         self.settingButton.setObjectName(u"settingButton")
-        sizePolicy1.setHeightForWidth(self.settingButton.sizePolicy().hasHeightForWidth())
-        self.settingButton.setSizePolicy(sizePolicy1)
+        sizePolicy2.setHeightForWidth(self.settingButton.sizePolicy().hasHeightForWidth())
+        self.settingButton.setSizePolicy(sizePolicy2)
         self.settingButton.setMinimumSize(QSize(150, 40))
-        self.settingButton.setFocusPolicy(Qt.NoFocus)
+        self.settingButton.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.settingButton.setStyleSheet(u"")
         self.settingButton.setIcon(icon)
         self.settingButton.setIconSize(QSize(32, 32))
         self.settingButton.setCheckable(True)
-        self.settingButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.settingButton.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         self.settingButton.setAutoRaise(False)
 
         self.verticalLayout_5.addWidget(self.settingButton)
@@ -503,18 +505,17 @@ class Ui_Navigation(object):
         self.signButton.setText(QCoreApplication.translate("Navigation", u"\u6253\u5361", None))
         self.nameLabel.setText("")
         self.titleLabel.setText("")
+        self.label_9.setText(QCoreApplication.translate("Navigation", u"\u5c4f\u853d\u8bcd\uff1a", None))
+        self.label_5.setText(QCoreApplication.translate("Navigation", u"\u79bb\u7ebf\u6a21\u5f0f\uff1a", None))
+        self.expLabel.setText(QCoreApplication.translate("Navigation", u"\u7b49\u7ea7:", None))
+        self.label_8.setText(QCoreApplication.translate("Navigation", u"\u6536\u85cf\u6570\uff1a", None))
+        self.hideButton.setText("")
+        self.favorite.setText("")
+        self.label_7.setText(QCoreApplication.translate("Navigation", u"\u56fe\u7247\u5206\u6d41\uff1a", None))
+        self.label_4.setText(QCoreApplication.translate("Navigation", u"API\u5206\u6d41\uff1a", None))
+        self.levelLabel.setText("")
         self.label_6.setText(QCoreApplication.translate("Navigation", u"J Coins\uff1a", None))
         self.coins.setText("")
-        self.expLabel.setText(QCoreApplication.translate("Navigation", u"\u7b49\u7ea7:", None))
-        self.levelLabel.setText("")
-        self.label_8.setText(QCoreApplication.translate("Navigation", u"\u6536\u85cf\u6570\uff1a", None))
-        self.favorite.setText("")
-        self.label_4.setText(QCoreApplication.translate("Navigation", u"\u5206\u6d41\uff1a", None))
-        self.proxyName.setText("")
-        self.label_5.setText(QCoreApplication.translate("Navigation", u"\u5206\u6d41\uff1a", None))
-        self.proxyImgName.setText("")
-        self.label_9.setText(QCoreApplication.translate("Navigation", u"\u5c4f\u853d\u8bcd\uff1a", None))
-        self.hideButton.setText("")
         self.label.setText(QCoreApplication.translate("Navigation", u"\u7528\u6237", None))
         self.collectButton.setText(QCoreApplication.translate("Navigation", u"\u6211\u7684\u6536\u85cf", None))
         self.myCommentButton.setText(QCoreApplication.translate("Navigation", u"\u6211\u7684\u8bc4\u8bba", None))

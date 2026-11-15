@@ -7,6 +7,7 @@ import time
 from config import config
 from config.global_config import GlobalConfig
 from config.setting import Setting
+from qt_owner import QtOwner
 from tools.log import Log
 from tools.str import Str
 from tools.tool import ToolUtil
@@ -18,16 +19,19 @@ from curl_cffi import CurlOpt, CurlHttpVersion
 class ServerReq(object):
     SPACE_PIC = set()  # 优先使用CDN，如果出现空白图片则回源
 
-    def __init__(self, url, params=None, method="POST", isOtherCloudFlare=False, isSpeed=False) -> None:
+    def __init__(self, url, params=None, method="POST") -> None:
         self.url = url
-        self.resetCnt = 1
+        self.json = ""
+        self.resetCnt = 0
         self.resetUrl = []
         self.resetIndex = 0
         self.params = params
         self.method = method
         self.isParseRes = False
+
+        host = ToolUtil.GetUrlHost(url)
         self.timeout = 5
-        self.isOtherCloudFlare = isOtherCloudFlare
+        self.isOtherCloudFlare = host in GlobalConfig.OtherCloudflareDomain.value
         self.isUseHttps = True
         # self.isUseHttps = bool(Setting.IsUseHttps.value)
         self.proxyUrl = ""
@@ -47,7 +51,7 @@ class ServerReq(object):
             self.isImg = True
             self.timeout = Setting.ImgTimeOut.GetIndexV()
 
-        if "https://" + host in GlobalConfig.UrlList.value:
+        if "https://" + host in GlobalConfig.UrlList.value or "https://" + host == GlobalConfig.Url.value:
             self.isRegister = True
 
         # if Setting.ProxySelectIndex.value == 5:
@@ -65,7 +69,7 @@ class ServerReq(object):
         self.headers = self.GetHeader(url, method)
 
         from qt_owner import QtOwner
-        if self.isApi and QtOwner().user.token and not isSpeed:
+        if self.isApi and QtOwner().user.token :
             ## 图片不设置该值，否则cf-cache-status返回BYPASS
             self.headers["authorization"] = "Bearer " + QtOwner().user.token
 
@@ -161,6 +165,20 @@ class ServerReq(object):
                     for v in GlobalConfig.UrlList.value:
                         host2 =  ToolUtil.GetUrlHost(v)
                         self.curl_opt[CurlOpt.RESOLVE].append(f"{host2}:443:{ipStr}")
+                    if GlobalConfig.Url.value not in GlobalConfig.UrlList.value:
+                        v = GlobalConfig.Url.value
+                        host2 =  ToolUtil.GetUrlHost(v)
+                        self.curl_opt[CurlOpt.RESOLVE].append(f"{host2}:443:{ipStr}")
+
+                elif self.isApi:
+                    for v in GlobalConfig.Url2List.value:
+                        host2 =  ToolUtil.GetUrlHost(v)
+                        self.curl_opt[CurlOpt.RESOLVE].append(f"{host2}:443:{ipStr}")
+                elif self.isImg:
+                    for v in GlobalConfig.PicUrlList.value:
+                        host2 =  ToolUtil.GetUrlHost(v)
+                        self.curl_opt[CurlOpt.RESOLVE].append(f"{host2}:443:{ipStr}")
+
         if isHttp3:
             self.curl_opt[CurlOpt.HTTP_VERSION] = CurlHttpVersion.V3
             self.isH3 = True
@@ -174,6 +192,18 @@ class ServerReq(object):
         self.resetIndex += 1
         Log.Info("request switch url:{}->{}".format(self.url, url))
         self.url = url
+
+        host = ToolUtil.GetUrlHost(url)
+        oldCloudFlare = self.isOtherCloudFlare
+        self.isOtherCloudFlare = host in GlobalConfig.OtherCloudflareDomain.value
+        if oldCloudFlare != self.isOtherCloudFlare:
+            if self.isOtherCloudFlare:
+                self.ipList = [Setting.ProxyIpValue.value]
+                self.SetCurlOpt(self.isH3, Setting.EnableEch.value, QtOwner().echConfig, self.ipList)
+            else:
+                self.ipList = []
+                self.SetCurlOpt(self.isH3, Setting.EnableEch.value, QtOwner().echConfig, self.ipList)
+
         return True
         # host = ToolUtil.GetUrlHost(self.url)
         # if host in self.resetUrlHost:
@@ -362,11 +392,11 @@ class DownloadBookReq(ServerReq):
         self.isReload = isReload
         self.isReset = False
         super(self.__class__, self).__init__(self.url, {}, method)
-        self.resetCnt = resetCnt
 
         if "_3x4" in self.url:
             self.resetUrl.append(self.url.replace("_3x4", ""))
 
+        self.resetCnt = max(resetCnt, len(self.resetUrl))
         self.headers = dict()
         self.headers["Accept-Encoding"] ="None"
         # if Setting.UerAgent.value:
@@ -1272,8 +1302,8 @@ class GetIpInfoReq(ServerReq):
             "version": config.RealVersion
         }
         self.isParseRes = False
-        self.resetUrl = [f"https://parse2.jpacg.cc/ipinfo?ip={ip}"]
-        self.resetCnt = 2
+        self.resetUrl = [f"https://parse2.jpacg.cc/ipinfo?ip={ip}", f"https://parse3.jpacg.cc/ipinfo?ip={ip}"]
+        self.resetCnt = len(self.resetUrl)
 
 # 获取proxyip
 class GetProxyIpInfoReq(ServerReq):
@@ -1289,5 +1319,19 @@ class GetProxyIpInfoReq(ServerReq):
         }
         self.isParseRes = False
         realUrl = ToolUtil.GetUrlHost(url)
-        self.resetUrl = [url.replace(realUrl, "check2.jpacg.cc")]
-        self.resetCnt = 2
+        self.resetUrl = [url.replace(realUrl, "check2.jpacg.cc"), url.replace(realUrl, "check3.jpacg.cc")]
+        self.resetCnt = len(self.resetUrl)
+
+# 获取bestcf
+class GetBestCfIpReq(ServerReq):
+    def __init__(self):
+        url = f"https://parse.jpacg.cc/bestcf"
+        method = "GET"
+        super(self.__class__, self).__init__(url, {}, method)
+        self.headers = {
+            "version": config.RealVersion
+        }
+        self.isParseRes = False
+        realUrl = ToolUtil.GetUrlHost(url)
+        self.resetUrl = [url.replace(realUrl, "parse2.jpacg.cc"), url.replace(realUrl, "parse3.jpacg.cc")]
+        self.resetCnt = len(self.resetUrl)

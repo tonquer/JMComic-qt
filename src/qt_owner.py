@@ -1,5 +1,68 @@
+from __future__ import annotations
+
 import sys
 import weakref
+
+from typing import TYPE_CHECKING
+
+from PySide6.QtNetwork import QLocalServer
+
+if TYPE_CHECKING:
+    from view.category.category_view import CategoryView
+    from view.category.rank_view import RankView
+
+    from view.comment.comment_view import CommentView
+    from view.comment.fried_comment_view import FriedCommentView
+    from view.comment.game_comment_view import GameCommentView
+    from view.comment.my_comment_view import MyCommentView
+    from view.comment.sub_comment_view import SubCommentView
+
+    from view.convert.convert_view import ConvertView
+
+    from view.download.download_all_view import DownloadAllView
+    from view.download.download_dir_view import DownloadDirView
+    from view.download.download_view import DownloadView
+
+    from view.game.game_view import GameView
+
+    from view.help.help_view import HelpView
+
+    from view.index.index_view import IndexView
+
+    from view.info.book_eps_view import BookEpsView
+    from view.info.book_info_view import BookInfoView
+    from view.info.game_info_view import GameInfoView
+
+    from view.main.main_view import MainView
+
+    from view.nas.nas_add_view import NasAddView
+    from view.nas.nas_view import NasView
+
+    from view.read.read_graphics import ReadGraphicsView
+    from view.read.read_view import ReadView
+
+    from view.search.search_view import SearchView
+
+    from view.setting.setting_sr_select_view import SettingSrSelectView
+    from view.setting.setting_view import SettingView
+
+    from view.tool.batch_sr_tool_view import BatchSrToolView
+    from view.tool.forbid_words_view import ForbidWordsView
+    from view.tool.local_eps_read_view import LocalEpsReadView
+    from view.tool.local_fold_view import LocalFoldView
+    from view.tool.local_read_all_view import LocalReadAllView
+    from view.tool.local_read_eps_view import LocalReadEpsView
+    from view.tool.local_read_view import LocalReadView
+    from view.tool.waifu2x_tool_view import Waifu2xToolView
+
+    from view.user.favorite_view import FavoriteView
+    from view.user.history_view import HistoryView
+    from view.user.local_favorite_fold_view import LocalFavoriteFoldView
+    from view.user.local_favorite_view import LocalFavoriteView
+    from view.user.login_new_view import LoginNewView
+    from component.widget.navigation_widget import NavigationWidget
+
+    from component.widget.animation_stack_widget import AnimationStackWidget
 
 from PySide6.QtCore import QFile
 
@@ -23,8 +86,38 @@ class QtOwner(Singleton):
         self.closeType = 1   # 1普通， 2关闭弹窗触发， 3任务栏触发
         self.isMaxSize = 0
         self.echConfig = ""
+        self.downFmtRule = {}
+        self.convertFmtRule = {}
+
         # 请求代次：登出时 +1，在途请求的回调随之作废（见 task_http.HandlerTask）
         self.requestGeneration = 0
+
+        self.allSupportFmt = set()
+
+        self.globalNewIcon = None
+        self.globalStarIcon = None
+        self.globalShieldImage = None
+        self.globalPlaceholderImage = None
+        self.globalCommentLikeIcon = None
+        self.globalReplyIcon = None
+        self.globalCommentLikedImage = None
+        self.globalCommentLikeImage = None
+
+    def InitIcons(self):
+        from PySide6.QtGui import QIcon, QImage
+        self.globalStarIcon = QIcon(":/png/icon/icon_bookmark_on.png")
+        self.globalNewIcon = QIcon(":/png/icon/new.svg")
+        self.globalShieldImage = QImage(":/png/icon/shiled.svg")
+        self.globalShieldImage.setDevicePixelRatio(self.app.devicePixelRatio())
+        self.globalPlaceholderImage = QImage(":/png/icon/placeholder_avatar.png")
+        self.globalPlaceholderImage.setDevicePixelRatio(self.app.devicePixelRatio())
+        self.globalCommentLikeIcon = QIcon(":/png/icon/icon_comment_like.png")
+        self.globalReplyIcon = QIcon(":/png/icon/icon_comment_reply")
+        self.globalCommentLikedImage = QImage(":/png/icon/icon_comment_liked.png")
+        self.globalCommentLikedImage.setDevicePixelRatio(self.app.devicePixelRatio())
+        self.globalCommentLikeImage = QImage(":/png/icon/icon_comment_like.png")
+        self.globalCommentLikeImage.setDevicePixelRatio(self.app.devicePixelRatio())
+        return
 
     def NewRequestGeneration(self):
         """作废所有在途 HTTP 请求的回调。
@@ -34,6 +127,60 @@ class QtOwner(Singleton):
         """
         self.requestGeneration += 1
         return
+
+    def UpdateDownFmtRule(self):
+        from config.setting import Setting
+        self.downFmtRule = {}
+        if not Setting.DownloadConvertFmt.value:
+            self.downFmtRule = {}
+            return
+        for v in Setting.DownloadConvertFmt.value.split(":"):
+            v2 = v.split(",")
+            if len(v2) < 3:
+                continue
+            indexType = int(v2[0])  # 0=all , 1=down, 2=convert
+            if indexType == 2:
+                continue
+            format1 = v2[1]
+            toFormat = v2[2]
+            self.downFmtRule[format1] = toFormat
+
+    def GetDownFmtRule(self, oldFmt):
+        if not self.downFmtRule:
+            self.UpdateDownFmtRule()
+
+        if oldFmt in self.downFmtRule:
+            return self.downFmtRule.get(oldFmt)
+        if "*" in self.downFmtRule:
+            return self.downFmtRule.get("*")
+        return oldFmt
+
+    def UpdateConvertFmtRule(self):
+        from config.setting import Setting
+        self.convertFmtRule = {}
+        if not Setting.DownloadConvertFmt.value:
+            self.convertFmtRule = {}
+            return
+        for v in Setting.DownloadConvertFmt.value.split(":"):
+            v2 = v.split(",")
+            if len(v2) < 3:
+                continue
+            indexType = int(v2[0])  # 0=all , 1=down, 2=convert
+            if indexType == 1:
+                continue
+            format1 = v2[1]
+            toFormat = v2[2]
+            self.convertFmtRule[format1] = toFormat
+
+    def GetConvertFmtRule(self, oldFmt):
+        from config.setting import Setting
+        if not self.convertFmtRule:
+            self.UpdateConvertFmtRule()
+        if oldFmt in self.convertFmtRule:
+            return self.convertFmtRule.get(oldFmt)
+        if "*" in self.convertFmtRule:
+            return self.convertFmtRule.get("*")
+        return oldFmt
 
     @property
     def cookie(self):
@@ -125,60 +272,116 @@ class QtOwner(Singleton):
         return self._app()
 
     @property
-    def loginNewView(self):
+    def loginNewView(self) -> LoginNewView:
         return self.owner.loginNewView
 
     @property
-    def localServer(self):
+    def localServer(self) -> QLocalServer:
         return self._localServer()
 
     @property
-    def localFavoriteView(self):
+    def localFavoriteView(self) -> LocalFavoriteView:
         return self.owner.localFavoriteView
 
     @property
-    def nasView(self):
+    def nasView(self) -> NasView:
         return self.owner.nasView
 
     @property
-    def downloadView(self):
+    def downloadView(self) -> DownloadView:
         return self.owner.downloadView
+
+    @property
+    def historyView(self) -> HistoryView:
+        return self.owner.historyView
+
+    @property
+    def gameInfoView(self) -> GameInfoView:
+        return self.owner.gameInfoView
+
+    @property
+    def bookInfoView(self) -> BookInfoView:
+        return self.owner.bookInfoView
+
+    @property
+    def localReadView(self) -> LocalReadView:
+        return self.owner.localReadView
+
+    @property
+    def localReadEpsView(self) -> LocalReadEpsView:
+        return self.owner.localReadEpsView
+
+    @property
+    def readView(self) -> ReadView:
+        return self.owner.readView
+
+    @property
+    def favoriteView(self) -> FavoriteView:
+        return self.owner.favoriteView
+
+    @property
+    def indexView(self) -> IndexView:
+        return self.owner.indexView
+
+    @property
+    def settingView(self) -> SettingView:
+        return self.owner.settingView
+
+    @property
+    def searchView(self) -> SearchView:
+        return self.owner.searchView
+
+    @property
+    def navigationWidget(self) -> NavigationWidget:
+        return self.owner.navigationWidget
+
+    @property
+    def commentView(self) -> CommentView:
+        return self.owner.commentView
+
+    @property
+    def gameCommentView(self) -> GameCommentView:
+        return self.owner.gameCommentView
+
+    @property
+    def bookEpsView(self) -> BookEpsView:
+        return self.owner.bookEpsView
+
+    @property
+    def subCommentView(self) -> SubCommentView:
+        return self.owner.subCommentView
+
+    @property
+    def waifu2xToolView(self) -> Waifu2xToolView:
+        return self.owner.waifu2xToolView
+
+    @property
+    def bookInfoView2(self) -> BookInfoView:
+        return self.owner.bookInfoView2
+
+    @property
+    def searchView2(self) -> SearchView:
+        return self.owner.searchView2
+
+    @property
+    def downloadAllView(self) -> DownloadAllView:
+        return self.owner.downloadAllView
+
+    @property
+    def localReadAllView(self) -> LocalReadAllView:
+        return self.owner.localReadAllView
+
+    @property
+    def subStackWidget(self) -> AnimationStackWidget:
+        return self.owner.subStackWidget
+
+    def IsCurView(self, view):
+        index = self.subStackWidget.currentIndex()
+        return view == self.subStackWidget.widget(index)
 
     @property
     def loginWebView(self):
         return self.owner.loginWebView
-
-    @property
-    def historyView(self):
-        return self.owner.historyView
-
-    @property
-    def gameInfoView(self):
-        return self.owner.gameInfoView
-
-    @property
-    def bookInfoView(self):
-        return self.owner.bookInfoView
-
-    @property
-    def localReadView(self):
-        return self.owner.localReadView
-
-    @property
-    def favoriteView(self):
-        return self.owner.favoriteView
-
-    @property
-    def indexView(self):
-        return self.owner.indexView
-
-    @property
-    def settingView(self):
-        return self.owner.settingView
-
-    @property
-    def searchView(self):
-        return self.owner.searchView
 
     def SetSubTitle(self, text):
         return self.owner.setSubTitle(text)
@@ -303,7 +506,13 @@ class QtOwner(Singleton):
 
     def CloseReadView(self):
         self.owner.totalStackWidget.setCurrentIndex(0)
-        QtOwner().bookInfoView.ReloadHistory.emit()
+        self.SetSubTitle("")
+        self.ReloadBookInfoHistory()
+
+    def ReloadBookInfoHistory(self):
+        # 阅读器可能从任意一个详情页打开，两个详情页都要刷新“上次看到”
+        self.bookInfoView.ReloadHistory.emit()
+        self.bookInfoView2.ReloadHistory.emit()
 
     def OpenSearchByCategory(self, categories):
         arg = {"categories": categories}

@@ -119,6 +119,7 @@ class Setting:
     EchConfig = SettingValue("ProxySetting", "", False)
     EchProxyIndex = SettingValue("ProxySetting", 0, False, ["Auto", "true", "false"])
     ProxyIpLastList =  SettingValue("ProxySetting", "", False)
+    BestCfIpLastList =  SettingValue("ProxySetting", "", False)
     ProxyIpValue =  SettingValue("ProxySetting", "", False)
 
     EnableEch = SettingValue("ProxySetting", 1, False)
@@ -140,13 +141,21 @@ class Setting:
     ImgTimeOut = SettingValue("ProxySetting", 1, False, [2, 5, 7, 10, 15])
 
     # 下载与缓存
+    IsInitSave = SettingValue("DownloadSetting", 0, False)
     SavePath = SettingValue("DownloadSetting", "", False)
     SaveNameType = SettingValue("DownloadSetting", 0, False)
+    IsOpenMemCache = SettingValue("DownloadSetting", 1, False)
+    MemCacheSize = SettingValue("DownloadSetting", 512, False)
+    IsOpenDiskCache = SettingValue("DownloadSetting", 0, False)
+    DiskCacheSize = SettingValue("DownloadSetting", 10240, False)
+    DiskCacheDay = SettingValue("DownloadSetting", 30, False)
+    DownloadConvertFmt = SettingValue("DownloadSetting", "", False)
 
     # Waifu2x设置
     SelectEncodeGpu = SettingValue("Waifu2xSetting", "", True)
     Waifu2xCpuCore = SettingValue("Waifu2xSetting", 0, True)
     Waifu2xTileSize = SettingValue("Waifu2xSetting", 0, False, [0, 200, 100, 32])
+    ProcThreadNum = SettingValue("Waifu2xSetting", 0, False, [0, 1, 2, 3, 4, 5, 6, 7, 8])
 
     # 封面 Waifu2x
     CoverIsOpenWaifu = SettingValue("Waifu2xSetting", 0, False)
@@ -178,6 +187,15 @@ class Setting:
     ScrollTime = SettingValue("ReadSetting", 100, False)
     PreDownWaifu2x = SettingValue("ReadSetting", 1, False)
     IsOpenOpenGL = SettingValue("ReadSetting", 0, True)
+    IsOpenReadAnime = SettingValue("ReadSetting", 1, False)
+
+    PicturePrefetchFrontCount = SettingValue("ReadSetting", 3, False)
+    PicturePrefetchCount = SettingValue("ReadSetting", 5, False)
+    CrossChapterPrefetch = SettingValue("ReadSetting", 1, False)
+    PrefetchWholeChapter = SettingValue("ReadSetting", 0, False)
+    PictureShowFrontCount = SettingValue("ReadSetting", 2, False)
+    PictureShowCount = SettingValue("ReadSetting", 4, False)
+
     # UpDownScrollSpeed = SettingValue("ReadSetting", 100, False)
     # ScaleCnt = SettingValue("ReadSetting", 0, False)
 
@@ -201,7 +219,7 @@ class Setting:
     IsShowCmd = SettingValue("Other", 0, False)
     IsGrabGesture = SettingValue("Other", 0, True)
     IsReDownload = SettingValue("Other", 0, False)
-    WebpToPng = SettingValue("Other", 0, False)
+    # WebpToPng = SettingValue("Other", 0, False)
     IsPreUpdate = SettingValue("Other", 0, False)
     UerAgent = SettingValue("Other", "", False)
     GlobalConfig = SettingValue("Other", "", False)

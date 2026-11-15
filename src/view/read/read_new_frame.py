@@ -6,20 +6,24 @@ from PySide6.QtWidgets import QFrame, QLabel
 
 from component.label.gif_label import GifLabel
 from component.progress_bar.dwater_progress_bar import DWaterProgress
+from config.setting import Setting
 from tools.str import Str
 from view.read.read_enum import ReadMode
-from view.read.read_graphics import ReadGraphicsView
-from view.read.read_tool import ReadTool
+from view.read.read_new_graphics import ReadNewGraphics
+from view.read.read_new_tool import ReadNewTool
 
 
-class ReadFrame(QFrame):
+class ReadNewFrame(QFrame):
     def __init__(self, readImg):
         QFrame.__init__(self, readImg)
         self._readImg = weakref.ref(readImg)
         self.resize(readImg.width(), readImg.height())
-        # self.scrollArea = ReadScrollArea(self)
-        self.scrollArea = ReadGraphicsView(self)
-        self.qtTool = ReadTool(self)
+        if Setting.LookReadMode.value > ReadMode.Samewight.value or Setting.LookReadMode.value < 0:
+            mode = ReadMode.LeftRight.value
+        else:
+            mode = Setting.LookReadMode.value
+        self.scrollArea = ReadNewGraphics(ReadMode(mode), self)
+        self.qtTool = ReadNewTool(self)
         self.qtTool.hide()
         self.helpLabel = QLabel(self)
         self.helpPixMap = QPixmap()
@@ -50,8 +54,6 @@ class ReadFrame(QFrame):
         self.downloadMaxSize = 1
         self.oldValue = 0
         self.baseValue = 0
-
-
 
     @property
     def readImg(self):
@@ -87,7 +89,7 @@ class ReadFrame(QFrame):
         painter.drawRect(QRect(0, 0, self.width()//3*4, self.height() // 2))
 
         painter.setFont(font)
-        if self.qtTool.stripModel in [ReadMode.RightLeftDouble, ReadMode.RightLeftScroll, ReadMode.RightLeftScroll2]:
+        if self.qtTool.stripModel in [ReadMode.RightLeftDouble, ReadMode.RightLeftScroll]:
             nextPage = Str.GetStr(Str.LastPage)
             lastPage = Str.GetStr(Str.NextPage)
         else:
@@ -130,14 +132,13 @@ class ReadFrame(QFrame):
         self.process2.setGeometry(w//2-150, h-150, 150, 150)
         self.waifu2xProcess.setGeometry(w-150, h-150, 150, 150)
         self.waifu2xProcess2.setGeometry(w//2-150, h-150, 150, 150)
-        self.scrollArea.ResetLabelSize(self.qtTool.maxPic)
+        # self.scrollArea.ResetLabelSize(self.qtTool.maxPic)
         return
 
     def UpdateProcessBar(self, info):
         if info:
             self.downloadSize = info.downloadSize
-            # self.downloadMaxSize = max(1, info.size)
-            self.downloadMaxSize = 1024*200
+            self.downloadMaxSize = max(1, info.size)
             value = int((self.downloadSize / self.downloadMaxSize) * 100)
             # print(value)
             self.process.setValue(value)
@@ -149,7 +150,7 @@ class ReadFrame(QFrame):
     def UpdateProcessBar2(self, info):
         if info:
             self.downloadSize = info.downloadSize
-            self.downloadMaxSize = 1024*200
+            self.downloadMaxSize = max(1, info.size)
             value = int((self.downloadSize / self.downloadMaxSize) * 100)
             # print(value)
             self.process2.setValue(value)
@@ -158,11 +159,19 @@ class ReadFrame(QFrame):
             self.downloadMaxSize = 1
             self.process2.setValue(0)
 
+    def HideHelp(self):
+        if not self.helpLabel.isHidden():
+            self.helpLabel.hide()
+
+    def ShowHelp(self):
+        if self.helpLabel.isHidden():
+            self.helpLabel.show()
+
     def eventFilter(self, obj, ev) -> bool:
         # print(obj, ev.type())
         if obj == self.helpLabel:
             if ev.type() == QEvent.MouseButtonPress:
                 if not self.helpLabel.isHidden():
-                    self.helpLabel.hide()
+                    self.HideHelp()
                     return True
         return False

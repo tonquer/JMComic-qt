@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>401</width>
-    <height>300</height>
+    <width>464</width>
+    <height>330</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -64,17 +64,10 @@
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="2" column="1">
-      <widget class="QLabel" name="waifu2xDir">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_3">
        <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QLabel" name="cacheDir">
-       <property name="text">
-        <string/>
+        <string>下载:</string>
        </property>
       </widget>
      </item>
@@ -85,13 +78,6 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>下载:</string>
-       </property>
-      </widget>
-     </item>
      <item row="1" column="0">
       <widget class="QLabel" name="label_5">
        <property name="text">
@@ -99,10 +85,102 @@
        </property>
       </widget>
      </item>
+     <item row="1" column="1">
+      <widget class="QLabel" name="cacheDir">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
      <item row="2" column="0">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>聊天:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLabel" name="chatDir">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
       <widget class="QLabel" name="label_4">
        <property name="text">
         <string>waifu2x缓存:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLabel" name="waifu2xDir">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QCheckBox" name="openMemBox">
+       <property name="text">
+        <string>开启内存缓存</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>大小(MB)：</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="memBox">
+       <property name="maximum">
+        <number>8192</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QCheckBox" name="openDiskBox">
+       <property name="text">
+        <string>开启磁盘缓存</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>大小(MB)：</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="diskBox">
+       <property name="maximum">
+        <number>102400</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_9">
+       <property name="text">
+        <string>天数：</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="diskDayBox">
+       <property name="maximum">
+        <number>9999</number>
        </property>
       </widget>
      </item>

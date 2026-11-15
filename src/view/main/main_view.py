@@ -2,7 +2,7 @@ import sys
 from functools import partial
 
 from PySide6.QtCore import Qt, QEvent, QPoint, Signal
-from PySide6.QtGui import QIcon, QMouseEvent, QGuiApplication, QFont
+from PySide6.QtGui import QIcon, QMouseEvent, QGuiApplication, QFont, QImageReader
 from PySide6.QtWidgets import QButtonGroup, QToolButton, QLabel
 
 from component.dialog.loading_dialog import LoadingDialog
@@ -16,12 +16,12 @@ from qt_owner import QtOwner
 from server import req, GlobalConfig
 from server.server import Server
 from task.qt_task import QtTaskBase
+from task.task_cache import TaskCache
 from task.task_multi import TaskMulti
 from task.task_qimage import TaskQImage
 from task.task_waifu2x import TaskWaifu2x
 from tools.log import Log
 from view.download.download_dir_view import DownloadDirView
-from view.read.read_pool import QtReadImgPoolManager
 
 
 class MainView(Main, QtTaskBase):
@@ -209,7 +209,12 @@ class MainView(Main, QtTaskBase):
 
     def Init(self):
         IsCanUse = False
+        import os
         self.SwitchWidgetAndClear(self.subStackWidget.indexOf(self.helpView))
+        formats = QImageReader.supportedImageFormats()
+        # "Lib\site-packages\PySide6\plugins\imageformats"
+        QtOwner().allSupportFmt.update([f.data().decode() for f in formats])
+
         self.helpView.Init()
         self.downloadView.Init()
         self.nasView.Init()
@@ -217,7 +222,8 @@ class MainView(Main, QtTaskBase):
         if config.CanWaifu2x:
             from sr_vulkan import sr_vulkan as sr
             stat = sr.init()
-            sr.setDebug(True)
+            if os.environ.get("PYCHARM_HOSTED") == "1":
+                sr.setDebug(True)
             if stat < 0:
                 pass
                 # QtOwner().ShowMsg(self.tr("未发现支持VULKAN的GPU, Waiuf2x当前为CPU模式, " + ", code:{}".format(str(stat))))
@@ -230,7 +236,14 @@ class MainView(Main, QtTaskBase):
             gpuInfo = sr.getGpuInfo()
             cpuNum = sr.getCpuCoreNum()
             gpuNum = sr.getGpuCoreNum()
+            if not gpuInfo:
+                gpuInfo = []
             self.settingView.SetGpuInfos(gpuInfo, cpuNum)
+            if Setting.ProcThreadNum.GetIndexV()> 0:
+                procNum = max(1, Setting.ProcThreadNum.GetIndexV())
+                encodeThread = max(1, Setting.ProcThreadNum.GetIndexV())
+                decodeThread = max(1, Setting.ProcThreadNum.GetIndexV())
+                sr.setThreadNum(decodeThread, encodeThread, procNum)
             # if not gpuInfo or (gpuInfo and config.Encode < 0) or (gpuInfo and config.Encode >= len(gpuInfo)):
             #     config.Encode = 0
 
@@ -244,7 +257,8 @@ class MainView(Main, QtTaskBase):
                 stat, config.Encode, version, sts, config.UseCpuNum, cpuNum, gpuNum, gpuInfo
             ))
         else:
-            QtOwner().ShowError("Waifu2x Error, " + config.ErrorMsg)
+            if not config.CloseWaifu2x:
+                QtOwner().ShowError("Waifu2x Error, " + config.ErrorMsg)
             Log.Warn("Waifu2x Error: " + str(config.ErrorMsg))
 
         if not IsCanUse:
@@ -274,12 +288,14 @@ class MainView(Main, QtTaskBase):
         # self.AddHttpTask(req.LoginCheck301Req(), callBack=self.LoginCheckBack)
         # QtReadImgPoolManager().Init()
 
-        if not Setting.SavePath.value:
+        if not Setting.SavePath.value or not Setting.IsInitSave.value:
             view = DownloadDirView(self)
-            view.show()
             view.closed.connect(self.OpenLoginView)
+            view.exec()
         else:
             self.OpenLoginView()
+
+        TaskCache().Init()
 
     # def LoginCheckBack(self, raw):
     #     self.AddHttpTask(req.LoginPreReq())
@@ -506,8 +522,8 @@ class MainView(Main, QtTaskBase):
         TaskQImage().Stop()
         # QtReadImgPoolManager().Stop()
         # TaskDownload().Stop()
-        Server().Stop()
         TaskMulti().Stop()
+        Server().Stop()
         # QtTask().Stop()
 
     def OnNewConnection(self):

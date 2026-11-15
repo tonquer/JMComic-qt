@@ -1,3 +1,4 @@
+import hashlib
 import os
 import threading
 from queue import Queue
@@ -8,8 +9,10 @@ from PySide6.QtGui import QImage
 from config import config
 from config.global_config import GlobalConfig
 from config.setting import Setting
+from tools.log import Log
 from tools.singleton import Singleton
-from tools.str import Str
+from tools.tool import time_me
+from view.read.read_perf_probe import timed
 
 
 class QtTaskQObject(QObject):
@@ -18,20 +21,17 @@ class QtTaskQObject(QObject):
     downloadStBack = Signal(int, dict)
     convertBack = Signal(int)
     imageBack = Signal(int, QImage)
+    sqlBack = Signal(int, bytes)
     localBack = Signal(int, int, list)
     localReadBack = Signal(int, int, bytes)
     uploadBack = Signal(int, int, str)
+    diskCacheRefresh = Signal()
+
+    statuApiBack = Signal(float, int, int, int)
+    statuImgBack = Signal(float, int, int, int)
 
     def __init__(self):
         super(self.__class__, self).__init__()
-
-
-class QtHttpTask(object):
-    def __init__(self, taskId):
-        self.taskId = taskId
-        self.callBack = None
-        self.backParam = None
-        self.cleanFlag = ""
 
 
 class QtTaskBase:
@@ -42,45 +42,30 @@ class QtTaskBase:
         QtTaskBase.Id += 1
 
     @property
-    def req(self):
-        return
-
-    @property
     def cleanFlag(self):
         return self.__taskFlagId
 
+    @property
+    def req(self):
+        return
+
     # callBack(data)
     # callBack(data, backParam)
-    def AddHttpTask(self, req, callBack=None, backParam=None):
-        from tools.qt_domain import QtDomainMgr
+    def AddHttpTask(self, req, callBack=None, backParam=None, cleanFlag=""):
         from task.task_http import TaskHttp
-        # if not Setting.IsOpenDoh.value:
-        return TaskHttp().AddHttpTask(req, callBack, backParam, cleanFlag=self.__taskFlagId)
-        # else:
-        #     return QtDomainMgr().AddHttpTask(req, callBack, backParam, cleanFlag=self.__taskFlagId)
+        if not cleanFlag:
+            cleanFlag = self.__taskFlagId
+        return TaskHttp().AddHttpTask(req, callBack, backParam, cleanFlag=cleanFlag)
+
+    # def AddSqlTask(self, table, data, taskType, callBack=None, backParam=None):
+    #     from task.task_sql import TaskSql
+    #     return TaskSql().AddSqlTask(table, data, taskType, callBack, backParam, cleanFlag=self.__taskFlagId)
 
     # downloadCallBack(data, laveFileSize, backParam)
     # downloadCallBack(data, laveFileSize)
     # downloadCompleteBack(data, st)
     # downloadCompleteBack(data, st, backParam)
-    def AddDownloadBook(self, bookId, epsId, index, statusBack=None, downloadCallBack=None, completeCallBack=None, backParam=None, loadPath="", cachePath="", savePath="", cleanFlag="", isInit=False):
-        from task.task_download import TaskDownload
-        if not cleanFlag:
-            cleanFlag = self.__taskFlagId
-        return TaskDownload().DownloadBook(bookId, epsId, index, statusBack, downloadCallBack, completeCallBack, backParam, loadPath, cachePath, savePath, cleanFlag, isInit)
-
-    def AddDownloadBookCache(self, loadPath, completeCallBack=None, backParam=0, cleanFlag=""):
-        from task.task_download import TaskDownload
-        if not cleanFlag:
-            cleanFlag = self.__taskFlagId
-        return TaskDownload().DownloadCache(loadPath, completeCallBack, backParam, cleanFlag)
-
-    # downloadCallBack(data, laveFileSize, backParam)
-    # downloadCallBack(data, laveFileSize)
-    # downloadCompleteBack(data, st)
-    # downloadCompleteBack(data, st, backParam)
-    def AddDownloadTask(self, url, path="", downloadCallBack=None, completeCallBack=None, downloadStCallBack=None, backParam=None, loadPath="", cachePath="", savePath="",  saveParam="", cleanFlag="", isReload=False, resetCnt=1):
-        from tools.qt_domain import QtDomainMgr
+    def AddDownloadTask(self, url, path, downloadCallBack=None, completeCallBack=None, downloadStCallBack=None, backParam=None, loadPath="", cachePath="", savePath="",  saveParam="", cleanFlag="", isReload=False, resetCnt=config.ResetDownloadCntDefault, completeCallBack2=None, otherParams=None):
         from task.task_download import TaskDownload
         if not cleanFlag:
             cleanFlag = self.__taskFlagId
@@ -89,48 +74,62 @@ class QtTaskBase:
             url = GlobalConfig.GetImgUrl() + url
 
         if not cachePath and not savePath:
+            # if not path:
+            #     a = hashlib.md5(url.encode("utf-8")).hexdigest() + ".jpg"
+            # else:
+            #     a = hashlib.md5(path.encode("utf-8")).hexdigest() + ".jpg"
             if Setting.SavePath.value and path:
                 cachePath = os.path.join(Setting.GetCachePath(), path)
-        # if not Setting.IsOpenDohPicture.value:
-        return TaskDownload().DownloadTask(url, downloadCallBack, completeCallBack, downloadStCallBack, backParam, loadPath,
-                                               cachePath, savePath, saveParam, cleanFlag, isReload, resetCnt)
-        # else:
-        #     return QtDomainMgr().AddDownloadTask(url, downloadCallBack, completeCallBack, downloadStCallBack, backParam, loadPath,
-        #                                        cachePath, savePath, saveParam, cleanFlag, isReload)
+        return TaskDownload().DownloadTask(url, path, downloadCallBack, completeCallBack, downloadStCallBack, backParam, loadPath, cachePath, savePath, saveParam, cleanFlag, isReload, resetCnt, completeCallBack2, otherParams)
+
+    # downloadCallBack(data, laveFileSize, backParam)
+    # downloadCallBack(data, laveFileSize)
+    # downloadCompleteBack(data, st)
+    # downloadCompleteBack(data, st, backParam)
+    def AddDownloadBook(self, bookId, epsId, index, statusBack=None, downloadCallBack=None, completeCallBack=None, backParam=None, loadPath="", cachePath="", savePath="", cleanFlag="", isInit=False, completeCallBack2=None):
+        from task.task_download import TaskDownload
+        if not cleanFlag:
+            cleanFlag = self.__taskFlagId
+        return TaskDownload().DownloadBook(bookId, epsId, index, statusBack, downloadCallBack, completeCallBack, backParam, loadPath, cachePath, savePath, cleanFlag, isInit, completeCallBack2)
+
+    def AddDownloadBookCache(self, loadPath, completeCallBack=None, backParam=0, cleanFlag="", completeCallBack2=None):
+        from task.task_download import TaskDownload
+        if not cleanFlag:
+            cleanFlag = self.__taskFlagId
+        return TaskDownload().DownloadCache(loadPath, completeCallBack, backParam, cleanFlag, completeCallBack2)
 
     # completeCallBack(saveData, taskId, backParam, tick)
-    def AddConvertTask(self, path, imgData, model, completeCallBack, backParam=None, preDownPath=None, noSaveCache=False, saveParams=None, cleanFlag=""):
+    def AddConvertTask(self, path, imgData, model, completeCallBack=None, backParam=None, preDownPath=None, noSaveCache=False, cleanFlag="", completeCallBack2=None, otherParams=None):
         from task.task_waifu2x import TaskWaifu2x
         if not cleanFlag:
             cleanFlag = self.__taskFlagId
-        return TaskWaifu2x().AddConvertTaskByData(path, imgData, model, completeCallBack, backParam, preDownPath, noSaveCache, saveParams, cleanFlag)
+        return TaskWaifu2x().AddConvertTaskByData(path, imgData, model, completeCallBack, backParam, preDownPath, noSaveCache, cleanFlag, completeCallBack2, otherParams)
 
-    # completeCallBack
     # completeCallBack(saveData, taskId, backParam, tick)
-    def AddConvertTaskByPath(self, loadPath, savePath, completeCallBack, backParam=None, cleanFlag=""):
+    def AddConvertTaskByPath(self, loadPath, savePath, completeCallBack, backParam=None, cleanFlag="", otherParams=None):
         from task.task_waifu2x import TaskWaifu2x
         if not cleanFlag:
             cleanFlag = self.__taskFlagId
-        return TaskWaifu2x().AddConvertTaskByPath(loadPath, savePath, completeCallBack, backParam, cleanFlag)
-    # completeCallBack(saveData, taskId, backParam, tick)
+        return TaskWaifu2x().AddConvertTaskByPath(loadPath, savePath, completeCallBack, backParam, cleanFlag, otherParams)
 
+    # completeCallBack(saveData, taskId, backParam, tick)
     def AddConvertTaskByPathSetModel(self, loadPath, savePath, completeCallBack, backParam=None, model=None, cleanFlag=""):
         from task.task_waifu2x import TaskWaifu2x
         if not cleanFlag:
             cleanFlag = self.__taskFlagId
         return TaskWaifu2x().AddConvertTaskByPathSetModel(loadPath, savePath, completeCallBack, backParam, model, cleanFlag)
 
-    def AddQImageTask(self, data, radio, toW, toH, model, saveParams, callBack=None, backParam=None):
+    def AddQImageTask(self, data, radio, toW, toH, model, callBack=None, backParam=None):
         from task.task_qimage import TaskQImage
-        return TaskQImage().AddQImageTask(data, radio, toW, toH, model, saveParams, callBack, backParam, cleanFlag=self.__taskFlagId)
+        return TaskQImage().AddQImageTask(data, radio, toW, toH, model, callBack, backParam, cleanFlag=self.__taskFlagId)
 
     def AddLocalTaskLoad(self, type, dir, backparam=None, callBack=None):
         from task.task_local import TaskLocal
         return TaskLocal().AddLoadRead(type, dir, backparam, callBack, cleanFlag=self.__taskFlagId)
 
-    def AddLocalTaskLoadPicture(self, v, index, backparam=None, callBack=None):
+    def AddLocalTaskLoadPicture(self, v, index, backparam=None, callBack=None, completeCallBack2=None):
         from task.task_local import TaskLocal
-        return TaskLocal().AddLoadReadPicture(v, index, backparam, callBack, cleanFlag=self.__taskFlagId)
+        return TaskLocal().AddLoadReadPicture(v, index, backparam, callBack, cleanFlag=self.__taskFlagId, completeCallBack2=completeCallBack2)
 
     def AddUploadTask(self, nas_id, type, srcDir, desFile, upDirPath, bookId, epsId, backParam=None, callBack=None):
         from task.task_upload import TaskUpload
@@ -142,7 +141,13 @@ class QtTaskBase:
 
     def ClearTask(self):
         from task.task_http import TaskHttp
-        return TaskHttp().Cancel(self.__taskFlagId)
+        from task.task_download import TaskDownload
+        from task.task_waifu2x import TaskWaifu2x
+        from task.task_qimage import TaskQImage
+        TaskDownload().Cancel(self.__taskFlagId)
+        TaskHttp().Cancel(self.__taskFlagId)
+        TaskWaifu2x().Cancel(self.__taskFlagId)
+        TaskQImage().Cancel(self.__taskFlagId)
 
     def ClearDownload(self):
         from task.task_download import TaskDownload
@@ -151,6 +156,10 @@ class QtTaskBase:
     def ClearConvert(self):
         from task.task_waifu2x import TaskWaifu2x
         return TaskWaifu2x().Cancel(self.__taskFlagId)
+
+    def ClearSql(self):
+        from task.task_sql import TaskSql
+        return TaskSql().Cancel(self.__taskFlagId)
 
     def ClearWaitConvertIds(self, taskIds):
         from task.task_waifu2x import TaskWaifu2x
@@ -161,61 +170,19 @@ class QtTaskBase:
         return TaskQImage().Cancel(self.__taskFlagId)
 
 
-class QtDownloadTask(object):
-    Waiting = Str.Waiting
-    Reading = Str.Reading
-    ReadingPicture = Str.ReadingPicture
-    Downloading = Str.Downloading
-    Success = Str.Success
-    Error = Str.Error
-
-    def __init__(self, downloadId=0):
-        self.downloadId = downloadId
-        self.downloadCallBack = None       # addData, laveSize
-        self.downloadCompleteBack = None   # data, status
-
-        self.status = self.Waiting
-        self.statusBack = None             # data, status
-        self.fileSize = 0
-        self.saveData = b""
-        self.bookId = ""
-        self.epsId = ""
-        self.index = ""
-        self.isSaveCache = ""
-        self.isSaveFile = False
-        self.resetCnt = 0
-        self.cacheCallBack = ""   # ��ʱ����һ��callback����Ϊ
-
-        self.originalName = ""
-        self.backParam = None
-        self.cleanFlag = ""
-        self.tick = 0
-        self.cacheAndLoadPath = ""   # ����ͼ���
-        self.loadPath = ""           # ֻ����
-
-        self.imgData = b""
-        self.scale = 0
-        self.noise = 0
-        self.model = {
-            "model": 1,
-            "scale": 2,
-            "toH": 100,
-            "toW": 100,
-        }
-
-
 class TaskBase(Singleton):
     taskId = 0
     taskObj = QtTaskQObject()
 
     def __init__(self):
         Singleton.__init__(self)
-        self.thread = threading.Thread(target=self.Run)
-        self.thread.setName("Task-" + str(self.__class__.__name__))
-        self.thread.setDaemon(True)
         self._inQueue = Queue()
+        self.thread = threading.Thread(target=self.Run)
+        self.thread.name = "Task-" + str(self.__class__.__name__)
+        self.thread.daemon = True
         self.tasks = {}
         self.flagToIds = {}
+        self._taskLock = threading.RLock()
 
     def Stop(self):
         self._inQueue.put("")
@@ -225,10 +192,46 @@ class TaskBase(Singleton):
         return
 
     def Cancel(self, cleanFlag):
-        taskIds = self.flagToIds.get(cleanFlag, set())
-        if not taskIds:
-            return
-        for taskId in taskIds:
-            if taskId in self.tasks:
-                del self.tasks[taskId]
-        self.flagToIds.pop(cleanFlag)
+        self._RemoveTasksByFlag(cleanFlag)
+
+    @timed
+    def _RegisterTask(self, info, cleanFlag=None, id_attr="taskId"):
+        with self._taskLock:
+            self.taskId += 1
+            taskId = self.taskId
+            setattr(info, id_attr, taskId)
+            info.cleanFlag = cleanFlag
+            self.tasks[taskId] = info
+            if cleanFlag:
+                self.flagToIds.setdefault(cleanFlag, set()).add(taskId)
+            return taskId
+
+    def _GetTask(self, taskId):
+        with self._taskLock:
+            return self.tasks.get(taskId)
+
+    def _TakeTask(self, taskId):
+        # 终态先取出记录，再调用业务回调，避免重入或回调异常留下旧任务。
+        with self._taskLock:
+            info = self.tasks.pop(taskId, None)
+            if info is None:
+                return None
+            if info.cleanFlag:
+                taskIds = self.flagToIds.get(info.cleanFlag)
+                if taskIds is not None:
+                    taskIds.discard(taskId)
+                    if not taskIds:
+                        self.flagToIds.pop(info.cleanFlag, None)
+            return info
+
+    def _RemoveTasksByFlag(self, cleanFlag):
+        with self._taskLock:
+            taskIds = list(self.flagToIds.get(cleanFlag, ()))
+            removedIds = self._RemoveTasksByIds(taskIds)
+            self.flagToIds.pop(cleanFlag, None)
+            taskIds and Log.Info(f"cancel {self.__class__.__name__} taskId, {taskIds}")
+            return removedIds
+
+    def _RemoveTasksByIds(self, taskIds):
+        with self._taskLock:
+            return [taskId for taskId in list(taskIds) if self._TakeTask(taskId) is not None]

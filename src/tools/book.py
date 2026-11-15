@@ -182,6 +182,10 @@ class BookInfo(object):
         self.localMaxEps = 0
 
     @property
+    def categories(self):
+        return self.baseInfo.tagList
+
+    @property
     def id(self):
         return self.baseInfo.id
 

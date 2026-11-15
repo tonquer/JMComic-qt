@@ -13,11 +13,12 @@ from interface.ui_navigation import Ui_Navigation
 from interface.ui_sign_widget import Ui_SignWidget
 from qt_owner import QtOwner
 from server import req
-from task.qt_task import QtTaskBase
+from task.qt_task import QtTaskBase, TaskBase
 from tools.langconv import Converter
 from tools.log import Log
 from tools.status import Status
 from tools.str import Str
+from tools.tool import ToolUtil
 from view.user.sign_view import SignView
 
 
@@ -64,9 +65,9 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
         self.pushButton.clicked.connect(self.OpenLoginView)
         self.picLabel.installEventFilter(self)
         self.picData = None
-        # self.offlineButton.SetState(False)
+        self.offlineButton.SetState(False)
+        self.offlineButton.Switch.connect(self.SwitchOffline)
 
-        # self.offlineButton.Switch.connect(self.SwitchOffline)
         # self.signButton.setEnabled(False)
         self.signId = 0
         self.signMap = {}
@@ -87,7 +88,31 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
             QScroller.scroller(self.scrollArea).setScrollerProperties(propertiesOne)
         self.hideButton.clicked.connect(self.OpenForbidWords)
         self.tmpSignView = None
+        TaskBase.taskObj.statuImgBack.connect(self.StatusImgBack)
+        TaskBase.taskObj.statuApiBack.connect(self.StatusApiBack)
+        self.refresh_timer = QTimer(self)
+        self.refresh_timer.timeout.connect(self.RefreshDisplay)
+        self.refresh_timer.start(2000)
 
+    def RefreshDisplay(self):
+        self.proxyName.refresh_display()
+        self.proxyImgName.refresh_display()
+
+    def StatusImgBack(self, tick, st, status_code, size):
+        if st != Status.Ok and status_code != 200:
+            self.proxyImgName.update_result(-1)
+        else:
+            self.proxyImgName.update_result(int(tick*1000))
+            self.proxyImgName.add_traffic(size)
+        return
+
+    def StatusApiBack(self, tick, st, status_code, size):
+        if st != Status.Ok and status_code != 200:
+            self.proxyName.update_result(-1)
+        else:
+            self.proxyName.update_result(int(tick*1000))
+            self.proxyName.add_traffic(size)
+        return
 
     def IsInFilter(self, categoryList, tagList, title):
         categoryList2 = Converter('zh-hans').convert(categoryList)
@@ -112,6 +137,10 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
     def retranslateUi(self, View):
         Ui_Navigation.retranslateUi(self, self)
         self.UpdateFilterStr()
+
+    def RefrshTheme(self):
+        self.proxyName.update_theme()
+        self.proxyImgName.update_theme()
 
     def UpdateFilterStr(self):
         self.allFilterStr.clear()
@@ -219,7 +248,8 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
         self.nameLabel.setText(str(user.name))
         config.LoginUserName = user.name.replace("@", "")
         if user.imgUrl and config.IsLoadingPicture:
-            self.AddDownloadTask(user.imgUrl, "", completeCallBack=self.ShowUserImg)
+            path = ToolUtil.GetRealPath(user.uid, "user")
+            self.AddDownloadTask(user.imgUrl, path, completeCallBack=self.ShowUserImg)
 
         self.pushButton.setText(Str.GetStr(Str.LoginOut))
         self.AddHttpTask(req.GetDailyReq2(user.uid), self.GetSignDailyBack)
@@ -373,9 +403,7 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
             return super(self.__class__, self).eventFilter(obj, event)
 
     def SetNewUpdate(self):
-        icon2 = QIcon()
-        icon2.addFile(u":/png/icon/new.svg", QSize(), QIcon.Normal, QIcon.Off)
-        self.helpButton.setIcon(icon2)
+        self.helpButton.setIcon(QtOwner().globalNewIcon)
         return
 
     def OpenForbidWords(self, bookId=""):
@@ -418,3 +446,4 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
 
     def Stop(self):
         self.timer.stop()
+        self.refresh_timer.stop()

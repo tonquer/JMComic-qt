@@ -259,7 +259,7 @@ class Str:
     ImportSimpleZip = 145     # 导入单本Zip
     ImportSimpleDir = 146     # 批量导入单本目录
     ImportChipDir = 147       # 批量导入带章节目录
-    SupportDrop = 148         # 支持拖拽文件导入
+    SupportDrop = 148         # 支持批量拖拽文件夹导入
     AlreadyHave = 149         # 已存在
     SameWight = 150    # 等宽模式
     CopyFileLast = 151     # 保存上次路径
@@ -312,6 +312,11 @@ class Str:
     ActorsName = 199           # 登场人物
     NotSupportFmt = 200            # 不支持该格式
     ReSign = 201            # 补签
+    Local = 202             # 本地
+    Remote = 203            # 远程
+    RepeatRule = 204            # 重复规则
+    NotOpenLocal = 205            # 重复规则
+    HistoryNum = 206            # 记录数
 
     @classmethod
     def Reload(cls):
@@ -557,7 +562,7 @@ class Str:
         cls.strDict[cls.ImportSimpleZip] = QCoreApplication.translate("cls.obj", "导入单本Zip", None)
         cls.strDict[cls.ImportSimpleDir] = QCoreApplication.translate("cls.obj", "批量导入单本目录", None)
         cls.strDict[cls.ImportChipDir] = QCoreApplication.translate("cls.obj", "批量导入带章节目录", None)
-        cls.strDict[cls.SupportDrop] = QCoreApplication.translate("cls.obj", "支持拖拽文件导入", None)
+        cls.strDict[cls.SupportDrop] = QCoreApplication.translate("cls.obj", "支持批量拖拽文件夹导入", None)
         cls.strDict[cls.AlreadyHave] = QCoreApplication.translate("cls.obj", "已存在", None)
         cls.strDict[cls.SameWight] = QCoreApplication.translate("cls.obj", "等宽模式", None)
         cls.strDict[cls.CopyFileLast] = QCoreApplication.translate("cls.obj", "保存上次路径", None)
@@ -610,6 +615,11 @@ class Str:
         cls.strDict[cls.ActorsName] = QCoreApplication.translate("cls.obj", "登场人物", None)
         cls.strDict[cls.NotSupportFmt] = QCoreApplication.translate("cls.obj", "不支持该格式", None)
         cls.strDict[cls.ReSign] = QCoreApplication.translate("cls.obj", "补签", None)
+        cls.strDict[cls.Local] = QCoreApplication.translate("cls.obj", "本地", None)
+        cls.strDict[cls.Remote] = QCoreApplication.translate("cls.obj", "远程", None)
+        cls.strDict[cls.RepeatRule] = QCoreApplication.translate("cls.obj", "重复规则", None)
+        cls.strDict[cls.NotOpenLocal] = QCoreApplication.translate("cls.obj", "帮助界面未启用本地库", None)
+        cls.strDict[cls.HistoryNum] = QCoreApplication.translate("cls.obj", "记录数", None)
 
 
     @classmethod
