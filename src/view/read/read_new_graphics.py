@@ -206,6 +206,11 @@ class ReadNewGraphics(QGraphicsView):
         self._anims = []             # 已确认是动图的 item（无论当前有没有 QMovie）
         self._anim_seq = 0           # 递增的时间戳：标记"最近一次该播放"，LRU 回收用
         self._anims_enabled = True   # 是否播放动画（可运行时关，省 CPU/电）
+        # 被 _trim_anim_raw 丢弃 _raw 的动图滚回屏幕时，滚动停稳 250ms 后再重新加载
+        self._anim_refetch = QTimer(self)
+        self._anim_refetch.setSingleShot(True)
+        self._anim_refetch.setInterval(250)
+        self._anim_refetch.timeout.connect(self._refetch_visible_anims)
 
         # 不确定态进度环（总大小未知时转圈）的动画定时器。按需启停：没有
         # "未知总大小且正在下载"的 item 时就停掉，避免常驻定时器空转
@@ -572,9 +577,9 @@ class ReadNewGraphics(QGraphicsView):
         # 重新评估：上一轮排队但还没发出去的重下需求全部作废（可能又缩回去了、
         # 也可能已经被别的路径下完了），避免用过期队列反复重下。
         for idx, it in its:
-            # 动图不重新下载：它的原图字节还在 _raw 里，只需要把每帧解码得更
-            # 大一点——_refresh_playing 会发现 setScaledSize 需要更新并改掉
-            if it.pixmap is None or it._reply is not None or it._failed:
+            # 动图不重新下载/重解：它的原图字节在 _raw 里，只需要把每帧解码尺寸改掉——
+            # 下面的 _refresh_playing 会更新 QMovie.setScaledSize
+            if it.isAnima or it.pixmap is None or it._reply is not None or it._failed:
                 continue
 
             target = self._decode_target_size(it)  # 与 DecodeTask 同一套口径
@@ -597,6 +602,8 @@ class ReadNewGraphics(QGraphicsView):
                 it._decoding = None
             it._pending_decode = True
             self._start_decode_if_ready(it)
+        if self._anims:
+            self._refresh_playing()
         # 正好有余量就立刻按距离发；名额满了就等 _on_finished 腾出名额再补。
         self._download_around_current()
 
@@ -677,6 +684,8 @@ class ReadNewGraphics(QGraphicsView):
             return
         self._anims_enabled = on
         self._refresh_playing()
+        if on:
+            self._anim_refetch.start()
 
     @timed
     def _decode_target_size(self, it: ReadNewGraphicsItem) -> QSizeF:
@@ -778,6 +787,27 @@ class ReadNewGraphics(QGraphicsView):
             h = max(1, int(round(h * s)))
         return QSize(w, h)
 
+    def _release_movie(self, it: ReadNewGraphicsItem, keep_poster: bool = False):
+        """安全停止并销毁 item 的 QMovie 与 QBuffer，避免子对象和原始字节长期泄漏。"""
+        mv = it._movie
+        buf = it._movie_buf
+        it._movie = None
+        it._movie_buf = None
+        if mv is not None:
+            if keep_poster:
+                pm = mv.currentPixmap()
+                if not pm.isNull():
+                    it.pixmap = pm
+            mv.stop()
+            mv.setDevice(None)
+        if buf is not None:
+            buf.close()
+            buf.setData(QByteArray())
+            if mv is None:
+                buf.deleteLater()
+        if mv is not None:
+            mv.deleteLater()
+
     def _ensure_movie(self, it: ReadNewGraphicsItem):
         """拿到动图的 QMovie（没有就创建）。调用前确保 _raw 非空。"""
         if it._movie is not None:
@@ -787,19 +817,23 @@ class ReadNewGraphics(QGraphicsView):
         self._evict_movies()                 # 超上限先回收最久没播的
         self._anim_seq += 1
         it._anim_seq = self._anim_seq
-        # QBuffer 必须和 QMovie 同生共死（QMovie 不接管设备所有权），挂到 view 上
-        # 保活即可——item 是 QGraphicsItem，不是 QObject，当不了 QObject 的 parent
-        buf = QBuffer(self)
+        # QBuffer 挂到 QMovie 上同生共死（避免 parent=self 导致回收后 QBuffer 泄漏），
+        # QMovie 挂到 view 上保活——item 是 QGraphicsItem，当不了 QObject 的 parent
+        mv = QMovie(self)
+        buf = QBuffer(mv)
         buf.setData(it._raw)
         buf.open(QIODevice.ReadOnly)
-        mv = QMovie(self)
         mv.setDevice(buf)
         sz = self._movie_scaled_size(it)
         if sz.isValid():
             mv.setScaledSize(sz)             # 必须在首次取帧之前设
-        mv.frameChanged.connect(lambda _n=0: it.update())   # 换帧 -> 只请求重绘
+        mv.frameChanged.connect(
+            lambda _n=0, _it=it, _mv=mv: _it._movie is _mv and _it.update()
+        )   # 换帧 -> 仅当前有效 movie 请求重绘
         it._movie_buf, it._movie = buf, mv
-        it.pixmap = None                     # 有 movie 了，别再画静态海报帧
+        # 保留首帧海报 it.pixmap（paint 优先画 _movie.currentPixmap()）：
+        # 1) 不会因为 pixmap 变 None 被 _decode_visible 误判为"未解码"而反复重解；
+        # 2) 后续 _trim_anim_raw 丢弃 _raw 时已有现成海报，无需主线程同步 _ensure_poster。
         return mv
 
     def _evict_movies(self):
@@ -821,12 +855,7 @@ class ReadNewGraphics(QGraphicsView):
                 break
         if victim is None:
             return                           # 全在播且都超上限：这次先放过
-        pm = victim._movie.currentPixmap()
-        if not pm.isNull():
-            victim.pixmap = pm               # 留个海报帧
-        victim._movie.stop()
-        victim._movie.deleteLater()
-        victim._movie, victim._movie_buf = None, None
+        self._release_movie(victim, keep_poster=True)
 
     def _trim_anim_raw(self):
         """原始压缩数据超预算时，丢掉 _raw。**按离当前阅读位置由远及近**。
@@ -922,6 +951,24 @@ class ReadNewGraphics(QGraphicsView):
             elif it._movie is not None and not self._movie_is_paused(it._movie):
                 it._movie.setPaused(True)
 
+    def _refetch_visible_anims(self):
+        """滚动停稳后：把屏幕上"被预算丢了 _raw"的动图重新拉回来恢复播放。
+
+        只补当前可见的几张（不动预取窗口），避免大 GIF 批量重下拖慢滚动。"""
+        if not self._anims_enabled:
+            return
+        for i in self.visible_indices():
+            if self._active_downloads >= self.MAX_CONCURRENT_DOWNLOADS:
+                break
+            if i >= len(self._items):
+                continue
+            it = self._items[i]
+            if (not it.isAnima or it._movie is not None
+                    or not it._raw.isEmpty() or it._reply is not None
+                    or it._decoding or it._buf or it._failed):
+                continue
+            self._start_download(it)
+
     def _pause_all_animations(self):
         """全部暂停（窗口隐藏时调用——不可见还在解帧是纯浪费）。"""
         for it in self._anims:
@@ -932,18 +979,28 @@ class ReadNewGraphics(QGraphicsView):
         """后台线程判定这是动图（主线程槽）：交给 QMovie 而不是位图。
 
         布局和静态图完全一样处理（尺寸用 QImageReader 报告的画布尺寸），所以
-        滚动        不跳动、可见性判定等既有机制全部复用——区别只有"内容会自己变"。"""
+        滚动不跳动、可见性判定等既有机制全部复用——区别只有"内容会自己变"。"""
         item._decoding = None
         item._failed = False
         item._pending_decode = False
         if item not in self._items:
             return
+        if not data:
+            return
 
+        item.isAnima = True
+        if item._movie is not None:
+            self._release_movie(item, keep_poster=True)
         if item not in self._anims:
             self._anims.append(item)
-        if not item._size_known:
+        if not item._size_known and real is not None and real.isValid():
             self._correct_len(item, real)      # GIF/WebP 的画布尺寸（HTML <img> 同口径）
-        item._raw = QByteArray(data)           # COW 浅拷贝，不额外占内存
+        item._raw = data if isinstance(data, QByteArray) else QByteArray(data)
+        if item._file_size <= 0:
+            item._file_size = item._raw.size()
+        # 压缩字节已转存到 _raw（受 ANIM_MAX_RAW_MB 预算管控）：释放 file_data，
+        # 避免每张动图同时保留 file_data.data + _raw 两份 ~10MB 字节撑爆内存。
+        item.file_data = None
         self._trim_anim_raw()
         self._trim_caches()                    # 静态位图的回收也顺带跑一次
         item.update()
@@ -2346,7 +2403,9 @@ class ReadNewGraphics(QGraphicsView):
         if not maxNum:
             return
 
+        self._anim_refetch.stop()
         for item in self._items:
+            self._release_movie(item, keep_poster=False)
             self._scene.removeItem(item)
             ReadNewPoolManager().AddProxyItem(item)
         self.read_task.ClearQImageTask()
@@ -2574,6 +2633,19 @@ class ReadNewGraphics(QGraphicsView):
             it = self._items[i]
             self._maybe_download(it)
 
+        # 被 _trim_anim_raw 丢弃 _raw 的动图：滚回屏幕后防抖 250ms 再重新加载，
+        # 避免快速滚动时把路过的大 GIF 全部重新拉一遍。
+        if self._anims_enabled and self._anims:
+            for i in self.visible_indices():
+                if i >= len(self._items):
+                    continue
+                it = self._items[i]
+                if (it.isAnima and it._movie is None and it._raw.isEmpty()
+                        and it._reply is None and not it._decoding
+                        and not it._buf and not it._failed):
+                    self._anim_refetch.start()
+                    break
+
     @timed
     def _waifu2x_around_current(self):
         """预超分：[_cur_idx - back, _cur_idx + ahead] 之内、还没超分的图。"""
@@ -2625,9 +2697,12 @@ class ReadNewGraphics(QGraphicsView):
 
     def _maybe_download(self, it: ReadNewGraphicsItem) -> bool:
         """需要的话发起下载（没下过/没在下载/没在解码/没失败过）。
-        返回是否真的发出了请求：不需要下载或并发名额已满时为 False。"""
+        返回是否真的发出了请求：不需要下载或并发名额已满时为 False。
+
+        动图排除在常规预下载之外：它转存进 _raw 后会释放 file_data；如果 _raw
+        被预算回收，滚回屏幕时由 _anim_refetch 防抖单独补下可见项。"""
         if it.pixmap is not None or it._reply is not None \
-                or it._decoding or it._failed:
+                or it._decoding or it._failed or it.isAnima:
             return False
         if it._buf:
             return False                           # 已经下完，等预解码窗口触发，别重复下
@@ -2647,6 +2722,9 @@ class ReadNewGraphics(QGraphicsView):
         if it._failed:
             return
         if it._decoding:
+            return
+        # 动图已有 QMovie 或 _raw 时不需要再次静态解码（尺寸变化由 QMovie.setScaledSize 处理）
+        if it.isAnima and (it._movie is not None or it.is_animated) and not it._pending_decode:
             return
         if not isForce and (it.pixmap is not None and not it.pixmap.isNull()):
             return
@@ -2756,7 +2834,7 @@ class ReadNewGraphics(QGraphicsView):
         for i, it in enumerate(self._items):
             if it.pixmap is None:
                 continue
-            if i in keep or it.is_animated:
+            if i in keep or it.isAnima:
                 continue
             if not (curIdx - front <= it.index <= curIdx+after):
                 max_cands.append((i, it))
@@ -2936,6 +3014,7 @@ class ReadNewGraphics(QGraphicsView):
 
         reply, item._reply = item._reply, None
         item.file_data = fileData
+        item._file_size = len(fileData.data) if (fileData and fileData.data) else 0
 
         self._try_probe_size(item, fileData)           # 兜底：万一中途一直没探测到
         item._pending_decode = True          # 有新字节等着解
@@ -2948,7 +3027,12 @@ class ReadNewGraphics(QGraphicsView):
                 self._download_around_current()      # 腾出名额：按优先级补下一个
                 self._waifu2x_around_current()
                 return
-        self._maybe_decode(item)             # 在视窗窗口里就立刻解，否则等滚到附近
+        if item.isAnima and item.pixmap is not None and not item.pixmap.isNull():
+            # 动图被 _trim_anim_raw 回收后重新拉取回来：已有首帧海报，直接交给 _on_animated 重建 QMovie
+            item._pending_decode = False
+            self._on_animated(item, item._size, item._buf)
+        else:
+            self._maybe_decode(item)             # 在视窗窗口里就立刻解，否则等滚到附近
         self.update_tool_label(item.index)
         self._download_around_current()      # 腾出名额：按优先级补下一个
         self._waifu2x_around_current()
@@ -3041,7 +3125,7 @@ class ReadNewGraphics(QGraphicsView):
         self._try_probe_size(item, fileData)           # 兜底：万一中途一直没探测到
 
         if item.isAnima:
-            QTimer.singleShot(0, partial(self._on_animated, item, item._size, fileData.data))
+            self._on_animated(item, item._size, fileData.data)
         else:
             self._maybe_decode(item)
 
@@ -3056,8 +3140,8 @@ class ReadNewGraphics(QGraphicsView):
         item = self._items[index]
         if img.isNull():
             self._on_decode_failed(item)
-            if item.isAnima:
-                QTimer.singleShot(0, partial(self._on_animated, item, item._size, item._buf))
+            if item.isAnima and item._buf:
+                self._on_animated(item, item._size, item._buf)
             return
 
         Log.Info(f"finish decode, index{index}, size:{img.size()}, is_waifu:{isWaifu2x}")
@@ -3065,20 +3149,21 @@ class ReadNewGraphics(QGraphicsView):
         item._decoding = None
         item._pending_decode = False
         item._cur_is_waifu2x_px = isWaifu2x
-        # 注意：压缩字节 _buf **不释放**。位图会被 _trim_pixmaps 按预算回收，
-        # 回收后靠这份字节重新解码（不用重新下载）；总量由 _trim_buffers 兜底。
+        # 注意：静态图压缩字节 _buf **不释放**。位图会被 _trim_pixmaps 按预算回收，
+        # 回收后靠这份字节重新解码（不用重新下载）；动图则在 _on_animated 中转存进 _raw 并释放 file_data。
 
         if not item._size_known:
             self._correct_len(item, QSize(img.width(), img.height()))    # 探测也没拿到过的最后兜底
         # QPixmap 只在主线程创建（严格模式，跨平台零风险）；
         # dpr 已设在 QImage 上，fromImage 会保留
 
-        self.update_tool_label(item.index)
         item.pixmap = QPixmap.fromImage(img)
         item.update()                        # 只请求重绘，几何不动 -> 无跳动
-        self._trim_caches()                  # 位图可能超预算：回收离当前页最远的
-        if item.isAnima:
-            QTimer.singleShot(0, partial(self._on_animated, item, item._size, item._buf))
+        if item.isAnima and item._buf:
+            self._on_animated(item, item._size, item._buf)
+        else:
+            self._trim_caches()              # 位图可能超预算：回收离当前页最远的
+        self.update_tool_label(item.index)
 
     def _on_decode_failed(self, item: ReadNewGraphicsItem):
         """解码失败：清状态并标记失败，避免卡在"解码中"或被反复重试。"""
@@ -3468,10 +3553,9 @@ class ReadNewGraphics(QGraphicsView):
         return
 
     def update_tool_label(self, index):
-        index = self._cur_idx
         if index != self._cur_idx:
             return
-        if index >= len(self._items):
+        if index < 0 or index >= len(self._items):
             return
         item = self._items[index]
         size = 0
@@ -3482,8 +3566,12 @@ class ReadNewGraphics(QGraphicsView):
         waifuState = ""
         if item.file_data:
             size = QSize(item.file_data.w, item.file_data.h)
-        if item.file_data:
             dataLen = len(item.file_data.data)
+            status = QtFileData.DownloadSuc
+        elif item._file_size > 0 or (item.isAnima and (item.pixmap is not None or item.is_animated)):
+            if item._size and item._size.isValid():
+                size = QSize(item._size)
+            dataLen = item._file_size or item._raw.size()
             status = QtFileData.DownloadSuc
         elif item._failed:
             status = QtFileData.DownloadReset
@@ -3718,7 +3806,11 @@ class ReadNewGraphics(QGraphicsView):
         self._reset_edge_counts()     # 跳转后重新算"到顶/到底"的连续次数
         self.stop_auto()
         self._release_initial_hold()
+        self._anim_refetch.stop()
         for item in self._items:
+            self._release_movie(item, keep_poster=False)
             self._scene.removeItem(item)
             ReadNewPoolManager().AddProxyItem(item)
         self._items = []
+        self._anims = []
+        self._anim_seq = 0

@@ -1,13 +1,61 @@
+import io
+import sys
 import threading
 import time
 
-from PySide6.QtGui import QImage, QImageReader
-from PySide6.QtCore import Qt, QBuffer, QIODevice
+from PIL import Image, ImageOps
+from PySide6.QtGui import QImage
+from PySide6.QtCore import Qt
 
 from task.qt_task import TaskBase
 from tools.log import Log
 from tools.tool import ToolUtil
 from view.read.read_perf_probe import Timer
+
+try:
+    import pillow_jxl  # noqa: F401
+    import pillow_avif  # noqa: F401
+except Exception:
+    pass
+
+
+def _decode_bytes_to_qimage(data: bytes, tw: int = 0, th: int = 0) -> QImage:
+    """在后台线程用 Pillow 解码并构造 QImage，避免 PySide6 的 QImageReader(QBuffer)
+    在后台线程持 Qt QFactoryLoader 锁回调 QBufferWrapper 抢 GIL，与主线程
+    QMovie.start()（持 GIL 等 QFactoryLoader 锁）发生 AB-BA 死锁。"""
+    if not data:
+        return QImage()
+    try:
+        with io.BytesIO(data) as bio, Image.open(bio) as im:
+            is_anim = getattr(im, "is_animated", False)
+            if is_anim:
+                im.seek(0)
+            exif = im.getexif()
+            has_exif_rot = bool(exif and exif.get(274, 1) != 1)
+            if (not is_anim and not has_exif_rot and im.format == "JPEG"
+                    and tw > 0 and th > 0 and (im.width > tw or im.height > th)):
+                im.draft("RGB", (tw, th))
+            if has_exif_rot:
+                im = ImageOps.exif_transpose(im)
+            has_alpha = (
+                im.mode in ("RGBA", "LA", "PA")
+                or (im.mode == "P" and "transparency" in im.info)
+            )
+            im_rgba = im.convert("RGBA") if im.mode != "RGBA" else im
+            w, h = im_rgba.width, im_rgba.height
+            if sys.byteorder == "little":
+                raw = im_rgba.tobytes("raw", "BGRA")
+                fmt = QImage.Format_ARGB32 if has_alpha else QImage.Format_RGB32
+            else:
+                raw = im_rgba.tobytes("raw", "RGBA")
+                fmt = QImage.Format_RGBA8888
+            return QImage(raw, w, h, w * 4, fmt).copy()
+    except Exception:
+        # 兜底走 Qt 纯 C++ 内部缓冲的 loadFromData（不经过 Python QBufferWrapper，无死锁风险）
+        q = QImage()
+        newData = ToolUtil.GetCanUseData(data)
+        q.loadFromData(newData)
+        return q
 
 
 class QtQImageTask(object):
@@ -61,29 +109,21 @@ class TaskQImage(TaskBase):
                 continue
             newQ = QImage()
             try:
-                newData = ToolUtil.GetCanUseData(info.data)
-                buf = QBuffer()
-                buf.setData(newData)
-                buf.open(QIODevice.ReadOnly)
-                reader = QImageReader(buf)
-                reader.setAutoTransform(True)
-
-                # 该函数会释放GIL锁, 如果使用loadFromData, 会占用GIL依然卡顿
-                q = reader.read()
-                q.setDevicePixelRatio(info.radio)
-
-                # q.loadFromData(newData)
-                # q.setDevicePixelRatio(info.radio)
-                if info.model:
-                    model = info.model
-                else:
-                    model = Qt.KeepAspectRatio
-                if 0 < info.toW < q.width() and info.toH == 0:
-                    newQ = q.scaledToWidth(info.toW, Qt.SmoothTransformation)
-                elif info.toW > 0 and info.toH > 0:
-                    newQ = q.scaled(round(info.toW * info.radio), round(info.toH * info.radio), model, Qt.SmoothTransformation)
-                else:
-                    newQ = q
+                target_w = round(info.toW * info.radio) if info.toW > 0 else 0
+                target_h = round(info.toH * info.radio) if info.toH > 0 else 0
+                q = _decode_bytes_to_qimage(info.data, target_w, target_h)
+                if not q.isNull():
+                    q.setDevicePixelRatio(info.radio)
+                    if info.model:
+                        model = info.model
+                    else:
+                        model = Qt.KeepAspectRatio
+                    if 0 < info.toW < q.width() and info.toH == 0:
+                        newQ = q.scaledToWidth(info.toW, Qt.SmoothTransformation)
+                    elif info.toW > 0 and info.toH > 0:
+                        newQ = q.scaled(target_w, target_h, model, Qt.SmoothTransformation)
+                    else:
+                        newQ = q
             except Exception as es:
                 Log.Error(es)
             finally:

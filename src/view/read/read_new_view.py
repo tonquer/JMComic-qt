@@ -440,7 +440,8 @@ class ReadNewView(QtWidgets.QWidget):
             info = self.scrollArea.get_cur_item()
         if not info:
             return
-        if not info._buf and not info._waifu_buf:
+        raw_buf = info.get_raw_bytes()
+        if not raw_buf and not info._waifu_buf:
             return
 
         # today = time.strftime("%Y%m%d%H%M%S", time.localtime(time.time()))
@@ -449,9 +450,9 @@ class ReadNewView(QtWidgets.QWidget):
             path = "{}_{}_waifu2x.{}".format(self.bookId, info.index + 1, mat)
             data = info._waifu_buf
         else:
-            _, _, mat, _ = ToolUtil.GetPictureSize(info._buf)
+            _, _, mat, _ = ToolUtil.GetPictureSize(raw_buf)
             path = "{}_{}.{}".format(self.bookId, info.index + 1, mat)
-            data = info._buf
+            data = raw_buf
         if not data:
             return
         try:
@@ -477,7 +478,8 @@ class ReadNewView(QtWidgets.QWidget):
             info = self.scrollArea.get_cur_item()
         if not info:
             return
-        if not info._buf and not info._waifu_buf:
+        raw_buf = info.get_raw_bytes()
+        if not raw_buf and not info._waifu_buf:
             return
 
         if info._waifu_buf:
@@ -485,9 +487,9 @@ class ReadNewView(QtWidgets.QWidget):
             path = "{}_{}_waifu2x.{}".format(self.bookId, info.index + 1, mat)
             data = info._waifu_buf
         else:
-            _, _, mat, _ = ToolUtil.GetPictureSize(info._buf)
+            _, _, mat, _ = ToolUtil.GetPictureSize(raw_buf)
             path = "{}_{}.{}".format(self.bookId, info.index + 1, mat)
-            data = info._buf
+            data = raw_buf
         if not data:
             return
         try:
@@ -520,12 +522,13 @@ class ReadNewView(QtWidgets.QWidget):
             info = self.scrollArea.get_cur_item()
         if not info:
             return
-        if not info._buf and not info._waifu_buf:
+        raw_buf = info.get_raw_bytes()
+        if not raw_buf and not info._waifu_buf:
             return
         if info._waifu_buf:
             data = info._waifu_buf
         else:
-            data = info._buf
+            data = raw_buf
         p = QImage()
         p.loadFromData(data)
 

@@ -78,6 +78,7 @@ class ReadNewGraphicsItem(QGraphicsItem):
         self.scale_size = QSizeF()            # 缩放
 
         self.file_data: FileData = None
+        self._file_size = 0                   # 已下载文件的原始字节大小（动图释放 file_data 后仍供状态栏显示）
         self._reply = None                    # 正在进行的网络请求（None = 没在下载）
         self._re_download_cnt = 0
         self._decoding = None                # 后台解码中（下载完成 -> 等预解码窗口触发）
@@ -122,12 +123,27 @@ class ReadNewGraphicsItem(QGraphicsItem):
         self._is_debug = os.environ.get("PYCHARM_HOSTED") == "1"
 
     def init(self):
+        mv = self._movie
+        buf = self._movie_buf
+        self._movie = None
+        self._movie_buf = None
+        if mv is not None:
+            mv.stop()
+            mv.setDevice(None)
+        if buf is not None:
+            buf.close()
+            buf.setData(QByteArray())
+            if mv is None:
+                buf.deleteLater()
+        if mv is not None:
+            mv.deleteLater()
         self.pixmap = None          # 解码完成后的图像；None = 还没加载完（画占位框）
         self.isAnima = False
         self.fmt = None
         self._size: QSize = None                     # QSize：图片真实尺寸（API 预估/头探测/解码，任一来源）
         self._size_known = False              # True = _size 是精确值，之后不再修正
         self.file_data: FileData = None
+        self._file_size = 0                   # 已下载文件的原始字节大小（动图释放 file_data 后仍供状态栏显示）
         self._reply = None                    # 正在进行的网络请求（None = 没在下载）
         self._re_download_cnt = 0
         self._decoding = None                # 后台解码中（下载完成 -> 等预解码窗口触发）
@@ -216,9 +232,17 @@ class ReadNewGraphicsItem(QGraphicsItem):
 
     @property
     def is_animated(self) -> bool:
-        """这张是不是动图（GIF/动画 WebP）。看 _raw 而不是 _movie —— QMovie
-        被 LRU 回收后它依然是动图，只是暂时停在海报帧。"""
-        return self._raw
+        """当前是否持有动图原始字节（可用于重建 QMovie）。
+        永久动图身份请看 self.isAnima（_raw 被预算回收后仍为 True）。"""
+        return not self._raw.isEmpty()
+
+    def get_raw_bytes(self):
+        """获取原始图片字节（静态图取 file_data.data，动图回退到 _raw）。"""
+        if self.file_data and self.file_data.data:
+            return self.file_data.data
+        if not self._raw.isEmpty():
+            return bytes(self._raw)
+        return None
 
     def _format_bytes(self, n: int) -> str:
         """字节数 -> "12B" / "600KB" / "1.5MB"（进度环文字用）。"""
