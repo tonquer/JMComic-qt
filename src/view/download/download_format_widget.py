@@ -39,8 +39,8 @@ class DownloadFormatWidget(BaseMaskDialog, Ui_FormatWidget):
         self.tableWidget.verticalHeader().setDefaultSectionSize(35)
         self.tableWidget.resizeRowsToContents()
         self.typeList = ["全部", "下载", "超分"]
-        self.formatList = ["*", "png", "jpg", "webp", "gif", "jxl", "avif", "bmp"]
-        self.toFormatList = ["png", "jpg", "webp", "gif", "jxl", "avif", "bmp"]
+        self.formatList = ["*", "png", "jpg", "webp", "gif", "jxl", "avif", "bmp", "apng"]
+        self.toFormatList = ["png", "jpg", "webp", "gif", "jxl", "avif", "bmp", "apng"]
         self._Load()
 
     def _Load(self):

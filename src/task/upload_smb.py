@@ -55,10 +55,13 @@ class SmbClient(UpLoadBase):
             self.isLink = True
             if not result:
                 return Str.CvAuthError, ""
+
+            return Str.Ok, ""
         except Exception as es:
             Log.Error(es)
             return self.GetExceptionSt(es), ""
-        return Str.Ok, ""
+        finally:
+            self.DisConnect()
 
     def DisConnect(self):
         try:
@@ -99,10 +102,12 @@ class SmbClient(UpLoadBase):
             with open(localPath, "rb") as local_file:
                 self.client.storeFile(self.service_name, remotePath + "/" + fileName, local_file)
             os.remove(localPath)
+            return Str.Ok
         except Exception as es:
             Log.Error(es)
             return self.GetExceptionSt(es)
-        return Str.Ok
+        finally:
+            self.DisConnect()
 
     def GetExceptionSt(self, es):
         if isinstance(es, NotReadyError):

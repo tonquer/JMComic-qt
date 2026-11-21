@@ -67,6 +67,7 @@ class ThreadLocalParam:
         self.impersonate = impersonate
         self.oldIpList = []
         self.index = index
+        self.userName = ""
         self.isH3 = False
 
     def __del__(self):
@@ -79,7 +80,7 @@ class ThreadLocalParam:
             CurlInfo.APPCONNECT_TIME,
             CurlInfo.PRETRANSFER_TIME,
             CurlInfo.STARTTRANSFER_TIME,
-            CurlInfo.TOTAL_TIME
+            CurlInfo.TOTAL_TIME,
         ]
         if self.impersonate:
             # return requests2.Session(impersonate=self.impersonate, curl_infos=curlInfos,debug=True)
@@ -90,7 +91,9 @@ class ThreadLocalParam:
     def IsNeedSwitch(self, request: req.ServerReq):
         if not self.session:
             return True
-        return Counter(self.oldIpList) != Counter(request.ipList) or self.isH3 != request.isH3
+        if isinstance(request, req.LoginReq2):
+            return True
+        return Counter(self.oldIpList) != Counter(request.ipList) or self.isH3 != request.isH3 or self.userName != request.userName
 
     def CheckSwitchSession(self, request: req.ServerReq):
         # 如果curl_opts的RESOLVE出现修改，必须重新创建session，不然自定义dns无效
@@ -99,6 +102,7 @@ class ThreadLocalParam:
             self.session = self.Create()
             self.oldIpList = copy.deepcopy(request.ipList)
             self.isH3 = request.isH3
+            self.userName = request.userName
             Log.Info(f"create new session, index:{self.index}, ip:{self.oldIpList}, isH3:{self.isH3}")
         # 复制curl_opts
         self.session.curl_options = copy.deepcopy(request.curl_opt)
@@ -125,7 +129,7 @@ class Server(Singleton):
         self.threadNum = config.ThreadNum
         self.speedThreadNum = 8
         from config.setting import Setting
-        self.downloadNum = Setting.MultiNum.value
+        self.downloadNum = max(1, Setting.MultiNum.value)
         self.allWaitThread = []
 
     def Init(self):

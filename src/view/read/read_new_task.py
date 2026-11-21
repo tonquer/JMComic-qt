@@ -58,8 +58,6 @@ class ReadNewTask(QtTaskBase):
             bookInfo = BookMgr().GetBook(self.bookId)
             if not bookInfo:
                 return False
-            epsInfo = bookInfo.pageInfo.epsInfo.get(self.epsId)
-            pitureName = epsInfo.pictureName.get(i)
             return self.AddDownloadBook(self.bookId, self.epsId, i,
                                  downloadCallBack=downloadCallBack,
                                  completeCallBack2=completeCallBack2,

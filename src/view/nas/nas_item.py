@@ -31,7 +31,7 @@ class NasUploadItem(QtTaskBase):
         self.title = ""
         self.tick = int(time.time())                #
         self.status = self.Pause       # 状态
-        self.statusMsg = 0
+        self.statusMsg = 0             # 无用
         self.tableRow = 0                # 索引
 
         self.epsIds = []                 # 所有完成的章节

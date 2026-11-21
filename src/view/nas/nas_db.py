@@ -107,7 +107,7 @@ class NasDb(object):
             info.curPreUpIndex = query.value(4)
             info.tick = query.value(5)
             info.status = query.value(6)
-            info.status_msg = query.value(7)
+            info.statusMsg = query.value(7)
             downloads[info.key] = info
 
         return downloads
@@ -129,7 +129,12 @@ class NasDb(object):
               "VALUES ({0}, {1}'{2}', '{3}', {4}, '{5}', '{6}', {7}, {8}, {9}, {10}, '{11}', {12}) " \
               "ON CONFLICT(nas_id) DO UPDATE SET title='{2}', address='{3}', type={4}, user='{5}', passwd='{6}', " \
               "compress_index = {7}, save_index = {8}, dir_index= {9}, is_waifu2x={10}, path='{11}', port={12}".\
-            format(task.nasId, "", task.title.replace("'", "''"), task.address, task.type, task.user, task.passwd, task.compress_index, task.save_index, task.dir_index, task.is_waifu2x, task.path, task.port)
+            format(task.nasId, "", task.title.replace("'", "''"),
+                   task.address.replace("'", "''"),
+                   task.type,
+                   task.user.replace("'", "''"), task.passwd.replace("'", "''"),
+                   task.compress_index, task.save_index, task.dir_index, task.is_waifu2x,
+                   task.path.replace("'", "''"), task.port)
 
         suc = query.exec_(sql)
         if not suc:

@@ -91,6 +91,7 @@ class ReadNewGraphicsItem(QGraphicsItem):
                                               # 未知（chunked 响应没有 Content-Length），
                                               # 此时进度环画成不停转圈的"不确定态"
 
+        self._got_bytes = 0                   # 已下载字节数（进度 >100% 时显示它）
         # self._is_waifu2x = False
         self._cur_is_waifu2x_px = False       # 当前是否使用了waifu2x pixmap
         self._waifu2x_state = 0               # 0 == auto, -1 == close, 1 == open
@@ -139,6 +140,7 @@ class ReadNewGraphicsItem(QGraphicsItem):
                                               # 未知（chunked 响应没有 Content-Length），
                                               # 此时进度环画成不停转圈的"不确定态"
 
+        self._got_bytes = 0                   # 已下载字节数（进度 >100% 时显示它）
         self._cur_is_waifu2x_px = False       # 当前是否使用了waifu2x pixmap
         self._waifu2x_state = 0               # 0 == auto, -1 == close, 1 == open
         self._waifu_reply = None              # 正在进行的超分请求（None = 没在下载）
@@ -184,7 +186,11 @@ class ReadNewGraphicsItem(QGraphicsItem):
 
     @property
     def is_need_waifu2x(self):
-        return (not self.isAnima and (self._waifu2x_state == 0 and Setting.IsOpenWaifu.value) or (self._waifu2x_state == 1))
+        return not self.isAnima and ((self._waifu2x_state == 0 and Setting.IsOpenWaifu.value) or (self._waifu2x_state == 1)) and not self._waifu_failed
+
+    @property
+    def is_cur_is_waifu2x(self):
+        return (self._waifu2x_state == 0 and Setting.IsOpenWaifu.value) or (self._waifu2x_state == 1) and not self._waifu_failed
 
     @property
     def is_downloading(self):
@@ -213,6 +219,15 @@ class ReadNewGraphicsItem(QGraphicsItem):
         """这张是不是动图（GIF/动画 WebP）。看 _raw 而不是 _movie —— QMovie
         被 LRU 回收后它依然是动图，只是暂时停在海报帧。"""
         return self._raw
+
+    def _format_bytes(self, n: int) -> str:
+        """字节数 -> "12B" / "600KB" / "1.5MB"（进度环文字用）。"""
+        n = max(0, int(n))
+        if n < 1024:
+            return f"{n}B"
+        if n < 1024 * 1024:
+            return f"{n / 1024:.0f}KB"
+        return f"{n / (1024 * 1024):.1f}MB"
 
     def set_geometry(self, w, h):
         """设置显示宽高。变化 <0.01px 时跳过——prepareGeometryChange 有开销
@@ -410,10 +425,11 @@ class ReadNewGraphicsItem(QGraphicsItem):
         """在 rect 正中画一个圆形进度环。
 
         两种形态：
-        - 确定态（_progress 是 0~1 的数，服务器给了 Content-Length）：
-          整圈是轨道，按进度画一段弧，中心写百分比；
-        - 不确定态（_progress 是 None，chunked 响应没有总大小）：
-          画一段固定 100° 的弧匀速旋转，表示"在动但不知道还要多久"。
+        - 确定态（_progress 是数，服务器给了 Content-Length，或没给时按 512KB
+          默认值估算）：整圈是轨道，按进度画一段弧，中心写百分比；超过 100%
+          （实际比估算的大）时弧画满，中心改显示已下载的字节数；
+        - 不确定态（_progress 是 None，还没收到第一个进度信号）：
+          画一段固定 100° 的弧匀速旋转，表示"在动但还不知道进度"。
           相位来自模块级 SPIN_PHASE（view 的定时器推进），所有 item 同步转。
 
         注意 view 开了 DontSavePainterState 优化（不自动保存/恢复 painter 状态），
@@ -441,15 +457,23 @@ class ReadNewGraphicsItem(QGraphicsItem):
         if self._progress is None:
             painter.drawArc(box, int((90 - self.SPIN_PHASE * 360.0) * 16), -self.SPIN_ARC * 16)
         else:
-            painter.drawArc(box, 90 * 16, int(-self._progress * 360 * 16))
+            # 进度可能 >1（没有 Content-Length 时按 512KB 估算）：弧最多画满一圈
+            painter.drawArc(box, 90 * 16, int(-min(self._progress, 1.0) * 360 * 16))
             if d >= 40:                                # 太小就不塞文字了
                 f = painter.font()
                 f.setPixelSize(12)
                 painter.setFont(f)
                 painter.setPen(QColor(255, 255, 255, 240))
-                painter.drawText(box, Qt.AlignCenter,
-                                 f"{int(self._progress * 100)}%")
+                painter.drawText(box, Qt.AlignCenter, self._progress_text())
         painter.restore()
+
+    def _progress_text(self) -> str:
+        """进度环中心文字：≤100% 显示百分比；超过估算值显示已下载的字节数。"""
+        if self._progress is None:
+            return ""
+        if self._progress <= 1.0:
+            return f"{int(self._progress * 100)}%"
+        return self._format_bytes(self._got_bytes)
 
     def _draw_progress_ring(self, painter: QPainter, rect: QRectF,
                            phase: float = 0.0):

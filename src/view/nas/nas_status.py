@@ -10,11 +10,11 @@ from server import req
 class NasStatus(QtTaskBase):
     def __init__(self):
         QtTaskBase.__init__(self)
-        self.downloadingList = []  # 正在下载列表
-        self.downloadList = []  # 下载队列
-        self.downloadDict = {}  # bookId ：downloadInfo
+        self.downloadingList: list[NasUploadItem] = []  # 正在下载列表
+        self.downloadList: list[NasUploadItem] = []  # 下载队列
+        self.downloadDict: dict[str, NasUploadItem] = {}  # bookId ：downloadInfo
 
-    def SetNewStatus(self, task, status, statusMsg=0):
+    def SetNewStatus(self, task: NasUploadItem, status, statusMsg=0):
         if status == task.status:
             return
         task.status = status

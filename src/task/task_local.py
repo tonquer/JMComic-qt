@@ -169,6 +169,10 @@ class TaskLocal(TaskBase, QtTaskBase):
 
     def Stop(self):
         self._inQueue.put("")
+        self._loadQueue.put("")
+        if self.cacheBookZip:
+            self.cacheBookZip.close()
+            self.cacheBookZip = None
 
     def ClearQImageTaskById(self, taskId):
         self._TakeTask(taskId)
@@ -303,12 +307,12 @@ class TaskLocal(TaskBase, QtTaskBase):
                         if not firstDirName:
                             firstDirName = v.name
                         continue
-                    if not v.is_file:
+                    if not v.is_file():
                         continue
                     data = v.name.split(".")
                     if len(data) < 2:
                         continue
-                    mat = data[-1]
+                    mat = data[-1].lower()
                     if mat not in ToolUtil.AllFormatStr:
                         continue
                     isNotPicture = False
@@ -388,7 +392,7 @@ class TaskLocal(TaskBase, QtTaskBase):
                     data = v.name.split(".")
                     if len(data) < 2:
                         continue
-                    mat = data[-1]
+                    mat = data[-1].lower()
                     if mat == "zip" or mat == "cbz":
                         zipFile.append(v.name)
                     if mat in ToolUtil.AllFormatStr:
@@ -431,7 +435,7 @@ class TaskLocal(TaskBase, QtTaskBase):
                     data = v.filename.split(".")
                     if len(data) < 2:
                         continue
-                    mat = data[-1]
+                    mat = data[-1].lower()
                     if mat not in ToolUtil.AllFormatStr:
                         continue
                     path = os.path.dirname(v.filename)
@@ -528,19 +532,18 @@ class TaskLocal(TaskBase, QtTaskBase):
                     if v.index != -1:
                         self.cacheBookZip = f
                         self.cacheBookId = v.bookId
+                    try:
+                        imgData = TaskCache().GetMemDataByKey(TaskCache().GetPathCacheKey(fullPath))
+                        if imgData:
+                            return Status.Ok, imgData
 
-                    imgData = TaskCache().GetMemDataByKey(TaskCache().GetPathCacheKey(fullPath))
-                    if imgData:
+                        if v.filePath:
+                            data = f.read(v.filePath + "/" + v.fileName)
+                        else:
+                            data = f.read(v.fileName)
+                    finally:
                         if v.index == -1:
                             f.close()
-                        return Status.Ok, imgData
-
-                    if v.filePath:
-                        data = f.read(v.filePath + "/" + v.fileName)
-                    else:
-                        data = f.read(v.fileName)
-                    if v.index == -1:
-                        f.close()
             else:
                 filePath = os.path.join(v.path, os.path.join(v.filePath, v.fileName))
                 fullPath = filePath
@@ -549,7 +552,7 @@ class TaskLocal(TaskBase, QtTaskBase):
                     return Status.Ok, imgData
 
                 if not os.path.isfile(filePath):
-                    return Str.NotFoundPicture, ""
+                    return Str.NotFoundPicture, b""
                 f = open(filePath, "rb")
                 data = f.read()
                 f.close()
@@ -580,7 +583,7 @@ class TaskLocal(TaskBase, QtTaskBase):
                     data = filename.split(".")
                     if len(data) < 2:
                         continue
-                    mat = data[-1]
+                    mat = data[-1].lower()
                     if mat not in ToolUtil.AllFormatStr:
                         continue
                     subPath = filepath.replace(dirName, "").lstrip("\\").lstrip("/")

@@ -57,9 +57,10 @@ if __name__ == "__main__":
         # 此处不能删除
         import images_rc
 
-        Log.Init()
         Setting.Init()
         Setting.InitLoadSetting()
+        Log.Init()
+        Log.UpdateLoggingLevel()
         os.environ['QT_IMAGEIO_MAXALLOC'] = "10000000000000000000000000000000000000000000000000000000000000000"
         QtGui.QImageReader.setAllocationLimit(0)
         if Setting.IsUseScaleFactor.value > 0:

@@ -157,9 +157,9 @@ class QtTaskBase:
         from task.task_waifu2x import TaskWaifu2x
         return TaskWaifu2x().Cancel(self.__taskFlagId)
 
-    def ClearSql(self):
-        from task.task_sql import TaskSql
-        return TaskSql().Cancel(self.__taskFlagId)
+    # def ClearSql(self):
+    #     from task.task_sql import TaskSql
+    #     return TaskSql().Cancel(self.__taskFlagId)
 
     def ClearWaitConvertIds(self, taskIds):
         from task.task_waifu2x import TaskWaifu2x

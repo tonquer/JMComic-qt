@@ -106,7 +106,7 @@ class LocalFavoriteDb(object):
         query = QSqlQuery(self.db)
         sql = "INSERT INTO favorite_fold(name, tick) " \
               "VALUES ('{0}', {1})". \
-            format(name, str(int(time.time())))
+            format(name.replace("'", "''"), str(int(time.time())))
 
         suc = query.exec_(sql)
         if not suc:
@@ -117,6 +117,11 @@ class LocalFavoriteDb(object):
     def DelFavoriteFid(self, fid):
         query = QSqlQuery(self.db)
         sql = "delete from favorite_fold where fid={}".format(fid)
+        suc = query.exec_(sql)
+        if not suc:
+            Log.Warn(query.lastError().text())
+
+        sql = "delete from favorite_fid where fid={}".format(fid)
         suc = query.exec_(sql)
         if not suc:
             Log.Warn(query.lastError().text())
@@ -247,7 +252,7 @@ class LocalFavoriteDb(object):
                 sql += "ORDER BY book.tick ASC, book.bookId ASC"
 
 
-        if page >= 0:
+        if page > 0:
             sql += "  limit {},{};".format((page - 1) * 20, 20)
 
         self.db.exec()

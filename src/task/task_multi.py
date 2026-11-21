@@ -2,6 +2,7 @@ from multiprocessing import Process, Queue
 import  multiprocessing
 from config.setting import Setting
 from task.qt_task import TaskBase
+from tools.log import Log
 from tools.tool import ToolUtil
 
 
@@ -42,7 +43,7 @@ class TaskMulti(TaskBase):
         self.allMultiState = {}
 
     def Start(self):
-        for i in range(Setting.MultiNum.value):
+        for i in range(max(1, Setting.MultiNum.value)):
             queue = Queue()
             queue2 = Queue()
             self.queueList.append(queue)
@@ -64,16 +65,20 @@ class TaskMulti(TaskBase):
         index = self._inQueue.get()
         if index < 0:
             return None
-        self.queueList[index].put((TaskMulti.MultiTaskSegment, (imgData, saveParam1, saveParam2, saveParam3)))
-        result = self.queueFinishList[index].get()
-        self._inQueue.put(index)
-        return result
-
-    def SaveJmPicResultsResult(self, imgData, saveParam1, saveParam2, saveParam3, path, format):
-        index = self._inQueue.get()
-        if index < 0:
+        try:
+            self.queueList[index].put((TaskMulti.MultiTaskSegment, (imgData, saveParam1, saveParam2, saveParam3)))
+            return self.queueFinishList[index].get(timeout=30)
+        except Exception as es:
+            Log.Error(es)
             return None
-        self.queueList[index].put((TaskMulti.MultiTaskSegmentToDisk, (imgData, saveParam1, saveParam2, saveParam3, path, format)))
-        result = self.queueFinishList[index].get()
-        self._inQueue.put(index)
-        return result
+        finally:
+            self._inQueue.put(index)
+
+    # def SaveJmPicResultsResult(self, imgData, saveParam1, saveParam2, saveParam3, path, format):
+    #     index = self._inQueue.get()
+    #     if index < 0:
+    #         return None
+    #     self.queueList[index].put((TaskMulti.MultiTaskSegmentToDisk, (imgData, saveParam1, saveParam2, saveParam3, path, format)))
+    #     result = self.queueFinishList[index].get()
+    #     self._inQueue.put(index)
+    #     return result

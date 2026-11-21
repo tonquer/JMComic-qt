@@ -102,7 +102,7 @@ class MainView(Main, QtTaskBase):
         if i == 0:
             # windows
             if not sys.platform == "darwin":
-                if self.isMaxSize and self.windowState != Qt.WindowState.WindowMaximized:
+                if self.isMaxSize and self.windowState() != Qt.WindowState.WindowMaximized:
                     self.showMaximized()
             # Macos只有全屏和非全屏
         return

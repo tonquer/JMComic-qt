@@ -54,10 +54,12 @@ class SmbV3Client(UpLoadBase):
                 dirs = smbclient.listdir(rf"\\{self.address}\{self.service_name}", username=self.username,
                                   password=self.password, connection_timeout=5)
             self.isLink = True
+            return Str.Ok, ""
         except Exception as es:
             Log.Error(es)
             return self.GetTestExceptionSt(es)
-        return Str.Ok, ""
+        finally:
+            self.DisConnect()
 
     def DisConnect(self):
         try:
@@ -114,23 +116,26 @@ class SmbV3Client(UpLoadBase):
             with open(localPath, "rb") as local_file:
                 data = local_file.read()
                 if self.port:
-                    with smbclient.open_file(rf"\\{self.address}\{self.service_name}\{remotePath}"+ "/" + fileName,
+                    with smbclient.open_file(rf"\\{self.address}\{self.service_name}\{remotePath}"+ "\\" + fileName,
                                     mode="wb+",
                                     port=self.port,
                                     username=self.username,
                                     password=self.password, connection_timeout=5) as fd:
                         fd.write(data)
                 else:
-                    with smbclient.open_file(rf"\\{self.address}\{self.service_name}\{remotePath}" + "/" + fileName,
+                    with smbclient.open_file(rf"\\{self.address}\{self.service_name}\{remotePath}" + "\\" + fileName,
                                              mode="wb+",
                                              username=self.username,
                                              password=self.password, connection_timeout=5) as fd:
                         fd.write(data)
             os.remove(localPath)
+            return Str.Ok
         except Exception as es:
             Log.Error(es)
             return self.GetExceptionSt(es)
-        return Str.Ok
+        finally:
+            self.DisConnect()
+
 
     def GetExceptionSt(self, es):
         if isinstance(es, SmbEx.SMBAuthenticationError):

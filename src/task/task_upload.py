@@ -185,22 +185,22 @@ class TaskUpload(TaskBase, QtTaskBase):
             if not os.path.isdir(cacheZipPath):
                 os.makedirs(cacheZipPath)
             zipFileName = fileName
-            zip_file = zipfile.ZipFile(zipFileName, "w")
-            picNum = 0
-            for item in os.scandir(srcDirPath):
-                if item.is_dir():
-                    pass
-                elif item.is_file():
-                    picNum += 1
-                    arcname = os.path.basename(item.path)
-                    zip_file.write(item.path, arcname=arcname, compress_type=zipfile.ZIP_DEFLATED)
 
-            if task.bookId and nasInfo.isCbz:
-                bookInfo = BookMgr().GetBook(task.bookId)
-                if bookInfo:
-                    xmlData = ToolUtil.GetComicInfoXml(task.epsId, picNum, bookInfo)
-                    zip_file.writestr("ComicInfo.xml", xmlData)
-            zip_file.close()
+            with zipfile.ZipFile(zipFileName, "w") as zip_file:
+                picNum = 0
+                for item in os.scandir(srcDirPath):
+                    if item.is_dir():
+                        pass
+                    elif item.is_file():
+                        picNum += 1
+                        arcname = os.path.basename(item.path)
+                        zip_file.write(item.path, arcname=arcname, compress_type=zipfile.ZIP_DEFLATED)
+
+                if task.bookId and nasInfo.isCbz:
+                    bookInfo = BookMgr().GetBook(task.bookId)
+                    if bookInfo:
+                        xmlData = ToolUtil.GetComicInfoXml(task.epsId, picNum, bookInfo)
+                        zip_file.writestr("ComicInfo.xml", xmlData)
         except Exception as es:
             Log.Error(es)
             return Str.CvZipError

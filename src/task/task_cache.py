@@ -53,6 +53,8 @@ class DiskCacheDB(object):
         self.cur = None
 
     def Init(self):
+        if self.db:
+            return False
         self.db = sqlite3.connect(os.path.join(Setting.GetStatePath(), "disk_cache.db"),
                                   check_same_thread=False)
         self.cur = self.db.cursor()
@@ -62,7 +64,7 @@ class DiskCacheDB(object):
             path varchar, \
             tick INTEGER, \
             size INTEGER
-            )\ 
+            )\
             """
         try:
             suc = self.db.execute(sql)
@@ -152,8 +154,8 @@ class DiskCacheDB(object):
             return
         sql = "INSERT INTO cache_path(key, path, size, tick) " \
               "VALUES ('{0}', '{1}', {2}, {3}) " \
-              "ON CONFLICT(key) DO UPDATE SET size={2}, tick={2}". \
-            format(file.key, file.path, file.size, file.tick)
+              "ON CONFLICT(key) DO UPDATE SET size={2}, tick={3}". \
+            format(file.key, file.path.replace("'", "''"), file.size, file.tick)
         suc = self.cur.execute(sql)
         return
 
@@ -165,6 +167,7 @@ class DiskCacheDB(object):
               "ON CONFLICT(key) DO UPDATE SET last_tick={1}". \
             format("sys", int(time.time()))
         suc = self.cur.execute(sql)
+        self.cur.execute("COMMIT")
         return
 
 class TaskCache(TaskBase, QtTaskBase):

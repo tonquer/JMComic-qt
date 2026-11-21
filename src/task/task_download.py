@@ -121,7 +121,7 @@ class TaskDownload(TaskBase, QtTaskBase):
         return taskId
 
     def HandlerTask(self, downloadId, addFileSize, fileSize, data, isCallBack=True):
-        isTerminal = (addFileSize < 0 and data == b"") or addFileSize == -2 or (addFileSize == 0 and data != b"")
+        isTerminal = addFileSize != -Status.Resetting and ((addFileSize < 0 and data == b"") or addFileSize == -2 or (addFileSize == 0 and data != b""))
         info = self._TakeTask(downloadId) if isTerminal else self._GetTask(downloadId)
         if not info:
             return
@@ -132,6 +132,20 @@ class TaskDownload(TaskBase, QtTaskBase):
             v = {"st": Status.SaveError}
             self.CallBookBack(v, info)
             return
+
+        # 表示重新下载中
+        if addFileSize == -Status.Resetting:
+            info.addSize = 0
+            try:
+                if info.downloadCallBack:
+                    if info.backParam is not None:
+                        info.downloadCallBack(info.addSize, fileSize, info.backParam)
+                    else:
+                        info.downloadCallBack(info.addSize, fileSize)
+            except Exception as es:
+                Log.Error(es)
+            return
+
         st = Str.Error
         if addFileSize < -2:
             st = - addFileSize

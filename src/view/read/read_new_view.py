@@ -92,6 +92,7 @@ class ReadNewView(QtWidgets.QWidget):
         self._prefetchReady = False
         self._prefetchChapterMax = 0
         # QtOwner().owner.WindowsSizeChange.connect(self.qtTool.ClearQImage)
+        self.menuPos = None
 
     def SwitchTurnSpeed(self):
         Setting.TurnSpeed.SetValue(int(self.qtTool.turnSpeed.value() * 1000))
@@ -118,6 +119,7 @@ class ReadNewView(QtWidgets.QWidget):
         self.qtTool.modelNameButton.setToolTip(Setting.LookModelName.value)
 
     def SelectMenu(self, view):
+        self.menuPos = QCursor.pos()
         # TODO bug: 现在opengl全屏模式下无法显示右键菜单
         if view:
             popMenu = QMenu(view)
@@ -139,13 +141,14 @@ class ReadNewView(QtWidgets.QWidget):
                 action = popMenu.addAction(Str.GetStr(Str.OpenAutoWaifu2x))
             action.triggered.connect(self.qtTool.checkBox.click)
 
-        item = self.scrollArea.get_cur_item()
+        item = self.scrollArea.get_cur_pos_item(self.menuPos)
         if item:
-            if item.is_need_waifu2x:
+            if not item.is_cur_is_waifu2x:
                 action = popMenu.addAction(Str.GetStr(Str.OpenCurWaifu2x) + "(F2)")
+                action.triggered.connect(partial(self.scrollArea.open_waifu2x_state, item.index))
             else:
                 action = popMenu.addAction(Str.GetStr(Str.CloseCurWaifu2x) + "(F2)")
-            action.triggered.connect(self.qtTool.curWaifu2x.click)
+                action.triggered.connect(partial(self.scrollArea.close_waifu2x_state, item.index))
 
         action = popMenu.addAction(Str.GetStr(Str.ToggleDoublePageAlign) + "(F10)")
         action.triggered.connect(self.scrollArea.change_double_page)
@@ -208,16 +211,23 @@ class ReadNewView(QtWidgets.QWidget):
 
         action = popMenu.addAction(Str.GetStr(Str.AutoScroll) + "(F5)")
         action.triggered.connect(self.qtTool.SwitchScrollAndTurn)
+        # if self.qtTool.IsStartScrollAndTurn():
+        #     action.setCheckable(True)
+        #     action.setChecked(True)
 
         action = popMenu.addAction(Str.GetStr(Str.Exit) + "(Esc)")
         action.triggered.connect(self.Close)
 
-        if self.qtTool.IsStartScrollAndTurn():
-            action.setCheckable(True)
-            action.setChecked(True)
+        index = self.scrollArea.index_at_by_global_pos(self.menuPos)
+        if index < 0:
+            index = self.scrollArea._cur_idx
+        if index >= 0:
+            action = popMenu.addAction(f"{index+1}/{self.maxPic}")
+            action.setEnabled(False)
 
         self.isShowMenu = True
         popMenu.exec_(QCursor.pos())
+        self.menuPos = None
 
     @property
     def qtTool(self) -> ReadNewTool:
@@ -424,7 +434,10 @@ class ReadNewView(QtWidgets.QWidget):
 
     def CopyFile(self):
         # info = self.pictureData.get(self.curIndex)
-        info = self.scrollArea.get_cur_item()
+        if self.menuPos:
+            info = self.scrollArea.get_cur_pos_item(self.menuPos)
+        else:
+            info = self.scrollArea.get_cur_item()
         if not info:
             return
         if not info._buf and not info._waifu_buf:
@@ -433,11 +446,11 @@ class ReadNewView(QtWidgets.QWidget):
         # today = time.strftime("%Y%m%d%H%M%S", time.localtime(time.time()))
         if info._waifu_buf:
             _, _, mat, _ = ToolUtil.GetPictureSize(info._waifu_buf)
-            path = "{}_{}_waifu2x.{}".format(self.bookId, self.curIndex + 1, mat)
+            path = "{}_{}_waifu2x.{}".format(self.bookId, info.index + 1, mat)
             data = info._waifu_buf
         else:
             _, _, mat, _ = ToolUtil.GetPictureSize(info._buf)
-            path = "{}_{}.{}".format(self.bookId, self.curIndex + 1, mat)
+            path = "{}_{}.{}".format(self.bookId, info.index + 1, mat)
             data = info._buf
         if not data:
             return
@@ -458,7 +471,10 @@ class ReadNewView(QtWidgets.QWidget):
             Log.Error(es)
 
     def CopyLastFile(self):
-        info = self.scrollArea.get_cur_item()
+        if self.menuPos:
+            info = self.scrollArea.get_cur_pos_item(self.menuPos)
+        else:
+            info = self.scrollArea.get_cur_item()
         if not info:
             return
         if not info._buf and not info._waifu_buf:
@@ -466,11 +482,11 @@ class ReadNewView(QtWidgets.QWidget):
 
         if info._waifu_buf:
             _, _, mat, _ = ToolUtil.GetPictureSize(info._waifu_buf)
-            path = "{}_{}_waifu2x.{}".format(self.bookId, self.curIndex + 1, mat)
+            path = "{}_{}_waifu2x.{}".format(self.bookId, info.index + 1, mat)
             data = info._waifu_buf
         else:
             _, _, mat, _ = ToolUtil.GetPictureSize(info._buf)
-            path = "{}_{}.{}".format(self.bookId, self.curIndex + 1, mat)
+            path = "{}_{}.{}".format(self.bookId, info.index + 1, mat)
             data = info._buf
         if not data:
             return
@@ -498,7 +514,10 @@ class ReadNewView(QtWidgets.QWidget):
             Log.Error(es)
 
     def CopyPicture(self):
-        info = self.scrollArea.get_cur_item()
+        if self.menuPos:
+            info = self.scrollArea.get_cur_pos_item(self.menuPos)
+        else:
+            info = self.scrollArea.get_cur_item()
         if not info:
             return
         if not info._buf and not info._waifu_buf:

@@ -43,7 +43,8 @@ class DownloadItem(QtTaskBase):
         self.curConvertEpsId = -1        # 当前正在转换的章节, 不是索引
         self.speedStr = ""
 
-        self.downloadLen = 0
+        self.lastSize = 0
+        # self.downloadLen = 0
         self.speedDownloadLen = 0
         self.downloadReset = 0
         self.convertReset = 0

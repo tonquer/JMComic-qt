@@ -25,6 +25,7 @@ class Status(object):
     DownloadFail = Str.DownloadFail
     OfflineModel = Str.OfflineModel
     DownloadBusy = Str.DownloadBusy
+    Resetting = Str.Resetting
 
     UnderReviewBook = Str.UnderReviewBook
     SaveError = Str.SaveError

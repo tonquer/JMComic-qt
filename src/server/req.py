@@ -67,8 +67,8 @@ class ServerReq(object):
             
         self.now = int(time.time())
         self.headers = self.GetHeader(url, method)
-
         from qt_owner import QtOwner
+        self.userName = QtOwner().user.userName
         if self.isApi and QtOwner().user.token :
             ## 图片不设置该值，否则cf-cache-status返回BYPASS
             self.headers["authorization"] = "Bearer " + QtOwner().user.token
@@ -142,6 +142,10 @@ class ServerReq(object):
         self.ipList = dnsIpList
         self.curl_opt = dict()
         self.curl_opt[CurlOpt.HTTP_VERSION] = CurlHttpVersion.V2_0
+        if self.isImg:
+            self.curl_opt[CurlOpt.CONNECTTIMEOUT] = self.timeout # 建立连接超时：5 秒
+            self.curl_opt[CurlOpt.LOW_SPEED_LIMIT] = 1 # 最低速度阈值：1 byte/s
+            self.curl_opt[CurlOpt.LOW_SPEED_TIME] = 5 # 持续时间阈值：5 秒
         host = ToolUtil.GetUrlHost(self.url)
         isEch = isEch and (self.isImg or self.isApi or self.isRegister or self.isOtherCloudFlare) and not self.proxyUrl
         # allUrls = GlobalConfig.DohUrlList.value[:]
@@ -449,6 +453,7 @@ class LoginReq2(ServerReq):
         data["password"] = passwd
         super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
         if "authorization" in self.headers:
+            # self.headers["authorization"] = ""
             self.headers.pop("authorization")
 
 

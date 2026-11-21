@@ -85,6 +85,8 @@ class Setting:
     ThemeIndex = SettingValue("GeneraSetting", 0, False, ["Auto", "light", "dark"])  #
     ThemeColorIndex = SettingValue("GeneraSetting", 0, False)  #
 
+    LogDirPath = SettingValue("GeneraSetting", "", False)
+
     LogIndex = SettingValue("GeneraSetting", 0, False, ["warn", "info", "debug"])  # Warn Info Debug
     CoverSize = SettingValue("GeneraSetting", 100, False)  #
     TitleLine = SettingValue("GeneraSetting", 2, False)  #
@@ -364,6 +366,9 @@ class Setting:
 
     @staticmethod
     def GetLogPath():
+        if Setting.LogDirPath.value:
+            return Setting.LogDirPath.value
+
         if sys.platform == "win32":
             return "logs"
         return Setting._xdgDir("XDG_STATE_HOME", ".local/state", "logs")

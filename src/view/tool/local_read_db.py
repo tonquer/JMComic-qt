@@ -52,7 +52,7 @@ class LocalReadDb(object):
             Log.Error(es)
 
     def DelCategory(self, category):
-        sql = "delete from local_category where category='{}'".format(category)
+        sql = "delete from local_category where category='{}'".format(self.GetSaveStr(category))
         suc = self.cur.execute(sql)
         self.cur.execute("COMMIT")
         return
@@ -64,7 +64,7 @@ class LocalReadDb(object):
 
     def AddCategory(self, category, bookId=""):
         try:
-            sql = "INSERT INTO local_category(category, book_id) values ('{}', '{}')".format(category, bookId)
+            sql = "INSERT INTO local_category(category, book_id) values ('{}', '{}')".format(self.GetSaveStr(category), bookId)
             suc = self.cur.execute(sql)
             self.cur.execute("COMMIT")
         except Exception as es:
@@ -170,7 +170,7 @@ class LocalReadDb(object):
         return books
 
     def Search(self, searchTxt):
-        sql = "select  id from local_book  where id = main_id and title like '%{}%'".format(searchTxt)
+        sql = "select  id from local_book  where id = main_id and title like '%{}%'".format(self.GetSaveStr(searchTxt))
         suc = self.cur.execute(sql)
 
         bookIds = []

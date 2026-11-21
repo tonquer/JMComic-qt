@@ -25,13 +25,21 @@ jobs:
         python -m pip install --upgrade pip
         pip install pyinstaller
         pip install -r src\requirements.txt
+        
+        $imageformatsPath = python -c "import os, PySide6; print(os.path.join(os.path.dirname(PySide6.__file__), 'plugins', 'imageformats'))"
+        cp lib\qjpegxl6.dll $imageformatsPath"\"
+        cp lib\qavif6.dll $imageformatsPath"\"
+
+        Invoke-WebRequest -Uri "https://github.com/upx/upx/releases/download/v5.0.1/upx-5.0.1-win64.zip" -OutFile "upx.zip"
+        Expand-Archive -Path "upx.zip" -DestinationPath "D:\"
+        Remove-Item "upx.zip"
     - name: Build
       run: |
         python script/build_qrc.py
         cd src
         cp ..\res\icon\icon.ico .\
 
-        pyinstaller --hidden-import=_cffi_backend --collect-all curl_cffi -F -w -i icon.ico start.py
+        pyinstaller --hidden-import=_cffi_backend --collect-all curl_cffi -F -w -i icon.ico start.py --upx-dir "D:\upx-5.0.1-win64"
         mv dist jmcomic
         cp ..\LICENSE jmcomic\
         cp ..\CHANGELOG jmcomic\
@@ -120,7 +128,7 @@ jobs:
         cd src
         cp ../res/icon/Icon.icns ./
         pyinstaller --target-architecture=universal2 --clean --onedir --name JMComic \
-            --hidden-import sr_ncnn_vulkan --hidden-import PySide6 --hidden-import requests \
+            --hidden-import sr_vulkan --hidden-import _cffi_backend --collect-all curl_cffi --hidden-import PySide6 --hidden-import requests \
             --hidden-import urllib3 --hidden-import websocket-client --hidden-import pillow \
             --hidden-import config \
             --hidden-import component \

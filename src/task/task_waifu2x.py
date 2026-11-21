@@ -33,6 +33,7 @@ class QConvertTask(object):
         self.savePath = ""  #
         self.imgData = b""
         self.saveData = b""
+        self.isAni = False
         self.isCacheFetch = False
 
         self.model = {
@@ -108,15 +109,20 @@ class TaskWaifu2x(TaskBase):
                     self.taskObj.convertBack.emit(taskId)
                     continue
 
-                w, h, mat, _ = ToolUtil.GetPictureSize(task.imgData)
-                if mat.lower() in ToolUtil.NeedConvertFormat:
+                w, h, mat, isAni = ToolUtil.GetPictureSize(task.imgData)
+                task.isAni = isAni
+                if mat.lower() in ToolUtil.SrNeedConvertFormat:
                     task.imgData = ToolUtil.GetCanConvertUseData(task.imgData)
 
                 if task.convertType ==  "download":
                     from qt_owner import QtOwner
                     newFormat = QtOwner().GetConvertFmtRule(mat)
-                    if newFormat != mat and newFormat not in ToolUtil.NeedConvertFormat:
-                        task.model['format'] = newFormat
+                    if isAni:
+                        # 动图：目标是 apng/webp/jxl 由 sr_vulkan 直接导出；目标是 gif 或静态格式则留空，交由后续逻辑处理
+                        task.model['format'] = newFormat if newFormat in ToolUtil.SrExportAnimaFormat else ""
+                    else:
+                        # 静图：目标是 bmp/png/jpg/apng/webp/jxl 由 sr_vulkan 直接导出；avif/gif 留空走 Pillow 转换
+                        task.model['format'] = newFormat if newFormat in ToolUtil.SrExportFormat else ""
 
                 if isFind:
                     continue
@@ -127,6 +133,7 @@ class TaskWaifu2x(TaskBase):
                     scale = task.model.get("scale", 0)
                     toMat = task.model.get("format", "")
                     tileSize = Setting.Waifu2xTileSize.GetIndexV()
+                    ## sr支持bmp/png/jpg/apng/webp/jxl
                     if scale <= 0:
                         sts = sr.add(task.imgData, task.model.get('model', 0), task.taskId, task.model.get("width", 0), task.model.get("high", 0), format=toMat, tileSize=tileSize)
                     else:
@@ -181,6 +188,7 @@ class TaskWaifu2x(TaskBase):
                 if info.savePath and Setting.IsSkipPic.value:
                     info.status = Status.Ok
                     data = info.imgData
+                    _, _, format, _ = ToolUtil.GetPictureSize(data)
 
             assert isinstance(info, QConvertTask)
             info.saveData = data
@@ -192,7 +200,10 @@ class TaskWaifu2x(TaskBase):
                         TaskCache().AddCacheDiskPath(ToolUtil.GetPictureName(info.cachePath, format), data)
 
                     for path in [info.savePath]:
-                        ToolUtil.SaveConvertPicture(data, path, format)
+                        if info.convertType == "download" and not info.model.get("format"):
+                            ToolUtil.SaveConvertPicture(data, path, format, info.isAni)
+                        else:
+                            ToolUtil.SavePicture(data, path, format)
             except Exception as es:
                 info.status = Status.SaveError
                 Log.Error(es)

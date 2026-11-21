@@ -1,5 +1,5 @@
 PySide6==6.9.3
-sr-vulkan>=2.1.0
+sr-vulkan>=2.2.1
 sr-vulkan-model-waifu2x
 sr-vulkan-model-realcugan
 sr-vulkan-model-realesrgan

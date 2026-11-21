@@ -310,7 +310,10 @@ class ReadNewTool(QtWidgets.QWidget, Ui_ReadImg):
     #     return
 
     def OpenCurWaifu(self):
-        self.scrollArea.switch_cur_waifu2x_state()
+        if self.curWaifu2x.isChecked():
+            self.scrollArea.open_waifu2x_state(self.scrollArea._cur_idx)
+        else:
+            self.scrollArea.close_waifu2x_state(self.scrollArea._cur_idx)
         # if self.curWaifu2x.isChecked():
         #     self.readImg.SetIsWaifu2x(1)
         # else:

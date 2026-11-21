@@ -61,13 +61,14 @@ class ReadNewGraphics(QGraphicsView):
     ANIM_MAX_MOVIES = 8
     # 保留原始压缩数据的总预算（MB）。动画角色的 QMovie 被回收后要靠它重建，
     # 超预算就把最久没播的那张的原始字节也丢掉（之后只能停在海报帧）
-    ANIM_MAX_RAW_MB = 512
+    ANIM_MAX_RAW_MB = 256
 
     # 首屏/跳转校准期的超时保护：校准期里"当前序号 != 目标"会被压住不发信号
     # （避免中间态闪烁），连续这么多次数都对不上就认命，把真实序号发出去——
     # 否则目标图加载失败时 UI 上的页码会一直停在跳转前的旧值上。
     HOLD_MAX_MISS = 60
 
+    MAX_RE_DOWNLOAD = 10
     # PREFETCH_BACK = 3  # 已读方向（往回）预取几张
     # PREFETCH_AHEAD = 12  # 未读方向（往后）预取几张
 
@@ -610,6 +611,12 @@ class ReadNewGraphics(QGraphicsView):
             return None
         return self._items[idx]
 
+    def get_cur_pos_item(self, pos) -> ReadNewGraphicsItem:
+        index = self.index_at_by_global_pos(pos)
+        if index >= len(self._items) or index < 0:
+            return self.get_cur_item()
+        return self._items[index]
+
     def get_cur_item(self) -> ReadNewGraphicsItem:
         idx = self._cur_idx
         if idx >= len(self._items):
@@ -821,24 +828,66 @@ class ReadNewGraphics(QGraphicsView):
         victim._movie.deleteLater()
         victim._movie, victim._movie_buf = None, None
 
-    # def _trim_anim_raw(self):
-    #     """原始压缩数据超预算时，丢掉最久没播那几张的 _raw。
-    #
-    #     丢了就无法再重建 QMovie（只能停在海报帧），所以先 жертв 最久没播的。
-    #     这只是防御：常见 GIF 几 MB，几十张也在预算内。"""
-    #     total = sum(x._raw.size() for x in self._anims)
-    #     cap = self.ANIM_MAX_RAW_MB * 1024 * 1024
-    #     if total <= cap:
-    #         return
-    #     busy = {id(x) for x in self._anims if x._movie is not None}
-    #     for x in sorted((v for v in self._anims if not v._raw.isEmpty()),
-    #                     key=lambda v: v._anim_seq):
-    #         if total <= cap:
-    #             break
-    #         if id(x) in busy:
-    #             continue                     # 正在播的不丢
-    #         total -= x._raw.size()
-    #         x._raw = QByteArray()
+    def _trim_anim_raw(self):
+        """原始压缩数据超预算时，丢掉 _raw。**按离当前阅读位置由远及近**。
+
+        两条规则：
+        1. **丢弃前先留首帧**（`_ensure_poster`）：把第一帧解成静态海报。否则之后
+           `_ensure_movie` 拿不到字节、item 连首帧都没有，只能一直画占位框。
+        2. **按屏幕位置的优先级**：离当前页越远的越先丢；同距离再按"最久没播"
+           （_anim_seq）排。正在用的 QMovie（播放/暂停）和屏幕上可见的永远不丢。
+
+        丢了就无法再重建 QMovie（只能停在海报帧）——这是防御逻辑，常见 GIF
+        几 MB，几十张也在预算内。"""
+        total = sum(x._raw.size() for x in self._anims)
+        cap = self.ANIM_MAX_RAW_MB * 1024 * 1024
+        if total <= cap:
+            return
+        cur = self._cur_idx if self._cur_idx >= 0 else 0
+        keep = set(self.visible_indices())        # 屏幕上看得见的绝不丢
+        cands = []
+        for x in self._anims:
+            if x._raw.isEmpty() or x._movie is not None:
+                continue                          # 没字节 / 正在用（播放或暂停）
+            try:
+                i = self._items.index(x)
+            except ValueError:
+                continue
+            if i in keep:
+                continue
+            cands.append((abs(i - cur), x._anim_seq, x))
+        # 先丢离当前页最远的；同距离时先丢最久没播的
+        cands.sort(key=lambda t: (-t[0], t[1]))
+        for _, _, x in cands:
+            if total <= cap:
+                break
+            self._ensure_poster(x)                # 先留首帧，别让占位框顶着
+            total -= x._raw.size()
+            x._raw = QByteArray()
+            x.update()
+
+    def _ensure_poster(self, it: ReadNewGraphicsItem):
+        """丢弃 _raw 之前，把第一帧解成静态海报，避免之后连首帧都没有。
+
+        已有 pixmap（海报/静态帧）就跳过。GIF/动画 WebP 的 QImageReader.read()
+        返回首帧；按 `_movie_scaled_size` 缩放，和 QMovie 的帧同一尺寸。"""
+        if it.pixmap is not None and not it.pixmap.isNull():
+            return
+        if it._raw.isEmpty():
+            return
+        buf = QBuffer()
+        buf.setData(it._raw)
+        buf.open(QIODevice.ReadOnly)
+        reader = QImageReader(buf)
+        sz = self._movie_scaled_size(it)
+        if sz.isValid():
+            reader.setScaledSize(sz)              # 和 QMovie 的帧同一目标尺寸
+        img = reader.read()                       # 动图格式：read() 返回首帧
+        if img.isNull():
+            return
+        img.setDevicePixelRatio(self.devicePixelRatioF())
+        it.pixmap = QPixmap.fromImage(img)
+        it.update()
 
     @timed
     def _refresh_playing(self, vis=None):
@@ -885,13 +934,17 @@ class ReadNewGraphics(QGraphicsView):
         布局和静态图完全一样处理（尺寸用 QImageReader 报告的画布尺寸），所以
         滚动        不跳动、可见性判定等既有机制全部复用——区别只有"内容会自己变"。"""
         item._decoding = None
+        item._failed = False
         item._pending_decode = False
+        if item not in self._items:
+            return
+
         if item not in self._anims:
             self._anims.append(item)
         if not item._size_known:
             self._correct_len(item, real)      # GIF/WebP 的画布尺寸（HTML <img> 同口径）
         item._raw = QByteArray(data)           # COW 浅拷贝，不额外占内存
-        # self._trim_anim_raw()
+        self._trim_anim_raw()
         self._trim_caches()                    # 静态位图的回收也顺带跑一次
         item.update()
         self._refresh_playing()                # 它在屏上就立刻开播
@@ -982,6 +1035,60 @@ class ReadNewGraphics(QGraphicsView):
     def count(self) -> int:
         """图片总数（len(_items) 的语义化别名）。"""
         return len(self._items)
+
+    # ---- 命中测试：这个点下面是哪张图 ----
+
+    def item_at(self, pos):
+        """viewport 坐标（如右键事件的 event.pos()）下是哪张图片。
+
+        返回 `StripItem`；点在图片之间的间隙、页模式的留白、或场景外时返回 None。
+
+        适用范围：连续模式（一屏多张，最常用）、单页等宽、单页、双页都可以。
+        页模式只会在**当前页实际显示的那 1~2 张**里命中；翻页/拖拽动画途中
+        邻页被拖进屏幕时也能命中邻页。
+
+        坐标是 **viewport 像素**（QGraphicsView 的鼠标/右键事件 pos() 就是它，
+        滚动条和缩放都已由 mapToScene 处理）。典型用法：
+
+            def contextMenuEvent(self, ev):
+                idx = self.index_at(ev.pos())      # ev.pos() 就是 viewport 坐标
+                if idx < 0:
+                    return                          # 点在间隙/留白：不弹菜单
+                item = self._items[idx]              # 或 self.item_at(ev.pos())
+                ...
+        """
+        if not self._items:
+            return None
+        p = QPointF(pos)
+        scene_pos = self.mapToScene(p.toPoint())
+        # 用场景的 itemAt（按 item 的 shape/boundingRect 命中）：
+        # - 连续模式：返回矩形覆盖该点的那张；1px 接缝叠加处返回上层（后一张）
+        # - 页模式：只命中当前页真正 setVisible(True) 的 item
+        it = self._scene.itemAt(scene_pos, QTransform())
+        return it if isinstance(it, ReadNewGraphicsItem) else None
+
+    def index_at(self, pos) -> int:
+        """同 `item_at`，但返回图片序号（0 起）；没命中返回 -1。"""
+        it = self.item_at(pos)
+        if it is None:
+            return -1
+        try:
+            return self._items.index(it)
+        except ValueError:
+            return -1
+
+    def index_at_by_global_pos(self, pos) -> int:
+        """同 `item_at`，但返回图片序号（0 起）；没命中返回 -1。"""
+        if not pos:
+            return -1
+        p = self.viewport().mapFromGlobal(pos)
+        it = self.item_at(p)
+        if it is None:
+            return -1
+        try:
+            return self._items.index(it)
+        except ValueError:
+            return -1
 
     # def side_of_index(self, idx: int):
     #     """这张图现在显示在屏幕的哪个物理方位？
@@ -2554,7 +2661,10 @@ class ReadNewGraphics(QGraphicsView):
         toW, toH = 0, 0
         it.update()                          # 立刻显示"解码中…"
         if it.isAnima:
-            QTimer.singleShot(0, partial(self._on_animated, it, it._size, it._buf))
+            size = self._decode_target_size(it)
+            toW, toH = self._get_decode_to_size(size, it.file_data)
+            it.decoding_param = QSizeF(toW, toH)
+            it._decoding = self.read_task.AddQImageTask(it._buf, self.devicePixelRatioF(), toW, toH, Qt.IgnoreAspectRatio, callBack=self._on_loaded, backParam=(it.index, False))
         elif it.is_need_waifu2x:
             size = self._decode_target_size(it)
             toW, toH = self._get_decode_to_size(size, it.waifu_file_data)
@@ -2717,17 +2827,22 @@ class ReadNewGraphics(QGraphicsView):
         if self._active_downloads >= self.MAX_CONCURRENT_DOWNLOADS:
             return False
         Log.Info(f"Start download, index{item.index}, downloading:{self._active_downloads}")
-        self._active_downloads += 1
         if item._buf:
             item._reply = 0
+            self._active_downloads += 1
+            item._got_bytes = len(item.file_data.data)
             QTimer.singleShot(0, partial(self._on_finished, item.file_data, Str.Ok, item.index))
             return False
         else:
             taskId = self.read_task.AddDownload(item.index,
                                            downloadCallBack=self._on_download_progress,
                                            completeCallBack2=self._on_finished)
+            if not taskId:
+                return False
+            self._active_downloads += 1
             item._reply = taskId
             item._progress = None            # 请求刚发出、还不知道总大小：先转圈
+            item._got_bytes = 0
             self._spin_timer.start()         # 有下载在跑就保持转圈动画可用
             self.update_tool_label(item.index)
             item.update()
@@ -2743,10 +2858,11 @@ class ReadNewGraphics(QGraphicsView):
         item = self._items[index]
         if item.pixmap is not None:
             return
+        item._got_bytes = got
         if total > 0:
-            item._progress = max(0.0, min(1.0, got / float(total)))
+            item._progress = max(0.0, got / float(total))
         else:
-            item._progress = max(0.0, min(1.0, got / float(10000)))
+            item._progress = max(0.0, got / float(512 * 1024))
             if not self._spin_timer.isActive():
                 self._spin_timer.start()
         item.update()
@@ -2802,17 +2918,20 @@ class ReadNewGraphics(QGraphicsView):
 
         Log.Info(f"finish download, index{item.index} active_download:{self._active_downloads}")
         reply = item._reply
+        item._progress = None            # 下载结束：进度环不再显示（成功/失败都一样）
+        item._got_bytes = 0
+
         if reply is None:
             self._download_around_current()      # 腾出名额：按优先级补下一个
             return
         if st != Str.Ok:
-            # 重新下载
             item._reply = None
             item._re_download_cnt += 1
             item._progress = None
-            item.update()                    # 触发重画（占位框变红显示"加载失败"）
-
-            self._download_around_current()  # 腾出名额：按优先级补下一个
+            if item._re_download_cnt >= self.MAX_RE_DOWNLOAD :
+                item._failed = True
+            item.update()
+            self._download_around_current()
             return
 
         reply, item._reply = item._reply, None
@@ -2912,6 +3031,8 @@ class ReadNewGraphics(QGraphicsView):
             item._waifu_failed = True
             item._waifu_reply = None
             item.update()                    # 触发重画（占位框变红显示"加载失败"）
+            self._waifu2x_around_current()
+            self._maybe_decode(item)
             return
 
         reply, item._waifu_reply = item._waifu_reply, None
@@ -2935,6 +3056,8 @@ class ReadNewGraphics(QGraphicsView):
         item = self._items[index]
         if img.isNull():
             self._on_decode_failed(item)
+            if item.isAnima:
+                QTimer.singleShot(0, partial(self._on_animated, item, item._size, item._buf))
             return
 
         Log.Info(f"finish decode, index{index}, size:{img.size()}, is_waifu:{isWaifu2x}")
@@ -2954,6 +3077,8 @@ class ReadNewGraphics(QGraphicsView):
         item.pixmap = QPixmap.fromImage(img)
         item.update()                        # 只请求重绘，几何不动 -> 无跳动
         self._trim_caches()                  # 位图可能超预算：回收离当前页最远的
+        if item.isAnima:
+            QTimer.singleShot(0, partial(self._on_animated, item, item._size, item._buf))
 
     def _on_decode_failed(self, item: ReadNewGraphicsItem):
         """解码失败：清状态并标记失败，避免卡在"解码中"或被反复重试。"""
@@ -3522,10 +3647,12 @@ class ReadNewGraphics(QGraphicsView):
             if not self._page_dragging:      # 页模式拖拽中滚轮被忽略，不参与计数
                 self._note_edge_scroll(forward, at_start, at_end, True)
 
-    def switch_cur_waifu2x_state(self):
-        if self._cur_idx < 0:
+    # def switch_cur_waifu2x_state(self):
+    #     return self.switch_waifu2x_state(self._cur_idx)
+
+    def close_waifu2x_state(self, idx):
+        if idx >= len(self._items) or idx < 0:
             return
-        idx = self._cur_idx
         if ReadMode.isDouble(self._mode):
             idx = self._cur_idx
             items = self._items[idx:idx+2]
@@ -3533,15 +3660,52 @@ class ReadNewGraphics(QGraphicsView):
             items = self._items[idx:idx+1]
 
         for item in items:
-            if item._waifu2x_state == 0:
-                item._waifu2x_state = 1
-            elif item._waifu2x_state == 1:
-                item._waifu2x_state = -1
-            elif item._waifu2x_state == -1:
-                item._waifu2x_state = 1
+            item._waifu2x_state = -1
+            if not Setting.IsOpenWaifu.value:
+                item._waifu2x_state = 0
         self._load_visible()
 
+    def open_waifu2x_state(self, idx):
+        if idx >= len(self._items) or idx < 0:
+            return
+        if ReadMode.isDouble(self._mode):
+            idx = self._cur_idx
+            items = self._items[idx:idx+2]
+        else:
+            items = self._items[idx:idx+1]
+
+        for item in items:
+            item._waifu2x_state = 1
+            if Setting.IsOpenWaifu.value:
+                item._waifu2x_state = 0
+        self._load_visible()
+
+    # def switch_waifu2x_state(self, idx):
+    #     if idx >= len(self._items) or idx < 0:
+    #         return
+    #     if ReadMode.isDouble(self._mode):
+    #         idx = self._cur_idx
+    #         items = self._items[idx:idx+2]
+    #     else:
+    #         items = self._items[idx:idx+1]
+    #
+    #     for item in items:
+    #         if item._waifu2x_state == 0:
+    #             item._waifu2x_state = 1
+    #         elif item._waifu2x_state == 1:
+    #             item._waifu2x_state = -1
+    #         elif item._waifu2x_state == -1:
+    #             item._waifu2x_state = 1
+    #     self._load_visible()
+
     def check_waifu2x_state(self):
+        for item in self._items:
+            if Setting.IsOpenWaifu.value:
+                if item._waifu2x_state == 1:
+                    item._waifu2x_state = 0
+            else:
+                if item._waifu2x_state == -1:
+                    item._waifu2x_state = 0
         self._load_visible()
 
     def after_switch_last_eps(self):

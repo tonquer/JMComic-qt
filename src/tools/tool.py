@@ -51,7 +51,12 @@ def time_me(fn):
 class ToolUtil(object):
     AllUseFormat = [".jpg", ".png", ".gif", ".webp", ".bmp", ".apng", ".jpeg", ".jxl", ".avif"]
     AllFormatStr = [v.replace(".", "") for v in AllUseFormat]
-    NeedConvertFormat = ["jxl", "avif"]
+    SrNeedConvertFormat = ["avif"]                       # sr_vulkan 导入不支持，超分前需转 PNG
+    QtNeedConvertFormat = ["jxl", "avif"]                # Qt 不原生支持，显示前需转 PNG
+    SrExportAnimaFormat = ["webp", "apng", "jxl"]        # sr_vulkan 原生支持动图导出
+    SrExportFormat = ["bmp", "png", "jpg", "apng", "webp", "jxl"]  # sr_vulkan 原生支持导出
+    AnimaFormat = ["gif", "webp", "apng"]                # Pillow save_all 支持的动图导出
+
 
     @staticmethod
     def DictToUrl(paramDict):
@@ -205,9 +210,16 @@ class ToolUtil(object):
                     mat = "jxl"
                 elif img.format.upper() == "AVIF":
                     mat = "avif"
-                else:
+                elif img.format.upper() == "JPEG":
                     mat = "jpg"
-                return img.width, img.height, mat, isAnima
+                else:
+                    mat = img.format.lower()
+                exif = img.getexif()
+                orientation = exif.get(274, 1)  # 默认值为 1（正常方向）
+                width, height = img.width, img.height
+                if orientation in (5, 6, 7, 8):
+                    width, height = height, width  # 互换宽高
+                return width, height, mat, isAnima
         except Exception as es:
             Log.Error(es)
         return 0, 0, "jpg", False
@@ -228,7 +240,7 @@ class ToolUtil(object):
                 BytesIO(data) as buffer,
                 Image.open(buffer) as img,
             ):
-                if img.format.lower() in ToolUtil.NeedConvertFormat and img.format.lower() not in QtOwner().allSupportFmt:
+                if img.format.lower() in ToolUtil.QtNeedConvertFormat and img.format.lower() not in QtOwner().allSupportFmt:
                     toMat = "PNG"
                     newBuffer = BytesIO()
                     img.save(newBuffer, format=toMat)
@@ -256,7 +268,7 @@ class ToolUtil(object):
                 BytesIO(data) as buffer,
                 Image.open(buffer) as img,
             ):
-                if img.format.lower() in ToolUtil.NeedConvertFormat:
+                if img.format.lower() in ToolUtil.SrNeedConvertFormat:
                     toMat = "PNG"
                     newBuffer = BytesIO()
                     img.save(newBuffer, format=toMat)
@@ -363,7 +375,7 @@ class ToolUtil(object):
     @staticmethod
     def SavePicture(data, path, format):
         if path and not os.path.isdir(os.path.dirname(path)):
-            os.makedirs(os.path.dirname(path))
+            os.makedirs(os.path.dirname(path), exist_ok=True)
 
         if path and data:
             path = ToolUtil.GetPictureName(path, format)
@@ -371,20 +383,26 @@ class ToolUtil(object):
                 f.write(data)
 
     @staticmethod
-    def SaveConvertPicture(data, path, format):
+    def SaveConvertPicture(data, path, format, isAni):
         if path and not os.path.isdir(os.path.dirname(path)):
-            os.makedirs(os.path.dirname(path))
+            os.makedirs(os.path.dirname(path), exist_ok=True)
 
         from qt_owner import QtOwner
         if path and data:
             newFormat = QtOwner().GetConvertFmtRule(format)
+            if isAni and newFormat not in ToolUtil.AnimaFormat:
+                newFormat = format
+
             if newFormat != format and newFormat in ToolUtil.AllFormatStr:
-                newData = ToolUtil.ConvertPicture(data, newFormat)
+                isSuc, newData = ToolUtil.ConvertPicture(data, newFormat, isAni)
                 if path[-4:] in ToolUtil.AllUseFormat:
                     path = path[:-4]
                 elif path[-5:] in ToolUtil.AllUseFormat:
                     path = path[:-5]
-                path = ToolUtil.GetPictureName(path, format)
+                if isSuc:
+                    path = ToolUtil.GetPictureName(path, newFormat)
+                else:
+                    path = ToolUtil.GetPictureName(path, format)
             else:
                 newData = data
                 path = ToolUtil.GetPictureName(path, format)
@@ -392,20 +410,26 @@ class ToolUtil(object):
                 f.write(newData)
 
     @staticmethod
-    def SaveDownloadPicture(data, path, format):
+    def SaveDownloadPicture(data, path, format, isAni):
         if path and not os.path.isdir(os.path.dirname(path)):
-            os.makedirs(os.path.dirname(path))
+            os.makedirs(os.path.dirname(path), exist_ok=True)
 
         from qt_owner import QtOwner
         if path and data:
             newFormat = QtOwner().GetDownFmtRule(format)
+            if isAni and newFormat not in ToolUtil.AnimaFormat:
+                newFormat = format
+
             if newFormat != format and newFormat in ToolUtil.AllFormatStr:
-                newData = ToolUtil.ConvertPicture(data, newFormat)
+                isSuc, newData = ToolUtil.ConvertPicture(data, newFormat, isAni)
                 if path[-4:] in ToolUtil.AllUseFormat:
                     path = path[:-4]
                 elif path[-5:] in ToolUtil.AllUseFormat:
                     path = path[:-5]
-                path = ToolUtil.GetPictureName(path, newFormat)
+                if isSuc:
+                    path = ToolUtil.GetPictureName(path, newFormat)
+                else:
+                    path = ToolUtil.GetPictureName(path, format)
             else:
                 newData = data
                 path = ToolUtil.GetPictureName(path, format)
@@ -413,7 +437,7 @@ class ToolUtil(object):
                 f.write(newData)
 
     @staticmethod
-    def ConvertPicture(data, fmt):
+    def ConvertPicture(data, fmt, isAni=False):
         try:
             import pillow_jxl
             import pillow_avif
@@ -428,15 +452,43 @@ class ToolUtil(object):
                 Image.open(buffer) as img,
             ):
                 imgFmt = fmt
-                if fmt == "jpg" and img.mode in ("RGBA", "P"):
-                    img = img.convert("RGB")
-                    imgFmt = "JPEG"
-                img.save(output_io, format=imgFmt)
-                jpeg_bytes = output_io.getvalue()
-                return jpeg_bytes
+                if not isAni:
+                    if fmt.lower() == "jpg" and img.mode in ("RGBA", "P"):
+                        img = img.convert("RGB")
+                    if fmt.lower() == "jpg":
+                        imgFmt = "JPEG"
+                    if fmt.lower() == "apng":
+                        imgFmt = "PNG"
+                    img.save(output_io, format=imgFmt)
+                    jpeg_bytes = output_io.getvalue()
+                    return True, jpeg_bytes
+                else:
+                    frames = []
+                    durations = []
+                    if fmt.lower() == "apng":
+                        imgFmt = "PNG"
+                    for frame_idx in range(getattr(img, "n_frames", 1)):
+                        img.seek(frame_idx)
+                        rgba_frame = img.convert("RGBA")
+                        frames.append(rgba_frame)
+                        durations.append(img.info.get("duration", 100))
+                    if not frames:
+                        return False, data
+                    loop = img.info.get("loop", 0)  # 0 表示无限循环
+                    frames[0].save(
+                        output_io,
+                        format=imgFmt,
+                        save_all=True,
+                        append_images=frames[1:],
+                        duration=durations,
+                        loop=loop,
+                        quality=80,
+                    )
+                    jpeg_bytes = output_io.getvalue()
+                    return True, jpeg_bytes
         except Exception as es:
             Log.Error(es)
-        return data
+        return False, data
 
     @staticmethod
     def GetPictureName(path, format):
@@ -783,7 +835,7 @@ class ToolUtil(object):
     @staticmethod
     def ParseBookEpsScramble(data):
         try:
-            mo = re.search(r"(?<=var scramble_id = )\w+", data)
+            mo = re.search(r"(?<=var scramble_id = )\w+", data.decode("utf-8"))
             return int(mo.group())
         except Exception as es:
             Log.Error(es)
@@ -886,8 +938,8 @@ class ToolUtil(object):
                 b2.content = v2.get("content")
                 b2.like = v2.get("likes")
                 b2.date = v2.get("addtime")
-                b.linkBookName = v2.get("name")
-                b.linkBookId = v2.get("AID")
+                b2.linkBookName = v2.get("name")
+                b2.linkBookId = v2.get("AID")
                 b.subComments.append(b2)
             commentList.append(b)
         return commentList, total
@@ -1243,13 +1295,13 @@ class ToolUtil(object):
         return Converter('zh-hans').convert(name1) == Converter('zh-hans').convert(name2)
 
 
-    @staticmethod
-    def GetPictureFormat(data):
-        import imghdr
-        mat = imghdr.what(None, data)
-        if mat:
-            return mat
-        return "jpg"
+    # @staticmethod
+    # def GetPictureFormat(data):
+    #     import imghdr
+    #     mat = imghdr.what(None, data)
+    #     if mat:
+    #         return mat
+    #     return "jpg"
 
     @staticmethod
     def GetStrMaxLen(str, maxLen=6):
@@ -1292,7 +1344,7 @@ class ToolUtil(object):
             fileDir = os.path.dirname(filePath)
 
             if not os.path.isdir(fileDir):
-                os.makedirs(fileDir)
+                os.makedirs(fileDir, exist_ok=True)
 
             with open(filePath, "wb+") as f:
                 f.write(data)

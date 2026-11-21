@@ -1,7 +1,7 @@
 from functools import partial
 
 from PySide6 import QtWidgets
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QPersistentModelIndex
 from PySide6.QtGui import QCursor
 from PySide6.QtWidgets import QListWidgetItem, QMenu, QApplication, QFrame, QListWidget, QMessageBox
 
@@ -368,11 +368,13 @@ class ComicListWidget(BaseListWidget):
         toW = widget.picLabel.width()
         toH = widget.picLabel.height()
         widget.cacheImageTaskId = self.AddQImageTask(data, self.devicePixelRatio(), toW, toH, 0,
-                                                self.ConvertQImageBack, indexModel)
+                                                self.ConvertQImageBack, QPersistentModelIndex(indexModel))
 
     def ConvertQImageBack(self, data, indexModel):
         # item = self.item(index)
         # widget = self.itemWidget(item)
+        if not indexModel.isValid():
+            return
         widget = self.indexWidget(indexModel)
         if not widget:
             return
@@ -448,9 +450,9 @@ class ComicListWidget(BaseListWidget):
 
                 otherParams = {"bookId": widget.id, "type": "cover"}
                 if self.isLocal:
-                    self.AddConvertTask(widget.path, widget.picData, model, self.Waifu2xPictureBack, index, noSaveCache=True, otherParams=otherParams)
+                    self.AddConvertTask(widget.path, widget.picData, model, self.Waifu2xPictureBack, QPersistentModelIndex(index), noSaveCache=True, otherParams=otherParams)
                 else:
-                    self.AddConvertTask(widget.path, widget.picData, model, self.Waifu2xPictureBack, index, otherParams=otherParams)
+                    self.AddConvertTask(widget.path, widget.picData, model, self.Waifu2xPictureBack, QPersistentModelIndex(index), otherParams=otherParams)
 
     def CancleWaifu2xPicture(self, indexModel):
         widget = self.indexWidget(indexModel)
@@ -460,6 +462,8 @@ class ComicListWidget(BaseListWidget):
             self.ConvertQImage(widget, widget.picData, indexModel)
 
     def Waifu2xPictureBack(self, data, waifuId, indexModel, tick):
+        if not indexModel.isValid():
+            return
         widget = self.indexWidget(indexModel)
         if data and widget:
             assert isinstance(widget, ComicItemWidget)

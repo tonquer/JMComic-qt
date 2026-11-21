@@ -177,7 +177,7 @@ class LoginCheck301Handler(object):
 
 
 @handler(req.GetCaptchaReq)
-class ParseMsgHandler(object):
+class GetCaptchaReqHandler(object):
     def __call__(self, task: Task):
         data = {"st": task.status, "content": task.res.GetContent(), "msg": ""}
         try:
@@ -333,7 +333,7 @@ class GetIndexInfoReq2Handler(object):
 
 
 @handler(req.GetLatestInfoReq2)
-class GetIndexInfoReq2Handler(object):
+class GetLatestInfoReq2Handler(object):
     def __call__(self, task: Task):
         data = {"st": task.status}
         try:
@@ -505,7 +505,7 @@ class GetSearchReq2Handler(object):
 
 
 @handler(req.GetCategoryReq2)
-class GetSearchReq2Handler(object):
+class GetCategoryReq2Handler(object):
     def __call__(self, task: Task):
         data = {"st": task.status}
         try:
@@ -966,7 +966,7 @@ class DownloadBookHandler(object):
         result_data["total"] = 0
         result_data["send"] = 0
         result_data["now"] = int(time.time())
-        result_data["data"] = b""
+        result_data["data"] = bytearray()
 
         # 1. 处理响应头：按行到达
         def on_header(header_line: bytes):
@@ -978,7 +978,7 @@ class DownloadBookHandler(object):
         def on_content(chunk: bytes):
             cur = time.time()
             tick = cur - result_data["now"]
-            result_data["data"] += chunk
+            result_data["data"].extend(chunk)
             result_data["total"] += len(chunk)
             result_data["send"] +=  len(chunk)
             if tick >= 0.1:
@@ -996,7 +996,7 @@ class DownloadBookHandler(object):
         result = {"backParam": backData.backParam}
         if backData.status != Status.Ok:
             if backData.bakParam:
-                TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, -backData.status, b"")
+                TaskBase.taskObj.downloadBack.emit(backData.backParam, -backData.status, 0, b"")
         else:
             fileSize = 0
             request = backData.req
@@ -1013,8 +1013,9 @@ class DownloadBookHandler(object):
                     # with task.session.get("GET", request.url, headers=request.headers,
                     #                          timeout=backData.timeout, proxies=request.proxy) as r:
 
-                    header_cb, content_cb = DownloadBookHandler.create_handlers(result)
-                    r = task.session.get(request.url, headers=request.headers, timeout=backData.timeout,
+                    _, content_cb = DownloadBookHandler.create_handlers(result)
+                    # curl_cffi未开放header_cb
+                    r = task.session.get(request.url, headers=request.headers, timeout=None,
                                          proxies=request.proxy, content_callback=content_cb)
 
                     ttfb_time = r.infos.get(CurlInfo.STARTTRANSFER_TIME)
@@ -1031,23 +1032,25 @@ class DownloadBookHandler(object):
                         isReset = backData.req.ResetToSwitchNextUrl()
                         if isReset and backData.req.resetCnt >= 0:
                             backData.req.isReset = True
+                            if backData.backParam:
+                                TaskBase.taskObj.downloadBack.emit(backData.backParam, -Status.Resetting, fileSize, b"")
                             Server().ReDownload(backData)
                             return
                         else:
                             if backData.backParam:
-                                TaskBase.taskObj.downloadBack.emit(backData.backParam, -Status.Error, fileSize,
-                                                                   b"")
+                                TaskBase.taskObj.downloadBack.emit(backData.backParam, -Status.Error, fileSize, b"")
                             return
                     elif r.status_code != 200:
                         if backData.backParam:
                             TaskBase.taskObj.downloadBack.emit(backData.backParam, -Status.Error, fileSize, b"")
                         return
 
-                    data = result["data"]
+                    data = bytes(result["data"])
+                    fileSize = len(data)
                     isSpacePic = len(data) == 0
                     if result["send"] > 0:
                         if backData.backParam:
-                            TaskBase.taskObj.downloadBack.emit(backData.backParam, result['send'], result["fileSize"], b"")
+                            TaskBase.taskObj.downloadBack.emit(backData.backParam, result['send'], fileSize, b"")
 
                 except exceptions.DNSError as es:
                     task.status = Status.DnsError
@@ -1101,12 +1104,14 @@ class DownloadBookHandler(object):
                     backData.req.ResetToSwitchNextUrl()
                     if backData.req.resetCnt >= 0:
                         backData.req.isReset = True
+                        if backData.bakParam:
+                            TaskBase.taskObj.downloadBack.emit(backData.backParam, -Status.Resetting, fileSize, b"")
                         Server().ReDownload(backData)
                         return
                     else:
                         backData.status = Status.DownloadBusy
                         if backData.bakParam:
-                            TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, -backData.status, b"")
+                            TaskBase.taskObj.downloadBack.emit(backData.backParam, -backData.status, fileSize, b"")
                         return
 
                 # Log.Info("size:{}, url:{}".format(ToolUtil.GetDownloadSize(fileSize), backData.req.url))
@@ -1115,35 +1120,37 @@ class DownloadBookHandler(object):
                     if backData.bakParam:
                         from server.req import ServerReq
                         ServerReq.SPACE_PIC.add(backData.req.url)
-                        TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, -Str.SpacePic, b"")
+                        TaskBase.taskObj.downloadBack.emit(backData.bakParam, -Str.SpacePic, fileSize, b"")
                     return
 
                 if config.IsUseCache and len(data) > 0:
                     try:
-                        if not backData.req.cachePath and not backData.req.savePath:
-                            return
-                        saveParam = backData.req.saveParam
-                        if backData.req.saveParam:
-                            if not isAni:
-                                data = TaskMulti().GetJmPicResultsResult(data, saveParam[0], saveParam[1], saveParam[2])
+                        if backData.req.cachePath or backData.req.savePath:
+                            saveParam = backData.req.saveParam
+                            if backData.req.saveParam and not isAni:
+                                newData = TaskMulti().GetJmPicResultsResult(data, saveParam[0], saveParam[1],
+                                                                            saveParam[2])
+                                if newData:
+                                    data = newData
 
-                        if backData.req.cachePath:
-                            TaskCache().AddCacheDiskPath(ToolUtil.GetPictureName(backData.req.cachePath, mat), data)
+                            if backData.req.cachePath:
+                                TaskCache().AddCacheDiskPath(ToolUtil.GetPictureName(backData.req.cachePath, mat), data)
 
-                        for path in [backData.req.savePath]:
-                            filePath = path
-                            if not path:
-                                continue
-                            ToolUtil.SaveDownloadPicture(data, filePath, mat)
-                            Log.Debug("add download cache, cachePath:{}".format(filePath))
+                            for path in [backData.req.savePath]:
+                                filePath = path
+                                if not path:
+                                    continue
+                                ToolUtil.SaveDownloadPicture(data, filePath, mat, isAni)
+                                Log.Debug("add download cache, cachePath:{}".format(filePath))
                     except Exception as es:
                         Log.Error(es)
                         # 保存失败了
                         if backData.bakParam:
-                            TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, -2, b"")
+                            TaskBase.taskObj.downloadBack.emit(backData.backParam, -2, fileSize, b"")
+                        return
 
                 if backData.bakParam:
-                    TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, 0, data)
+                    TaskBase.taskObj.downloadBack.emit(backData.backParam, 0, fileSize, data)
 
                 Log.Info("response{}-> backId:{}, {}, st:{}, hit:{}".format(
                     index, backData.backParam, backData.req.__class__.__name__,
@@ -1153,7 +1160,7 @@ class DownloadBookHandler(object):
                 backData.status = Status.DownloadFail
                 Log.Error(es)
                 if backData.bakParam:
-                    TaskBase.taskObj.downloadBack.emit(backData.bakParam, 0, -backData.status, b"")
+                    TaskBase.taskObj.downloadBack.emit(backData.backParam, -backData.status, fileSize, b"")
             finally:
                 if task.req.isImg and isinstance(ttfb_time, (int, float)):
                     addSize = result.get("total", 0)
