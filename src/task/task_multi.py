@@ -66,6 +66,11 @@ class TaskMulti(TaskBase):
         if index < 0:
             return None
         try:
+            while not self.queueFinishList[index].empty():
+                try:
+                    self.queueFinishList[index].get_nowait()
+                except Exception:
+                    break
             self.queueList[index].put((TaskMulti.MultiTaskSegment, (imgData, saveParam1, saveParam2, saveParam3)))
             return self.queueFinishList[index].get(timeout=30)
         except Exception as es:

@@ -96,7 +96,7 @@ class GlobalConfig:
         "raw3.jpacg.cc",
         "app3.jpacg.cc",
         "check.jpacg.cc",
-        "parse3.jpacg.cc"
+        "parse3.jpacg.cc",
         "macapi1.com"])
 
     ProxyIpList = GlobalItem([

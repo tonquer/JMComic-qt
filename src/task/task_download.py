@@ -279,9 +279,12 @@ class TaskDownload(TaskBase, QtTaskBase):
                 task.status = task.Reading
             if task.status == task.Reading:
                 # isReset or self.SetTaskStatus(taskId, backData, task.ReadingEps)
+                if not info:
+                    self.SetTaskStatus(taskId, backData, task.Error)
+                    return
 
                 epsInfo = info.pageInfo.epsInfo.get(task.epsId)
-                if info.pageInfo.epsInfo and not epsInfo:
+                if not epsInfo:
                     self.SetTaskStatus(taskId, backData, Str.SpaceEps)
                     return
 
@@ -341,7 +344,7 @@ class TaskDownload(TaskBase, QtTaskBase):
                                 task.isCacheFetch = True
                                 TaskBase.taskObj.downloadBack.emit(taskId, len(imgData), len(imgData), b"")
                                 TaskBase.taskObj.downloadBack.emit(taskId, 0, len(imgData), imgData)
-                                isReset or self.SetTaskStatus(taskId, backData, task.Cache)
+                                self.SetTaskStatus(taskId, backData, task.Cache)
                                 return
 
                     for cachePath in checkPaths:
@@ -351,7 +354,7 @@ class TaskDownload(TaskBase, QtTaskBase):
                             if imgData:
                                 TaskBase.taskObj.downloadBack.emit(taskId, len(imgData), len(imgData), b"")
                                 TaskBase.taskObj.downloadBack.emit(taskId, 0, len(imgData), imgData)
-                                isReset or self.SetTaskStatus(taskId, backData, task.Cache)
+                                self.SetTaskStatus(taskId, backData, task.Cache)
                                 return
 
                 url = epsInfo.pictureUrl.get(realIndex)
@@ -359,7 +362,7 @@ class TaskDownload(TaskBase, QtTaskBase):
                     self.SetTaskStatus(taskId, backData, task.Error)
                     return
 
-                isReset or self.SetTaskStatus(taskId, backData, task.Downloading)
+                self.SetTaskStatus(taskId, backData, task.Downloading)
 
                 resetCnt = config.ResetDownloadCnt
                 otherParams = {"bookId": task.bookId, "epsId": task.epsId, "type": "book", "index": task.index}

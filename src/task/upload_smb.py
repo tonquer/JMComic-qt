@@ -37,10 +37,12 @@ class SmbClient(UpLoadBase):
                 result = self.client.connect(self.address, self.port, timeout=5)
             else:
                 result = self.client.connect(self.address, timeout=5)
-            self.isLink = True
             if not result:
+                self.isLink = False
                 return Str.CvAuthError
+            self.isLink = True
         except Exception as es:
+            self.isLink = False
             Log.Error(es)
             return self.GetExceptionSt(es)
         return Str.Ok
@@ -92,9 +94,16 @@ class SmbClient(UpLoadBase):
     def Upload(self, localPath, remotePath):
         try:
             if not self.isLink:
-                self.Connect()
+                st = self.Connect()
+                if st != Str.Ok:
+                    return st
 
-            remotePath  = remotePath.replace("/{}/".format(self.service_name), "")
+            prefix = f"{self.service_name}/"
+            remotePath = remotePath.lstrip("/")
+            if remotePath.startswith(prefix):
+                remotePath = remotePath[len(prefix):]
+            elif remotePath == self.service_name:
+                remotePath = ""
             if not os.path.isfile(localPath):
                 return Str.FileError
             self.Create(remotePath)

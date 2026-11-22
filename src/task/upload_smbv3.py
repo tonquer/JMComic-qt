@@ -106,9 +106,16 @@ class SmbV3Client(UpLoadBase):
     def Upload(self, localPath, remotePath):
         try:
             if not self.isLink:
-                self.Connect()
+                st = self.Connect()
+                if st != Str.Ok:
+                    return st
 
-            remotePath  = remotePath.replace("/{}/".format(self.service_name), "")
+            prefix = f"{self.service_name}/"
+            remotePath = remotePath.lstrip("/")
+            if remotePath.startswith(prefix):
+                remotePath = remotePath[len(prefix):]
+            elif remotePath == self.service_name:
+                remotePath = ""
             if not os.path.isfile(localPath):
                 return Str.FileError
             self.Create(remotePath)

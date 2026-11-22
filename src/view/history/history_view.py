@@ -69,9 +69,9 @@ class HistoryView(QtWidgets.QWidget, Ui_History):
         self.update()
         self.bookList.clear()
         self.bookList.page = 1
-        self.bookList.pages = len(self.history) // self.pageNums + 1
+        self.bookList.pages = max(1, (len(self.history) - 1) // self.pageNums + 1) if self.history else 1
         self.spinBox.setValue(1)
-        self.spinBox.setMaximum(self.pageNums)
+        self.spinBox.setMaximum(self.bookList.pages)
         self.bookList.UpdateState()
         self.UpdatePageLabel()
         self.RefreshData(self.bookList.page)

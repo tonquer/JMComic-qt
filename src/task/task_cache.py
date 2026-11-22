@@ -182,6 +182,7 @@ class TaskCache(TaskBase, QtTaskBase):
     TypeInitDiskCache = 1  # 初始化磁盘缓存
     TypeAddDiskCache = 2  # 添加磁盘缓存
     TypeRemoveDiskCache = 3  # 删除磁盘缓存
+    TypeUpdateDiskSetting = 4  # 更新磁盘缓存设置
 
     def __init__(self):
         TaskBase.__init__(self)
@@ -200,24 +201,31 @@ class TaskCache(TaskBase, QtTaskBase):
         self.thread.start()
 
     def Init(self):
-        self._inQueue.put((self.TypeInitDiskDB, ()))
-
         from qt_owner import QtOwner
         self.taskObj.diskCacheRefresh.connect(QtOwner().settingView.UpdateCacheLabe)
 
+        self.UpdateSetting()
+        if not self.isOpenDisk:
+            self._inQueue.put((self.TypeInitDiskDB, ()))
+        return
+
+    def UpdateSetting(self):
         if not Setting.SavePath.value or not Setting.IsInitSave.value:
             return
         self.isOpenMem = bool(Setting.IsOpenMemCache.value)
         self.isOpenDisk = bool(Setting.IsOpenDiskCache.value)
-        if Setting.MemCacheSize.value > 0:
-            self.memeryCache = LRUCache(maxsize=Setting.MemCacheSize.value * self.MB, getsizeof=FilePicCache.GetSize)
-        if Setting.DiskCacheSize.value > 0:
-            self.diskCache = LRUDiskCache(maxsize=Setting.DiskCacheSize.value * self.MB, ttu=FilePicCache.GetTTU,
-                                          getsizeof=FilePicCache.GetSize, timer=datetime.now)
-        if Setting.DiskCacheDay.value > 0:
-            self.diskSaveSecond = Setting.DiskCacheDay.value * self.DAY
-        if self.isOpenDisk:
-            self._inQueue.put((self.TypeInitDiskDB, ()))
+        with self._taskLock:
+            if Setting.MemCacheSize.value > 0:
+                newMax = Setting.MemCacheSize.value * self.MB
+                if self.memeryCache.maxsize != newMax:
+                    newCache = LRUCache(maxsize=newMax, getsizeof=FilePicCache.GetSize)
+                    for k, v in self.memeryCache.items():
+                        if v.size <= newMax:
+                            newCache[k] = v
+                    self.memeryCache = newCache
+        diskMax = Setting.DiskCacheSize.value * self.MB if Setting.DiskCacheSize.value > 0 else 0
+        diskSaveSecond = Setting.DiskCacheDay.value * self.DAY if Setting.DiskCacheDay.value > 0 else 0
+        self._inQueue.put((self.TypeUpdateDiskSetting, (self.isOpenDisk, diskMax, diskSaveSecond)))
         return
 
     ## 需要在download前初始化
@@ -229,7 +237,8 @@ class TaskCache(TaskBase, QtTaskBase):
         self.taskObj.convertBack.connect(self.ConvertSuc)
 
     def GetMemSize(self):
-        return round(self.memeryCache.currsize / 1024 / 1024, 2)
+        with self._taskLock:
+            return round(self.memeryCache.currsize / 1024 / 1024, 2)
 
     def GetDiskSize(self):
         if not self.isInitDisk:
@@ -246,12 +255,14 @@ class TaskCache(TaskBase, QtTaskBase):
                 cacheType, params = v
                 if cacheType == self.TypeInitDiskDB:
                     self.__InitDiskDB()
-                if cacheType == self.TypeInitDiskCache:
+                elif cacheType == self.TypeInitDiskCache:
                     self.__InitDiskCache()
                 elif cacheType == self.TypeAddDiskCache:
                     self.__AddCacheDiskPath(*params)
                 elif cacheType == self.TypeRemoveDiskCache:
                     self.__RemoveCacheDiskPath(params)
+                elif cacheType == self.TypeUpdateDiskSetting:
+                    self.__UpdateDiskSetting(*params)
             except Exception as es:
                 Log.Error(es)
 
@@ -331,7 +342,8 @@ class TaskCache(TaskBase, QtTaskBase):
         file.bookId = task.bookId
         Log.Debug("add cache waifu2x info, taskId:{}, key:{}, path:{}, size:{}".format(taskId, file.key, file.path, len(file.data)))
         with self._taskLock:
-            self.memeryCache[file.key] = file
+            if file.size <= self.memeryCache.maxsize:
+                self.memeryCache[file.key] = file
         return
 
     def DownloadSuc(self, downloadId, addSize, fileSize, data):
@@ -353,7 +365,8 @@ class TaskCache(TaskBase, QtTaskBase):
         file.bookId = task.bookId
         Log.Debug("add cache info, taskId:{}, key:{}, path:{}, size:{}".format(downloadId, file.key, file.path, len(data)))
         with self._taskLock:
-            self.memeryCache[file.key] = file
+            if file.size <= self.memeryCache.maxsize:
+                self.memeryCache[file.key] = file
 
     def LoadDataSuc(self, path, data, bookId):
         if not path or not data:
@@ -368,7 +381,8 @@ class TaskCache(TaskBase, QtTaskBase):
         file.bookId = bookId
         Log.Debug("add cache data info, key:{}, path:{}, size:{}".format(file.key, file.path, len(file.data)))
         with self._taskLock:
-            self.memeryCache[file.key] = file
+            if file.size <= self.memeryCache.maxsize:
+                self.memeryCache[file.key] = file
         return
 
     def __InitDiskDB(self):
@@ -384,14 +398,37 @@ class TaskCache(TaskBase, QtTaskBase):
             files = self.__diskDB.LoadAll()
             for file in files:
                 file.ttl = (file.tick + self.diskSaveSecond) - now
-                if file.ttl <= 0 :
+                if file.ttl <= 0 or file.size > self.diskCache.maxsize:
                     self.RemoveCacheDiskPath(file.key, file.path)
                     continue
                 self.diskCache[file.key] = file
 
             self.isInitDisk = True
+            TaskBase.taskObj.diskCacheRefresh.emit()
             return
         self.InitDiskCache()
+        return
+
+    def __UpdateDiskSetting(self, isOpenDisk, diskMax, diskSaveSecond):
+        if diskSaveSecond > 0:
+            self.diskSaveSecond = diskSaveSecond
+        changed = False
+        if diskMax > 0 and self.diskCache.maxsize != diskMax:
+            newCache = LRUDiskCache(maxsize=diskMax, ttu=FilePicCache.GetTTU,
+                                    getsizeof=FilePicCache.GetSize, timer=datetime.now)
+            now = int(time.time())
+            for k, v in list(self.diskCache.items()):
+                v.ttl = (v.tick + self.diskSaveSecond) - now
+                if v.ttl <= 0 or v.size > diskMax:
+                    self.RemoveCacheDiskPath(v.key, v.path)
+                    continue
+                newCache[k] = v
+            self.diskCache = newCache
+            changed = True
+        if isOpenDisk and not self.isInitDisk:
+            self.__InitDiskDB()
+        elif changed and self.isInitDisk:
+            TaskBase.taskObj.diskCacheRefresh.emit()
         return
 
     def InitDiskCache(self):
@@ -427,11 +464,11 @@ class TaskCache(TaskBase, QtTaskBase):
                         file.path = full_path
                         file.tick = mtime
                         file.ttl = (file.tick + self.diskSaveSecond) - now
-                        if file.ttl <= 0:
+                        if file.ttl <= 0 or file.size > self.diskCache.maxsize:
                             self.RemoveCacheDiskPath(file.key, file.path)
                             continue
                         self.diskCache[file.key] = file
-                        allFiles.append(file)
+        allFiles = list(self.diskCache.values())
         self.__diskDB.AddAll(allFiles)
         self.__diskDB.UpdateInfo()
         totalSize = sum([v.size for v in allFiles])
@@ -452,6 +489,8 @@ class TaskCache(TaskBase, QtTaskBase):
         file = FilePicCache()
         # 不需要存data
         file.size = len(data)
+        if file.size > self.diskCache.maxsize:
+            return
         file.key = self.GetPathCacheKey(path)
         file.path = path
         file.tick = int(time.time())

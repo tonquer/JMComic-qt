@@ -24,6 +24,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         Ui_SettingNew.__init__(self)
         self._settingControlsReady = False
         self._settingBindingsConnected = False
+        self._appliedTheme = None
         self.setupUi(self)
 
         self.mainSize = None
@@ -94,7 +95,265 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
 
         self._settingControlsReady = True
         self.diskRefreshButton.clicked.connect(self.StartUpdateDiskCache)
+        self.InitBackupSection()
         #     QScroller.grabGesture(self.scrollArea, QScroller.LeftMouseButtonGesture)
+
+    def InitBackupSection(self):
+        """在设置页末尾追加「配置备份」区块
+
+        这里用代码追加而不是改 .ui 文件，避免与上游的界面改动冲突。
+        """
+        frame = QtWidgets.QFrame(self.scrollAreaWidgetContents)
+        frame.setObjectName("backupFrame")
+        hLayout = QtWidgets.QHBoxLayout(frame)
+        hLayout.setContentsMargins(0, 0, 0, 0)
+
+        self.backupLabel = QtWidgets.QLabel("配置备份", frame)
+        self.exportConfigButton = QtWidgets.QPushButton("导出配置", frame)
+        self.importConfigButton = QtWidgets.QPushButton("导入配置", frame)
+        self.exportConfigButton.setToolTip("把配置、搜索历史和下载记录打包成一个 zip 文件（内含账号登录凭据，请妥善保管）")
+        self.importConfigButton.setToolTip("从导出的 zip 文件恢复配置，恢复后需要重启程序")
+
+        self.exportConfigButton.clicked.connect(self.ExportConfig)
+        self.importConfigButton.clicked.connect(self.ImportConfig)
+
+        hLayout.addWidget(self.backupLabel)
+        hLayout.addWidget(self.exportConfigButton)
+        hLayout.addWidget(self.importConfigButton)
+        hLayout.addStretch(1)
+        self.verticalLayout_4.addWidget(frame)
+
+    @staticmethod
+    def GetBackupFileMap():
+        """配置备份包含的文件：{归档内路径: 实际路径}"""
+        fileMap = {
+            "config/config.ini": os.path.join(Setting.GetConfigPath(), "config.ini"),
+            "data/cache_word": os.path.join(Setting.GetDataPath(), "cache_word"),
+        }
+        for name in ("download.db", "favorite.db", "history.db",
+                     "local_read.db", "nas.db", "batch_sr_tool.db"):
+            fileMap["state/" + name] = os.path.join(Setting.GetStatePath(), name)
+        return fileMap
+
+    def ExportConfig(self):
+        path, _ = QFileDialog.getSaveFileName(self, "导出配置", "jmcomic-config.zip", "Zip(*.zip)")
+        if not path:
+            return
+        try:
+            count = self.WriteBackupTo(path)
+            QtOwner().ShowMsgOne("已导出 {} 个配置文件到：\n{}\n\n注意：文件内含账号和代理设置，请妥善保管".format(count, path))
+        except Exception as es:
+            Log.Error(es)
+            QtOwner().ShowErrOne("导出配置失败：{}".format(es))
+
+    def WriteBackupTo(self, path):
+        """把配置打包写到 path，返回打包的文件数。
+
+        先写临时文件再替换，避免中途失败留下半截 zip；
+        .db 文件用 SQLite backup API 取一致性快照，不复制正在写入的裸文件。
+        """
+        import zipfile
+        tmpPath = path + ".tmp"
+        count = 0
+        try:
+            with zipfile.ZipFile(tmpPath, "w", zipfile.ZIP_DEFLATED) as zf:
+                for name, srcPath in self.GetBackupFileMap().items():
+                    if not os.path.isfile(srcPath):
+                        continue
+                    if name.endswith(".db"):
+                        snapPath = self.SnapshotSqlite(srcPath)
+                        if snapPath:
+                            try:
+                                zf.write(snapPath, name)
+                            finally:
+                                if os.path.isfile(snapPath):
+                                    os.remove(snapPath)
+                            count += 1
+                            continue
+                    zf.write(srcPath, name)
+                    count += 1
+            os.replace(tmpPath, path)
+        finally:
+            if os.path.isfile(tmpPath):
+                os.remove(tmpPath)
+        return count
+
+    @staticmethod
+    def SnapshotSqlite(srcPath):
+        """对 SQLite 文件取快照，失败返回 None（由调用方退回普通复制）"""
+        import sqlite3
+        import tempfile
+        snapPath = None
+        src = dst = None
+        ok = False
+        try:
+            fd, snapPath = tempfile.mkstemp(suffix=".db")
+            os.close(fd)
+            src = sqlite3.connect(srcPath)
+            dst = sqlite3.connect(snapPath)
+            src.backup(dst)
+            ok = True
+            return snapPath
+        except Exception as es:
+            Log.Warn("sqlite snapshot failed, fallback to raw copy, {}: {}".format(srcPath, es))
+            return None
+        finally:
+            for con in (dst, src):
+                if con is not None:
+                    try:
+                        con.close()
+                    except Exception:
+                        pass
+            if not ok and snapPath and os.path.isfile(snapPath):
+                try:
+                    os.remove(snapPath)
+                except Exception:
+                    pass
+
+    def ReadBackupFrom(self, path):
+        """解压并校验备份文件，返回 ({归档内路径: 临时文件路径}, 临时目录)。
+
+        在动任何现有文件之前，先确认压缩包完整、内容合法。
+        """
+        import zipfile
+        import tempfile
+        fileMap = self.GetBackupFileMap()
+        tmpDir = tempfile.mkdtemp(prefix="jmcomic-import-")
+        extracted = {}
+        try:
+            with zipfile.ZipFile(path, "r") as zf:
+                for name in zf.namelist():
+                    if name not in fileMap:
+                        continue
+                    data = zf.read(name)
+                    if name.endswith(".db") and data[:16] != b"SQLite format 3\x00":
+                        raise ValueError("{} 不是有效的数据库文件".format(name))
+                    dest = os.path.join(tmpDir, name.replace("/", "_"))
+                    with open(dest, "wb") as f:
+                        f.write(data)
+                    extracted[name] = dest
+            if not extracted:
+                raise ValueError("压缩包里没有可导入的配置文件")
+            return extracted, tmpDir
+        except Exception:
+            import shutil
+            shutil.rmtree(tmpDir, ignore_errors=True)
+            raise
+
+    def RestoreConfig(self, extracted):
+        """把解压好的文件替换到位；任一步失败，回滚所有已替换的文件"""
+        import shutil
+        import sqlite3
+        fileMap = self.GetBackupFileMap()
+        backups = {}
+        created = []
+        try:
+            for name, tmpPath in extracted.items():
+                destPath = fileMap[name]
+                os.makedirs(os.path.dirname(destPath), exist_ok=True)
+                existed = os.path.isfile(destPath)
+                if existed:
+                    if name.endswith(".db"):
+                        snap = self.SnapshotSqlite(destPath)
+                        if snap:
+                            try:
+                                with open(snap, "rb") as f:
+                                    backups[destPath] = f.read()
+                            finally:
+                                if os.path.isfile(snap):
+                                    os.remove(snap)
+                        else:
+                            with open(destPath, "rb") as f:
+                                backups[destPath] = f.read()
+                    else:
+                        with open(destPath, "rb") as f:
+                            backups[destPath] = f.read()
+                else:
+                    created.append(destPath)
+                if name.endswith(".db") and existed:
+                    src = dst = None
+                    try:
+                        src = sqlite3.connect(tmpPath)
+                        dst = sqlite3.connect(destPath)
+                        src.backup(dst)
+                    finally:
+                        for con in (dst, src):
+                            if con is not None:
+                                try:
+                                    con.close()
+                                except Exception:
+                                    pass
+                else:
+                    shutil.copyfile(tmpPath, destPath)
+        except Exception:
+            for destPath in created:
+                try:
+                    if os.path.isfile(destPath):
+                        os.remove(destPath)
+                except Exception as es:
+                    Log.Error(es)
+            for destPath, data in backups.items():
+                try:
+                    if destPath.endswith(".db") and os.path.isfile(destPath):
+                        import tempfile
+                        fd, rTmp = tempfile.mkstemp(suffix=".db")
+                        os.close(fd)
+                        src = dst = None
+                        try:
+                            with open(rTmp, "wb") as f:
+                                f.write(data)
+                            src = sqlite3.connect(rTmp)
+                            dst = sqlite3.connect(destPath)
+                            src.backup(dst)
+                        finally:
+                            for con in (dst, src):
+                                if con is not None:
+                                    try:
+                                        con.close()
+                                    except Exception:
+                                        pass
+                            if os.path.isfile(rTmp):
+                                try:
+                                    os.remove(rTmp)
+                                except Exception:
+                                    pass
+                    else:
+                        with open(destPath, "wb") as f:
+                            f.write(data)
+                except Exception as es:
+                    Log.Error(es)
+            raise
+
+    def ImportConfig(self):
+        path, _ = QFileDialog.getOpenFileName(self, "导入配置", "", "Zip(*.zip)")
+        if not path:
+            return
+        try:
+            # 先完整解压校验，再询问，最后替换；替换失败会自动回滚
+            extracted, tmpDir = self.ReadBackupFrom(path)
+        except Exception as es:
+            Log.Error(es)
+            QtOwner().ShowErrOne("导入配置失败：{}".format(es))
+            return
+        try:
+            from PySide6.QtWidgets import QMessageBox
+            ret = QMessageBox.question(
+                self, "导入配置",
+                "导入会覆盖当前配置，程序需要重启。\n\n"
+                "注意：压缩包只含配置和记录（账号、收藏、下载清单等），"
+                "不含漫画文件本身；如果原来的下载目录在这台电脑上不存在，"
+                "导入后请到「下载与缓存」里重新选择。\n\n是否继续？",
+                QMessageBox.Yes | QMessageBox.No)
+            if ret != QMessageBox.Yes:
+                return
+            self.RestoreConfig(extracted)
+            QtOwner().ShowMsgOne("已导入 {} 个配置文件，请重启程序后生效".format(len(extracted)))
+        except Exception as es:
+            Log.Error(es)
+            QtOwner().ShowErrOne("导入配置失败，已保留原配置：{}".format(es))
+        finally:
+            import shutil
+            shutil.rmtree(tmpDir, ignore_errors=True)
 
     #     self.grabGestureBox.installEventFilter(self)
     #
@@ -155,8 +414,8 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
             # BindCheck(Setting.CrossChapterPrefetch, self.crossChapterPrefetch),
             BindCheck(Setting.PrefetchWholeChapter, self.prefetchWholeChapter),
             BindCheck(Setting.IsGrabGesture, self.grabGestureBox),
-            BindCheck(Setting.IsOpenMemCache, self.openMemBox),
-            BindCheck(Setting.IsOpenDiskCache, self.openDiskBox),
+            BindCheck(Setting.IsOpenMemCache, self.openMemBox, lambda: self._UpdateTaskCacheSetting()),
+            BindCheck(Setting.IsOpenDiskCache, self.openDiskBox, lambda: self._UpdateTaskCacheSetting()),
             BindLine(Setting.HttpProxy, self.httpEdit),
             BindLine(Setting.Sock5Proxy, self.sockEdit),
             # BindIndex(Setting.DownloadCoverLv, self.coverLvBox),
@@ -166,7 +425,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
             BindIndex(Setting.NotCategoryShow, self.categoryBox),
             BindIndex(Setting.FontStyle, self.fontStyle, lambda value: self.fontStyle.setCurrentIndex(int(value))),
             BindIndex(Setting.Waifu2xTileSize, self.tileComboBox),
-            BindIndex(Setting.ThemeColorIndex, self.colorBox, lambda value: self.SetTheme()),
+            BindIndex(Setting.ThemeColorIndex, self.colorBox, after_save=lambda: self.SetTheme()),
             BindIndex(Setting.ProcThreadNum, self.procThreadNum),
             BindValue(Setting.SelectEncodeGpu, self.encodeSelect,
                       lambda value: self._SetTextChoice(self.encodeSelect, value, config.EncodeGpu)),
@@ -174,6 +433,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
                       lambda value: self._SetTextChoice(self.fontBox, self._FontChoiceValue(value))),
             BindValue(Setting.FontSize, self.fontSize,
                       lambda value: self._SetTextChoice(self.fontSize, self._FontChoiceValue(value))),
+            BindSpin(Setting.MultiNum, self.threadSpin),
             BindSpin(Setting.ScaleFactor, self.scaleBox),
             BindSpin(Setting.CoverSize, self.coverSize),
             BindSpin(Setting.CategorySize, self.categorySize),
@@ -183,9 +443,9 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
             BindSpin(Setting.PicturePrefetchFrontCount, self.prefetchFrontCount),
             BindSpin(Setting.PictureShowCount, self.showCount),
             BindSpin(Setting.PictureShowFrontCount, self.showFrontCount),
-            BindSpin(Setting.MemCacheSize, self.memBox),
-            BindSpin(Setting.DiskCacheSize, self.diskBox),
-            BindSpin(Setting.DiskCacheDay, self.diskDayBox),
+            BindSpin(Setting.MemCacheSize, self.memBox, after_save=lambda: self._UpdateTaskCacheSetting()),
+            BindSpin(Setting.DiskCacheSize, self.diskBox, after_save=lambda: self._UpdateTaskCacheSetting()),
+            BindSpin(Setting.DiskCacheDay, self.diskDayBox, after_save=lambda: self._UpdateTaskCacheSetting()),
             BindSpin(Setting.LookScale, self.readScale, float),
             BindSpin(Setting.CoverLookScale, self.coverScale, float),
             BindSpin(Setting.DownloadScale, self.downScale, float),
@@ -241,6 +501,11 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         self.InitSetting()
         self.UpdateCacheLabe()
         return
+
+    @staticmethod
+    def _UpdateTaskCacheSetting():
+        from task.task_cache import TaskCache
+        TaskCache().UpdateSetting()
 
     def StartUpdateDiskCache(self):
         self.diskRefreshButton.setEnabled(False)
@@ -380,18 +645,20 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         if themeId == 0:
             themeId = self.GetSysColor()
 
-        if themeId == Setting.ThemeIndex.autoValue:
+        colorId = Setting.ThemeColorIndex.value
+        if self._appliedTheme == (themeId, colorId):
             return
 
+        self._appliedTheme = (themeId, colorId)
         Setting.ThemeIndex.autoValue = themeId
 
         if themeId == 1:
-            if Setting.ThemeColorIndex.value == 0:
+            if colorId == 0:
                 f = QFile(":/file/theme/dark_orange.qss")
             else:
                 f = QFile(":/file/theme/dark_pink.qss")
         else:
-            if Setting.ThemeColorIndex.value == 0:
+            if colorId == 0:
                 f = QFile(":/file/theme/light_orange.qss")
             else:
                 f = QFile(":/file/theme/light_pink.qss")
@@ -403,6 +670,9 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         QtOwner().app.setStyleSheet(data)
         self.SetSettingTheme(themeId)
         QtOwner().navigationWidget.RefrshTheme()
+        QtOwner().localReadView.RefreshTheme()
+        QtOwner().bookInfoView.RefreshTheme()
+        QtOwner().bookInfoView2.RefreshTheme()
 
     def SetSettingTheme(self, themId):
         if themId != 1:

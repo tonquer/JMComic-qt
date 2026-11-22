@@ -276,7 +276,7 @@ class TaskLocal(TaskBase, QtTaskBase):
             info.fileName = v.cover
         else:
             if index >= len(v.pic):
-                assert False
+                return 0
             info.fileName = v.pic[index]
 
         info.filePath = v.path
@@ -401,7 +401,7 @@ class TaskLocal(TaskBase, QtTaskBase):
                 st, l = self.ParseBookInfoByFile(os.path.join(dirName, zipName))
                 if st == Status.Ok:
                     allData.append(l)
-            if picNum > 1:
+            if picNum >= 1:
                 st, l = self.ParseBookInfoByDir(dirName)
                 if st == Status.Ok:
                     allData.append(l)
@@ -446,10 +446,11 @@ class TaskLocal(TaskBase, QtTaskBase):
                 allPictureName = []
                 nextPath = ""
                 for k, v in dirPictures.items():
-                    if len(v) <= 1:
+                    if len(v) < 1:
                         continue
-                    nextPath = k
-                    allPictureName = v
+                    if not allPictureName or len(v) > len(allPictureName):
+                        nextPath = k
+                        allPictureName = v
 
                 if not allPictureName:
                     return Str.NotPictureFile, ""

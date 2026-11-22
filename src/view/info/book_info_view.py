@@ -101,6 +101,9 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
 
     def retranslateUi(self, view):
         Ui_BookInfo.retranslateUi(self, view)
+        self.RefreshTheme()
+
+    def RefreshTheme(self):
         self.tagList.setStyleSheet(u"QPushButton {\n"
                                    f"                   background-color:{QtOwner().GetThemeColorList(1)};\n"
                                    f"                   color: {QtOwner().GetThemeColorList(2)};\n"

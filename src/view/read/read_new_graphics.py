@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 from config import config
 from qt_owner import QtOwner
 from task.task_download import FileData
+from tools.status import Status
 
 if TYPE_CHECKING:
     from view.read.read_new_view import ReadNewView
@@ -481,8 +482,6 @@ class ReadNewGraphics(QGraphicsView):
         else:
             self._zoom = z
             self._page_pan = QPointF(0.0, 0.0)   # 以中心为锚点：平移复位
-        self._zoom = z
-        self._page_pan = QPointF(0.0, 0.0)   # 以中心为锚点：平移复位
         self._show_page(self._page, 0)              # 重新摆放
         self._load_visible()
         # 同连续模式：缩放连发时用防抖定时器，停下来再统一重解
@@ -563,15 +562,11 @@ class ReadNewGraphics(QGraphicsView):
         else:
             front = Setting.PictureShowFrontCount.value
             after = Setting.PictureShowCount.value
-            # L = self._viewport_len()
-            # s0 = self._scroll_min_s()
-            # top, bottom = s0 - L * 1.5, s0 + L * 2.5
-            curIdx = self._cur_idx
-            # L = self._viewport_len()
-            # s0 = self._scroll_min_s()
-            its = [(i, it) for i, it in enumerate(self._items[max(0,curIdx - front):curIdx + after + 1])]
-            # its = [it for it in self._items
-            #        if it._s + it._len >= s0 - L and it._s <= s0 + L * 2.5]
+            curIdx = max(0, self._cur_idx)
+            vis = self.visible_indices()
+            lo = min([max(0, curIdx - front)] + vis)
+            hi = max([curIdx + after] + vis)
+            its = [(it.index, it) for it in self._items[lo:hi + 1]]
 
         # max_px = self._decode_max_px()        # 与 DecodeTask / QMovie 同一套口径
         # 重新评估：上一轮排队但还没发出去的重下需求全部作废（可能又缩回去了、
@@ -579,7 +574,7 @@ class ReadNewGraphics(QGraphicsView):
         for idx, it in its:
             # 动图不重新下载/重解：它的原图字节在 _raw 里，只需要把每帧解码尺寸改掉——
             # 下面的 _refresh_playing 会更新 QMovie.setScaledSize
-            if it.isAnima or it.pixmap is None or it._reply is not None or it._failed:
+            if it.isAnima or (it.pixmap is None and it._decoding is None) or it._reply is not None or it._failed:
                 continue
 
             target = self._decode_target_size(it)  # 与 DecodeTask 同一套口径
@@ -609,12 +604,12 @@ class ReadNewGraphics(QGraphicsView):
 
     @property
     def is_auto(self):
-        return self._page_auto_timer.isActive() or self.scroller.is_auto_scrolling()
+        return self._page_auto_on or self._page_auto_timer.isActive() or self.scroller.is_auto_scrolling()
 
     def get_item_by_idx(self, idx) -> ReadNewGraphicsItem:
         if idx >= len(self._items):
             return None
-        if idx <= 0:
+        if idx < 0:
             return None
         return self._items[idx]
 
@@ -1957,15 +1952,16 @@ class ReadNewGraphics(QGraphicsView):
             max(300, int(self._page_auto_speed * 1000)))
 
     def _on_page_auto(self):
-        if self._page >= self._max_page():
-            # self._stop_page_auto()    # 最后一页自动停
-            self.qtTool.CloseScrollAndTurn()
-            return
-
         if self._mode == ReadMode.Samewight:
+            if self._page >= self._max_page() and self._page_scroll >= self._page_scroll_max(self._page) - 0.5:
+                self.qtTool.CloseScrollAndTurn()
+                return
             # 单页等宽：每次滚一屏，到边界自动翻页（保持连续滚动的手感）
             self._scroll_or_flip_page(max(1.0, self._page_axis_len()))
         else:
+            if self._page >= self._max_page():
+                self.qtTool.CloseScrollAndTurn()
+                return
             self._flip_page(1)
         self._schedule_page_auto()
 
@@ -2427,7 +2423,7 @@ class ReadNewGraphics(QGraphicsView):
         if maxNum > curIndex >= 0:
             self.set_initial_index(curIndex)
         elif curIndex >= maxNum:
-            self.set_initial_index(maxNum)
+            self.set_initial_index(max(0, maxNum - 1))
         else:
             self.set_initial_index(0)
 
@@ -2673,6 +2669,23 @@ class ReadNewGraphics(QGraphicsView):
             it = self._items[i]
             self._maybe_start_waifu2x(it)
 
+    def _in_decode_window(self, it: ReadNewGraphicsItem) -> bool:
+        """这张图是否落在当前预解码窗口内。"""
+        if not ReadMode.isScroll(self._mode):
+            pg = self._page_of_index(it.index)
+            front = max(1, Setting.PictureShowFrontCount.value)
+            after = max(1, Setting.PictureShowCount.value)
+            return (self._page - front) <= pg <= (self._page + after)
+        front = Setting.PictureShowFrontCount.value
+        after = Setting.PictureShowCount.value
+        curIdx = max(0, self._cur_idx)
+        if (curIdx - front) <= it.index <= (curIdx + after):
+            return True
+        vis = self.visible_indices()
+        if vis and (min(vis) - front) <= it.index <= (max(vis) + after):
+            return True
+        return False
+
     @timed
     def _decode_visible(self):
         """预解码：视窗窗口内"已下完但还没解码"的图 -> 丢给线程池。"""
@@ -2684,15 +2697,11 @@ class ReadNewGraphics(QGraphicsView):
             return
         front = Setting.PictureShowFrontCount.value
         after = Setting.PictureShowCount.value
-        # L = self._viewport_len()
-        # s0 = self._scroll_min_s()
-        # top, bottom = s0 - L * 1.5, s0 + L * 2.5
-        curIdx = self._cur_idx
-        for it in self._items[max(0,curIdx - front):curIdx + after+1]:
-            # if it._s > bottom:
-            #     break                        # 后面的都更远，不用看了
-            # if it._s + it._len < top:
-            #     continue                     # 在窗口上方（已滚过）
+        curIdx = max(0, self._cur_idx)
+        vis = self.visible_indices()
+        lo = min([max(0, curIdx - front)] + vis)
+        hi = max([curIdx + after] + vis)
+        for it in self._items[lo:hi + 1]:
             self._start_decode_if_ready(it)
 
     def _maybe_download(self, it: ReadNewGraphicsItem) -> bool:
@@ -2735,7 +2744,6 @@ class ReadNewGraphics(QGraphicsView):
         if not it._buf:
             return
 
-        True
         toW, toH = 0, 0
         it.update()                          # 立刻显示"解码中…"
         if it.isAnima:
@@ -2760,11 +2768,7 @@ class ReadNewGraphics(QGraphicsView):
     @timed
     def _maybe_decode(self, it: ReadNewGraphicsItem):
         """下载刚完成时调用：只有落进"预解码窗口"才立刻解，否则留着字节等滚到附近。"""
-        curIdx = self._cur_idx
-        front = Setting.PictureShowFrontCount.value
-        after = Setting.PictureShowCount.value
-        if curIdx - front <= it.index <= curIdx+after:
-        # if self._in_decode_window(it):
+        if self._in_decode_window(it):
             self._start_decode_if_ready(it)
 
     # def _in_decode_window(self, it: ReadNewGraphicsItem) -> bool:
@@ -2823,20 +2827,14 @@ class ReadNewGraphics(QGraphicsView):
     @timed
     def _trim_pixmaps_max_len(self):
         """已解码位图超预算 数量限制"""
-        # min_budget = 5
-        # max_budget = 10
         keep = set(self.visible_indices())     # 当前屏幕上真正可见的：绝不回收
-        # min_cands = []
         max_cands = []
-        curIdx = self._cur_idx
-        front = Setting.PictureShowFrontCount.value
-        after = Setting.PictureShowCount.value
         for i, it in enumerate(self._items):
             if it.pixmap is None:
                 continue
             if i in keep or it.isAnima:
                 continue
-            if not (curIdx - front <= it.index <= curIdx+after):
+            if not self._in_decode_window(it):
                 max_cands.append((i, it))
 
         if len(max_cands) <= 0:
@@ -2947,12 +2945,12 @@ class ReadNewGraphics(QGraphicsView):
 
     @timed
     def _on_spin(self):
-        """推进不确定态进度环的相位并请求重绘；没有"未知进度且仍在下载"的
-        item 时自动停掉定时器（_on_download_progress 会在需要时重新拉起）。"""
+        """推进不确定态进度环的相位并请求重绘；没有"未知进度且仍在下载/超分"的
+        item 时自动停掉定时器（_on_download_progress / _start_waifu2x 会在需要时重新拉起）。"""
         ReadNewGraphicsItem.SPIN_PHASE = (ReadNewGraphicsItem.SPIN_PHASE + ReadNewGraphicsItem.SPIN_STEP) % 1.0
         alive = False
         for it in self._items:
-            if it.pixmap is None and it._reply is not None and it._progress is None:
+            if it.pixmap is None and ((it._reply is not None and it._progress is None) or it._waifu_reply is not None):
                 alive = True
                 it.update()          # 离屏 item 的 update 只打标记，开销可忽略
         if not alive:
@@ -2975,9 +2973,8 @@ class ReadNewGraphics(QGraphicsView):
             return
         item.isAnima = fileData.isAnima
         item.fmt = fileData.fmt
-        sz = QSize(fileData.w, fileData.h)
-        if sz is not None:
-            self._correct_len(item, sz)
+        if fileData.w > 0 and fileData.h > 0:
+            self._correct_len(item, QSize(fileData.w, fileData.h))
 
     @timed
     def _on_finished(self, fileData: FileData, st: int, index: int):
@@ -3020,7 +3017,9 @@ class ReadNewGraphics(QGraphicsView):
         item._pending_decode = True          # 有新字节等着解
         item.update()
         if item.is_need_waifu2x:
-            model = ToolUtil.GetLookScaleModel(self.read_view.category, item._size.width(), item._size.height(), item.fmt)
+            w = item._size.width() if (item._size and item._size.isValid()) else 0
+            h = item._size.height() if (item._size and item._size.isValid()) else 0
+            model = ToolUtil.GetLookScaleModel(self.read_view.category, w, h, item.fmt)
             if not model or item.isAnima:
                 item._waifu2x_state = -1
             else:
@@ -3065,7 +3064,7 @@ class ReadNewGraphics(QGraphicsView):
             return False
         if not it.is_need_waifu2x:
             return False
-        if it._waifu_reply:
+        if it._waifu_reply is not None:
             return False
         return self._start_waifu2x(it)
 
@@ -3084,37 +3083,41 @@ class ReadNewGraphics(QGraphicsView):
         self._active_waifu2x += 1
         if item.waifu_file_data:
             item._waifu_reply = 0
-            QTimer.singleShot(0, partial(self._on_waifu_finished, item.waifu_file_data, 0, item.index, item._waifu_tick))
+            QTimer.singleShot(0, partial(self._on_waifu_finished, item.waifu_file_data, Status.Ok, item.index, item._waifu_tick))
             return True
         else:
             item._progress = None  # 请求刚发出、还不知道总大小：先转圈
-            model = ToolUtil.GetLookScaleModel(self.read_view.category, item._size.width(), item._size.height(), item.fmt)
+            w = item._size.width() if (item._size and item._size.isValid()) else 0
+            h = item._size.height() if (item._size and item._size.isValid()) else 0
+            model = ToolUtil.GetLookScaleModel(self.read_view.category, w, h, item.fmt)
             if not model or item.isAnima:
                 item._waifu2x_state = -1
                 self._active_waifu2x = max(0, self._active_waifu2x - 1)
                 QTimer.singleShot(0, partial(self._maybe_decode, item))
             else:
                 item._waifu_reply = self.read_task.AddCovertData(item.index, item._buf, model, self._on_waifu_finished)
+                self._spin_timer.start()
 
             self.update_tool_label(item.index)
             item.update()
             return True
 
     @timed
-    def _on_waifu_finished(self, fileData: FileData, waifuId, index, tick):
+    def _on_waifu_finished(self, fileData: FileData, st, index, tick):
         if index >= len(self._items):
             return
         item = self._items[index]
 
         self._active_waifu2x = max(0, self._active_waifu2x - 1)
         reply = item._waifu_reply
-        Log.Info(f"finish waifu2x, index{item.index} active_waifu2x:{self._active_waifu2x}, reply:{reply}")
+        Log.Info(f"finish waifu2x, index{item.index} active_waifu2x:{self._active_waifu2x}, reply:{reply}, st:{st}")
         if reply is None:
             return
-        if not fileData or not fileData.data:
+        if st != Status.Ok or not fileData or not fileData.data:
             item._waifu_failed = True
             item._waifu_reply = None
             item.update()                    # 触发重画（占位框变红显示"加载失败"）
+            self.update_tool_label(item.index)
             self._waifu2x_around_current()
             self._maybe_decode(item)
             return
@@ -3304,6 +3307,9 @@ class ReadNewGraphics(QGraphicsView):
                 self.reset_zoom()
                 ev.accept()
                 return
+        if ev.modifiers() & ~Qt.KeypadModifier:
+            super().keyPressEvent(ev)
+            return
         k = ev.key()
         # 本模式下"前进/后退"对应的键（RTL 下左才是前进）
         if ReadMode.isUpDown(self._mode):
@@ -3316,13 +3322,22 @@ class ReadNewGraphics(QGraphicsView):
         is_back = k in (Qt.Key_PageUp, back)
 
         if ReadMode.isScroll(self._mode):
+            self._scroller.stop_auto()
             self._release_initial_hold()   # 方向键/PageUp 等：用户接管位置
             if not (is_fwd or is_back):
                 super().keyPressEvent(ev)
                 return
             at_start, at_end = self._at_content_start(), self._at_content_end()
-            super().keyPressEvent(ev)
+            if k in (Qt.Key_PageDown, Qt.Key_Space, Qt.Key_Return):
+                self._scroller.scroll_by(max(60.0, self._viewport_len() * 0.9))
+            elif k == Qt.Key_PageUp:
+                self._scroller.scroll_by(-max(60.0, self._viewport_len() * 0.9))
+            elif is_fwd:
+                self._scroller.scroll_by(max(60.0, self._viewport_len() / 6.0))
+            else:
+                self._scroller.scroll_by(-max(60.0, self._viewport_len() / 6.0))
             self._note_edge_scroll(is_fwd, at_start, at_end)
+            ev.accept()
             return
         self._scroller.stop_auto()      # 键盘操作停止自动滚动/自动翻页
         self._stop_page_auto()
@@ -3359,15 +3374,15 @@ class ReadNewGraphics(QGraphicsView):
     def mousePressEvent(self, ev):
         self._release_initial_hold()    # 用户接管：不再把位置校准回首屏目标
         if self.qtTool.IsStartScrollAndTurn():
+            self._start_press_pos = None
             self.qtTool.CloseScrollAndTurn()
             ev.accept()
-            super().mouseReleaseEvent(ev)
             return
 
         if ev.button() == Qt.RightButton:
+            self._start_press_pos = None
             self.read_view.SelectMenu(self._openglWidget)
             ev.accept()
-            super().mouseReleaseEvent(ev)
             return
 
         if not ReadMode.isScroll(self._mode):
@@ -3587,7 +3602,7 @@ class ReadNewGraphics(QGraphicsView):
             waifuDataLen = len(item.waifu_file_data.data)
         if item.is_not_waifu2x:
             waifuState = QtFileData.WaifuStateCancle
-        if item._waifu_reply:
+        if item._waifu_reply is not None:
             waifuState = QtFileData.WaifuStateStart
 
         self.qtTool.SetData(size, dataLen, status, waifuSize, waifuDataLen, waifuState, item._waifu_tick)
@@ -3648,9 +3663,9 @@ class ReadNewGraphics(QGraphicsView):
                     self.qtTool.OpenLastEps()
                 elif ev.modifiers() == Qt.ShiftModifier and ev.key() == Qt.Key_Right:
                     self.qtTool.OpenNextEps()
-                elif ev.key() == Qt.Key_Plus or ev.key() == Qt.Key_Equal:
+                elif not (ev.modifiers() & Qt.ControlModifier) and (ev.key() == Qt.Key_Plus or ev.key() == Qt.Key_Equal):
                     self.qtTool.zoomSlider.setValue(self.qtTool.zoomSlider.value() + 10)
-                elif ev.key() == Qt.Key_Minus:
+                elif not (ev.modifiers() & Qt.ControlModifier) and ev.key() == Qt.Key_Minus:
                     self.qtTool.zoomSlider.setValue(self.qtTool.zoomSlider.value() - 10)
                 return True
             elif ev.type() == QEvent.GraphicsSceneMousePress:
@@ -3665,10 +3680,13 @@ class ReadNewGraphics(QGraphicsView):
                     if not self.frame.helpLabel.isHidden():
                         self.frame.HideHelp()
                         return True
+                    if self._start_press_pos is None:
+                        return False
                     endPos = ev.screenPos()
                     subPos = (endPos - self._start_press_pos)
+                    self._start_press_pos = None
                     if abs(subPos.x()) <= 20 and abs(subPos.y()) <= 20:
-                        curPos = endPos - QtOwner().owner.pos()
+                        curPos = self.mapFromGlobal(endPos)
 
                         # print(curPos, endPos, QtOwner().owner.pos(), self.width(), self.height())
                         if curPos.x() <= self.width() // 3:
@@ -3676,7 +3694,8 @@ class ReadNewGraphics(QGraphicsView):
                                 self.read_view.ShowAndCloseTool()
                             else:
                                 if ReadMode.isScroll(self._mode) or self._mode == ReadMode.Samewight:
-                                    self.scroll_to_next(1, self._get_item_scroll_len())
+                                    d2 = -1 if ReadMode.isRightLeft(self._mode) else 1
+                                    self.scroll_to_next(d2, self._get_item_scroll_len())
                                 else:
                                     self.qtTool.LastPage()
                         elif curPos.x() <= self.width() // 3 * 2:
@@ -3688,8 +3707,9 @@ class ReadNewGraphics(QGraphicsView):
                             if curPos.y() <= self.height() // 2:
                                 self.read_view.ShowAndCloseTool()
                             else:
-                                if ReadMode.isScroll(self._mode)or self._mode == ReadMode.Samewight:
-                                    self.scroll_to_next(-1, self._get_item_scroll_len())
+                                if ReadMode.isScroll(self._mode) or self._mode == ReadMode.Samewight:
+                                    d2 = 1 if ReadMode.isRightLeft(self._mode) else -1
+                                    self.scroll_to_next(d2, self._get_item_scroll_len())
                                 else:
                                     self.qtTool.NextPage()
         return False
@@ -3714,18 +3734,10 @@ class ReadNewGraphics(QGraphicsView):
         if not (ReadMode.isScroll(self._mode) or self._mode == ReadMode.Samewight):
             return
 
-        if ReadMode.isUpDown(self._mode):
-            d = 120 * d2
-            step = value
-        elif ReadMode.isRightLeft(self._mode):
-            d = -120 * d2
-            step = value
-        else:
-            d = 120 * d2
-            step = value
-        # step = max(60.0, value / 6.0)
+        d = 120 * d2
+        step = value
         if self._mode == ReadMode.Samewight:
-            step = max(60.0, self._page_axis_len())
+            step = max(60.0, value if value > 0 else self._page_axis_len())
             self._sw_scroll_by(-d / 120.0 * step)   # 滚轮向下 = 前进
         else:
             at_start, at_end = self._at_content_start(), self._at_content_end()
@@ -3741,9 +3753,8 @@ class ReadNewGraphics(QGraphicsView):
     def close_waifu2x_state(self, idx):
         if idx >= len(self._items) or idx < 0:
             return
-        if ReadMode.isDouble(self._mode):
-            idx = self._cur_idx
-            items = self._items[idx:idx+2]
+        if ReadMode.isDouble(self._mode) and idx == self._cur_idx:
+            items = self._page_items(self._page)
         else:
             items = self._items[idx:idx+1]
 
@@ -3756,9 +3767,8 @@ class ReadNewGraphics(QGraphicsView):
     def open_waifu2x_state(self, idx):
         if idx >= len(self._items) or idx < 0:
             return
-        if ReadMode.isDouble(self._mode):
-            idx = self._cur_idx
-            items = self._items[idx:idx+2]
+        if ReadMode.isDouble(self._mode) and idx == self._cur_idx:
+            items = self._page_items(self._page)
         else:
             items = self._items[idx:idx+1]
 
@@ -3766,6 +3776,19 @@ class ReadNewGraphics(QGraphicsView):
             item._waifu2x_state = 1
             if Setting.IsOpenWaifu.value:
                 item._waifu2x_state = 0
+        self._load_visible()
+
+    def reset_waifu2x_results(self):
+        """修改超分模型或倍率后清空已缓存的超分结果并重新按当前窗口转换。"""
+        self.read_task.ClearConvert()
+        self._active_waifu2x = 0
+        for item in self._items:
+            item._waifu_reply = None
+            item._waifu_failed = False
+            item.waifu_file_data = None
+            item._waifu_tick = 0
+            if item._cur_is_waifu2x_px:
+                item._pending_decode = True
         self._load_visible()
 
     # def switch_waifu2x_state(self, idx):
@@ -3814,3 +3837,5 @@ class ReadNewGraphics(QGraphicsView):
         self._items = []
         self._anims = []
         self._anim_seq = 0
+        self._active_downloads = 0
+        self._active_waifu2x = 0

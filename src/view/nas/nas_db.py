@@ -73,13 +73,14 @@ class NasDb(object):
     def AddUploadDB(self, task):
         assert isinstance(task, NasUploadItem)
         tick = int(time.time())
+        statusMsg = int(task.statusMsg) if str(task.statusMsg).isdigit() else 0
         query = QSqlQuery(self.db)
         sql = "INSERT INTO nas_upload(nas_id, book_id, eps_ids, title, " \
               "curPreUpIndex, tick, status, status_msg) " \
               "VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', {5}, {6}, {7}) " \
               "ON CONFLICT(nas_id, book_id) DO UPDATE SET eps_ids='{2}', title='{3}', curPreUpIndex={4}, " \
               "tick = {5}, status = {6}, status_msg= {7}".\
-            format(task.nasId, task.bookId, json.dumps(task.epsIds), task.title.replace("'", "''"), task.curPreUpIndex, task.tick, task.status, task.statusMsg)
+            format(task.nasId, task.bookId, json.dumps(task.epsIds), task.title.replace("'", "''"), task.curPreUpIndex, task.tick, task.status, statusMsg)
 
         suc = query.exec_(sql)
         if not suc:

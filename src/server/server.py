@@ -238,7 +238,8 @@ class Server(Singleton):
         # request.resetUrlHost = GlobalConfig.PicUrlList.value[:]
         if request.proxyUrl:
             host = ToolUtil.GetUrlHost(request.url)
-            request.url = request.url.replace(host, request.proxyUrl+"/"+host)
+            if host != ToolUtil.GetUrlHost(request.proxyUrl):
+                request.url = request.url.replace(host, request.proxyUrl+"/"+host)
         elif request.isApi and not request.resetUrl and not request.ipList and not  isinstance(request, (req.SpeedTestReq, req.SpeedTestPingReq, req.SpeedTestPing2Req)) :
             # 为API请求准备备用线路，请求失败时自动切换到其他域名重试
             # (此前 resetUrl 始终为空，重试只会用同一个url再撞一次，
@@ -251,16 +252,18 @@ class Server(Singleton):
                 request.resetUrl.append(request.url.replace(host, ToolUtil.GetUrlHost(url)))
             if len(request.resetUrl) > 0:
                 request.resetCnt = min(len(request.resetUrl), 3)
-        elif request.isImg and not request.resetUrl and not request.ipList and not  isinstance(request, (req.SpeedTestReq, req.SpeedTestPingReq, req.SpeedTestPing2Req)) :
+        elif request.isImg and len(request.resetUrl) <= 1 and not request.ipList and not  isinstance(request, (req.SpeedTestReq, req.SpeedTestPingReq, req.SpeedTestPing2Req)) :
             # 为图片请求准备备用图片域名，图片下载失败时自动切换到其他CDN重试
             # 如果是固定ip，换域名没有意义
             host = ToolUtil.GetUrlHost(request.url)
             for domain in GlobalConfig.ImgAutoUrl.value:
                 if domain == host:
                     continue
-                request.resetUrl.append(request.url.replace(host, domain))
+                altUrl = request.url.replace(host, domain)
+                if altUrl not in request.resetUrl:
+                    request.resetUrl.append(altUrl)
             if len(request.resetUrl) > 0:
-                request.resetCnt = min(len(request.resetUrl), 3)
+                request.resetCnt = max(request.resetCnt, min(len(request.resetUrl), 3))
 
     def Send(self, request, token="", backParam="", isASync=True, index=0):
         self.__DealHeaders(request, token)
@@ -319,7 +322,8 @@ class Server(Singleton):
             if QtOwner().isOfflineModel:
                 task.status = Status.OfflineModel
                 data = {"st": Status.OfflineModel, "data": ""}
-                TaskBase.taskObj.taskBack.emit(task.bakParam, pickle.dumps(data))
+                if task.bakParam:
+                    TaskBase.taskObj.taskBack.emit(task.bakParam, pickle.dumps(data))
                 return
 
             if task.req.method.lower() == "post":

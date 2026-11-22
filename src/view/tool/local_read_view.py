@@ -85,6 +85,9 @@ class LocalReadView(QWidget, Ui_Local, QtTaskBase):
 
     def retranslateUi(self, SettingNew):
         Ui_Local.retranslateUi(self, SettingNew)
+        self.RefreshTheme()
+
+    def RefreshTheme(self):
         self.tagsList.setStyleSheet(u"QListWidget {background-color:transparent;}\n"
                                     "QListWidget::item {\n"
                                     f"    background-color:{QtOwner().GetThemeColorList(1)};\n"
@@ -289,7 +292,7 @@ class LocalReadView(QWidget, Ui_Local, QtTaskBase):
     def DelLocalReadAll(self, bookIds):
         for bookId in bookIds:
             if bookId not in self.allBookInfos:
-                return
+                continue
             del self.allBookInfos[bookId]
             self.db.DelDownloadDB(bookId)
         self.Init()

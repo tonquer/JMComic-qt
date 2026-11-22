@@ -258,8 +258,6 @@ class NasView(QtWidgets.QWidget, Ui_Nas, NasStatus):
         QtOwner().CloseLoading()
         nasId, bookId = v
         nasInfo = self.nasDict.get(nasId)
-        QtOwner().CloseLoading()
-        self.listWidget.clear()
         st = raw["st"]
         if st == Status.Ok:
             info = BookMgr().GetBook(bookId)

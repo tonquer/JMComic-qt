@@ -20,9 +20,9 @@ jobs:
           LIB_NAME=jmcomic
           TAG_NAME=$(git describe --abbrev=0 --tags)
           HEAD_SHA_SHORT=$(git rev-parse --short HEAD)
-          echo "::set-output name=PACKAGE_PREFIX::${LIB_NAME}_${TAG_NAME}"
-          echo "::set-output name=TAG_NAME::${TAG_NAME}"
-          echo "::set-output name=HEAD_SHA_SHORT::${HEAD_SHA_SHORT}"
+          echo "PACKAGE_PREFIX=${LIB_NAME}_${TAG_NAME}" >> "$GITHUB_OUTPUT"
+          echo "TAG_NAME=${TAG_NAME}" >> "$GITHUB_OUTPUT"
+          echo "HEAD_SHA_SHORT=${HEAD_SHA_SHORT}" >> "$GITHUB_OUTPUT"
 
   release:
     needs: [setup]
@@ -129,7 +129,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: ${{ env.PACKAGENAME }}
-        path: jmcomic.zip
+        path: ${{ env.PACKAGENAME }}
     - name: upload-macos
       uses: actions/upload-release-asset@v1
       env:

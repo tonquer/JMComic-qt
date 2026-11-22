@@ -194,10 +194,10 @@ class NasUploadItem(QtTaskBase):
             return Str.CvWaitDown
         from view.download.download_item import DownloadItem
         assert isinstance(downloadInfo, DownloadItem)
-        if not downloadInfo.epsInfo:
+        if not downloadInfo.epsInfo or not downloadInfo.epsIds:
             return Str.CvWaitDown
         if self.curPreUpIndex < 0:
-            self.curPreUpIndex = downloadInfo.epsInfo[0]
+            self.curPreUpIndex = downloadInfo.epsIds[0]
         if self.curPreUpIndex not in downloadInfo.epsInfo:
             return Str.CvWaitDown
         isDownload = downloadInfo.IsEpsComplete(self.curPreUpIndex)

@@ -46,7 +46,7 @@ jobs:
         cd ..
         mkdir ${{ env.PACKAGENAME }}
         mv src\jmcomic ${{ env.PACKAGENAME }}
-        7z a -r "$($Env:PACKAGENAME + '.zip')" "jmcomic"
+        7z a -r "$($Env:PACKAGENAME + '.zip')" "${{ env.PACKAGENAME }}"
     - name: Upload
       uses: actions/upload-artifact@v4
       with:
@@ -62,7 +62,7 @@ jobs:
     env:
       PACKAGENAME: jmcomic_py310_linux_glibc2.39
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@v4
     - name: Install dependencies
       run: |
         python3 -m pip install --upgrade pip

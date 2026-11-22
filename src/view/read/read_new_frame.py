@@ -85,8 +85,8 @@ class ReadNewFrame(QFrame):
         painter.drawRect(QRect(self.width() // 3 * 1, self.height() // 2, self.width() // 3, self.height() // 2))
 
         painter.setBrush(QBrush(QColor(51, 200, 255, 100)))
-        painter.drawRect(QRect(0, 0, self.width()//4, self.height() // 2))
-        painter.drawRect(QRect(0, 0, self.width()//3*4, self.height() // 2))
+        painter.drawRect(QRect(0, 0, self.width() // 3, self.height() // 2))
+        painter.drawRect(QRect(self.width() // 3 * 2, 0, self.width() // 3, self.height() // 2))
 
         painter.setFont(font)
         if self.qtTool.stripModel in [ReadMode.RightLeftDouble, ReadMode.RightLeftScroll]:

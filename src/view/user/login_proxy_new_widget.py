@@ -208,6 +208,10 @@ class LoginProxyNewWidget(object):
             partial(QtOwner().settingView.LineEditEvent, Setting.ProxyIpCountry, self.owner.proxyIpEdit))
         self.owner.dohLine.editingFinished.connect(
             partial(QtOwner().settingView.LineEditEvent, Setting.DohAddress, self.owner.dohLine))
+        self.owner.apiTimeout.currentIndexChanged.connect(
+            lambda idx: Setting.ApiTimeOut.SetValue(int(idx)))
+        self.owner.imgTimeout.currentIndexChanged.connect(
+            lambda idx: Setting.ImgTimeOut.SetValue(int(idx)))
 
         self.proxyIpGroup.buttonClicked.connect(self.SaveProxyIp)
         self.owner.radioApiGroup.buttonClicked.connect(QtOwner().UpdateProxyName)
@@ -473,6 +477,9 @@ class LoginProxyNewWidget(object):
             request.SetIndex(0, 0, GlobalConfig.CdnApiUrl.value, GlobalConfig.CdnImgUrl.value)
             request.SetCurlOpt(self.owner.http3Box.isChecked(), self.owner.echBox.isChecked(), QtOwner().echConfig, item.ip)
             self.owner.AddHttpTask(request, self.StartTestImgBack, backParam=item.index)
+        if self.maxSpeedImgCnt <= 0:
+            self.owner.testIpButton.setEnabled(True)
+            self.CheckSelectBox()
         return
 
     def GetIpInfo(self, raw, v):

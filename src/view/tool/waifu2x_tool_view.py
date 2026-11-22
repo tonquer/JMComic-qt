@@ -97,7 +97,7 @@ class Waifu2xToolView(QtWidgets.QWidget, Ui_Waifu2xTool, QtTaskBase):
         self.modelName.setToolTip(oldName)
 
     def OpenSrSelect(self):
-        QtOwner().OpenSrSelectModel(self.modelName.text(), self.OpenSrSelectBack)
+        QtOwner().OpenSrSelectModel(self.modelName.toolTip(), self.OpenSrSelectBack)
 
     def OpenSrSelectBack(self, newModName):
         self.modelName.setText(ToolUtil.GetShowModelName(newModName))
@@ -495,6 +495,6 @@ class Waifu2xToolView(QtWidgets.QWidget, Ui_Waifu2xTool, QtTaskBase):
         data = self.waifu2xData if self.waifu2xData else self.data
         if not data:
             return
-        QtOwner().owner.navigationWidget.UpdatePictureData(data)
+        QtOwner().owner.navigationWidget.SetPicture(data)
         QtOwner().ShowMsg(Str.GetStr(Str.HeadUpload))
         # QtImgMgr().SetHeadStatus(not self.isHeadUp)

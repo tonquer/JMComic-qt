@@ -80,8 +80,8 @@ class LocalFoldView(BaseMaskDialog, Ui_LocalFold, QtTaskBase):
         self.isEditMode = False
         self.bookIds = []
         if isinstance(bookId, list):
-            self.bookIds = bookId[:]
-        else:
+            self.bookIds = [v for v in bookId if v]
+        elif bookId:
             self.bookIds = [bookId]
         self.isFoldChange = False
         if not self.bookIds:
@@ -125,8 +125,6 @@ class LocalFoldView(BaseMaskDialog, Ui_LocalFold, QtTaskBase):
             for i in range(self.listWidget.count()):
                 item = self.listWidget.item(i)
                 w = self.listWidget.itemWidget(item)
-                if i <= 0:
-                    continue
                 w.SetEditEnable(True)
                 # item.setFlags(item.flags() & ~Qt.ItemIsSelectable)
         else:

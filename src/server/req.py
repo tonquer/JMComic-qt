@@ -106,7 +106,7 @@ class ServerReq(object):
                 self.proxyUrl = GlobalConfig.ProxyImgDomain2.value
             if imgHost:
                 self.url = self.url.replace(host, ToolUtil.GetUrlHost(imgHost))
-        if self.proxyUrl:
+        if self.proxyUrl and "?" not in self.url and not self.url.endswith("/"):
             self.url += "/"
 
     def SetProxy(self, proxyIndex, httpProxy, sock5Proxy):
@@ -355,9 +355,9 @@ class CheckUpdateInfoReq(ServerReq):
     def __init__(self, url2List, newVersion):
         method = "GET"
         data = dict()
-        params = ToolUtil.DictToUrl(data)
         data["version"] = config.RealVersion
         data["platform"] = platform.platform()
+        params = ToolUtil.DictToUrl(data)
         url = url2List[0] + "/{}.txt?".format(newVersion) + params
         super(self.__class__, self).__init__(url, {}, method)
         self.isParseRes = False
@@ -371,9 +371,9 @@ class CheckUpdateConfigReq(ServerReq):
     def __init__(self, url2List):
         method = "GET"
         data = dict()
-        params = ToolUtil.DictToUrl(data)
         data["version"] = config.RealVersion
         data["platform"] = platform.platform()
+        params = ToolUtil.DictToUrl(data)
         url = url2List[0] + "/config.txt?" + params
         super(self.__class__, self).__init__(url, {}, method)
         self.isParseRes = False
@@ -517,7 +517,7 @@ class GetCaptchaReq(ServerReq):
         data = dict()
         super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
         self.headers = self.GetWebHeader()
-        self.headers['Referer'] = GlobalConfig.Url.value  + "signup"
+        self.headers['Referer'] = GlobalConfig.Url.value + "/signup"
 
 
 # 账号验证

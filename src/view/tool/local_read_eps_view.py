@@ -1,14 +1,11 @@
 import json
 import os
-from this import d
 
 from PySide6.QtCore import Signal, QUrl
 from PySide6.QtGui import QAction, Qt, QDesktopServices
 from PySide6.QtWidgets import QWidget, QMenu, QFileDialog
 from natsort import natsorted
 
-from interface.ui_index import Ui_Index
-from interface.ui_local import Ui_Local
 from interface.ui_local_eps import Ui_LocalEps
 from qt_owner import QtOwner
 from task.qt_task import QtTaskBase
@@ -22,7 +19,7 @@ class LocalReadEpsView(QWidget, Ui_LocalEps, QtTaskBase):
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
-        Ui_Index.__init__(self)
+        Ui_LocalEps.__init__(self)
         QtTaskBase.__init__(self)
         self.setupUi(self)
         self.isInit = False

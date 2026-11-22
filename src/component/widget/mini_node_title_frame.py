@@ -155,12 +155,12 @@ class MiniNodeTileFrame(QFrame):
         palette = THEMES[theme_name]
 
         self.setStyleSheet(f"""
-            MiniNodeTile {{
+            MiniNodeTileFrame {{
                 background-color: {palette["tile_bg"]};
                 border: 1px solid {palette["tile_border"]};
                 border-radius: 5px;
             }}
-            MiniNodeTile:hover {{
+            MiniNodeTileFrame:hover {{
                 background-color: {palette["tile_hover_bg"]};
                 border-color: {palette["tile_hover_border"]};
             }}
@@ -256,7 +256,8 @@ class MiniNodeTileFrame(QFrame):
             lines.append(f"样本: {len(self.history)}/{HISTORY_SIZE}  丢包: {loss_rate:.0f}% loss")
             if samples:
                 lines.append(f"平均: {avg:.1f}ms  最低: {min(samples):.0f}ms  最高: {max(samples):.0f}ms")
-            lines.append("最近: " + "  ".join("超时" if v < 0 else f"{v:.0f}ms" for v in itertools.islice(self.history, 1, 10)))
+            recent = list(self.history)[-10:]
+            lines.append("最近: " + "  ".join("超时" if v < 0 else f"{v:.0f}ms" for v in recent))
 
         if self.traffic_total is None:
             lines.append("总流量: --（等待外部数据）")

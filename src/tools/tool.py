@@ -383,13 +383,13 @@ class ToolUtil(object):
                 f.write(data)
 
     @staticmethod
-    def SaveConvertPicture(data, path, format, isAni):
+    def SaveConvertPicture(data, path, format, isAni, rawFormat=""):
         if path and not os.path.isdir(os.path.dirname(path)):
             os.makedirs(os.path.dirname(path), exist_ok=True)
 
         from qt_owner import QtOwner
         if path and data:
-            newFormat = QtOwner().GetConvertFmtRule(format)
+            newFormat = QtOwner().GetConvertFmtRule(rawFormat or format)
             if isAni and newFormat not in ToolUtil.AnimaFormat:
                 newFormat = format
 

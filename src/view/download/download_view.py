@@ -575,7 +575,7 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
         row = list(selectRows)[0]
         col = 0
         bookId = self.tableWidget.item(row, col).text()
-        bookName = self.tableWidget.item(row, 1).text()
+        bookName = self.tableWidget.item(row, 2).text()
         if not bookId:
             return
         QtOwner().OpenBookInfo(bookId, bookName)

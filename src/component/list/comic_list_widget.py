@@ -78,7 +78,7 @@ class ComicListWidget(BaseListWidget):
                     category = ",".join(w.rawBook.baseInfo.category)
                 else:
                     category = w.rawBook.baseInfo.category
-                if QtOwner().IsInFilter(category, tags, w.rawBook.title):
+                if QtOwner().IsInFilter(category, tags, w.rawBook.baseInfo.title):
                     isFilter = True
                 else:
                     isFilter = False
@@ -145,10 +145,10 @@ class ComicListWidget(BaseListWidget):
                     action = popMenu.addAction(Str.GetStr(Str.Download))
                     action.triggered.connect(partial(self.DownloadHandler, index))
 
-                if self.isDelMenu and not self.isLocalFavorite and not self.isLocal:
+                if self.isDelMenu:
                     action = popMenu.addAction(Str.GetStr(Str.Delete))
                     action.triggered.connect(partial(self.DelHandler, index))
-                if self.isMoveMenu and not self.isLocalFavorite and not self.isLocal:
+                if self.isMoveMenu:
                     action = popMenu.addAction(Str.GetStr(Str.Move))
                     action.triggered.connect(partial(self.MoveHandler, index))
                 if self.openMenu:
@@ -552,7 +552,7 @@ class ComicListWidget(BaseListWidget):
             allIds = []
             for book in allBooks:
                 QtOwner().localFavoriteView.AddFavorites(book)
-                allIds.append(book.id)
+                allIds.append(book.baseInfo.id)
             QtOwner().OpenLocalFavoriteFold(allIds)
 
     def DelHandler(self, index):

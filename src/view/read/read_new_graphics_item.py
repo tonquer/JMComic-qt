@@ -137,11 +137,13 @@ class ReadNewGraphicsItem(QGraphicsItem):
                 buf.deleteLater()
         if mv is not None:
             mv.deleteLater()
+        self.index = -1
         self.pixmap = None          # 解码完成后的图像；None = 还没加载完（画占位框）
         self.isAnima = False
         self.fmt = None
         self._size: QSize = None                     # QSize：图片真实尺寸（API 预估/头探测/解码，任一来源）
         self._size_known = False              # True = _size 是精确值，之后不再修正
+        self.scale_size = QSizeF()
         self.file_data: FileData = None
         self._file_size = 0                   # 已下载文件的原始字节大小（动图释放 file_data 后仍供状态栏显示）
         self._reply = None                    # 正在进行的网络请求（None = 没在下载）
@@ -177,6 +179,8 @@ class ReadNewGraphicsItem(QGraphicsItem):
         # ---- 布局状态（由 view 写入，item 自己只读）----
         self._s = 0.0        # 在阅读方向上的偏移：图片起点距离第一张图起点的距离
         self._len = 0.0      # 沿滚动轴占据的长度（ttb=高，横排=宽）
+        self.setTransform(QTransform())
+        self.setVisible(True)
         self.prepareGeometryChange()   # 改 boundingRect 前必须调用（Qt 规则）
         self._w = self._h = 1.0   # item 的显示宽高（boundingRect 用）
         # 接缝叠加：(left, top, right, bottom) 额外绘制/包围的像素。连续模式下
@@ -206,7 +210,7 @@ class ReadNewGraphicsItem(QGraphicsItem):
 
     @property
     def is_cur_is_waifu2x(self):
-        return (self._waifu2x_state == 0 and Setting.IsOpenWaifu.value) or (self._waifu2x_state == 1) and not self._waifu_failed
+        return not self.isAnima and ((self._waifu2x_state == 0 and Setting.IsOpenWaifu.value) or (self._waifu2x_state == 1)) and not self._waifu_failed
 
     @property
     def is_downloading(self):
@@ -220,15 +224,15 @@ class ReadNewGraphicsItem(QGraphicsItem):
 
     @property
     def is_decoding(self):
-        return True
+        return self._decoding is not None
 
     @property
     def is_waifu2xing(self):
-        return True
+        return self._waifu_reply is not None
 
     @property
     def is_waifu_decoding(self):
-        return True
+        return self._decoding is not None and self.is_need_waifu2x
 
     @property
     def is_animated(self) -> bool:
@@ -433,7 +437,7 @@ class ReadNewGraphicsItem(QGraphicsItem):
             painter.restore()
             return
         if self._waifu_reply is not None:
-            self._draw_progress_ring(painter, rect)
+            self._draw_progress_ring(painter, rect, self.SPIN_PHASE)
             painter.restore()
             return
         painter.setPen(QColor(0, 0, 0, 90))

@@ -1100,6 +1100,12 @@ class DownloadBookHandler(object):
                 # 异常图片
                 if len(data) < 20 or isFail:
                     Log.Warn(f"download_error_picture, url:{backData.req.url}, data:{len(data)}, is_fail:{isFail}")
+                    if not data and not isFail and status_code == 200:
+                        if backData.bakParam:
+                            from server.req import ServerReq
+                            ServerReq.SPACE_PIC.add(backData.req.url)
+                            TaskBase.taskObj.downloadBack.emit(backData.bakParam, -Str.SpacePic, fileSize, b"")
+                        return
                     ## 尝试切换图片地址
                     backData.req.ResetToSwitchNextUrl()
                     if backData.req.resetCnt >= 0:
@@ -1116,12 +1122,6 @@ class DownloadBookHandler(object):
 
                 # Log.Info("size:{}, url:{}".format(ToolUtil.GetDownloadSize(fileSize), backData.req.url))
                 _, _, mat, isAni = ToolUtil.GetPictureSize(data)
-                if not data:
-                    if backData.bakParam:
-                        from server.req import ServerReq
-                        ServerReq.SPACE_PIC.add(backData.req.url)
-                        TaskBase.taskObj.downloadBack.emit(backData.bakParam, -Str.SpacePic, fileSize, b"")
-                    return
 
                 if config.IsUseCache and len(data) > 0:
                     try:
@@ -1273,10 +1273,12 @@ class SpeedTestPingHandler(object):
             else:
                 data["st"] = Status.Error
                 data["data"] = "0"
-            TaskBase.taskObj.taskBack.emit(task.bakParam, pickle.dumps(data))
+            if task.bakParam:
+                TaskBase.taskObj.taskBack.emit(task.bakParam, pickle.dumps(data))
         else:
             data["data"] = "0"
-            TaskBase.taskObj.taskBack.emit(task.bakParam, pickle.dumps(data))
+            if task.bakParam:
+                TaskBase.taskObj.taskBack.emit(task.bakParam, pickle.dumps(data))
 
 
 @handler(req.GetJmServerReq)

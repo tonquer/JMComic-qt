@@ -112,7 +112,7 @@ class BatchSrToolView(QtWidgets.QWidget, Ui_BatchSrTool, QtTaskBase):
 
     def SpinBoxEvent(self, setItem, value):
         assert isinstance(setItem, SettingValue)
-        setItem.SetValue(int(value))
+        setItem.SetValue(float(value))
         return
 
     def CheckOpenSrSelect(self):
@@ -329,7 +329,7 @@ class BatchSrToolView(QtWidgets.QWidget, Ui_BatchSrTool, QtTaskBase):
 
     def StartItemConvert(self):
         if self.curState == self.StartConvert:
-            self.SwitchState(self.PauseConvert)
+            self.PauseItemConvert()
         else:
             self.SwitchState(self.StartConvert)
             if not self.timer.isActive():

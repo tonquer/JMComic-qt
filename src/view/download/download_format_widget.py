@@ -91,11 +91,17 @@ class DownloadFormatWidget(BaseMaskDialog, Ui_FormatWidget):
 
         combo_box = QPushButton()
         combo_box.setText(Str.GetStr(Str.Delete))
-        combo_box.clicked.connect(partial(self.DeleteByIndex, row_count))
+        combo_box.clicked.connect(partial(self.DeleteByButton, combo_box))
 
         self.tableWidget.setCellWidget(row_count, 3, combo_box)
         self.tableWidget.resizeRowsToContents()
         return
+
+    def DeleteByButton(self, button):
+        for row in range(self.tableWidget.rowCount()):
+            if self.tableWidget.cellWidget(row, 3) is button:
+                self.tableWidget.removeRow(row)
+                break
 
     def DeleteByIndex(self, row):
         if row >= 0:

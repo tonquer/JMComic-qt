@@ -23,4 +23,5 @@ class ReadNewPoolManager(Singleton):
         # del item
         item.init()
         item.setPos(0, 0)
-        self.proxyItem.append(item)
+        if len(self.proxyItem) < self.proxyNum:
+            self.proxyItem.append(item)

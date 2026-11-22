@@ -1,4 +1,5 @@
 import os
+import sys
 
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QFileDialog
@@ -39,9 +40,13 @@ class DownloadDirView(BaseMaskDialog, Ui_DownloadDir, QtTaskBase):
         if url:
             self.lineEdit.setText(url)
             self.downloadDir.setText(os.path.join(url, config.SavePathDir))
-            self.chatDir.setText(os.path.join(Setting.GetCachePath(), config.ChatSavePath))
-            self.cacheDir.setText(Setting.GetCachePath())
-            self.waifu2xDir.setText(os.path.join(Setting.GetCachePath(), config.Waifu2xPath))
+            if sys.platform == "win32":
+                cacheBase = os.path.join(url, config.CachePathDir)
+            else:
+                cacheBase = Setting.GetCachePath()
+            self.chatDir.setText(os.path.join(cacheBase, config.ChatSavePath))
+            self.cacheDir.setText(cacheBase)
+            self.waifu2xDir.setText(os.path.join(cacheBase, config.Waifu2xPath))
 
     def SavePath(self):
         path = self.lineEdit.text()
@@ -55,4 +60,8 @@ class DownloadDirView(BaseMaskDialog, Ui_DownloadDir, QtTaskBase):
         Setting.DiskCacheSize.SetValue(self.diskBox.value())
         Setting.DiskCacheDay.SetValue(self.diskDayBox.value())
         Setting.IsInitSave.SetValue(1)
+        from task.task_cache import TaskCache
+        TaskCache().UpdateSetting()
+        if TaskCache().isOpenDisk:
+            TaskCache().InitDiskCache()
         self.close()

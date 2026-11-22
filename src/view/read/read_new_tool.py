@@ -53,28 +53,29 @@ class QtCustomSlider(QtWidgets.QSlider):
         if not self.label.isVisible():
             self.label.setVisible(True)
         x = event.pos().x()
-        pos = x / self.width()
+        w = max(1, self.width())
+        pos = min(1.0, max(0.0, x / w))
 
-        w = self.width()
-        size = int(w * self.value() / (self.maximum()))
-        x2 = self.sliderPosition()
+        span = max(1, self.maximum() - self.minimum())
+        size = int(w * (self.value() - self.minimum()) / span)
 
         if not (size - 5 <= x <= size + 5):
-            self.setValue(int(pos * (self.maximum()) + self.minimum()))
+            self.setValue(int(round(pos * (self.maximum() - self.minimum()) + self.minimum())))
             self.label.setText(str(self.value()))
-            size = int((self.width() - self.label.width()) * self.value() / (self.maximum()))
+            size = int((self.width() - self.label.width()) * (self.value() - self.minimum()) / span)
             self.label.move(size, 3)
         super(self.__class__, self).mousePressEvent(event)
 
     def mouseReleaseEvent(self, event):
         if self.label.isVisible():
             self.label.setVisible(False)
-            self.qtTool.SkipPicture(self.value())
+            self.qtTool.SkipPicture(self.value() - 1)
         super(self.__class__, self).mouseReleaseEvent(event)
 
     def mouseMoveEvent(self, event):
         self.label.setText(str(self.value()))
-        size = int((self.width() - self.label.width()) * self.value() / (self.maximum() - self.minimum()))
+        span = max(1, self.maximum() - self.minimum())
+        size = int((self.width() - self.label.width()) * (self.value() - self.minimum()) / span)
         self.label.move(size, 3)
         super(self.__class__, self).mouseMoveEvent(event)
 
@@ -138,6 +139,8 @@ class ReadNewTool(QtWidgets.QWidget, Ui_ReadImg):
         Setting.LookModelName.SetValue(newModName)
         self.modelNameButton.setText(ToolUtil.GetShowModelName(Setting.LookModelName.value))
         self.modelNameButton.setToolTip(Setting.LookModelName.value)
+        self.UpdateText(None)
+        self.scrollArea.reset_waifu2x_results()
 
     @property
     def imgFrame(self) -> ReadNewFrame:
@@ -410,7 +413,7 @@ class ReadNewTool(QtWidgets.QWidget, Ui_ReadImg):
 
     def InitSlider(self, maxIndex):
         self.slider.setMinimum(1)
-        self.slider.setMaximum(maxIndex)
+        self.slider.setMaximum(max(1, maxIndex))
 
     def UpdateSlider(self):
         return
@@ -439,15 +442,20 @@ class ReadNewTool(QtWidgets.QWidget, Ui_ReadImg):
             Setting.LookReadFull.SetValue(1)
 
     def Waifu2xSave(self):
+        self.scaleBox.setValue(Setting.LookScale.value)
         self.SetWaifu2xCancle(True)
 
     def Waifu2xCancle(self):
+        oldModel = Setting.LookModelName.value
+        oldScale = Setting.LookScale.value
         if self.modelNameButton.toolTip():
             Setting.LookModelName.SetValue(self.modelNameButton.toolTip())
         # Setting.LookNoise.SetValue(self.noiseBox.currentIndex() -1)
         Setting.LookScale.SetValue(self.scaleBox.value())
-
+        self.UpdateText(None)
         self.SetWaifu2xCancle(False)
+        if oldModel != Setting.LookModelName.value or oldScale != Setting.LookScale.value:
+            self.scrollArea.reset_waifu2x_results()
 
     def SetWaifu2xCancle(self, isVisibel=False):
         self.waifu2xSave.setVisible(not isVisibel)

@@ -33,7 +33,7 @@ class ReadMode(Enum):
 
     @staticmethod
     def isWheelLeftRight(model):
-        return model in [ReadMode.LeftRight, ReadMode.LeftRightDouble, ReadMode.LeftRightScroll, ReadMode.LeftRightDouble, ReadMode.RightLeftScroll]
+        return model in [ReadMode.LeftRight, ReadMode.LeftRightDouble, ReadMode.LeftRightScroll, ReadMode.RightLeftDouble, ReadMode.RightLeftScroll]
 
     @staticmethod
     def isRightLeft(model):

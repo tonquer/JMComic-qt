@@ -18,10 +18,11 @@ class SettingBinding:
     after_save: Optional[Callable[[], None]] = None
 
 
-def BindCheck(setting, control):
+def BindCheck(setting, control, after_save=None):
     return SettingBinding(setting, control, control.clicked,
                           lambda: int(control.isChecked()),
-                          lambda value: control.setChecked(bool(value)))
+                          lambda value: control.setChecked(bool(value)),
+                          after_save)
 
 
 def BindRadio(setting, group, buttons, after_save=None):
@@ -37,22 +38,24 @@ def BindRadio(setting, group, buttons, after_save=None):
                           group.checkedId, write, after_save)
 
 
-def BindLine(setting, control):
+def BindLine(setting, control, after_save=None):
     return SettingBinding(setting, control, control.editingFinished,
-                          control.text, control.setText)
+                          control.text, control.setText, after_save)
 
 
-def BindIndex(setting, control, write=None):
+def BindIndex(setting, control, write=None, after_save=None):
     return SettingBinding(setting, control, control.currentIndexChanged,
-                          control.currentIndex, write or control.setCurrentIndex)
+                          control.currentIndex, write or control.setCurrentIndex,
+                          after_save)
 
 
-def BindValue(setting, control, write):
+def BindValue(setting, control, write, after_save=None):
     return SettingBinding(setting, control, control.currentIndexChanged,
                           lambda: control.currentData() if control.currentIndex() >= 0 else None,
-                          write)
+                          write, after_save)
 
 
-def BindSpin(setting, control, converter=int):
+def BindSpin(setting, control, converter=int, after_save=None):
     return SettingBinding(setting, control, control.valueChanged,
-                          lambda: converter(control.value()), control.setValue)
+                          lambda: converter(control.value()), control.setValue,
+                          after_save)

@@ -93,9 +93,9 @@ class DownloadAllView(QtWidgets.QWidget, Ui_DownloadAll, QtTaskBase):
                 tags = book.pageInfo.tags
 
             if isinstance(book.baseInfo.category, list):
-                category = ",".join(book.baseInfo.categories)
+                category = ",".join(book.baseInfo.category)
             else:
-                category = book.baseInfo.categories
+                category = book.baseInfo.category
 
             task = DownloadAllItem()
             task.bookId = book.baseInfo.id
@@ -168,21 +168,17 @@ class DownloadAllView(QtWidgets.QWidget, Ui_DownloadAll, QtTaskBase):
                 QtOwner().downloadView.AddDownload(v.bookId, downloadIds)
                 self.StartGetEpsData()
             else:
-                self.StartGetEpsData()
-                # self.AddSqlTask("book", v.bookId, SqlServer.TaskTypeCacheBook, callBack=self.SendLocalBack, backParam=v)
+                if not QtOwner().isOfflineModel:
+                    self.AddHttpTask(req.GetBookInfoReq2(v.bookId), self.OpenBookBack, backParam=v)
+                else:
+                    self.StartGetEpsData()
         else:
             QtOwner().downloadView.AddDownload(v.bookId, [0])
             self.StartGetEpsData()
 
-    # def SendLocalBack(self, books, v):
-    #     if not QtOwner().isOfflineModel:
-    #         self.AddHttpTask(req.GetComicsBookReq(v.bookId), self.OpenBookBack, backParam=v)
-    #     else:
-    #         self.OpenBookBack({"st": Status.Ok}, v)
-
-    # def OpenBookBack(self, raw, v):
-    #     info = BookMgr().GetBook(v.bookId)
-    #     if info and info.epsCount > 0:
-    #         downloadIds = list(range(info.epsCount))
-    #         QtOwner().downloadView.AddDownload(v.bookId, downloadIds)
-    #     self.StartGetEpsData()
+    def OpenBookBack(self, raw, v):
+        info = BookMgr().GetBook(v.bookId)
+        if info and info.epsCount > 0:
+            downloadIds = list(range(info.epsCount))
+            QtOwner().downloadView.AddDownload(v.bookId, downloadIds)
+        self.StartGetEpsData()

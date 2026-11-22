@@ -34,6 +34,7 @@ class QConvertTask(object):
         self.imgData = b""
         self.saveData = b""
         self.isAni = False
+        self.rawFormat = ""
         self.isCacheFetch = False
 
         self.model = {
@@ -111,6 +112,7 @@ class TaskWaifu2x(TaskBase):
 
                 w, h, mat, isAni = ToolUtil.GetPictureSize(task.imgData)
                 task.isAni = isAni
+                task.rawFormat = mat
                 if mat.lower() in ToolUtil.SrNeedConvertFormat:
                     task.imgData = ToolUtil.GetCanConvertUseData(task.imgData)
 
@@ -200,8 +202,10 @@ class TaskWaifu2x(TaskBase):
                         TaskCache().AddCacheDiskPath(ToolUtil.GetPictureName(info.cachePath, format), data)
 
                     for path in [info.savePath]:
+                        if not path:
+                            continue
                         if info.convertType == "download" and not info.model.get("format"):
-                            ToolUtil.SaveConvertPicture(data, path, format, info.isAni)
+                            ToolUtil.SaveConvertPicture(data, path, format, info.isAni, info.rawFormat)
                         else:
                             ToolUtil.SavePicture(data, path, format)
             except Exception as es:
@@ -233,8 +237,7 @@ class TaskWaifu2x(TaskBase):
         isCache = TaskCache().AddConvertFromCache(info)
         if not isCache:
             self._inQueue.put(taskId)
-            return taskId
-        return 0
+        return taskId
 
     def AddConvertTaskByPath(self, loadPath, savePath, callBack, backParam=None, cleanFlag=None, otherParams = None):
         info = QConvertTask()

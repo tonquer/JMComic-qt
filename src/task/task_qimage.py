@@ -33,8 +33,9 @@ def _decode_bytes_to_qimage(data: bytes, tw: int = 0, th: int = 0) -> QImage:
             exif = im.getexif()
             has_exif_rot = bool(exif and exif.get(274, 1) != 1)
             if (not is_anim and not has_exif_rot and im.format == "JPEG"
-                    and tw > 0 and th > 0 and (im.width > tw or im.height > th)):
-                im.draft("RGB", (tw, th))
+                    and tw > 0 and (im.width > tw or (th > 0 and im.height > th))):
+                draft_h = th if th > 0 else max(1, round(im.height * (tw / im.width)))
+                im.draft("RGB", (tw, draft_h))
             if has_exif_rot:
                 im = ImageOps.exif_transpose(im)
             has_alpha = (
@@ -113,17 +114,17 @@ class TaskQImage(TaskBase):
                 target_h = round(info.toH * info.radio) if info.toH > 0 else 0
                 q = _decode_bytes_to_qimage(info.data, target_w, target_h)
                 if not q.isNull():
-                    q.setDevicePixelRatio(info.radio)
                     if info.model:
                         model = info.model
                     else:
                         model = Qt.KeepAspectRatio
-                    if 0 < info.toW < q.width() and info.toH == 0:
-                        newQ = q.scaledToWidth(info.toW, Qt.SmoothTransformation)
-                    elif info.toW > 0 and info.toH > 0:
+                    if 0 < target_w < q.width() and target_h == 0:
+                        newQ = q.scaledToWidth(target_w, Qt.SmoothTransformation)
+                    elif target_w > 0 and target_h > 0:
                         newQ = q.scaled(target_w, target_h, model, Qt.SmoothTransformation)
                     else:
                         newQ = q
+                    newQ.setDevicePixelRatio(info.radio)
             except Exception as es:
                 Log.Error(es)
             finally:

@@ -54,8 +54,8 @@ class NasStatus(QtTaskBase):
         return
 
     def _SetTaskPause(self, task2):
-        from task.task_download import TaskDownload
-        TaskDownload().Cancel(task2.cleanFlag)
+        from task.task_upload import TaskUpload
+        TaskUpload().Cancel(task2.cleanFlag)
         self._SetDownloadTaskNone(task2)
         return
 

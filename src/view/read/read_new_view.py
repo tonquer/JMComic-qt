@@ -177,9 +177,9 @@ class ReadNewView(QtWidgets.QWidget):
         def AddScaleMode(name, value):
             action = menu3.addAction(name)
             action.triggered.connect(partial(self.qtTool.ScalePicture2, value))
-            # if (self.frame.scaleCnt + 10) * 10 == value:
-            #     action.setCheckable(True)
-                # action.setChecked(True)
+            if round(self.scrollArea._zoom * 100) == value:
+                action.setCheckable(True)
+                action.setChecked(True)
 
         AddScaleMode("50%", 50)
         AddScaleMode("60%", 60)
@@ -227,6 +227,7 @@ class ReadNewView(QtWidgets.QWidget):
 
         self.isShowMenu = True
         popMenu.exec_(QCursor.pos())
+        self.isShowMenu = False
         self.menuPos = None
 
     @property
@@ -266,6 +267,7 @@ class ReadNewView(QtWidgets.QWidget):
         self._prefetchReady = False
         self._prefetchChapterMax = 0
         QtOwner().SetSubTitle("")
+        self.scrollArea.clear_all_item()
         self.readTask.ClearTask()
         self.readTask.ClearDownload()
         self.readTask.ClearQImageTask()
@@ -441,32 +443,42 @@ class ReadNewView(QtWidgets.QWidget):
         if not info:
             return
         raw_buf = info.get_raw_bytes()
-        if not raw_buf and not info._waifu_buf:
+        if not raw_buf and not info._waifu_buf and info.pixmap is None:
             return
 
         # today = time.strftime("%Y%m%d%H%M%S", time.localtime(time.time()))
         if info._waifu_buf:
             _, _, mat, _ = ToolUtil.GetPictureSize(info._waifu_buf)
+            mat = mat or info.fmt or "png"
             path = "{}_{}_waifu2x.{}".format(self.bookId, info.index + 1, mat)
             data = info._waifu_buf
-        else:
+        elif raw_buf:
             _, _, mat, _ = ToolUtil.GetPictureSize(raw_buf)
+            mat = mat or info.fmt or "jpg"
             path = "{}_{}.{}".format(self.bookId, info.index + 1, mat)
             data = raw_buf
+        else:
+            from PySide6.QtCore import QBuffer, QByteArray, QIODevice
+            ba = QByteArray()
+            buf = QBuffer(ba)
+            buf.open(QIODevice.WriteOnly)
+            info.pixmap.save(buf, "PNG")
+            buf.close()
+            data = bytes(ba)
+            path = "{}_{}.png".format(self.bookId, info.index + 1)
         if not data:
             return
         try:
             if self.lastPath:
                 path = os.path.join(self.lastPath, path)
-            filepath = QFileDialog.getSaveFileName(self, Str.GetStr(Str.Save), path, "Image Files(*.jpg *.png)")
+            filepath = QFileDialog.getSaveFileName(self, Str.GetStr(Str.Save), path, "Image Files(*.jpg *.png *.webp *.gif *.jxl *.avif);;All Files(*)")
             if filepath and len(filepath) >= 1:
                 name = filepath[0]
                 if not name:
                     return
                 self.lastPath = os.path.dirname(name)
-                f = open(name, "wb")
-                f.write(data)
-                f.close()
+                with open(name, "wb") as f:
+                    f.write(data)
                 QtOwner().ShowMsg(Str.GetStr(Str.SaveSuc))
         except Exception as es:
             Log.Error(es)
@@ -479,26 +491,35 @@ class ReadNewView(QtWidgets.QWidget):
         if not info:
             return
         raw_buf = info.get_raw_bytes()
-        if not raw_buf and not info._waifu_buf:
+        if not raw_buf and not info._waifu_buf and info.pixmap is None:
             return
 
         if info._waifu_buf:
             _, _, mat, _ = ToolUtil.GetPictureSize(info._waifu_buf)
+            mat = mat or info.fmt or "png"
             path = "{}_{}_waifu2x.{}".format(self.bookId, info.index + 1, mat)
             data = info._waifu_buf
-        else:
+        elif raw_buf:
             _, _, mat, _ = ToolUtil.GetPictureSize(raw_buf)
+            mat = mat or info.fmt or "jpg"
             path = "{}_{}.{}".format(self.bookId, info.index + 1, mat)
             data = raw_buf
+        else:
+            from PySide6.QtCore import QBuffer, QByteArray, QIODevice
+            ba = QByteArray()
+            buf = QBuffer(ba)
+            buf.open(QIODevice.WriteOnly)
+            info.pixmap.save(buf, "PNG")
+            buf.close()
+            data = bytes(ba)
+            path = "{}_{}.png".format(self.bookId, info.index + 1)
         if not data:
             return
         try:
             if self.lastPath:
                 name = os.path.join(self.lastPath, path)
             else:
-                if self.lastPath:
-                    path = os.path.join(self.lastPath, path)
-                filepath = QFileDialog.getSaveFileName(self, Str.GetStr(Str.Save), path, "Image Files(*.jpg *.png)")
+                filepath = QFileDialog.getSaveFileName(self, Str.GetStr(Str.Save), path, "Image Files(*.jpg *.png *.webp *.gif *.jxl *.avif);;All Files(*)")
                 if filepath and len(filepath) >= 1:
                     name = filepath[0]
                     if not name:
@@ -508,9 +529,8 @@ class ReadNewView(QtWidgets.QWidget):
                     return
 
             # self.lastPath = os.path.dirname(name)
-            f = open(name, "wb")
-            f.write(data)
-            f.close()
+            with open(name, "wb") as f:
+                f.write(data)
             QtOwner().ShowMsg(Str.GetStr(Str.SaveSuc))
         except Exception as es:
             Log.Error(es)
@@ -524,6 +544,9 @@ class ReadNewView(QtWidgets.QWidget):
             return
         raw_buf = info.get_raw_bytes()
         if not raw_buf and not info._waifu_buf:
+            if info.pixmap is not None and not info.pixmap.isNull():
+                QApplication.clipboard().setPixmap(info.pixmap)
+                QtOwner().ShowMsg(Str.GetStr(Str.CopySuc))
             return
         if info._waifu_buf:
             data = info._waifu_buf
@@ -531,8 +554,10 @@ class ReadNewView(QtWidgets.QWidget):
             data = raw_buf
         p = QImage()
         p.loadFromData(data)
-
-        clipboard = QApplication.clipboard()
-        clipboard.setImage(p)
+        if p.isNull() and info.pixmap is not None and not info.pixmap.isNull():
+            QApplication.clipboard().setPixmap(info.pixmap)
+        else:
+            clipboard = QApplication.clipboard()
+            clipboard.setImage(p)
         QtOwner().ShowMsg(Str.GetStr(Str.CopySuc))
         return
