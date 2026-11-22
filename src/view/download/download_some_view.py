@@ -43,7 +43,6 @@ class DownloadSomeView(QWidget, Ui_DownloadSome, QtTaskBase):
         self.loadInfoButton.clicked.connect(self.Start)
         self.cleanButton.clicked.connect(self.Clean)
         self.downButton.clicked.connect(self.Download)
-        self.nasButton.clicked.connect(self.AddNas)
         
         self.allBookInfo = {}  # bookId: SomeItem
         self.loadingBook = []
@@ -98,8 +97,10 @@ class DownloadSomeView(QWidget, Ui_DownloadSome, QtTaskBase):
         jm_infos = []
         count = self.tableWidget.rowCount()
         for i in range(count):
-            bookId = self.tableWidget.item(i, 0).text()
+            bookId = str(self.tableWidget.item(i, 0).text())
             info = self.allBookInfo.get(bookId)
+            if not info:
+                continue
             if mode == 0:
                 msg = f"{bookId}"
             elif mode == 1:
@@ -114,6 +115,7 @@ class DownloadSomeView(QWidget, Ui_DownloadSome, QtTaskBase):
         self.outputView.textEdit.setText("\n".join(jm_infos))
     
     def UpdateTable(self, bookId):
+        bookId = str(bookId)
         if bookId not in self.allBookInfo:
             return
         item = self.allBookInfo.get(bookId)
@@ -131,6 +133,7 @@ class DownloadSomeView(QWidget, Ui_DownloadSome, QtTaskBase):
         pass
     
     def AddTable(self, bookId):
+        bookId = str(bookId)
         if bookId not in self.allBookInfo:
             rowCont = self.tableWidget.rowCount()
             item = SomeItem()
@@ -143,7 +146,7 @@ class DownloadSomeView(QWidget, Ui_DownloadSome, QtTaskBase):
             self.UpdateTable(bookId)
             
     def AddBookInfo(self, addBookList):
-        for k in list(set(addBookList)):
+        for k in list(set(str(b) for b in addBookList)):
             self.AddTable(k)
         return
     
@@ -194,6 +197,7 @@ class DownloadSomeView(QWidget, Ui_DownloadSome, QtTaskBase):
         pass
     
     def OpenBookBack(self, raw, bookId):
+        bookId = str(bookId)
         st = raw["st"]
         item = self.allBookInfo.get(bookId)
         self.completeNum -= 1
@@ -255,7 +259,7 @@ class DownloadSomeView(QWidget, Ui_DownloadSome, QtTaskBase):
     def UpdateTableRow(self):
         count = self.tableWidget.rowCount()
         for i in range(count):
-            bookId = self.tableWidget.item(i, 0).text()
+            bookId = str(self.tableWidget.item(i, 0).text())
             info = self.allBookInfo.get(bookId)
             if info:
                 info.rowCount = i

@@ -66,4 +66,4 @@ class RemoteHistoryView(QWidget, Ui_History, QtTaskBase):
         if page > self.bookList.pages:
             return
         self.bookList.clear()
-        self.RefreshData(self.bookList.page)
+        self.RefreshData(page)

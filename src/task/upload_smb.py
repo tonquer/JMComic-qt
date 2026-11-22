@@ -24,9 +24,9 @@ class SmbClient(UpLoadBase):
         self.username = nasInfo.user
         self.path = nasInfo.path
 
-        datas = nasInfo.path.strip("/").split("/")
+        datas = [p for p in nasInfo.path.replace("\\", "/").split("/") if p]
 
-        self.service_name = datas[0]
+        self.service_name = datas[0] if datas else ""
 
         self.client = SMBConnection(self.username, self.password, '', '', use_ntlm_v2=True)
         self.isLink = False
@@ -53,11 +53,11 @@ class SmbClient(UpLoadBase):
                 result = self.client.connect(self.address, self.port, timeout=5)
             else:
                 result = self.client.connect(self.address, timeout=5)
+            if not result:
+                self.isLink = False
+                return Str.CvAuthError, ""
             self.client.listPath(self.service_name, "/")
             self.isLink = True
-            if not result:
-                return Str.CvAuthError, ""
-
             return Str.Ok, ""
         except Exception as es:
             Log.Error(es)
@@ -98,18 +98,17 @@ class SmbClient(UpLoadBase):
                 if st != Str.Ok:
                     return st
 
-            prefix = f"{self.service_name}/"
-            remotePath = remotePath.lstrip("/")
-            if remotePath.startswith(prefix):
-                remotePath = remotePath[len(prefix):]
-            elif remotePath == self.service_name:
-                remotePath = ""
+            parts = [p for p in remotePath.replace("\\", "/").split("/") if p]
+            if parts and parts[0] == self.service_name:
+                parts = parts[1:]
+            remotePath = "/".join(parts)
             if not os.path.isfile(localPath):
                 return Str.FileError
             self.Create(remotePath)
             fileName = os.path.basename(localPath)
+            remoteFile = f"{remotePath}/{fileName}" if remotePath else fileName
             with open(localPath, "rb") as local_file:
-                self.client.storeFile(self.service_name, remotePath + "/" + fileName, local_file)
+                self.client.storeFile(self.service_name, remoteFile, local_file)
             os.remove(localPath)
             return Str.Ok
         except Exception as es:

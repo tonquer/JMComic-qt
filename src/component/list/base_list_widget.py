@@ -51,6 +51,10 @@ class BaseListWidget(QListWidget, QtTaskBase):
         self.doubleClickType = 0
 
     def ValueChange(self, v):
+        if self.isLoadingPage:
+            return
+        if self.page >= self.pages:
+            return
         if v >= self.verticalScrollBar().maximum():
             if Setting.IsGrabGesture.value:
                 QScroller.ungrabGesture(self)

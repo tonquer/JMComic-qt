@@ -340,15 +340,28 @@ class BatchSrToolView(QtWidgets.QWidget, Ui_BatchSrTool, QtTaskBase):
 
     def PauseItemConvert(self):
         self.SwitchState(self.PauseConvert)
+        self.timer.stop()
         self.convertingIndex.clear()
         self.ClearConvert()
+        for item in self.allItem.values():
+            assert isinstance(item, BatchSrItem)
+            if item.status == item.Converting:
+                item.status = 0
+                self.UpdateTableItem(item)
         return
 
     def CancleItemConvert(self):
         self.SwitchState(self.NotSelect)
+        self.timer.stop()
+        self.ClearTask()
+        self.convertingIndex.clear()
+        self.allItem.clear()
+        self.indexToRow.clear()
         for i in range(self.tableWidget.rowCount(), 0, -1):
             self.tableWidget.removeRow(i-1)
         self.db.ClearBatchSrItem()
+        self.UpdateConvertLabel()
+        self.UpdateProcessLabel()
         return
 
     def UpdateTableItem(self, info):
@@ -411,7 +424,7 @@ class BatchSrToolView(QtWidgets.QWidget, Ui_BatchSrTool, QtTaskBase):
         model = ToolUtil.GetModelByIndex(Setting.BatchSrModelName.value, Setting.BatchSrScale.value)
         model['isForce'] = 1
         model['format'] = Setting.BatchSrFmt.value
-        self.AddConvertTaskByPathSetModel(loadPath, savePath, self.StartItemConvertBack, task.index, model=model, cleanFlag=task.cleanFlag)
+        self.AddConvertTaskByPathSetModel(loadPath, savePath, self.StartItemConvertBack, task.index, model=model, cleanFlag=self.cleanFlag)
         self.UpdateTableItem(task)
         self.db.AddBatchSrItem(task)
         return

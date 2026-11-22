@@ -26,6 +26,7 @@ class MsgLabel(QWidget):
         self.label = QLabel(self)
         layout.addWidget(self.label)
         self.animationGroup = QParallelAnimationGroup(self)
+        self.animationGroup.finished.connect(self.close)  # 动画结束时关闭窗口
         self.opacityAnimation = None
         self.moveAnimation = None
 
@@ -72,7 +73,6 @@ class MsgLabel(QWidget):
         # 并行动画组（目的是让上面的两个动画同时进行）
         self.animationGroup.addAnimation(opacityAnimation)
         self.animationGroup.addAnimation(moveAnimation)
-        self.animationGroup.finished.connect(self.close)  # 动画结束时关闭窗口
         self.animationGroup.start()
         self.opacityAnimation = opacityAnimation
         self.moveAnimation = moveAnimation
@@ -116,6 +116,7 @@ class MsgLabel(QWidget):
         if msgTick >= CurTick:
             return
         data = MsgLabel(owner)
+        data.setAttribute(Qt.WA_DeleteOnClose, True)
         data.setText(text)
         data.setStyleSheet("color:black")
         data.show()
@@ -134,6 +135,7 @@ class MsgLabel(QWidget):
         if msgTick >= CurTick:
             return
         data = MsgLabel(owner)
+        data.setAttribute(Qt.WA_DeleteOnClose, True)
         data.setText(text)
         data.setStyleSheet("color:red")
         data.show()

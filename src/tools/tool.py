@@ -513,6 +513,25 @@ class ToolUtil(object):
         return False
 
     @staticmethod
+    def IsHavePictureFile(filePath):
+        try:
+            if not filePath:
+                return False
+            if os.path.isfile(filePath) and os.path.getsize(filePath) > 0:
+                return True
+            lowerPath = filePath.lower()
+            hasExt = any(lowerPath.endswith(ext) for ext in ToolUtil.AllUseFormat)
+            if not hasExt:
+                for ext in ToolUtil.AllUseFormat:
+                    path = filePath + ext
+                    if os.path.isfile(path) and os.path.getsize(path) > 0:
+                        return True
+            return False
+        except Exception as es:
+            Log.Error(es)
+        return False
+
+    @staticmethod
     def DiffDays(d1, d2):
         return (int(d1 - time.timezone) // 86400) - (int(d2 - time.timezone) // 86400)
 
@@ -781,7 +800,7 @@ class ToolUtil(object):
     @staticmethod
     def ParseBookInfo2(result):
         raw = json.loads(result)
-        from tools.book import BookInfo
+        from tools.book import BookInfo, RelatedInfo
         b = BookInfo()
         bookId = raw["id"]
         b.baseInfo.coverUrl = "/media/albums/{}_3x4.jpg".format(bookId)
@@ -806,6 +825,13 @@ class ToolUtil(object):
         b.pageInfo.des = raw.get("description")
         b.pageInfo.commentNum = int(raw.get("comment_total"))
         isFavorite = raw.get("is_favorite")
+        for relatedDict in  raw.get("related_list", []):
+            related = BookInfo()
+            related.baseInfo.id = relatedDict.get("id", "")
+            related.baseInfo.coverUrl = "/media/albums/{}_3x4.jpg".format(related.id)
+            related.baseInfo.title = relatedDict.get("name", "")
+            related.baseInfo.author = [relatedDict.get("author", "")]
+            b.related_list.append(related)
 
         from tools.book import BookEps
         ## 264793不按sort顺序
@@ -1394,7 +1420,7 @@ class ToolUtil(object):
         tags.text = ",".join(bookInfo.baseInfo.tagList)
 
         everyoneTags = ["无h", "無h"]
-        isNotH = ToolUtil.IsHaveAssignTag(tags, everyoneTags)
+        isNotH = ToolUtil.IsHaveAssignTag(bookInfo.baseInfo.tagList, everyoneTags)
         ageRating = etree.SubElement(root, "AgeRating")  # R18+  Everyone
         if isNotH:
             ageRating.text = "Everyone"
@@ -1406,7 +1432,7 @@ class ToolUtil(object):
 
         blackAndWhite = etree.SubElement(root, "BlackAndWhite")  # Yes No
         everyoneTags = ["全彩", "cosplay"]
-        isColor = ToolUtil.IsHaveAssignTag(tags.text, everyoneTags)
+        isColor = ToolUtil.IsHaveAssignTag(bookInfo.baseInfo.tagList, everyoneTags)
         if isColor:
             blackAndWhite.text = "No"
         else:
@@ -1414,7 +1440,7 @@ class ToolUtil(object):
 
         manga = etree.SubElement(root, "Manga")  # Yes No
         everyoneTags = ["cosplay"]
-        isCos = ToolUtil.IsHaveAssignTag(tags.text, everyoneTags)
+        isCos = ToolUtil.IsHaveAssignTag(bookInfo.baseInfo.tagList, everyoneTags)
         if isCos:
             manga.text = "No"
         else:

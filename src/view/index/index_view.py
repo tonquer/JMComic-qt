@@ -113,7 +113,7 @@ class IndexView(QWidget, Ui_Index, QtTaskBase):
             self.GetLatestInfo(self.spinBox.value())
         elif self.tabWidget.currentIndex() == self.weekIndex:
             self.bookWidgetList[self.weekIndex].clear()
-            self.GetSerializationInfo()
+            self.GetSerializationInfo(self.spinBox.value())
 
     def GetLatestInfo(self, page=1):
         QtOwner().ShowLoading()

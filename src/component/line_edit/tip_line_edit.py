@@ -84,12 +84,12 @@ class TipLineEdit(QLineEdit):
             if currentIndex.row() >= 0:
                 text = currentIndex.data()
                 self.setText(text)
-            self.Search()
+            self.HideListView()
+            self.clearFocus()
         return QLineEdit.keyReleaseEvent(self, ev)
 
     def Search(self):
-        text = self.text()
-        QtOwner().OpenSearch(text)
+        self.HideListView()
         self.clearFocus()
         return
 

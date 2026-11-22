@@ -91,8 +91,8 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.uploadButton.clicked.connect(self.ShowMenu)
         self.buyButton.setVisible(False)
         self.buyButton.clicked.connect(self.DoBuyBook)
-        # self.commandLinkButton.clicked.connect(self.OpenRecommend)
-        self.commandLinkButton.setVisible(False)
+        self.commandLinkButton.clicked.connect(self.OpenRecommend)
+
         self.mainButton.setVisible(False)
         self.mainButton.clicked.connect(self.OpenMainJmID)
 
@@ -193,6 +193,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         pass
 
     def OpenBook(self, bookId):
+        self.commandLinkButton.setVisible(False)
         self.bookId = bookId
         if QtOwner().isOfflineModel:
             self.tabWidget.setCurrentIndex(1)
@@ -205,8 +206,13 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.buyButton.setVisible(False)
         self.AddHttpTask(req.GetBookInfoReq2(self.bookId), self.OpenBookBack)
 
-    # def OpenRecommend(self):
-    #     QtOwner().OpenRecomment(self.bookId)
+    def OpenRecommend(self):
+        info = BookMgr().GetBook(self.bookId)
+        if not info:
+            return
+        if not info.related_list:
+            return
+        QtOwner().OpenRecomment(self.bookId, info.related_list)
 
     def OpenBookBack(self, raw):
         QtOwner().CloseLoading()
@@ -221,6 +227,9 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             assert isinstance(info, BookInfo)
             for author in info.baseInfo.authorList:
                 self.autorList.AddItem(author)
+            if info.related_list:
+                self.commandLinkButton.setVisible(True)
+
             title = info.baseInfo.title
 
             if info.pageInfo.pages:
@@ -459,6 +468,8 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.AddHttpTask(req.AddAndDelFavoritesReq2(self.bookId), self.AddFavoriteBack)
 
     def ClearCache(self):
+        if not self.bookId:
+            return
         path = os.path.join(Setting.GetCachePath(), "book_new/{}".format(self.bookId))
         waifuPath = os.path.join(Setting.GetCachePath(), "waifu2x/book/{}".format(self.bookId))
         isClear = QMessageBox.information(self, Str.GetStr(Str.ClearCache), Str.GetStr(Str.ConfirmClearBookCache).format(path, waifuPath), QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)

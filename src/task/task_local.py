@@ -356,8 +356,8 @@ class TaskLocal(TaskBase, QtTaskBase):
             allData = self.ParseBookInfoByDirRecursion2(dirName)
             if not allData:
                 return Str.ErrorPath, ""
-            if len(allData) <= 1:
-                return self.ParseBookInfoByDir(dirName)
+            if len(allData) == 1:
+                return Status.Ok, allData[0]
             l = LocalData()
             l.eps = allData
             l.title = os.path.basename(dirName)

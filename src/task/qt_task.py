@@ -131,9 +131,9 @@ class QtTaskBase:
         from task.task_local import TaskLocal
         return TaskLocal().AddLoadReadPicture(v, index, backparam, callBack, cleanFlag=self.__taskFlagId, completeCallBack2=completeCallBack2)
 
-    def AddUploadTask(self, nas_id, type, srcDir, desFile, upDirPath, bookId, epsId, backParam=None, callBack=None):
+    def AddUploadTask(self, nas_id, type, srcDir, desFile, upDirPath, bookId, epsId, backParam=None, callBack=None, cleanFlag=""):
         from task.task_upload import TaskUpload
-        return TaskUpload().AddLoadReadPicture(nas_id, type, srcDir, desFile, upDirPath, bookId, epsId, backParam, callBack, cleanFlag=self.__taskFlagId)
+        return TaskUpload().AddLoadReadPicture(nas_id, type, srcDir, desFile, upDirPath, bookId, epsId, backParam, callBack, cleanFlag=cleanFlag or self.__taskFlagId)
 
     def ClearQImageTaskById(self, taskId):
         from task.task_qimage import TaskQImage
@@ -145,11 +145,13 @@ class QtTaskBase:
         from task.task_waifu2x import TaskWaifu2x
         from task.task_qimage import TaskQImage
         from task.task_local import TaskLocal
+        from task.task_upload import TaskUpload
         TaskDownload().Cancel(self.__taskFlagId)
         TaskHttp().Cancel(self.__taskFlagId)
         TaskWaifu2x().Cancel(self.__taskFlagId)
         TaskQImage().Cancel(self.__taskFlagId)
         TaskLocal().Cancel(self.__taskFlagId)
+        TaskUpload().Cancel(self.__taskFlagId)
 
     def ClearDownload(self):
         from task.task_download import TaskDownload

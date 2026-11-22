@@ -253,6 +253,10 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
         if not task:
             return
         assert isinstance(task, DownloadItem)
+        from task.task_download import TaskDownload
+        from task.task_waifu2x import TaskWaifu2x
+        TaskDownload().Cancel(task.cleanFlag)
+        TaskWaifu2x().Cancel(task.cleanFlag)
         if task in self.downloadingList:
             self.downloadingList.remove(task)
         if task in self.downloadList:
@@ -548,6 +552,7 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
         if not selectRows:
             return
         try:
+            saveRoot = os.path.abspath(os.path.join(Setting.SavePath.value, config.SavePathDir)) if Setting.SavePath.value else ""
             for row in sorted(selectRows, reverse=True):
                 col = 0
                 bookId = self.tableWidget.item(row, col).text()
@@ -555,8 +560,14 @@ class DownloadView(QtWidgets.QWidget, Ui_Download, DownloadStatus):
                 if not bookInfo:
                     continue
                 self.RemoveRecord(bookId)
-                path = os.path.dirname(bookInfo.savePath)
-                if os.path.isdir(path):
+                if not bookInfo.savePath or not saveRoot:
+                    continue
+                path = os.path.abspath(os.path.dirname(bookInfo.savePath))
+                try:
+                    isSafeSubdir = os.path.commonpath([saveRoot, path]) == saveRoot and path != saveRoot
+                except ValueError:
+                    isSafeSubdir = False
+                if isSafeSubdir and os.path.isdir(path):
                     shutil.rmtree(path, True)
 
         except Exception as es:

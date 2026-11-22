@@ -77,6 +77,7 @@ class MainView(Main, QtTaskBase):
         self.searchView2.monthBox.hide()
         self.searchView2.typeBox.hide()
         self.searchView2.yearBox.hide()
+        self.searchView2.isSearch2 = True
         self.myTrayIcon = MySystemTrayIcon()
         self.myTrayIcon.show()
         self.totalStackWidget.currentChanged.connect(self.SwitchReadView)
@@ -356,6 +357,12 @@ class MainView(Main, QtTaskBase):
             bookList = getattr(view, "bookList", None)
             if bookList is not None:
                 bookList.clear()
+            if hasattr(view, "ClearCommentList"):
+                view.ClearCommentList()
+        favoriteView = getattr(self, "favoriteView", None)
+        if favoriteView is not None:
+            favoriteView.folderDict.clear()
+            favoriteView.ClearFolder()
         return
 
     def SwitchWidgetNext(self):

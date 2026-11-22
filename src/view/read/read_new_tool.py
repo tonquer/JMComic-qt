@@ -193,12 +193,15 @@ class ReadNewTool(QtWidgets.QWidget, Ui_ReadImg):
 
     def _NextPage(self):
         epsId = self.readImg.epsId
-        if ReadMode.isDouble(self.stripModel):
-            index = self.scrollArea._cur_idx + 2
+        if not ReadMode.isScroll(self.stripModel):
+            next_page = self.scrollArea._page + 1
+            at_end = self.maxPic <= 0 or next_page > self.scrollArea._max_page()
+            index = self.scrollArea._page_first_index(next_page) if not at_end else self.maxPic
         else:
             index = self.scrollArea._cur_idx + 1
+            at_end = index >= self.maxPic
 
-        if index >= self.maxPic:
+        if at_end:
             if self.readImg.isLocal:
                 self.OpenNextEps()
                 QtOwner().ShowMsg(Str.GetStr(Str.AutoSkipNext))
@@ -229,8 +232,15 @@ class ReadNewTool(QtWidgets.QWidget, Ui_ReadImg):
 
     def _LastPage(self):
         epsId = self.readImg.epsId
+        if not ReadMode.isScroll(self.stripModel):
+            prev_page = self.scrollArea._page - 1
+            at_start = self.maxPic <= 0 or prev_page < 0
+            index = self.scrollArea._page_first_index(prev_page) if not at_start else 0
+        else:
+            at_start = self.curIndex <= 0
+            index = self.scrollArea._cur_idx - 1
 
-        if self.curIndex <= 0:
+        if at_start:
             if self.readImg.isLocal:
                 QtOwner().ShowMsg(Str.GetStr(Str.AutoSkipLast))
                 self.OpenLastEps()
@@ -246,10 +256,6 @@ class ReadNewTool(QtWidgets.QWidget, Ui_ReadImg):
             QtOwner().ShowMsg(Str.GetStr(Str.AlreadyLastPage))
             return
 
-        if ReadMode.isDouble(self.stripModel):
-            index = self.scrollArea._cur_idx - 2
-        else:
-            index = self.scrollArea._cur_idx - 1
         self.scrollArea.jump_to_index(index)
         return
 

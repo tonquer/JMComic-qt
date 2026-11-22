@@ -1,6 +1,7 @@
 import base64
 import hashlib
 import json
+import re
 import struct
 import time
 
@@ -12,7 +13,8 @@ from tools.log import Log
 from tools.str import Str
 from tools.tool import ToolUtil
 import platform
-import urllib
+import urllib.parse
+import urllib.request
 from curl_cffi import CurlOpt, CurlHttpVersion
 
 
@@ -35,6 +37,7 @@ class ServerReq(object):
         self.isUseHttps = True
         # self.isUseHttps = bool(Setting.IsUseHttps.value)
         self.proxyUrl = ""
+        self.proxy = {"http": None, "https": None}
         self.extend = {}
         self.cookies = {}
         self.curl_opt = {}
@@ -106,21 +109,30 @@ class ServerReq(object):
                 self.proxyUrl = GlobalConfig.ProxyImgDomain2.value
             if imgHost:
                 self.url = self.url.replace(host, ToolUtil.GetUrlHost(imgHost))
-        if self.proxyUrl and "?" not in self.url and not self.url.endswith("/"):
+        if self.isApi and self.proxyUrl and "?" not in self.url and not self.url.endswith("/"):
             self.url += "/"
 
     def SetProxy(self, proxyIndex, httpProxy, sock5Proxy):
+        self.proxy = {"http": None, "https": None}
         if proxyIndex == 1:
-            self.proxy = {"http": httpProxy, "https": httpProxy}
+            if httpProxy:
+                self.proxy = {"http": httpProxy, "https": httpProxy}
         elif proxyIndex == 2 and sock5Proxy:
-            data = sock5Proxy.replace("http://", "").replace("https://", "").replace("sock5://", "").replace(
-                "socks5://", "")
-            data = data.split(":")
-            if len(data) == 2:
-                host = data[0]
-                port = data[1]
-                proxy = f"socks5://{host}:{port}"
-                self.proxy = {"http": proxy, "https": proxy}
+            raw = sock5Proxy.strip()
+            scheme = "socks5"
+            for prefix in ("http://", "https://", "socks5h://", "socks5://", "sock5://"):
+                if raw.lower().startswith(prefix):
+                    if prefix == "socks5h://":
+                        scheme = "socks5h"
+                    raw = raw[len(prefix):]
+                    break
+            try:
+                parsed = urllib.parse.urlsplit(f"{scheme}://{raw}")
+                if parsed.hostname and parsed.port:
+                    proxy = f"{scheme}://{parsed.netloc}"
+                    self.proxy = {"http": proxy, "https": proxy}
+            except ValueError:
+                pass
         elif proxyIndex == 3:
             proxy = urllib.request.getproxies()
             httpProxyStr = proxy.get("http") if isinstance(proxy, dict) else None
@@ -133,16 +145,12 @@ class ServerReq(object):
                 if "://" not in socksProxyStr:
                     socksProxyStr = "socks5://" + socksProxyStr
                 self.proxy = {"http": socksProxyStr, "https": socksProxyStr}
-            else:
-                self.proxy = {"http": None, "https": None}
-        else:
-            self.proxy = {"http": None, "https": None}
 
     def SetCurlOpt(self, isHttp3=False, isEch=False, echConfig="", dnsIpList=None):
         self.ipList = dnsIpList
         self.curl_opt = dict()
         self.curl_opt[CurlOpt.HTTP_VERSION] = CurlHttpVersion.V2_0
-        if self.isImg:
+        if self.isImg or isinstance(self, DownloadBookReq):
             self.curl_opt[CurlOpt.CONNECTTIMEOUT] = self.timeout # 建立连接超时：5 秒
             self.curl_opt[CurlOpt.LOW_SPEED_LIMIT] = 1 # 最低速度阈值：1 byte/s
             self.curl_opt[CurlOpt.LOW_SPEED_TIME] = 5 # 持续时间阈值：5 秒
@@ -226,6 +234,18 @@ class ServerReq(object):
         #     Log.Info("request 404 switch:{}->{}".format(host, newHost))
         #     return True
 
+    @staticmethod
+    def _MaskProxy(proxy):
+        if not isinstance(proxy, dict):
+            return proxy
+        masked = {}
+        for k, v in proxy.items():
+            if isinstance(v, str) and "@" in v:
+                masked[k] = re.sub(r"(://|^)[^/\s]+@", r"\1***:***@", v)
+            else:
+                masked[k] = v
+        return masked
+
     def GetPri(self):
         ech = False
         if CurlOpt.ECH in self.curl_opt:
@@ -233,11 +253,17 @@ class ServerReq(object):
         if Setting.LogIndex.value <= 1:
             return "{}, ech:{}, url:{}, ip:{}, h3:{}".format(self.__class__.__name__, ech, self.url, self.ipList, self.isH3)
         headers = dict()
-        headers.update(self.headers)
+        if self.headers:
+            for k, v in self.headers.items():
+                if str(k).lower() in ("authorization", "cookie"):
+                    headers[k] = "***" if v else ""
+                else:
+                    headers[k] = v
+        proxy = self._MaskProxy(self.proxy)
         params = self.params
         if isinstance(self, (LoginReq2, RegisterReq, RegisterVerifyMailReq, ResetPasswordReq)):
             params = {}
-        return "{}, ech:{}, url:{}, ip:{}, proxy:{}, method:{}, headers:{}, params:{}".format(self.__class__.__name__, ech, self.url, self.ipList, self.proxy, self.method, headers, params)
+        return "{}, ech:{}, url:{}, ip:{}, proxy:{}, method:{}, headers:{}, params:{}".format(self.__class__.__name__, ech, self.url, self.ipList, proxy, self.method, headers, params)
 
     def __str__(self):
         return self.GetPri()
@@ -306,6 +332,10 @@ class ServerReq(object):
         return header
 
     def GetWebError(self, text):
+        if not text:
+            return ""
+        if isinstance(text, bytes):
+            text = text.decode("utf-8", errors="ignore")
         if "Edge IP Restricted" in text:
             return "Edge IP Restricted"
         elif "Just a moment..." in text:
@@ -958,7 +988,10 @@ class GetHistoryReq2(ServerReq):
         method = "GET"
         data = dict()
         data["page"] = page
-        super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
+        param = ToolUtil.DictToUrl(data)
+        if param:
+            url += "/?" + param
+        super(self.__class__, self).__init__(url, {}, method)
 
 
 # Jcoin购买
@@ -978,7 +1011,10 @@ class GetWeekCategoriesReq2(ServerReq):
         data = dict()
         data["lang"] = self.GetLang()
         data["page"] = page
-        super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
+        param = ToolUtil.DictToUrl(data)
+        if param:
+            url += "/?" + param
+        super(self.__class__, self).__init__(url, {}, method)
 
 
 # 获取每周连载

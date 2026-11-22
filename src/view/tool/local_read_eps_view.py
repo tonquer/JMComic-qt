@@ -73,17 +73,21 @@ class LocalReadEpsView(QWidget, Ui_LocalEps, QtTaskBase):
 
     def LoadingPicture(self, index):
         if isinstance(index, int):
+            row = index
             item = self.bookList.item(index)
             widget = self.bookList.itemWidget(item)
         else:
+            row = index.row()
             widget = self.bookList.indexWidget(index)
+        if not widget:
+            return
 
         bookId = widget.id
         if bookId not in self.bookIdToIndex:
             return
         i = self.bookIdToIndex.get(bookId)
         v = self.cacheBook.eps[i]
-        self.AddLocalTaskLoadPicture(v, -1, index, self.bookList.LoadingPictureComplete)
+        self.AddLocalTaskLoadPicture(v, -1, row, self.bookList.LoadingPictureComplete)
 
     def OpenLocalBook(self, bookId):
         if bookId not in self.bookIdToIndex:

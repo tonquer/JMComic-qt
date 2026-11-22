@@ -266,15 +266,19 @@ class LocalReadView(QWidget, Ui_Local, QtTaskBase):
 
     def LoadingPicture(self, index):
         if isinstance(index, int):
+            row = index
             item = self.bookList.item(index)
             widget = self.bookList.itemWidget(item)
         else:
+            row = index.row()
             widget = self.bookList.indexWidget(index)
+        if not widget:
+            return
         bookId = widget.id
         if bookId not in self.allBookInfos:
             return
         v = self.allBookInfos[bookId]
-        self.AddLocalTaskLoadPicture(v, -1, index, self.bookList.LoadingPictureComplete)
+        self.AddLocalTaskLoadPicture(v, -1, row, self.bookList.LoadingPictureComplete)
 
     def DelLocalRead(self, bookId):
         if bookId not in self.allBookInfos:

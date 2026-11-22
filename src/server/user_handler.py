@@ -132,7 +132,7 @@ class LoginPreHandler(object):
             for cookie in task.res.raw.cookies.jar:
                 cookie_dict[cookie.name] = cookie.value
             # print(cookies)
-            Log.Info("get pre cookies, {}, code:{}".format(cookie_dict, task.res.code))
+            Log.Info("get pre cookies, {}, code:{}".format(list(cookie_dict.keys()), task.res.code))
 
         except Exception as es:
             data["st"] = Status.ParseError
@@ -150,13 +150,13 @@ class LoginCheck301Handler(object):
             if task.status != Status.Ok:
                 return
             if task.res.raw.status_code != 200:
-                data["msg"] = task.req.GetWebError(task.res.raw.content)
+                data["msg"] = task.req.GetWebError(task.res.GetText())
 
             cookie_dict = {}
             for cookie in task.res.raw.cookies.jar:
                 cookie_dict[cookie.name] = cookie.value
                 # print(cookies)
-            Log.Info("get pre cookies, {}, code:{}".format(cookie_dict, task.res.code))
+            Log.Info("get pre cookies, {}, code:{}".format(list(cookie_dict.keys()), task.res.code))
             url = "https://" + ToolUtil.GetUrlHost(task.res.raw.url)
 
             ## 如果发生了301跳转，必须设置为新的域名，否则无法注册
@@ -185,7 +185,7 @@ class GetCaptchaReqHandler(object):
                 return
             if task.res.raw.status_code != 200:
                 data["st"] = Status.Error
-                data["msg"] = task.req.GetWebError(task.res.raw.content)
+                data["msg"] = task.req.GetWebError(task.res.GetText())
 
             desUrl = ToolUtil.GetUrlHost(task.res.raw.url)
             srcUrl = ToolUtil.GetUrlHost(task.req.url)
@@ -224,7 +224,7 @@ class ParseMsgHandler(object):
                 data["st"] = st
             else:
                 if task.res.raw.status_code != 200:
-                    data["msg"] = task.req.GetWebError(task.res.raw.content)
+                    data["msg"] = task.req.GetWebError(task.res.GetText())
 
                 data["st"] = Status.Error
         except Exception as es:
@@ -266,7 +266,7 @@ class LoginReq2Handler(object):
             # config.ipm5 = ipm5 if ipm5 else config.ipm5
             # config.AVS = AVS if AVS else config.AVS
             # config.shunt = shunt if shunt else config.shunt
-            Log.Info("Login suc, user_id:{}, cookies:{}".format(user.uid, cookie_dict))
+            Log.Info("Login suc, user_id:{}, cookie_keys:{}".format(user.uid, list(cookie_dict.keys())))
             st = Status.Ok
             user.cookie = cookie_dict
             data["st"] = st
@@ -317,7 +317,8 @@ class GetIndexInfoReq2Handler(object):
                 data["st"] = Status.Error
                 return
             cookies = task.res.raw.cookies
-            Log.Info("latest suc, cookies:{}".format(cookies))
+            cookie_keys = list(cookies.keys()) if hasattr(cookies, "keys") else []
+            Log.Info("latest suc, cookie_keys:{}".format(cookie_keys))
             infos = ToolUtil.ParseIndex2(task.req.ParseData(v.get("data")))
 
             data["st"] = Status.Ok
@@ -611,8 +612,9 @@ class GetBookInfoReq2Handler(object):
                 return
             if task.res.raw.status_code != 200:
                 data["st"] = Status.Error
-                data["message"] = task.res.raw.content
-                Log.Warn("GetBookInfoReq2 error, book_id={}, code={}, msg={}".format(task.req.bookId, task.res.raw.status_code, task.res.raw.content))
+                msg = task.res.GetText()
+                data["message"] = msg
+                Log.Warn("GetBookInfoReq2 error, book_id={}, code={}, msg={}".format(task.req.bookId, task.res.raw.status_code, msg))
                 return
             v = json.loads(task.res.raw.content)
             code = v.get("code")
@@ -1028,6 +1030,7 @@ class DownloadBookHandler(object):
                     status_code = r.status_code
                     cfHit = r.headers.get("cf-cache-status", False)
                     if r.status_code == 404 or r.status_code == 403:
+                        backData.status = Status.Error
                         ## 404 尝试切换图片地址
                         isReset = backData.req.ResetToSwitchNextUrl()
                         if isReset and backData.req.resetCnt >= 0:
@@ -1041,6 +1044,7 @@ class DownloadBookHandler(object):
                                 TaskBase.taskObj.downloadBack.emit(backData.backParam, -Status.Error, fileSize, b"")
                             return
                     elif r.status_code != 200:
+                        backData.status = Status.Error
                         if backData.backParam:
                             TaskBase.taskObj.downloadBack.emit(backData.backParam, -Status.Error, fileSize, b"")
                         return
@@ -1115,7 +1119,8 @@ class DownloadBookHandler(object):
                         Server().ReDownload(backData)
                         return
                     else:
-                        backData.status = Status.DownloadBusy
+                        if backData.status == Status.Ok:
+                            backData.status = Status.DownloadBusy
                         if backData.bakParam:
                             TaskBase.taskObj.downloadBack.emit(backData.backParam, -backData.status, fileSize, b"")
                         return
@@ -1123,16 +1128,19 @@ class DownloadBookHandler(object):
                 # Log.Info("size:{}, url:{}".format(ToolUtil.GetDownloadSize(fileSize), backData.req.url))
                 _, _, mat, isAni = ToolUtil.GetPictureSize(data)
 
+                if len(data) > 0 and backData.req.saveParam and not isAni:
+                    try:
+                        saveParam = backData.req.saveParam
+                        newData = TaskMulti().GetJmPicResultsResult(data, saveParam[0], saveParam[1],
+                                                                    saveParam[2])
+                        if newData:
+                            data = newData
+                    except Exception as es:
+                        Log.Error(es)
+
                 if config.IsUseCache and len(data) > 0:
                     try:
                         if backData.req.cachePath or backData.req.savePath:
-                            saveParam = backData.req.saveParam
-                            if backData.req.saveParam and not isAni:
-                                newData = TaskMulti().GetJmPicResultsResult(data, saveParam[0], saveParam[1],
-                                                                            saveParam[2])
-                                if newData:
-                                    data = newData
-
                             if backData.req.cachePath:
                                 TaskCache().AddCacheDiskPath(ToolUtil.GetPictureName(backData.req.cachePath, mat), data)
 

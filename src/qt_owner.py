@@ -469,12 +469,12 @@ class QtOwner(Singleton):
         self.owner.searchView2.searchTab.setText("{}".format(text))
         self.owner.SwitchWidget(self.owner.searchView2, **arg)
 
-    # def OpenRecomment(self, bookId):
-    #     Title = "看了这边本子的人也在看"
-    #     arg = {"recoment": 1, "bookId": bookId}
-    #     self.owner.searchView2.setWindowTitle(Title)
-    #     self.owner.searchView2.searchTab.setText(Title)
-    #     self.owner.SwitchWidget(self.owner.searchView2, **arg)
+    def OpenRecomment(self, bookId, relatedList):
+        Title = "更多相关"
+        arg = {"recoment": 1, "bookId": bookId, "relatedList": relatedList}
+        self.owner.searchView2.setWindowTitle(Title)
+        self.owner.searchView2.searchTab.setText(Title)
+        self.owner.SwitchWidget(self.owner.searchView2, **arg)
 
     def OpenSearch2Author(self, text):
         arg = {"text": text}

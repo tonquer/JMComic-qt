@@ -34,7 +34,7 @@ class DownloadSomeEditView(BaseMaskDialog, Ui_DownloadSomeEdit, QtTaskBase):
         for text in data.split("\n"):
             text = text.lower()
             for bookId in re.findall('jm(\d+)', text):
-                bookId = int(bookId)
+                bookId = str(int(bookId))
                 allBookIds.append(bookId)
 
         allBookIds = allBookIds[:1000]

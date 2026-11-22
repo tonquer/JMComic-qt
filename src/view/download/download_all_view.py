@@ -87,10 +87,10 @@ class DownloadAllView(QtWidgets.QWidget, Ui_DownloadAll, QtTaskBase):
         self.task.clear()
         for book in books:
             assert isinstance(book, BookInfo)
-            if isinstance(book.pageInfo.tags, list):
-                tags = ",".join(book.pageInfo.tags)
+            if isinstance(book.baseInfo.tagList, list):
+                tags = ",".join(book.baseInfo.tagList)
             else:
-                tags = book.pageInfo.tags
+                tags = book.baseInfo.tagList
 
             if isinstance(book.baseInfo.category, list):
                 category = ",".join(book.baseInfo.category)

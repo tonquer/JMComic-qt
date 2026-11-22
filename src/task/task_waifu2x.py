@@ -92,7 +92,7 @@ class TaskWaifu2x(TaskBase):
                         continue
 
                 if task.savePath:
-                    if ToolUtil.IsHaveFile(task.savePath):
+                    if ToolUtil.IsHavePictureFile(task.savePath):
                         self.taskObj.convertBack.emit(taskId)
                         continue
 
@@ -196,18 +196,19 @@ class TaskWaifu2x(TaskBase):
             info.saveData = data
             info.tick = tick
             try:
-                if not info.noSaveCache:
-                    if info.cachePath:
-                        from task.task_cache import TaskCache
-                        TaskCache().AddCacheDiskPath(ToolUtil.GetPictureName(info.cachePath, format), data)
+                if info.status == Status.Ok and data:
+                    if not info.noSaveCache:
+                        if info.cachePath:
+                            from task.task_cache import TaskCache
+                            TaskCache().AddCacheDiskPath(ToolUtil.GetPictureName(info.cachePath, format), data)
 
-                    for path in [info.savePath]:
-                        if not path:
-                            continue
-                        if info.convertType == "download" and not info.model.get("format"):
-                            ToolUtil.SaveConvertPicture(data, path, format, info.isAni, info.rawFormat)
-                        else:
-                            ToolUtil.SavePicture(data, path, format)
+                        for path in [info.savePath]:
+                            if not path:
+                                continue
+                            if info.convertType == "download" and not info.model.get("format"):
+                                ToolUtil.SaveConvertPicture(data, path, format, info.isAni, info.rawFormat)
+                            else:
+                                ToolUtil.SavePicture(data, path, format)
             except Exception as es:
                 info.status = Status.SaveError
                 Log.Error(es)
@@ -259,7 +260,8 @@ class TaskWaifu2x(TaskBase):
         info.savePath = savePath
         info.callBack = callBack
         info.backParam = backParam
-        info.model = model
+        if model:
+            info.model = model
         taskId = self._RegisterTask(info, cleanFlag)
         Log.Debug("add convert info, loadPath:{}, savePath:{}".format(info.loadPath, info.savePath))
         self._inQueue.put(taskId)

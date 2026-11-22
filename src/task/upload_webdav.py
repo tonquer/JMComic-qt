@@ -108,9 +108,12 @@ class WebdavClient(UpLoadBase):
         try:
             if not os.path.isfile(localPath):
                 return Str.FileError
-            self.CheckAndCreateDir(remotePath)
+            cleanRemotePath = "/".join(p for p in remotePath.replace("\\", "/").split("/") if p)
+            if cleanRemotePath:
+                self.CheckAndCreateDir(cleanRemotePath)
             fileName = os.path.basename(localPath)
-            self.client.upload(remotePath + "/" + fileName, localPath)
+            remoteFile = f"{cleanRemotePath}/{fileName}" if cleanRemotePath else fileName
+            self.client.upload(remoteFile, localPath)
             os.remove(localPath)
         except Exception as es:
             Log.Error(es)

@@ -220,6 +220,8 @@ class GlobalConfig:
                 value = getattr(GlobalConfig, name)
                 if isinstance(value, GlobalItem) and not value.is_same():
                     saveData[name] = value.value
+            if saveData:
+                saveData["Ver"] = GlobalConfig.Ver.value
             Setting.GlobalConfig.SetValue(saveData)
         except Exception as es:
             Log.Error(es)
@@ -238,15 +240,22 @@ class GlobalConfig:
     def UpdateSetting(data):
         allKvs = {}
         for v in data.replace("\r", "").split("\n"):
-            if not v:
+            if not v or "=" not in v:
                 continue
-            [k, v2] = v.split("=")
+            k, v2 = v.split("=", 1)
+            k = k.strip()
+            v2 = v2.strip()
+            if not k:
+                continue
             allKvs[k] = v2
-        ver = int(allKvs.get("Ver", 0))
+        try:
+            ver = int(allKvs.get("Ver", 0))
+        except (ValueError, TypeError):
+            ver = 0
         if ver > GlobalConfig.Ver.value:
             Log.Info("update setting, {}".format(allKvs))
             for name, value in allKvs.items():
-                item = getattr(GlobalConfig, name)
+                item = getattr(GlobalConfig, name, None)
                 if isinstance(item, GlobalItem):
                     item.set_value(value)
             GlobalConfig.SaveSetting()

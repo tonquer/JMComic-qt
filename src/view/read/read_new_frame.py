@@ -39,17 +39,9 @@ class ReadNewFrame(QFrame):
 
         self.waifu2xProcess = GifLabel(self)
         self.waifu2xProcess.setVisible(False)
-        f = QFile(":/png/icon/loading_gif.webp")
-        f.open(QFile.ReadOnly)
-        self.waifu2xProcess.Init(f.readAll())
 
         self.waifu2xProcess2 = GifLabel(self)
         self.waifu2xProcess2.setVisible(False)
-        f = QFile(":/png/icon/loading_gif.webp")
-        f.open(QFile.ReadOnly)
-        self.waifu2xProcess2.Init(f.readAll())
-
-        f.close()
         self.downloadSize = 1
         self.downloadMaxSize = 1
         self.oldValue = 0

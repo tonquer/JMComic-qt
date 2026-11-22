@@ -67,6 +67,7 @@ class LocalFavoriteView(QtWidgets.QWidget, Ui_LocalFavorite, QtTaskBase):
         self.folderBox.currentIndexChanged.connect(self.RefreshDataFocus)
         self.updateEpsIds = []
         self.updateMax = 0
+        self.updateRetryMap = {}
         # self.updateFailIds = []
         self.updateTick = 0
 
@@ -346,6 +347,7 @@ class LocalFavoriteView(QtWidgets.QWidget, Ui_LocalFavorite, QtTaskBase):
         QtOwner().ShowLoading()
         self.updateEpsIds = books
         self.updateMax = len(books)
+        self.updateRetryMap = {}
         # self.updateFailIds = []
         self.updateTick = int(time.time())
         self.SetEnable(False)
@@ -373,7 +375,12 @@ class LocalFavoriteView(QtWidgets.QWidget, Ui_LocalFavorite, QtTaskBase):
                 self.db.UpdateBookEpsNum(bookId, info.epsCount, info.baseInfo.addTime)
                 self.db.UpdateBookInfo(info)
             else:
-                self.updateEpsIds.append(bookId)
+                retry = self.updateRetryMap.get(bookId, 0)
+                if retry < 2:
+                    self.updateRetryMap[bookId] = retry + 1
+                    self.updateEpsIds.append(bookId)
+                else:
+                    Log.Warn("local favorite update eps failed after retries, skip bookId:{}, st:{}".format(bookId, st))
         except Exception as es:
             Log.Error(es)
         finally:

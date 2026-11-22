@@ -56,16 +56,22 @@ class DownloadItem(QtTaskBase):
     def curDownloadPic(self):
         if self.status == self.Success:
             return self.maxDownloadPic
+        if not self.curDownloadEpsInfo:
+            return 0
         return self.curDownloadEpsInfo.curPreDownloadIndex
 
     @property
     def maxDownloadPic(self):
+        if not self.curDownloadEpsInfo:
+            return 0
         return self.curDownloadEpsInfo.picCnt
 
     @property
     def curDownloadEps(self):
         if self.status == self.Success:
             return len(self.epsIds)
+        if not self.epsIds or self.curDownloadEpsId not in self.epsIds:
+            return 0
         if self.curDownloadEpsInfo.curPreDownloadIndex > 0 and self.curDownloadEpsInfo.curPreDownloadIndex >= self.curDownloadEpsInfo.picCnt:
             return self.epsIds.index(self.curDownloadEpsId) + 1
 
@@ -105,6 +111,8 @@ class DownloadItem(QtTaskBase):
     def curConvertEps(self):
         if self.convertStatus == self.ConvertSuccess:
             return len(self.epsIds)
+        if not self.epsIds or self.curConvertEpsId not in self.epsIds:
+            return 0
         if self.curConvertEpsInfo.curPreConvertId > 0 and self.curConvertEpsInfo.curPreConvertId >= self.curConvertEpsInfo.picCnt:
             return self.epsIds.index(self.curConvertEpsId) + 1
         return self.epsIds.index(self.curConvertEpsId)
@@ -115,6 +123,8 @@ class DownloadItem(QtTaskBase):
 
     @property
     def curDownloadEpsInfo(self):
+        if not self.epsIds:
+            return None
         if self.curDownloadEpsId < 0:
             self.curDownloadEpsId = self.epsIds[0]
 
@@ -140,6 +150,8 @@ class DownloadItem(QtTaskBase):
 
     @property
     def curConvertEpsInfo(self):
+        if not self.epsIds:
+            return None
         if self.curConvertEpsId < 0:
             self.curConvertEpsId = self.epsIds[0]
 
@@ -200,21 +212,21 @@ class DownloadItem(QtTaskBase):
 
     def SkipCurEps(self):
         if self.curDownloadEpsId in self.epsIds:
+            oldIdx = self.epsIds.index(self.curDownloadEpsId)
             self.epsIds.remove(self.curDownloadEpsId)
+        else:
+            oldIdx = 0
 
+        self.dirty = True
         if not self.epsIds:
+            self.curDownloadEpsId = -1
             return self.Error
 
-        if self.curDownloadEpsInfo.isDownloadComplete():
-            index = self.epsIds.index(self.curDownloadEpsId)
-            if index + 1 >= len(self.epsIds):
-                self.curDownloadEpsId = self.epsIds[len(self.epsIds)-1]
-                return self.Success
-            self.curDownloadEpsId = self.epsIds[index + 1]
+        if oldIdx >= len(self.epsIds):
+            self.curDownloadEpsId = self.epsIds[-1]
+            return self.Success
 
-        if self.curDownloadEpsId not in self.epsIds:
-            self.curDownloadEpsId = self.epsIds[len(self.epsIds)-1]
-
+        self.curDownloadEpsId = self.epsIds[oldIdx]
         self.curDownloadEpsInfo.dirty = True
         return self.Downloading
 
@@ -257,34 +269,39 @@ class DownloadItem(QtTaskBase):
         if not self.curDownloadEpsInfo.epsTitle:
             return self.curDownloadEpsInfo.epsId, 0, "", True
 
+        safeTitle = ToolUtil.GetCanSaveName(self.title) or str(self.bookId)
+        safeAuthor = ToolUtil.GetCanSaveName(self.author) if self.author else ""
+
         if not self.savePath and Setting.SavePath.value:
             path = os.path.join(Setting.SavePath.value, config.SavePathDir)
-            path2 = os.path.join(path, ToolUtil.GetCanSaveName(self.title))
+            path2 = os.path.join(path, safeTitle)
             self.savePath = os.path.join(path2, "original")
             if Setting.SaveNameType.value == SaveNameType.AuthorAndTitle:
-                if self.author:
-                    path2 = os.path.join(path, ToolUtil.GetCanSaveName("[{}]".format(self.author)+self.title))
+                if safeAuthor:
+                    dirName = ToolUtil.GetCanSaveName("[{}]".format(self.author) + self.title) or safeTitle
+                    path2 = os.path.join(path, dirName)
                     self.savePath = os.path.join(path2, "original")
             elif Setting.SaveNameType.value == SaveNameType.AuthorDir:
-                if self.author:
-                    path2 = os.path.join(path, os.path.join(ToolUtil.GetCanSaveName(self.author), ToolUtil.GetCanSaveName(self.title)))
+                if safeAuthor:
+                    path2 = os.path.join(path, os.path.join(safeAuthor, safeTitle))
                 else:
-                    path2 = os.path.join(path, os.path.join("default", ToolUtil.GetCanSaveName(self.title)))
+                    path2 = os.path.join(path, os.path.join("default", safeTitle))
                 self.savePath = os.path.join(path2, "original")
 
         if not self.convertPath and Setting.SavePath.value:
             path = os.path.join(Setting.SavePath.value, config.SavePathDir)
-            path2 = os.path.join(path, ToolUtil.GetCanSaveName(self.title))
+            path2 = os.path.join(path, safeTitle)
             self.convertPath = os.path.join(path2, "waifu2x")
             if Setting.SaveNameType.value == SaveNameType.AuthorAndTitle:
-                if self.author:
-                    path2 = os.path.join(path, ToolUtil.GetCanSaveName("[{}]".format(self.author)+self.title))
+                if safeAuthor:
+                    dirName = ToolUtil.GetCanSaveName("[{}]".format(self.author) + self.title) or safeTitle
+                    path2 = os.path.join(path, dirName)
                     self.convertPath = os.path.join(path2, "waifu2x")
             elif Setting.SaveNameType.value == SaveNameType.AuthorDir:
-                if self.author:
-                    path2 = os.path.join(path, os.path.join(ToolUtil.GetCanSaveName(self.author), ToolUtil.GetCanSaveName(self.title)))
+                if safeAuthor:
+                    path2 = os.path.join(path, os.path.join(safeAuthor, safeTitle))
                 else:
-                    path2 = os.path.join(path, os.path.join("default", ToolUtil.GetCanSaveName(self.title)))
+                    path2 = os.path.join(path, os.path.join("default", safeTitle))
                 self.convertPath = os.path.join(path2, "waifu2x")
 
         convertPath = os.path.join(self.savePath, ToolUtil.GetCanSaveName(self.curDownloadEpsInfo.epsTitle))

@@ -138,11 +138,11 @@ class LoginProxyNewWidget(object):
 
         self.proxyIpGroup = QButtonGroup(self.owner)
         self.proxyIpGroup.setExclusive(True)
-        self.otherProxyIps = Setting.ProxyIpLastList.value.split(",")
+        self.otherProxyIps = [ip.strip() for ip in Setting.ProxyIpLastList.value.split(",") if ip.strip()]
         if not self.otherProxyIps:
             self.otherProxyIps = GlobalConfig.ProxyIpList.value[:]
 
-        self.otherCDNIps = Setting.BestCfIpLastList.value.split(",")
+        self.otherCDNIps = [ip.strip() for ip in Setting.BestCfIpLastList.value.split(",") if ip.strip()]
         if not self.otherCDNIps:
             self.otherCDNIps = GlobalConfig.BestCfIpList.value[:]
 
@@ -444,6 +444,9 @@ class LoginProxyNewWidget(object):
                 request.SetIndex(0, 0)
                 request.SetCurlOpt(False, False, "")
                 self.owner.AddHttpTask(request, self.GetIpInfo, backParam=item.index)
+        if self.maxSpeedIpCnt <= 0:
+            self.owner.testIpButton.setEnabled(True)
+            self.CheckSelectBox()
         return
 
     def CheckSelectBox(self):

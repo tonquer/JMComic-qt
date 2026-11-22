@@ -129,8 +129,11 @@ class TaskDownload(TaskBase, QtTaskBase):
 
         # 表示保存失败了
         if addFileSize == -2:
-            v = {"st": Status.SaveError}
-            self.CallBookBack(v, info)
+            if info.statusBack:
+                v = {"st": Status.SaveError}
+                self.CallBookBack(v, info)
+            else:
+                self.CallErrorCompleteBack(Status.SaveError, info)
             return
 
         # 表示重新下载中
@@ -151,20 +154,7 @@ class TaskDownload(TaskBase, QtTaskBase):
             st = - addFileSize
 
         if addFileSize < 0 and data == b"":
-            try:
-                if info.downloadCompleteBack:
-                    if info.backParam is not None:
-                        info.downloadCompleteBack(b"", st, info.backParam)
-                    else:
-                        info.downloadCompleteBack(b"", st)
-                if info.downloadCompleteBack2:
-                    if info.backParam is not None:
-                        info.downloadCompleteBack2(None, st, info.backParam)
-                    else:
-                        info.downloadCompleteBack2(None, st)
-
-            except Exception as es:
-                Log.Error(es)
+            self.CallErrorCompleteBack(st, info)
             return
 
         if addFileSize > 0:
@@ -323,7 +313,7 @@ class TaskDownload(TaskBase, QtTaskBase):
                 pitureName = epsInfo.pictureName.get(realIndex)
                 task.saveParam = (epsInfo.epsId, epsInfo.scrambleId, pitureName)
                 if task.savePath:
-                    if ToolUtil.IsHaveFile(task.savePath):
+                    if ToolUtil.IsHavePictureFile(task.savePath):
                         self.SetTaskStatus(taskId, backData, task.Cache)
                         return
                 else:
@@ -342,9 +332,9 @@ class TaskDownload(TaskBase, QtTaskBase):
                             imgData = TaskCache().GetMemDataByKey(task.memCacheKey)
                             if imgData:
                                 task.isCacheFetch = True
+                                self.SetTaskStatus(taskId, backData, task.Cache)
                                 TaskBase.taskObj.downloadBack.emit(taskId, len(imgData), len(imgData), b"")
                                 TaskBase.taskObj.downloadBack.emit(taskId, 0, len(imgData), imgData)
-                                self.SetTaskStatus(taskId, backData, task.Cache)
                                 return
 
                     for cachePath in checkPaths:
@@ -352,9 +342,9 @@ class TaskDownload(TaskBase, QtTaskBase):
                             task.memCacheKey = TaskCache().GetPathCacheKey(cachePath)
                             imgData = ToolUtil.LoadCachePicture(cachePath)
                             if imgData:
+                                self.SetTaskStatus(taskId, backData, task.Cache)
                                 TaskBase.taskObj.downloadBack.emit(taskId, len(imgData), len(imgData), b"")
                                 TaskBase.taskObj.downloadBack.emit(taskId, 0, len(imgData), imgData)
-                                self.SetTaskStatus(taskId, backData, task.Cache)
                                 return
 
                 url = epsInfo.pictureUrl.get(realIndex)
@@ -362,13 +352,12 @@ class TaskDownload(TaskBase, QtTaskBase):
                     self.SetTaskStatus(taskId, backData, task.Error)
                     return
 
-                self.SetTaskStatus(taskId, backData, task.Downloading)
-
                 resetCnt = config.ResetDownloadCnt
                 otherParams = {"bookId": task.bookId, "epsId": task.epsId, "type": "book", "index": task.index}
                 self.AddDownloadTask(
                     url, "", task.downloadCallBack, task.downloadCompleteBack, task.statusBack,
                     task.backParam, task.loadPath, task.cachePath, task.savePath, task.saveParam, task.cleanFlag, resetCnt=resetCnt, completeCallBack2=task.downloadCompleteBack2, otherParams=otherParams)
+                self.SetTaskStatus(taskId, backData, task.Downloading)
         except Exception as es:
             Log.Error(es)
             self.SetTaskStatus(taskId, backData, task.Error)
@@ -391,6 +380,21 @@ class TaskDownload(TaskBase, QtTaskBase):
         except Exception as es:
             Log.Error(es)
 
+    def CallErrorCompleteBack(self, st, task):
+        try:
+            if task.downloadCompleteBack:
+                if task.backParam is not None:
+                    task.downloadCompleteBack(b"", st, task.backParam)
+                else:
+                    task.downloadCompleteBack(b"", st)
+            if task.downloadCompleteBack2:
+                if task.backParam is not None:
+                    task.downloadCompleteBack2(None, st, task.backParam)
+                else:
+                    task.downloadCompleteBack2(None, st)
+        except Exception as es:
+            Log.Error(es)
+
     def HandlerTaskSt(self, downloadId, data):
         task = self._GetTask(downloadId)
         if not task:
@@ -398,12 +402,26 @@ class TaskDownload(TaskBase, QtTaskBase):
         assert isinstance(task, QtDownloadTask)
         try:
             status = data.get("st") or task.status
+            nonErrorStatuses = (
+                Status.Ok, task.Waiting, task.Reading, task.ReadingEps,
+                task.ReadingPicture, task.Downloading, task.Success, task.Cache
+            )
+            isErrorStatus = status not in nonErrorStatuses
             # Downloading 表示元数据已交接给另一个下载任务，不是图片下载完成。
-            if status in (task.Success, task.Downloading, task.Error, task.SpaceEps, task.Cache, task.UnderReviewBook):
+            # Cache 且无 savePath 时，随后还会通过 downloadBack 下发缓存图片数据，由 HandlerTask 统一取出任务。
+            isTerminalSt = (
+                status in (task.Success, task.Downloading)
+                or isErrorStatus
+                or (status == task.Cache and bool(task.savePath))
+            )
+            if isTerminalSt:
                 task = self._TakeTask(downloadId)
                 if not task:
                     return
-            self.CallBookBack(data, task)
+            if task.statusBack:
+                self.CallBookBack(data, task)
+            elif isErrorStatus:
+                self.CallErrorCompleteBack(status, task)
             st = data.get("st")
             if st:
                 task.status = st

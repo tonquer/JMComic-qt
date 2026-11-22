@@ -384,6 +384,8 @@ class NasView(QtWidgets.QWidget, Ui_Nas, NasStatus):
         if not task:
             return
         assert isinstance(task, NasUploadItem)
+        from task.task_upload import TaskUpload
+        TaskUpload().Cancel(task.cleanFlag)
         if task in self.downloadingList:
             self.downloadingList.remove(task)
         if task in self.downloadList:

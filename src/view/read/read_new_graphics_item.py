@@ -394,7 +394,9 @@ class ReadNewGraphicsItem(QGraphicsItem):
         # 绘制优先级：QMovie 当前帧 > 静态 QPixmap > 占位框。
         # 注意 currentPixmap() 返回的是内部帧的共享副本，每帧取的开销约等于一次
         # 引用计数，不要缓存它（缓存了就永远停在某一帧）。
-        pm = self._movie.currentPixmap() if self._movie is not None else self.pixmap
+        pm = self._movie.currentPixmap() if self._movie is not None else None
+        if pm is None or pm.isNull():
+            pm = self.pixmap
         if pm is not None and not pm.isNull():
             sr = QRectF(pm.rect())    # 源矩形（PM 自身单位；见下面关于 dpr 的说明）
             if self._fit:

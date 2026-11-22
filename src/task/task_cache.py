@@ -9,6 +9,7 @@ from task.qt_task import TaskBase, QtTaskBase
 from tools.log import Log
 from cachetools import LRUCache, TLRUCache
 
+from tools.status import Status
 from tools.tool import ToolUtil, time_me
 
 
@@ -138,11 +139,13 @@ class DiskCacheDB(object):
             Log.Error(es)
 
     def Add(self, file):
+        if not self.db:
+            return
         self.__Add(file)
         self.cur.execute("COMMIT")
 
     def AddAll(self, files):
-        if not files:
+        if not self.db or not files:
             return
         for file in files:
             self.__Add(file)
@@ -215,6 +218,8 @@ class TaskCache(TaskBase, QtTaskBase):
         self.isOpenMem = bool(Setting.IsOpenMemCache.value)
         self.isOpenDisk = bool(Setting.IsOpenDiskCache.value)
         with self._taskLock:
+            if not self.isOpenMem:
+                self.memeryCache.clear()
             if Setting.MemCacheSize.value > 0:
                 newMax = Setting.MemCacheSize.value * self.MB
                 if self.memeryCache.maxsize != newMax:
@@ -325,11 +330,15 @@ class TaskCache(TaskBase, QtTaskBase):
         return False
 
     def ConvertSuc(self, taskId):
+        if not self.isOpenMem:
+            return
         from task.task_waifu2x import QConvertTask, TaskWaifu2x
         task = TaskWaifu2x()._GetTask(taskId)
         if not task or not task.path:
             return
-        if task.isCacheFetch:
+        if task.isCacheFetch or task.noSaveCache:
+            return
+        if task.status != Status.Ok:
             return
         if not task.saveData:
             return
@@ -410,16 +419,19 @@ class TaskCache(TaskBase, QtTaskBase):
         return
 
     def __UpdateDiskSetting(self, isOpenDisk, diskMax, diskSaveSecond):
-        if diskSaveSecond > 0:
+        ttlChanged = False
+        if diskSaveSecond > 0 and self.diskSaveSecond != diskSaveSecond:
             self.diskSaveSecond = diskSaveSecond
+            ttlChanged = True
         changed = False
-        if diskMax > 0 and self.diskCache.maxsize != diskMax:
-            newCache = LRUDiskCache(maxsize=diskMax, ttu=FilePicCache.GetTTU,
+        if (diskMax > 0 and self.diskCache.maxsize != diskMax) or ttlChanged:
+            targetMax = diskMax if diskMax > 0 else self.diskCache.maxsize
+            newCache = LRUDiskCache(maxsize=targetMax, ttu=FilePicCache.GetTTU,
                                     getsizeof=FilePicCache.GetSize, timer=datetime.now)
             now = int(time.time())
             for k, v in list(self.diskCache.items()):
                 v.ttl = (v.tick + self.diskSaveSecond) - now
-                if v.ttl <= 0 or v.size > diskMax:
+                if v.ttl <= 0 or v.size > targetMax:
                     self.RemoveCacheDiskPath(v.key, v.path)
                     continue
                 newCache[k] = v
@@ -437,7 +449,6 @@ class TaskCache(TaskBase, QtTaskBase):
 
     # init
     def __InitDiskCache(self):
-        self.isInitDisk = True
         # 遍历cache目录文件，计算缓存时长
         if not Setting.SavePath.value:
             return
@@ -449,12 +460,12 @@ class TaskCache(TaskBase, QtTaskBase):
         now = int(time.time())
         formatList = ToolUtil.AllUseFormat
         pathList = ["book", "book_new", "category", "cover", "game", "user", "waifu2x"]
-        allFiles = []
+        scannedFiles = []
         for path in pathList:
             for root, dirs, files in os.walk(os.path.join(cachePath, path)):
-                for file in files:
-                    if file[-4:] in formatList or file[-5:] in formatList:
-                        full_path = os.path.join(root, file)
+                for fileName in files:
+                    if fileName[-4:] in formatList or fileName[-5:] in formatList:
+                        full_path = os.path.join(root, fileName)
                         key = self.GetPathCacheKey(full_path)
                         mtime = int(os.path.getmtime(full_path))
                         file = FilePicCache()
@@ -467,10 +478,14 @@ class TaskCache(TaskBase, QtTaskBase):
                         if file.ttl <= 0 or file.size > self.diskCache.maxsize:
                             self.RemoveCacheDiskPath(file.key, file.path)
                             continue
-                        self.diskCache[file.key] = file
+                        scannedFiles.append(file)
+        scannedFiles.sort(key=lambda f: f.tick)
+        for file in scannedFiles:
+            self.diskCache[file.key] = file
         allFiles = list(self.diskCache.values())
         self.__diskDB.AddAll(allFiles)
         self.__diskDB.UpdateInfo()
+        self.isInitDisk = True
         totalSize = sum([v.size for v in allFiles])
         Log.Debug(f"init disk cache info, len:{len(allFiles)}, size:{totalSize}")
         TaskBase.taskObj.diskCacheRefresh.emit()

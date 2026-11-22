@@ -16,6 +16,21 @@ class SmbV3Client(UpLoadBase):
         UpLoadBase.__init__(self)
         pass
 
+    @staticmethod
+    def _SplitParts(path):
+        if not path:
+            return []
+        return [part for part in path.replace("\\", "/").split("/") if part]
+
+    def _BuildUncPath(self, *parts):
+        normalized = []
+        for part in parts:
+            normalized.extend(self._SplitParts(part))
+        base = rf"\\{self.address}\{self.service_name}"
+        if normalized:
+            return base + "\\" + "\\".join(normalized)
+        return base
+
     def Init(self, nasInfo):
         assert isinstance(nasInfo, NasInfoItem)
         self.address = nasInfo.address
@@ -24,20 +39,21 @@ class SmbV3Client(UpLoadBase):
         self.username = nasInfo.user
         self.path = nasInfo.path
 
-        datas = nasInfo.path.strip("/").split("/")
+        datas = self._SplitParts(nasInfo.path)
 
-        self.service_name = datas[0]
+        self.service_name = datas[0] if datas else ""
 
         self.client = None
         self.isLink = False
 
     def Connect(self):
         try:
+            uncRoot = self._BuildUncPath()
             if self.port:
-                smbclient.listdir(rf"\\{self.address}\{self.service_name}", port=self.port, username=self.username,
+                smbclient.listdir(uncRoot, port=self.port, username=self.username,
                               password=self.password, connection_timeout=5)
             else:
-                smbclient.listdir(rf"\\{self.address}\{self.service_name}", username=self.username,
+                smbclient.listdir(uncRoot, username=self.username,
                                   password=self.password, connection_timeout=5)
             self.isLink = True
         except Exception as es:
@@ -47,11 +63,12 @@ class SmbV3Client(UpLoadBase):
 
     def TestConnect(self):
         try:
+            uncRoot = self._BuildUncPath()
             if self.port:
-                dirs = smbclient.listdir(rf"\\{self.address}\{self.service_name}", port=self.port, username=self.username,
+                dirs = smbclient.listdir(uncRoot, port=self.port, username=self.username,
                               password=self.password, connection_timeout=5)
             else:
-                dirs = smbclient.listdir(rf"\\{self.address}\{self.service_name}", username=self.username,
+                dirs = smbclient.listdir(uncRoot, username=self.username,
                                   password=self.password, connection_timeout=5)
             self.isLink = True
             return Str.Ok, ""
@@ -63,21 +80,26 @@ class SmbV3Client(UpLoadBase):
 
     def DisConnect(self):
         try:
-            pass
+            self.isLink = False
+            if hasattr(smbclient, "reset_connection_cache"):
+                smbclient.reset_connection_cache()
         except Exception as es:
             Log.Error(es)
         return Str.Ok
 
     def IsHaveDir(self, remote_directory):
-        lastPath = os.path.dirname(remote_directory)
-        name = os.path.basename(remote_directory)
+        parts = self._SplitParts(remote_directory)
+        if not parts:
+            return True
+        parentPath = self._BuildUncPath(*parts[:-1])
+        name = parts[-1]
         dirs = []
         try:
             if self.port:
-                dirs = smbclient.listdir(rf"\\{self.address}\{self.service_name}\{lastPath}", port=self.port, username=self.username,
+                dirs = smbclient.listdir(parentPath, port=self.port, username=self.username,
                               password=self.password, connection_timeout=5)
             else:
-                dirs = smbclient.listdir(rf"\\{self.address}\{self.service_name}\{lastPath}",
+                dirs = smbclient.listdir(parentPath,
                                          username=self.username,
                                          password=self.password, connection_timeout=5)
         except SmbEx.SMBOSError as es:
@@ -85,22 +107,21 @@ class SmbV3Client(UpLoadBase):
         return name in dirs
 
     def Create(self, path):
-        current_dir = ""
-        dirs = path.split("/")
+        dirs = self._SplitParts(path)
+        currentParts = []
         for directory in dirs:
-            if not directory:
-                continue
-            current_dir += directory
+            currentParts.append(directory)
+            current_dir = "\\".join(currentParts)
             if not self.IsHaveDir(current_dir):
+                uncPath = self._BuildUncPath(*currentParts)
                 if self.port:
-                    smbclient.mkdir(rf"\\{self.address}\{self.service_name}\{current_dir}", port=self.port,
+                    smbclient.mkdir(uncPath, port=self.port,
                                          username=self.username,
                                          password=self.password, connection_timeout=5)
                 else:
-                    smbclient.mkdir(rf"\\{self.address}\{self.service_name}\{current_dir}",
+                    smbclient.mkdir(uncPath,
                                     username=self.username,
                                     password=self.password, connection_timeout=5)
-            current_dir  += "/"
         return Str.Ok
 
     def Upload(self, localPath, remotePath):
@@ -110,27 +131,26 @@ class SmbV3Client(UpLoadBase):
                 if st != Str.Ok:
                     return st
 
-            prefix = f"{self.service_name}/"
-            remotePath = remotePath.lstrip("/")
-            if remotePath.startswith(prefix):
-                remotePath = remotePath[len(prefix):]
-            elif remotePath == self.service_name:
-                remotePath = ""
+            parts = self._SplitParts(remotePath)
+            if parts and parts[0] == self.service_name:
+                parts = parts[1:]
+            normRemotePath = "\\".join(parts)
             if not os.path.isfile(localPath):
                 return Str.FileError
-            self.Create(remotePath)
+            self.Create(normRemotePath)
             fileName = os.path.basename(localPath)
+            remoteFile = self._BuildUncPath(*parts, fileName)
             with open(localPath, "rb") as local_file:
                 data = local_file.read()
                 if self.port:
-                    with smbclient.open_file(rf"\\{self.address}\{self.service_name}\{remotePath}"+ "\\" + fileName,
+                    with smbclient.open_file(remoteFile,
                                     mode="wb+",
                                     port=self.port,
                                     username=self.username,
                                     password=self.password, connection_timeout=5) as fd:
                         fd.write(data)
                 else:
-                    with smbclient.open_file(rf"\\{self.address}\{self.service_name}\{remotePath}" + "\\" + fileName,
+                    with smbclient.open_file(remoteFile,
                                              mode="wb+",
                                              username=self.username,
                                              password=self.password, connection_timeout=5) as fd:

@@ -187,11 +187,11 @@ class ReadNewScroller(QObject):
 
         增量写法下落点 = 已施加位移之和；最后一两帧若没被投递（定时器抖动、
         主线程卡顿）就会差几个像素。这里按 _target_s 补齐尾差，落点与帧投递无关。
-        _target_s 已含期间发生的尺寸修正补偿（on_viewport_shifted 同步平移过），
-        所以补齐量自动包含补偿。"""
-        rest = self._target_s - self._anim_v_prev
+        _target_s 与 _anim_pos 均已含期间发生的尺寸修正补偿（on_viewport_shifted
+        同步平移过），所以按 _target_s - _anim_pos 补齐不会重复施加补偿。"""
+        rest = self._target_s - self._anim_pos
         if abs(rest) >= 0.05:
-            self._anim_pos += rest
+            self._anim_pos = self._target_s
             self._anim_v_prev = self._target_s
             self._view._set_scroll_min_s(self._anim_pos)
         self._snap_if_idle()

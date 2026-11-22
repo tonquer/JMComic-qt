@@ -3,6 +3,7 @@ from task.qt_task import QtTaskBase
 from tools.book import BookMgr
 from tools.log import Log
 from tools.status import Status
+from tools.str import Str
 from view.nas.nas_item import NasUploadItem
 from server import req
 
@@ -15,6 +16,10 @@ class NasStatus(QtTaskBase):
         self.downloadDict: dict[str, NasUploadItem] = {}  # bookId ：downloadInfo
 
     def SetNewStatus(self, task: NasUploadItem, status, statusMsg=0):
+        if status == Str.CvNotNet:
+            status = task.Error
+            if not statusMsg:
+                statusMsg = Str.CvNotNet
         if status == task.status:
             return
         task.status = status
@@ -110,7 +115,7 @@ class NasStatus(QtTaskBase):
         newStatus, (nasInfo, srcDir, desFile, upDirPath) = task.GetNextParams()
         if newStatus == task.Uploading:
             task.type = 1
-            self.AddUploadTask(nasInfo, task.type, srcDir, desFile, upDirPath, task.bookId, task.curPreUpIndex, task.key, self.UploadStCallBack)
+            self.AddUploadTask(nasInfo, task.type, srcDir, desFile, upDirPath, task.bookId, task.curPreUpIndex, task.key, self.UploadStCallBack, cleanFlag=task.cleanFlag)
         self.SetNewStatus(task, newStatus)
         self.UpdateTableItem(task)
         self.UpdateTaskDB(task)
@@ -142,7 +147,7 @@ class NasStatus(QtTaskBase):
             if newStatus == task.Uploading:
                 newStatus, (nasInfo, srcDir, desFile, upDirPath) = task.GetNextParams()
                 if newStatus == task.Uploading:
-                    self.AddUploadTask(nasInfo, task.type, srcDir, desFile, upDirPath, task.bookId, task.curPreUpIndex, task.key, self.UploadStCallBack)
+                    self.AddUploadTask(nasInfo, task.type, srcDir, desFile, upDirPath, task.bookId, task.curPreUpIndex, task.key, self.UploadStCallBack, cleanFlag=task.cleanFlag)
             self.SetNewStatus(task, newStatus)
             self.UpdateTableItem(task)
             self.UpdateTaskDB(task)

@@ -5,6 +5,16 @@ from config import config
 from tools.log import Log
 from tools.singleton import Singleton
 
+
+# 推荐
+class RelatedInfo(object):
+    def __init__(self):
+        self.id = ""
+        self.author = ""
+        self.name = ""
+        self.image = ""
+        self.coverUrl = ""
+
 # 首页
 class IndexInfo(object):
     def __init__(self):
@@ -83,13 +93,25 @@ class BookEps(object):
 
     def Copy(self, o):
         assert isinstance(o, BookEps)
-        self.index = o.index
-        self.epsName = o.epsName
-        self.epsId = o.epsId
+        if o.index >= 0:
+            self.index = o.index
+        if o.title:
+            self.title = o.title
+        if o.epsName:
+            self.epsName = o.epsName
+        if o.epsUrl:
+            self.epsUrl = o.epsUrl
+        if o.epsId:
+            self.epsId = o.epsId
+        if o.sort:
+            self.sort = o.sort
+        if o.time:
+            self.time = o.time
         self.pictureUrl.update(o.pictureUrl)
         self.pictureName.update(o.pictureName)
         self.allIndex = sorted(self.pictureUrl.keys())
-        self.series_id = o.series_id
+        if o.series_id:
+            self.series_id = o.series_id
         if o.scrambleId:
             self.scrambleId = o.scrambleId
 
@@ -124,15 +146,41 @@ class BookBaseInfo(object):
         self.bookId = value
 
     def Copy(self, o):
-        self.bookId = o.bookId
-        self.title = o.title
-        self.author = o.author
-        self.bookUrl = o.bookUrl
-        self.coverUrl = o.coverUrl
+        if o.bookId:
+            self.bookId = o.bookId
+        if o.series_id:
+            self.series_id = o.series_id
+        if o.title:
+            self.title = o.title
+        if o.author:
+            self.author = o.author
+        if o.bookUrl:
+            self.bookUrl = o.bookUrl
+        if o.coverUrl:
+            self.coverUrl = o.coverUrl
+        if o.likes:
+            self.likes = o.likes
+        if o.views:
+            self.views = o.views
         # self.tagStr = o.tagStr
-        self.authorList = o.authorList
-        self.tagList = o.tagList
-        self.category = o.category
+        if o.authorList:
+            self.authorList = o.authorList
+        if o.tagList:
+            self.tagList = o.tagList
+        if o.workList:
+            self.workList = o.workList
+        if o.actorList:
+            self.actorList = o.actorList
+        if o.category:
+            self.category = o.category
+        if o.updateDate:
+            self.updateDate = o.updateDate
+        if o.addTime:
+            self.addTime = o.addTime
+        if o.price:
+            self.price = o.price
+        if o.purchased:
+            self.purchased = o.purchased
 
 
 class BookPageInfo(object):
@@ -169,16 +217,26 @@ class BookPageInfo(object):
 
     def Copy(self, o):
         self.kv.update(o.kv)
-        self.createDate = o.createDate
-        self.pages = o.pages
-        self.des = o.des
-        self.epsInfo.update(o.epsInfo)
+        if o.createDate:
+            self.createDate = o.createDate
+        if o.pages:
+            self.pages = o.pages
+        if o.des:
+            self.des = o.des
+        if o.commentNum:
+            self.commentNum = o.commentNum
+        for epsId, eps in o.epsInfo.items():
+            if epsId in self.epsInfo:
+                self.epsInfo[epsId].Copy(eps)
+            else:
+                self.epsInfo[epsId] = eps
 
 
 class BookInfo(object):
     def __init__(self):
-        self.baseInfo = BookBaseInfo()
         self.pageInfo = BookPageInfo()
+        self.baseInfo = BookBaseInfo()
+        self.related_list = []   # [{id, name, author, image}]
         self.localMaxEps = 0
 
     @property
@@ -235,9 +293,9 @@ class BookMgr(Singleton):
     def UpdateBookPicture(self, bookId, epsId, aid, minAid, pictureUrl, pictureName):
         bookId = str(bookId)
         book = self.GetBook(bookId)
-        assert isinstance(book, BookInfo)
         if not book:
             return
+        assert isinstance(book, BookInfo)
         epsInfo = book.pageInfo.epsInfo.get(epsId)
         if not epsInfo:
             return
@@ -252,9 +310,9 @@ class BookMgr(Singleton):
     def UpdateBookEps(self, bookId, newEps):
         bookId = str(bookId)
         book = self.GetBook(bookId)
-        assert isinstance(book, BookInfo)
         if not book:
             return
+        assert isinstance(book, BookInfo)
         epsInfo = None
         if newEps.index >= 0 :
             epsInfo = book.pageInfo.epsInfo.get(newEps.index)
@@ -271,9 +329,9 @@ class BookMgr(Singleton):
     def UpdateBookEpsScrambleId(self, bookId, epsIndex, scrambleId):
         bookId = str(bookId)
         book = self.GetBook(bookId)
-        assert isinstance(book, BookInfo)
         if not book:
             return
+        assert isinstance(book, BookInfo)
         epsInfo = book.pageInfo.epsInfo.get(epsIndex)
         if not epsInfo:
             return

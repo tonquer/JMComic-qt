@@ -30,6 +30,7 @@ class SearchView(QWidget, Ui_Search, QtTaskBase):
         self.isCategory = True
         self.isTag = True
         self.isAuthor = True
+        self.isSearch2 = False
         self.bookList.LoadCallBack = self.LoadNextPage
         self.sortCombox.currentIndexChanged.connect(self.ChangeSort)
         self.typeBox.currentIndexChanged.connect(self.ChangeSort)
@@ -50,15 +51,27 @@ class SearchView(QWidget, Ui_Search, QtTaskBase):
     def Stop(self):
         self.lineEdit.SaveCacheWord()
 
+    def SwitchSearch2Visite(self, enable):
+        if not self.isSearch2:
+            return
+        self.sortCombox.setVisible(enable)
+        self.label.setVisible(enable)
+        self.spinBox.setVisible(enable)
+        self.jumpPage.setVisible(enable)
+
     def SwitchCurrent(self, **kwargs):
         self.update()
         text = kwargs.get("text")
-        # recoment = kwargs.get("recoment")
-        # if recoment == 1:
-        #     bookId = kwargs.get("bookId")
-        #     self.AddHttpTask(req.GetRecommendReq2(bookId),
-        #                      self.SendSearchBack, 1)
-        #     return
+        recoment = kwargs.get("recoment")
+        self.SwitchSearch2Visite(True)
+        if recoment == 1:
+            self.SwitchSearch2Visite(False)
+            # bookId = kwargs.get("bookId")
+            relatedList = kwargs.get("relatedList")
+            self.bookList.clear()
+            for v in relatedList:
+                self.bookList.AddBookItemByBook(v)
+            return
         if text and (re.match('JM\d+', text) or re.match('jm\d+', text)):
             QtOwner().OpenBookInfo(text.lower().replace("jm", ""))
             return
@@ -124,6 +137,8 @@ class SearchView(QWidget, Ui_Search, QtTaskBase):
         return
 
     def LoadNextPage(self):
+        if self.isSearch2 and self.jumpPage.isHidden():
+            return
         self.SendSearch(self.bookList.page + 1)
         return
 

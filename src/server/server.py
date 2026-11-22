@@ -4,7 +4,7 @@ import pickle
 import threading
 import time
 from collections import Counter
-from queue import Queue
+from queue import Queue, Empty
 
 import curl_cffi.requests.exceptions as exceptions
 from curl_cffi import requests as requests2, CurlOpt, CurlInfo
@@ -201,9 +201,12 @@ class Server(Singleton):
 
     def Stop(self):
         for q in [self._inQueue, self._downloadQueue, self._speedQueue]:
-            while not q.empty():
-                q.get(False)
-                q.task_done()
+            while True:
+                try:
+                    q.get_nowait()
+                    q.task_done()
+                except Empty:
+                    break
 
         for i in range(self.threadNum):
             self._inQueue.put("")
@@ -214,7 +217,7 @@ class Server(Singleton):
 
         for thread in self.allWaitThread:
             Log.Info(f"wait {thread.name} end")
-            thread.join()
+            thread.join(timeout=3)
         Log.Info("all thread end")
 
     def RunDownload(self, index):
@@ -237,9 +240,18 @@ class Server(Singleton):
         ## 图片域名
         # request.resetUrlHost = GlobalConfig.PicUrlList.value[:]
         if request.proxyUrl:
+            proxyHost = ToolUtil.GetUrlHost(request.proxyUrl)
             host = ToolUtil.GetUrlHost(request.url)
-            if host != ToolUtil.GetUrlHost(request.proxyUrl):
-                request.url = request.url.replace(host, request.proxyUrl+"/"+host)
+            if host and host != proxyHost:
+                request.url = request.url.replace(host, request.proxyUrl + "/" + host, 1)
+            if request.resetUrl:
+                newResetUrl = []
+                for resetUrl in request.resetUrl:
+                    rHost = ToolUtil.GetUrlHost(resetUrl)
+                    if rHost and rHost != proxyHost:
+                        resetUrl = resetUrl.replace(rHost, request.proxyUrl + "/" + rHost, 1)
+                    newResetUrl.append(resetUrl)
+                request.resetUrl = newResetUrl
         elif request.isApi and not request.resetUrl and not request.ipList and not  isinstance(request, (req.SpeedTestReq, req.SpeedTestPingReq, req.SpeedTestPing2Req)) :
             # 为API请求准备备用线路，请求失败时自动切换到其他域名重试
             # (此前 resetUrl 始终为空，重试只会用同一个url再撞一次，

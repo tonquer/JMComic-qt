@@ -369,10 +369,10 @@ class ReadNewView(QtWidgets.QWidget):
         self.maxPic = maxPic
         title = raw.get("title", "")
         self.epsName = title
-        self.AddHistory()
+        self.qtTool.InitSlider(self.maxPic)
         self.scrollArea.init_all_image(self.maxPic, self.pageIndex)
         self.qtTool.UpdateSlider()
-        self.qtTool.InitSlider(self.maxPic)
+        self.AddHistory()
         return
 
     def AddHistory(self):

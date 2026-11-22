@@ -1,4 +1,4 @@
-from PySide6.QtCore import QByteArray, QBuffer
+from PySide6.QtCore import QByteArray, QBuffer, QIODevice
 from PySide6.QtGui import QMovie, Qt, QPixmap
 from PySide6.QtWidgets import QLabel
 
@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QLabel
 class GifLabel(QLabel):
     def __init__(self, parent):
         QLabel.__init__(self, parent)
-        self.movie = QMovie()
+        self.movie = QMovie(self)
         self.byteArray = None
         self.bBuffer = None
         self.setAttribute(Qt.WA_TranslucentBackground)
@@ -28,8 +28,15 @@ class GifLabel(QLabel):
 
     def Init(self, data, size=124):
         self.resize(size, size)
+        self.movie.stop()
+        self.movie.setDevice(None)
+        if self.bBuffer is not None:
+            self.bBuffer.close()
+            self.bBuffer.deleteLater()
         self.byteArray = QByteArray(data)
-        self.bBuffer = QBuffer(self.byteArray)
+        self.bBuffer = QBuffer(self.movie)
+        self.bBuffer.setData(self.byteArray)
+        self.bBuffer.open(QIODevice.ReadOnly)
 
         # self.movie.setFormat(QByteArray(b"GIF"))
 
@@ -43,8 +50,10 @@ class GifLabel(QLabel):
 
     def InitByFileName(self, name):
         self.resize(300, 300)
-        self.movie = QMovie(name)
-        # self.movie.setFileName(name)
-        self.movie.setFormat(QByteArray(b"GIF"))
+        self.movie.stop()
+        self.movie.setDevice(None)
+        self.movie.deleteLater()
+        self.movie = QMovie(name, QByteArray(b"GIF"), self)
+        self.setMovie(self.movie)
         self.movie.start()
         return

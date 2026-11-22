@@ -156,6 +156,9 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
         self.UpdateProxyName()
 
     def OpenSign(self):
+        if not QtOwner().user.isLogin:
+            QtOwner().ShowError(Str.GetStr(Str.NotLogin))
+            return
         if self.isDailySign:
             signView = SignView(QtOwner().owner, self.signMap)
             signView.reSignButton.clicked.connect(self.ReSign)
@@ -220,10 +223,23 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
         for label in (self.nameLabel, self.titleLabel, self.levelLabel,
                       self.favorite, self.coins):
             label.setText("")
+        self.picData = None
+        self.pictureData = ""
         f = QFile(u":/png/icon/placeholder_avatar.png")
         if f.open(QFile.ReadOnly):
             self.picLabel.SetPicture(f.readAll())
             f.close()
+        self.signId = 0
+        self.signMap.clear()
+        self.canResign = False
+        self.isDailySign = False
+        self.useReSignNum = 0
+        self.maxReSignNum = 5
+        self.resetDailySign = 3
+        self.signButton.setText(Str.GetStr(Str.Sign))
+        if self.tmpSignView:
+            self.tmpSignView.close()
+            self.tmpSignView = None
         config.LoginUserName = ""
         self.pushButton.setText(Str.GetStr(Str.Login))
 
