@@ -379,6 +379,10 @@ class CheckUpdateReq(ServerReq):
         self.resetUrl = newList
         self.resetCnt = len(url2List)
 
+        self.headers['cache-control'] = 'no-cache'
+        self.headers['expires'] = '0'
+        self.headers['pragma'] = 'no-cache'
+
 
 # 检查更新
 class CheckUpdateInfoReq(ServerReq):
@@ -395,6 +399,10 @@ class CheckUpdateInfoReq(ServerReq):
         self.resetUrl = [v + "/{}.txt?".format(newVersion) + params for v in url2List[1:]]
         self.resetCnt = len(url2List)
 
+        self.headers['cache-control'] = 'no-cache'
+        self.headers['expires'] = '0'
+        self.headers['pragma'] = 'no-cache'
+
 
 # 检查更新配置
 class CheckUpdateConfigReq(ServerReq):
@@ -410,6 +418,10 @@ class CheckUpdateConfigReq(ServerReq):
         self.useImgProxy = False
         self.resetUrl = [v + "/config.txt?" + params for v in url2List[1:]]
         self.resetCnt = len(url2List)
+
+        self.headers['cache-control'] = 'no-cache'
+        self.headers['expires'] = '0'
+        self.headers['pragma'] = 'no-cache'
 
 
 # 下载图片

@@ -28,21 +28,21 @@ class GlobalConfig:
     WebDnsList = GlobalItem([])
     JmFbUrl = GlobalItem("https://jmcomicog.net")
 
-    Url = GlobalItem("https://comic18j-jjeg.cc")
-    UrlList = GlobalItem(["https://comic18j-jjeg.cc",
+    Url = GlobalItem("https://comic18j-susu.com")
+    UrlList = GlobalItem(["https://comic18j-susu.com",
                           "https://18comic.vip",
                           "https://jmcomic.me",
                           "https://18comic.tw",
                           "https://jmcomic-zzz.org",
-                          "https://comic18j-hbd.online",
-                          "https://comic18j-jjeg.club"])
+                          "https://comic18j-nico.work",
+                          "https://comic18j-neo.com"])
 
     # mobile url
 
     # Url2 = GlobalItem("https://www.jmapinode.biz")
     # PicUrl2 = GlobalItem("https://cdn-msp.jmapinodeudzn.net")
-    Url2List = GlobalItem(["https://www.cdnhjk.net",
-                           "https://www.cdngwc.cc",
+    Url2List = GlobalItem(["https://www.cdnbtd.cc",
+                           "https://www.cdnutc.cc",
                            "https://www.cdngwc.net",
                            "https://www.cdngwc.club"])
 
@@ -70,11 +70,11 @@ class GlobalConfig:
     #     "www.cdn-mspjmapiproxy.xyz",
     # ])
 
-    CdnApiUrl = GlobalItem("https://www.cdngwc.cc")
+    CdnApiUrl = GlobalItem("https://www.cdngwc.net")
     CdnImgUrl = GlobalItem("https://cdn-msp.jmapiproxy3.cc")
-    ProxyApiUrl = GlobalItem("https://www.cdnhjk.net")
+    ProxyApiUrl = GlobalItem("https://www.cdngwc.net")
     ProxyImgUrl = GlobalItem("https://cdn-msp.jmapiproxy3.cc")
-    HeaderVer = GlobalItem("2.1.11")
+    HeaderVer = GlobalItem("2.1.14")
     JMServerUrl = GlobalItem("https://rup4a04-c02.tos-cn-hongkong.bytepluses.com/newsvr-2025.txt")
 
     # 非CF域名

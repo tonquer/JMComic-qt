@@ -1,33 +1,32 @@
-import copy
-import json
+import asyncio
+import inspect
 import pickle
-import threading
-import time
-from collections import Counter
-from queue import Queue, Empty
 
-import curl_cffi.requests.exceptions as exceptions
-from curl_cffi import requests as requests2, CurlOpt, CurlInfo
+from curl_cffi import CurlInfo
 
 import server.req as req
 import server.res as res
 from config import config
 from config.global_config import GlobalConfig
 from qt_owner import QtOwner
+from server.async_loop import AsyncLoopRunner, CreateDefaultEventLoop
+from server.error import ClassifyRequestError
+from server.session_pool import AsyncSessionPool, CURL_INFOS
 from task.qt_task import TaskBase
 from tools.log import Log
 from tools.singleton import Singleton
 from tools.status import Status
-from tools.str import Str
 from tools.tool import ToolUtil
 
 host_table = {}
 
+_SPEED_REQ_TYPES = (req.SpeedTestReq, req.SpeedTestPingReq, req.SpeedTestPing2Req)
+
 
 def handler(request):
-    def generator(handler):
-        Server().handler[request.__name__] = handler()
-        return handler
+    def generator(handlerCls):
+        Server().handler[request.__name__] = handlerCls()
+        return handlerCls
 
     return generator
 
@@ -37,6 +36,7 @@ class Task(object):
         self.req = request
         self.res = None
         self.localParam = None
+        self._session = None
         self.timeout = request.timeout
         self.backParam = backParam
         self.status = Status.Ok
@@ -46,7 +46,11 @@ class Task(object):
 
     @property
     def session(self):
-        return self.localParam.session
+        if self._session is not None:
+            return self._session
+        if self.localParam is not None:
+            return self.localParam.session
+        return None
 
     @property
     def bakParam(self):
@@ -60,57 +64,46 @@ class Task(object):
         return ""
 
 
-# 一个线程里的局部变量
-class ThreadLocalParam:
-    def __init__(self, index=0, impersonate=None):
-        self.session: requests2.Session = None
-        self.impersonate = impersonate
-        self.oldIpList = []
-        self.index = index
-        self.userName = ""
-        self.isH3 = False
+def _ApplyProxyUrl(request: req.ServerReq):
+    proxyHost = ToolUtil.GetUrlHost(request.proxyUrl)
+    host = ToolUtil.GetUrlHost(request.url)
+    if host and host != proxyHost:
+        request.url = request.url.replace(host, request.proxyUrl + "/" + host, 1)
 
-    def __del__(self):
-        self.Close()
+    if not request.resetUrl:
+        return
+    newResetUrl = []
+    for resetUrl in request.resetUrl:
+        rHost = ToolUtil.GetUrlHost(resetUrl)
+        if rHost and rHost != proxyHost:
+            resetUrl = resetUrl.replace(rHost, request.proxyUrl + "/" + rHost, 1)
+        newResetUrl.append(resetUrl)
+    request.resetUrl = newResetUrl
 
-    def Create(self):
-        curlInfos = [
-            CurlInfo.NAMELOOKUP_TIME,
-            CurlInfo.CONNECT_TIME,
-            CurlInfo.APPCONNECT_TIME,
-            CurlInfo.PRETRANSFER_TIME,
-            CurlInfo.STARTTRANSFER_TIME,
-            CurlInfo.TOTAL_TIME,
-        ]
-        if self.impersonate:
-            # return requests2.Session(impersonate=self.impersonate, curl_infos=curlInfos,debug=True)
-            return requests2.Session(impersonate=self.impersonate, curl_infos=curlInfos)
-        else:
-            return requests2.Session(curl_infos=curlInfos)
 
-    def IsNeedSwitch(self, request: req.ServerReq):
-        if not self.session:
-            return True
-        if isinstance(request, req.LoginReq2):
-            return True
-        return Counter(self.oldIpList) != Counter(request.ipList) or self.isH3 != request.isH3 or self.userName != request.userName
+def _AttachFallbackUrls(request: req.ServerReq):
+    if request.ipList or isinstance(request, _SPEED_REQ_TYPES):
+        return
 
-    def CheckSwitchSession(self, request: req.ServerReq):
-        # 如果curl_opts的RESOLVE出现修改，必须重新创建session，不然自定义dns无效
-        if self.IsNeedSwitch(request):
-            self.Close()
-            self.session = self.Create()
-            self.oldIpList = copy.deepcopy(request.ipList)
-            self.isH3 = request.isH3
-            self.userName = request.userName
-            Log.Info(f"create new session, index:{self.index}, ip:{self.oldIpList}, isH3:{self.isH3}")
-        # 复制curl_opts
-        self.session.curl_options = copy.deepcopy(request.curl_opt)
-
-    def Close(self):
-        if self.session:
-            self.session.close()
-            self.session = None
+    host = ToolUtil.GetUrlHost(request.url)
+    if request.isApi and not request.resetUrl:
+        # 为 API 请求准备备用域名，单条线路不可用时自动切换重试
+        for url in GlobalConfig.Url2List.value:
+            altHost = ToolUtil.GetUrlHost(url)
+            if altHost != host:
+                request.resetUrl.append(request.url.replace(host, altHost))
+        if request.resetUrl:
+            request.resetCnt = min(len(request.resetUrl), 3)
+    elif request.isImg and len(request.resetUrl) <= 1:
+        # 为图片请求准备备用 CDN 域名，下载失败时自动切换重试
+        for domain in GlobalConfig.ImgAutoUrl.value:
+            if domain == host:
+                continue
+            altUrl = request.url.replace(host, domain)
+            if altUrl not in request.resetUrl:
+                request.resetUrl.append(altUrl)
+        if request.resetUrl:
+            request.resetCnt = max(request.resetCnt, min(len(request.resetUrl), 3))
 
 
 class Server(Singleton):
@@ -121,461 +114,319 @@ class Server(Singleton):
         self.imageServer = ""
 
         self.token = ""
-        self._inQueue = Queue()
-        self._downloadQueue = Queue()
-        # self._oldQueue = Queue()
-        self._speedQueue = Queue()
         self.threadHandler = 0
-        self.threadNum = config.ThreadNum
+        self.threadNum = config.SpeedThreadNum
         self.speedThreadNum = 8
+
         from config.setting import Setting
         self.downloadNum = max(1, Setting.MultiNum.value)
-        self.allWaitThread = []
+
+        self._httpPool = None
+        self._downloadPool = None
+        self._speedPool = None
+        self._runner = AsyncLoopRunner(
+            threadName="AsyncIO-Server",
+            loopFactory=lambda: self._CreateEventLoop(),
+        )
+
+    def _CreateEventLoop(self):
+        return CreateDefaultEventLoop()
+
+    # ------------------------------------------------------------------
+    # Lifecycle
+    # ------------------------------------------------------------------
 
     def Init(self):
-
-        for i in range(self.threadNum):
-            # self.threadSession.append(self.GetNewSession())
-            thread = threading.Thread(target=self.Run, args=[i])
-            thread.name = "HTTP-" + str(i)
-            thread.daemon = True
-            thread.start()
-            self.allWaitThread.append(thread)
-
-        for i in range(self.downloadNum):
-            # self.downloadSession.append(self.GetNewSession())
-            thread = threading.Thread(target=self.RunDownload, args=[i])
-            thread.name = "Download-" + str(i)
-            thread.daemon = True
-            thread.start()
-            self.allWaitThread.append(thread)
-
-        for i in range(self.speedThreadNum):
-            # self.threadSession.append(self.GetNewSession())
-            thread = threading.Thread(target=self.RunSpeed, args=[i])
-            thread.name = "Speed-" + str(i)
-            thread.daemon = True
-            thread.start()
-            self.allWaitThread.append(thread)
-
-    def Run(self, index):
-        time.sleep(1)
-        localParam =  ThreadLocalParam(index)
-        while True:
-            task = self._inQueue.get(True)
-            self._inQueue.task_done()
-            try:
-                if task == "":
-                    break
-                self._Send(task, localParam)
-            except Exception as es:
-                Log.Error(es)
-        localParam.Close()
-        pass
-
-    def RunSpeed(self, index):
-        time.sleep(2)
-        localParam =  ThreadLocalParam(index)
-        while True:
-            task = self._speedQueue.get(True)
-            self._speedQueue.task_done()
-            try:
-                if task == "":
-                    break
-                self._Send(task, localParam)
-            except Exception as es:
-                Log.Error(es)
-        localParam.Close()
-
-    # def RunOld(self, index):
-    #     while True:
-    #         task = self._oldQueue.get(True)
-    #         self._oldQueue.task_done()
-    #         try:
-    #             if task == "":
-    #                 break
-    #             self._Send(task, index, isOld=True)
-    #         except Exception as es:
-    #             Log.Error(es)
-    #     pass
+        self._runner.Configure(
+            queueSpecs=[
+                ("in", "HTTP", self.threadNum, self._HandleHttpTask),
+                ("download", "Download", self.downloadNum, self._HandleDownloadTask),
+                ("speed", "Speed", self.speedThreadNum, self._HandleSpeedTask),
+            ],
+            onStartup=self._InitPools,
+            onShutdown=self._ClosePools,
+        )
+        self._runner.Start()
 
     def Stop(self):
-        for q in [self._inQueue, self._downloadQueue, self._speedQueue]:
-            while True:
-                try:
-                    q.get_nowait()
-                    q.task_done()
-                except Empty:
-                    break
+        self._runner.Stop(timeout=3.0)
 
-        for i in range(self.threadNum):
-            self._inQueue.put("")
-        for i in range(self.downloadNum):
-            self._downloadQueue.put("")
-        for i in range(self.speedThreadNum):
-            self._speedQueue.put("")
+    async def _InitPools(self):
+        self._httpPool = AsyncSessionPool("HTTP", impersonate=None, maxClients=self.threadNum, maxSessions=6)
+        self._downloadPool = AsyncSessionPool("Download", impersonate="chrome110", maxClients=self.downloadNum, maxSessions=6)
+        # 测速池禁用 session 复用，保证每次测速都是独立冷连接与独立 RESOLVE
+        self._speedPool = AsyncSessionPool("Speed", impersonate=None, maxClients=1, maxSessions=1, reuseSession=False)
 
-        for thread in self.allWaitThread:
-            Log.Info(f"wait {thread.name} end")
-            thread.join(timeout=3)
-        Log.Info("all thread end")
+    async def _ClosePools(self):
+        for pool in (self._httpPool, self._downloadPool, self._speedPool):
+            if pool is not None:
+                await pool.CloseAll()
 
-    def RunDownload(self, index):
-        time.sleep(2)
-        localParam =  ThreadLocalParam(index, impersonate="chrome110")
-        while True:
-            task = self._downloadQueue.get(True)
-            self._downloadQueue.task_done()
-            try:
-                if task == "":
-                    break
-                self._Download(task, localParam)
-            except Exception as es:
-                Log.Error(es)
-        localParam.Close()
+    async def _HandleHttpTask(self, task: Task, index: int):
+        await self._Send(task, index, self._httpPool)
 
-    def __DealHeaders(self, request, token):
-        # if not request.isUseHttps:
-        #     request.url = request.url.replace("https://", "http://")
-        ## 图片域名
-        # request.resetUrlHost = GlobalConfig.PicUrlList.value[:]
+    async def _HandleSpeedTask(self, task: Task, index: int):
+        await self._Send(task, index, self._speedPool)
+
+    async def _HandleDownloadTask(self, task: Task, index: int):
+        await self._Download(task, index, self._downloadPool)
+
+    # ------------------------------------------------------------------
+    # Public API (thread-safe, synchronous entry points)
+    # ------------------------------------------------------------------
+
+    def _PrepareRequest(self, request: req.ServerReq):
         if request.proxyUrl:
-            proxyHost = ToolUtil.GetUrlHost(request.proxyUrl)
-            host = ToolUtil.GetUrlHost(request.url)
-            if host and host != proxyHost:
-                request.url = request.url.replace(host, request.proxyUrl + "/" + host, 1)
-            if request.resetUrl:
-                newResetUrl = []
-                for resetUrl in request.resetUrl:
-                    rHost = ToolUtil.GetUrlHost(resetUrl)
-                    if rHost and rHost != proxyHost:
-                        resetUrl = resetUrl.replace(rHost, request.proxyUrl + "/" + rHost, 1)
-                    newResetUrl.append(resetUrl)
-                request.resetUrl = newResetUrl
-        elif request.isApi and not request.resetUrl and not request.ipList and not  isinstance(request, (req.SpeedTestReq, req.SpeedTestPingReq, req.SpeedTestPing2Req)) :
-            # 为API请求准备备用线路，请求失败时自动切换到其他域名重试
-            # (此前 resetUrl 始终为空，重试只会用同一个url再撞一次，
-            #  导致某条线路被墙时整个应用都无法使用)
-            # 如果是固定ip，换域名没有意义
-            host = ToolUtil.GetUrlHost(request.url)
-            for url in GlobalConfig.Url2List.value:
-                if ToolUtil.GetUrlHost(url) == host:
-                    continue
-                request.resetUrl.append(request.url.replace(host, ToolUtil.GetUrlHost(url)))
-            if len(request.resetUrl) > 0:
-                request.resetCnt = min(len(request.resetUrl), 3)
-        elif request.isImg and len(request.resetUrl) <= 1 and not request.ipList and not  isinstance(request, (req.SpeedTestReq, req.SpeedTestPingReq, req.SpeedTestPing2Req)) :
-            # 为图片请求准备备用图片域名，图片下载失败时自动切换到其他CDN重试
-            # 如果是固定ip，换域名没有意义
-            host = ToolUtil.GetUrlHost(request.url)
-            for domain in GlobalConfig.ImgAutoUrl.value:
-                if domain == host:
-                    continue
-                altUrl = request.url.replace(host, domain)
-                if altUrl not in request.resetUrl:
-                    request.resetUrl.append(altUrl)
-            if len(request.resetUrl) > 0:
-                request.resetCnt = max(request.resetCnt, min(len(request.resetUrl), 3))
+            _ApplyProxyUrl(request)
+        else:
+            _AttachFallbackUrls(request)
 
     def Send(self, request, token="", backParam="", isASync=True, index=0):
-        self.__DealHeaders(request, token)
+        self._PrepareRequest(request)
+        task = Task(request, backParam)
+
         if isinstance(request, req.SpeedTestReq):
             if isASync:
-                return self._downloadQueue.put(Task(request, backParam))
-            else:
-                return self._Download(Task(request, backParam), ThreadLocalParam(index))
+                return self._runner.Enqueue("download", task)
+            return self._runner.RunSync(self._DownloadSync(task, index))
+
+        queueName = "speed" if isinstance(request, (req.SpeedTestPingReq, req.SpeedTestPing2Req)) else "in"
+        if isASync:
+            return self._runner.Enqueue(queueName, task)
+        return self._runner.RunSync(self._SendSync(task, index))
+
+    def Download(self, request, token="", backParams="", cacheAndLoadPath="", loadPath="", isASync=True):
+        self._PrepareRequest(request)
+        task = Task(request, backParams, cacheAndLoadPath, loadPath)
+        if isASync:
+            self._runner.Enqueue("download", task)
         else:
-            if isinstance(request, (req.SpeedTestPingReq, req.SpeedTestPing2Req)):
-                if isASync:
-                    return self._speedQueue.put(Task(request, backParam))
-                else:
-                    return self._Send(Task(request, backParam), ThreadLocalParam(index))
+            self._runner.RunSync(self._DownloadSync(task, 0))
 
-            if isASync:
-                return self._inQueue.put(Task(request, backParam))
-            else:
-                return self._Send(Task(request, backParam), ThreadLocalParam(index))
+    def ReDownload(self, task: Task):
+        task.localParam = None
+        task._session = None
+        newTask = Task(task.req, task.backParam, task.cacheAndLoadPath, task.loadPath)
+        self._runner.Enqueue("download", newTask)
 
-    def _Send(self, task, localParam):
-        index = localParam.index
+    def TestSpeed(self, request, bakParams=""):
+        self._PrepareRequest(request)
+        self._runner.Enqueue("download", Task(request, bakParams))
+
+    def TestSpeedPing(self, request, bakParams=""):
+        self._PrepareRequest(request)
+        self._runner.Enqueue("in", Task(request, bakParams))
+
+    # ------------------------------------------------------------------
+    # Sync Compatibility Helpers
+    # ------------------------------------------------------------------
+
+    async def _SendSync(self, task: Task, index: int, impersonate=None):
+        pool = AsyncSessionPool("Sync", impersonate=impersonate, maxClients=1, maxSessions=1)
+        try:
+            return await self._Send(task, index, pool)
+        finally:
+            await pool.CloseAll()
+
+    async def _DownloadSync(self, task: Task, index: int):
+        pool = AsyncSessionPool("SyncDownload", impersonate="chrome110", maxClients=1, maxSessions=1)
+        try:
+            return await self._Download(task, index, pool)
+        finally:
+            await pool.CloseAll()
+
+    # ------------------------------------------------------------------
+    # Core Async Execution
+    # ------------------------------------------------------------------
+
+    async def _InvokeHandler(self, task: Task):
+        handlerObj = self.handler.get(task.req.__class__.__name__)
+        if handlerObj is None:
+            return
+        ret = handlerObj(task)
+        if inspect.isawaitable(ret):
+            await ret
+
+    async def _Send(self, task: Task, index: int, sessionPool: AsyncSessionPool):
         while True:
-            # 每次尝试独立记录结果，避免成功重试仍携带上次失败状态。
+            # 每次尝试独立记录结果，避免重试成功仍残留上次失败状态
             task.status = Status.Ok
-            task.res = res.BaseRes("", False)# 复制curl_opts
+            task.res = res.BaseRes("", False)
 
-            localParam.CheckSwitchSession(task.req)
-            task.localParam = localParam
+            entry = await sessionPool.Acquire(task.req)
+            try:
+                task._session = entry.session
+                await self._SendAttempt(task, index)
+                if task.status == Status.TimeOut:
+                    await sessionPool.RetireEntry(entry, reason="timeout")
+            finally:
+                task._session = None
+                await sessionPool.Release(entry)
 
-            self._SendAttempt(task, index)
             if task.status == Status.OfflineModel:
                 return task.res
             if task.status == Status.Ok or task.req.resetCnt < 0:
                 break
             task.req.ResetToSwitchNextUrl()
 
+        response = None
         try:
-            self.handler.get(task.req.__class__.__name__)(task)
+            await self._InvokeHandler(task)
+        except asyncio.CancelledError:
+            raise
         except Exception as es:
             task.status = Status.NetError
             Log.Warn(task.req.url + " " + es.__repr__())
             Log.Debug(es)
         finally:
-            respose = task.res
+            response = task.res
             task.res = None
+            task._session = None
             task.localParam = None
-            return respose
+        return response
 
-    def _SendAttempt(self, task, index):
-        ttfb_time = 0
+    async def _SendAttempt(self, task: Task, index: int):
+        ttfbTime = 0
         addSize = 0
         try:
             task.req.resetCnt -= 1
             Log.Info("request{}-> backId:{}, {}".format(index, task.bakParam, task.req))
             if QtOwner().isOfflineModel:
                 task.status = Status.OfflineModel
-                data = {"st": Status.OfflineModel, "data": ""}
                 if task.bakParam:
+                    data = {"st": Status.OfflineModel, "data": ""}
                     TaskBase.taskObj.taskBack.emit(task.bakParam, pickle.dumps(data))
                 return
 
-            if task.req.method.lower() == "post":
-                self.Post(task, index)
-            elif task.req.method.lower() == "post2":
-                self.Post(task)
-            elif task.req.method.lower() == "get":
-                self.Get(task, index)
-            elif task.req.method.lower() == "get2":
-                self.Get(task)
-            elif task.req.method.lower() == "put":
-                self.Put(task, index)
+            method = task.req.method.lower()
+            if method in ("post", "post2"):
+                await self.Post(task, index)
+            elif method in ("get", "get2"):
+                await self.Get(task, index)
+            elif method == "put":
+                await self.Put(task, index)
             else:
                 return
-            ttfb_time = task.res.raw.infos.get(CurlInfo.STARTTRANSFER_TIME)
+
+            ttfbTime = task.res.raw.infos.get(CurlInfo.STARTTRANSFER_TIME)
             addSize = len(task.res.raw.content)
-            # print(f"DNS 解析 (namelookup):   {task.res.raw.infos.get(CurlInfo.NAMELOOKUP_TIME):.4f} s")
-            # print(f"TCP 握手 (connect):      {task.res.raw.infos.get(CurlInfo.CONNECT_TIME):.4f} s")
-            # print(f"SSL 握手 (appconnect):   {task.res.raw.infos.get(CurlInfo.APPCONNECT_TIME):.4f} s")
-            # print(f"准备传输 (pretransfer):  {task.res.raw.infos.get(CurlInfo.PRETRANSFER_TIME):.4f} s")
-            # print(f"首字节响应 (starttransfer): {task.res.raw.infos.get(CurlInfo.STARTTRANSFER_TIME):.4f} s")
-
-        except exceptions.DNSError as es:
-            task.status = Status.DnsError
-            Log.Warn(f"error:{task.req.GetPri()}")
-            Log.Error(es)
-        except exceptions.Timeout as es:
-            if "Connection was reset" in str(es):
-                task.status = Status.ResetErr
-            elif "ECH_REJECTED" in str(es):
-                task.status = Status.EchError
-            elif "TLSV1_ALERT_UNRECOGNIZED_NAME" in str(es):
-                task.status = Status.SNIError
-            else:
-                task.status = Status.TimeOut
-            Log.Warn(f"error:{task.req.GetPri()}")
-            Log.Error(es)
-        except exceptions.SSLError as es:
-            if "Connection was reset" in str(es):
-                task.status = Status.ResetErr
-            elif "ECH_REJECTED" in str(es):
-                task.status = Status.EchError
-            elif "TLSV1_ALERT_UNRECOGNIZED_NAME" in str(es):
-                task.status = Status.SNIError
-            else:
-                task.status = Status.NetError
-            Log.Warn(f"error:{task.req.GetPri()}")
-            Log.Error(es)
-        except exceptions.ConnectionError as es:
-            task.status = Status.ConnectErr
-            Log.Warn(f"error:{task.req.GetPri()}")
-            Log.Error(es)
+        except asyncio.CancelledError:
+            raise
         except Exception as es:
-            task.status = Status.NetError
+            task.status = ClassifyRequestError(es)
             Log.Warn(f"error:{task.req.GetPri()}")
             Log.Error(es)
-        except:
-            Log.Error(f"error:{task.req.GetPri()}")
         finally:
-            if task.req.isApi and not isinstance(task.req, (req.SpeedTestReq, req.SpeedTestPingReq, req.SpeedTestPing2Req)) :
-                if task.res.raw:
-                    status_code = task.res.raw.status_code
-                else:
-                    status_code = 0
-                if isinstance(ttfb_time, (int, float)):
-                    TaskBase.taskObj.statuApiBack.emit(ttfb_time, task.status, status_code, addSize)
+            if task.req.isApi and not isinstance(task.req, _SPEED_REQ_TYPES):
+                statusCode = task.res.raw.status_code if task.res.raw else 0
+                if isinstance(ttfbTime, (int, float)):
+                    TaskBase.taskObj.statuApiBack.emit(ttfbTime, task.status, statusCode, addSize)
 
-            Log.Info("response{}-> backId:{}, {}, st:{}, {}".format(index, task.backParam, task.req.__class__.__name__,
-                                                                    task.status, task.res))
+            Log.Info(
+                "response{}-> backId:{}, {}, st:{}, {}".format(
+                    index, task.backParam, task.req.__class__.__name__, task.status, task.res
+                )
+            )
 
-    def Post(self, task, index=0):
+    async def _Request(self, task: Task, method: str):
         request = task.req
-        if request.params == None:
+        if request.params is None:
             request.params = {}
-
-        if request.headers == None:
-            request.headers = {}
-        # if isOld:
-        #     session = self.oldSession[index]
-        # else:
-        #     session = self.threadSession[index]
-        task.res = res.BaseRes("", False)
-
-        if task.req.cookies:
-            r = task.session.post(request.url, proxies=request.proxy, headers=request.headers, data=request.params,
-                                  timeout=task.timeout, cookies=task.req.cookies)
-        else:
-            r = task.session.post(request.url, proxies=request.proxy, headers=request.headers, data=request.params,
-                                  timeout=task.timeout)
-        task.res = res.BaseRes(r, request.isParseRes)
-        return task
-
-    # def Post2(self, task):
-    #     request = task.req
-    #     if request.params == None:
-    #         request.params = {}
-    #
-    #     if request.headers == None:
-    #         request.headers = {}
-    #
-    #     task.res = res.BaseRes("", False)
-    #     if task.req.cookies:
-    #         r = self.session2.post(request.url, proxies=request.proxy, impersonate="chrome110", headers=request.headers, data=request.params,
-    #                               timeout=task.timeout, verify=False, cookies=task.req.cookies)
-    #     else:
-    #         r = self.session2.post(request.url, proxies=request.proxy, impersonate="chrome110", headers=request.headers, data=request.params,
-    #                               timeout=task.timeout, verify=False)
-    #     task.res = res.BaseRes(r, request.isParseRes)
-    #     return task
-
-    def Put(self, task, index=0):
-        request = task.req
-        if request.params == None:
-            request.params = {}
-
-        if request.headers == None:
+        if request.headers is None:
             request.headers = {}
 
         task.res = res.BaseRes("", False)
-        # if isOld:
-        #     session = self.oldSession[index]
-        # else:
-        #     session = self.threadSession[index]
+        kwargs = {
+            "proxies": request.proxy,
+            "headers": request.headers,
+            "timeout": task.timeout,
+        }
+        if method == "post":
+            kwargs["data"] = request.params
+        if method in ("get", "post") and request.cookies:
+            kwargs["cookies"] = request.cookies
 
-        r = task.session.put(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout)
+        r = await getattr(task.session, method)(request.url, **kwargs)
         task.res = res.BaseRes(r, request.isParseRes)
         return task
 
-    def Get(self, task, index=0):
-        request = task.req
-        if request.params == None:
-            request.params = {}
+    async def Post(self, task: Task, index=0):
+        return await self._Request(task, "post")
 
-        if request.headers == None:
-            request.headers = {}
+    async def Put(self, task: Task, index=0):
+        return await self._Request(task, "put")
 
-        task.res = res.BaseRes("", False)
-        # if isOld:
-        #     session = self.oldSession[index]
-        # else:
-        #     session = self.threadSession[index]
-        if task.req.cookies:
-            r = task.session.get(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout,
-                                 cookies=task.req.cookies)
-        else:
-            r = task.session.get(request.url, proxies=request.proxy, headers=request.headers, timeout=task.timeout)
-        task.res = res.BaseRes(r, request.isParseRes)
-        return task
+    async def Get(self, task: Task, index=0):
+        return await self._Request(task, "get")
 
-    # def Get2(self, task):
-    #     request = task.req
-    #     if request.params == None:
-    #         request.params = {}
-    #
-    #     if request.headers == None:
-    #         request.headers = {}
-    #     task.res = res.BaseRes("", False)
-    #
-    #     if task.req.cookies:
-    #         r = self.session2.get(request.url, proxies=request.proxy, impersonate="chrome110", headers=request.headers, timeout=task.timeout, cookies=task.req.cookies)
-    #     else:
-    #         r = self.session2.get(request.url, proxies=request.proxy, impersonate="chrome110", headers=request.headers, timeout=task.timeout)
-    #     task.res = res.BaseRes(r, request.isParseRes)
-    #     return task
+    async def _TryLoadCache(self, task: Task, index: int) -> bool:
+        if task.req.isReload or isinstance(task.req, req.SpeedTestReq) or task.req.savePath:
+            return False
+        for cachePath in (task.req.loadPath, task.req.cachePath):
+            if not cachePath or not task.bakParam:
+                continue
+            data = await asyncio.to_thread(ToolUtil.LoadCachePicture, cachePath)
+            if data:
+                TaskBase.taskObj.downloadBack.emit(task.bakParam, len(data), len(data), b"")
+                TaskBase.taskObj.downloadBack.emit(task.bakParam, 0, len(data), data)
+                Log.Info("request{} cache -> backId:{}, {}".format(index, task.bakParam, task.req))
+                return True
+        return False
 
-    def Download(self, request, token="", backParams="", cacheAndLoadPath="", loadPath="", isASync=True):
-        self.__DealHeaders(request, token)
-        task = Task(request, backParams, cacheAndLoadPath, loadPath)
-        if isASync:
-            self._downloadQueue.put(task)
-        else:
-            self._Download(task, ThreadLocalParam())
-
-    def ReDownload(self, task):
-        task.localParam = None
-        newTask = Task(task.req, task.backParam)
-        self._downloadQueue.put(newTask)
-
-    def _Download(self, task, localParam):
-        index = localParam.index
+    async def _Download(self, task: Task, index: int, sessionPool: AsyncSessionPool):
+        entry = None
         try:
             task.req.resetCnt -= 1
-            if not task.req.isReload:
-                if not isinstance(task.req, req.SpeedTestReq) and not task.req.savePath:
-                    for cachePath in [task.req.loadPath, task.req.cachePath]:
-                        if cachePath and task.bakParam:
-                            data = ToolUtil.LoadCachePicture(cachePath)
-                            if data:
-                                TaskBase.taskObj.downloadBack.emit(task.bakParam, len(data), len(data), b"")
-                                TaskBase.taskObj.downloadBack.emit(task.bakParam, 0, len(data), data)
-                                Log.Info("request{} cache -> backId:{}, {}".format(index, task.bakParam, task.req))
-                                return
+            if await self._TryLoadCache(task, index):
+                return
 
             if QtOwner().isOfflineModel:
                 task.status = Status.OfflineModel
-                self.handler.get(task.req.__class__.__name__)(task)
+                await self._InvokeHandler(task)
                 return
 
-            # 复制curl_opts
-            localParam.CheckSwitchSession(task.req)
-            task.localParam = localParam
+            if not isinstance(task.req, req.SpeedTestReq):
+                entry = await sessionPool.Acquire(task.req)
+                task._session = entry.session
 
             request = task.req
-            if request.params == None:
+            if request.params is None:
                 request.params = {}
-
-            if request.headers == None:
+            if request.headers is None:
                 request.headers = {}
+
             if not request.isReset:
                 Log.Info("request{}-> backId:{}, {}".format(index, task.bakParam, task.req))
             else:
                 Log.Info(
-                    "request{} reset:{} -> backId:{}, {}".format(index, task.req.resetCnt, task.bakParam, task.req))
-            # task.res = res.BaseRes(r)
-            # print(r.elapsed.total_seconds())
+                    "request{} reset:{} -> backId:{}, {}".format(
+                        index, task.req.resetCnt, task.bakParam, task.req
+                    )
+                )
             task.res = None
             task.index = index
+        except asyncio.CancelledError:
+            if entry is not None:
+                task._session = None
+                await sessionPool.Release(entry)
+            raise
         except Exception as es:
             task.status = Status.NetError
             Log.Warn(task.req.url + " " + es.__repr__())
-            # if (task.req.resetCnt > 0):
-            #     task.req.isReset = True
-            #     self.ReDownload(task)
-            #     return
+
         try:
-            self.handler.get(task.req.__class__.__name__)(task)
+            await self._InvokeHandler(task)
+        except asyncio.CancelledError:
+            raise
         except Exception as es:
             task.status = Status.NetError
             Log.Warn(task.req.url + " " + es.__repr__())
             Log.Debug(es)
         finally:
+            if entry is not None and task.status == Status.TimeOut:
+                await sessionPool.RetireEntry(entry, reason="timeout")
             task.res = None
+            task._session = None
             task.localParam = None
-
-    def TestSpeed(self, request, bakParams=""):
-        self.__DealHeaders(request, "")
-        task = Task(request, bakParams)
-        self._downloadQueue.put(task)
-
-    def TestSpeedPing(self, request, bakParams=""):
-        self.__DealHeaders(request, "")
-        task = Task(request, bakParams)
-        self._inQueue.put(task)
+            if entry is not None:
+                await sessionPool.Release(entry)

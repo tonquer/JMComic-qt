@@ -77,7 +77,7 @@ class ReadNewGraphics(QGraphicsView):
     # 为什么必须限：默认预取窗口是 3+12=16 张，一次性全发会把连接池占满，
     # 真正马上要看的最近几张反而排在 16 个请求后面；而且慢请求会一直占着连接。
     # 限成 5 个后，滚到新位置时先把最近的 5 张发出去，完成一个再按距离补下一个。
-    MAX_CONCURRENT_DOWNLOADS = config.DownloadThreadNum
+    # MAX_CONCURRENT_DOWNLOADS = config.DownloadThreadNum
 
     # PIXMAP_BUDGET_MB = 2048    # 已解码位图的总预算（MB）
     # RAW_BUDGET_MB = 64        # 保留的原始压缩字节总预算（MB），用于位图回收后重解
@@ -285,6 +285,10 @@ class ReadNewGraphics(QGraphicsView):
         self.scrolledPastStart.connect(self.after_switch_last_eps)
         self.scrolledPastEnd.connect(self.after_switch_next_eps)
         self._scene.installEventFilter(self)
+
+    @property
+    def MAX_CONCURRENT_DOWNLOADS(self):
+        return max(1, Setting.MultiNum.value)
 
     @property
     def MAX_CONCURRENT_WAIFU2X(self):

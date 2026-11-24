@@ -1,3 +1,6 @@
+import asyncio
+from contextlib import suppress
+import copy
 import json
 import os
 import pickle
@@ -18,6 +21,7 @@ from tools.status import Status
 from tools.log import Log
 from tools.str import Str
 from tools.tool import ToolUtil
+from .error import ClassifyRequestError
 from .server import handler, Task, Server
 from curl_cffi import requests as requests2, CurlInfo
 
@@ -959,76 +963,54 @@ class GetReqRawDataHandler(object):
 #                 TaskBase.taskObj.taskBack.emit(task.backParam, pickle.dumps(data))
 
 
+async def _CloseStreamResponse(r, finished: bool):
+    if not finished:
+        quitNow = getattr(r, "quit_now", None)
+        if quitNow is not None:
+            quitNow.set()
+        streamTask = getattr(r, "astream_task", None)
+        if streamTask is not None and not streamTask.done():
+            streamTask.cancel()
+            with suppress(asyncio.CancelledError, Exception):
+                await streamTask
+            return
+    with suppress(asyncio.CancelledError, Exception):
+        await r.aclose()
+
+
 @handler(req.DownloadBookReq)
 class DownloadBookHandler(object):
-
-    @staticmethod
-    def create_handlers(result_data):
-        result_data["fileSize"] = 1024 * 512
-        result_data["total"] = 0
-        result_data["send"] = 0
-        result_data["now"] = int(time.time())
-        result_data["data"] = bytearray()
-
-        # 1. 处理响应头：按行到达
-        def on_header(header_line: bytes):
-            line = header_line.decode("utf-8", errors="ignore").strip()
-            if line.lower().startswith("content-length:"):
-                length_val = line.split(":", 1)[1].strip()
-                result_data["fileSize"] = int(length_val)
-
-        def on_content(chunk: bytes):
-            cur = time.time()
-            tick = cur - result_data["now"]
-            result_data["data"].extend(chunk)
-            result_data["total"] += len(chunk)
-            result_data["send"] +=  len(chunk)
-            if tick >= 0.1:
-                if result_data["backParam"]:
-                    TaskBase.taskObj.downloadBack.emit(result_data["backParam"] , result_data["send"], result_data["fileSize"], b"")
-                    result_data["send"] = 0
-                    result_data["now"] = cur
-
-        return on_header, on_content
-
-    def __call__(self, backData):
+    async def __call__(self, backData):
         task = backData
         ttfb_time = 0
         status_code = 0
-        result = {"backParam": backData.backParam}
+        totalSize = 0
         if backData.status != Status.Ok:
             if backData.bakParam:
                 TaskBase.taskObj.downloadBack.emit(backData.backParam, -backData.status, 0, b"")
-        else:
-            fileSize = 0
-            request = backData.req
-            index = backData.index
-            cfHit = False
-            isSpacePic = False
-            isFail = False
-            getSize = 0
-            data = b""
+            return
+
+        fileSize = 0
+        request = backData.req
+        index = backData.index
+        cfHit = False
+        isFail = False
+        data = b""
+        try:
             try:
+                r = await task.session.get(
+                    request.url,
+                    headers=request.headers,
+                    timeout=None,
+                    proxies=request.proxy,
+                    stream=True,
+                )
+                streamFinished = False
                 try:
-                    ## curl_cffi stream无法复用http2连接，改用get请求
-
-                    # with task.session.get("GET", request.url, headers=request.headers,
-                    #                          timeout=backData.timeout, proxies=request.proxy) as r:
-
-                    _, content_cb = DownloadBookHandler.create_handlers(result)
-                    # curl_cffi未开放header_cb
-                    r = task.session.get(request.url, headers=request.headers, timeout=None,
-                                         proxies=request.proxy, content_callback=content_cb)
-
                     ttfb_time = r.infos.get(CurlInfo.STARTTRANSFER_TIME)
-                    # print(f"DNS 解析 (namelookup):   {r.infos.get(CurlInfo.NAMELOOKUP_TIME):.4f} s")
-                    # print(f"TCP 握手 (connect):      {r.infos.get(CurlInfo.CONNECT_TIME):.4f} s")
-                    # print(f"SSL 握手 (appconnect):   {r.infos.get(CurlInfo.APPCONNECT_TIME):.4f} s")
-                    # print(f"准备传输 (pretransfer):  {r.infos.get(CurlInfo.PRETRANSFER_TIME):.4f} s")
-                    # print(f"首字节响应 (starttransfer): {r.infos.get(CurlInfo.STARTTRANSFER_TIME):.4f} s")
-
                     status_code = r.status_code
                     cfHit = r.headers.get("cf-cache-status", False)
+
                     if r.status_code == 404 or r.status_code == 403:
                         backData.status = Status.Error
                         ## 404 尝试切换图片地址
@@ -1049,130 +1031,120 @@ class DownloadBookHandler(object):
                             TaskBase.taskObj.downloadBack.emit(backData.backParam, -Status.Error, fileSize, b"")
                         return
 
-                    data = bytes(result["data"])
+                    contentLen = r.headers.get("Content-Length") or r.headers.get("content-length")
+                    try:
+                        expectedSize = int(contentLen) if contentLen is not None else 1024 * 512
+                    except (TypeError, ValueError):
+                        expectedSize = 1024 * 512
+
+                    buf = bytearray()
+                    send = 0
+                    now = time.time()
+                    async for chunk in r.aiter_content():
+                        buf.extend(chunk)
+                        chunkLen = len(chunk)
+                        totalSize += chunkLen
+                        send += chunkLen
+                        cur = time.time()
+                        if cur - now >= 0.1:
+                            if backData.backParam:
+                                TaskBase.taskObj.downloadBack.emit(backData.backParam, send, expectedSize, b"")
+                            send = 0
+                            now = cur
+                    streamFinished = True
+
+                    data = bytes(buf)
                     fileSize = len(data)
-                    isSpacePic = len(data) == 0
-                    if result["send"] > 0:
-                        if backData.backParam:
-                            TaskBase.taskObj.downloadBack.emit(backData.backParam, result['send'], fileSize, b"")
+                    if send > 0 and backData.backParam:
+                        TaskBase.taskObj.downloadBack.emit(backData.backParam, send, fileSize, b"")
+                finally:
+                    await _CloseStreamResponse(r, streamFinished)
 
-                except exceptions.DNSError as es:
-                    task.status = Status.DnsError
-                    isFail = True
-                    Log.Error(es)
-                except exceptions.Timeout as es:
-                    if "Connection was reset" in str(es):
-                        task.status = Status.ResetErr
-                    elif "ECH_REJECTED" in str(es):
-                        task.status = Status.EchError
-                    elif "TLSV1_ALERT_UNRECOGNIZED_NAME" in str(es):
-                        task.status = Status.SNIError
-                    else:
-                        task.status = Status.TimeOut
-                    isFail = True
-                    Log.Error(es)
-                except exceptions.SSLError as es:
-                    if "Connection was reset" in str(es):
-                        task.status = Status.ResetErr
-                    elif "ECH_REJECTED" in str(es):
-                        task.status = Status.EchError
-                    elif "TLSV1_ALERT_UNRECOGNIZED_NAME" in str(es):
-                        task.status = Status.SNIError
-                    else:
-                        task.status = Status.NetError
-                    isFail = True
-                    Log.Error(es)
-                except exceptions.ConnectionError as es:
-                    isFail = True
-                    task.status = Status.ConnectErr
-                    Log.Error(es)
-                except exceptions.RequestException as es:
-                    if "timed out" in str(es):
-                        task.status = Status.TimeOut
-                    else:
-                        task.status = Status.ConnectErr
-                    isFail = True
-                    Log.Error(es)
-                except Exception as es:
-                    isFail = True
-                    task.status = Status.NetError
-                    Log.Error(es)
-                except:
-                    isFail = True
-                    Log.Warn(f"error:{backData.req.GetPri()}")
-
-                # 异常图片
-                if len(data) < 20 or isFail:
-                    Log.Warn(f"download_error_picture, url:{backData.req.url}, data:{len(data)}, is_fail:{isFail}")
-                    if not data and not isFail and status_code == 200:
-                        if backData.bakParam:
-                            from server.req import ServerReq
-                            ServerReq.SPACE_PIC.add(backData.req.url)
-                            TaskBase.taskObj.downloadBack.emit(backData.bakParam, -Str.SpacePic, fileSize, b"")
-                        return
-                    ## 尝试切换图片地址
-                    backData.req.ResetToSwitchNextUrl()
-                    if backData.req.resetCnt >= 0:
-                        backData.req.isReset = True
-                        if backData.bakParam:
-                            TaskBase.taskObj.downloadBack.emit(backData.backParam, -Status.Resetting, fileSize, b"")
-                        Server().ReDownload(backData)
-                        return
-                    else:
-                        if backData.status == Status.Ok:
-                            backData.status = Status.DownloadBusy
-                        if backData.bakParam:
-                            TaskBase.taskObj.downloadBack.emit(backData.backParam, -backData.status, fileSize, b"")
-                        return
-
-                # Log.Info("size:{}, url:{}".format(ToolUtil.GetDownloadSize(fileSize), backData.req.url))
-                _, _, mat, isAni = ToolUtil.GetPictureSize(data)
-
-                if len(data) > 0 and backData.req.saveParam and not isAni:
-                    try:
-                        saveParam = backData.req.saveParam
-                        newData = TaskMulti().GetJmPicResultsResult(data, saveParam[0], saveParam[1],
-                                                                    saveParam[2])
-                        if newData:
-                            data = newData
-                    except Exception as es:
-                        Log.Error(es)
-
-                if config.IsUseCache and len(data) > 0:
-                    try:
-                        if backData.req.cachePath or backData.req.savePath:
-                            if backData.req.cachePath:
-                                TaskCache().AddCacheDiskPath(ToolUtil.GetPictureName(backData.req.cachePath, mat), data)
-
-                            for path in [backData.req.savePath]:
-                                filePath = path
-                                if not path:
-                                    continue
-                                ToolUtil.SaveDownloadPicture(data, filePath, mat, isAni)
-                                Log.Debug("add download cache, cachePath:{}".format(filePath))
-                    except Exception as es:
-                        Log.Error(es)
-                        # 保存失败了
-                        if backData.bakParam:
-                            TaskBase.taskObj.downloadBack.emit(backData.backParam, -2, fileSize, b"")
-                        return
-
-                if backData.bakParam:
-                    TaskBase.taskObj.downloadBack.emit(backData.backParam, 0, fileSize, data)
-
-                Log.Info("response{}-> backId:{}, {}, st:{}, hit:{}".format(
-                    index, backData.backParam, backData.req.__class__.__name__,
-                    backData.status, cfHit))
-
+            except asyncio.CancelledError:
+                raise
             except Exception as es:
-                backData.status = Status.DownloadFail
+                isFail = True
+                task.status = ClassifyRequestError(es, isDownload=True)
                 Log.Error(es)
-                if backData.bakParam:
-                    TaskBase.taskObj.downloadBack.emit(backData.backParam, -backData.status, fileSize, b"")
-            finally:
-                if task.req.isImg and isinstance(ttfb_time, (int, float)):
-                    addSize = result.get("total", 0)
-                    TaskBase.taskObj.statuImgBack.emit(ttfb_time, backData.status, status_code, addSize)
+
+            # 异常图片
+            if len(data) < 20 or isFail:
+                Log.Warn(f"download_error_picture, url:{backData.req.url}, data:{len(data)}, is_fail:{isFail}")
+                if not data and not isFail and status_code == 200:
+                    if backData.bakParam:
+                        from server.req import ServerReq
+                        ServerReq.SPACE_PIC.add(backData.req.url)
+                        TaskBase.taskObj.downloadBack.emit(backData.bakParam, -Str.SpacePic, fileSize, b"")
+                    return
+                ## 尝试切换图片地址
+                backData.req.ResetToSwitchNextUrl()
+                if backData.req.resetCnt >= 0:
+                    backData.req.isReset = True
+                    if backData.bakParam:
+                        TaskBase.taskObj.downloadBack.emit(backData.backParam, -Status.Resetting, fileSize, b"")
+                    Server().ReDownload(backData)
+                    return
+                else:
+                    if backData.status == Status.Ok:
+                        backData.status = Status.DownloadBusy
+                    if backData.bakParam:
+                        TaskBase.taskObj.downloadBack.emit(backData.backParam, -backData.status, fileSize, b"")
+                    return
+
+            # Log.Info("size:{}, url:{}".format(ToolUtil.GetDownloadSize(fileSize), backData.req.url))
+            _, _, mat, isAni = ToolUtil.GetPictureSize(data)
+
+            if len(data) > 0 and backData.req.saveParam and not isAni:
+                try:
+                    saveParam = backData.req.saveParam
+                    newData = await asyncio.to_thread(
+                        TaskMulti().GetJmPicResultsResult,
+                        data,
+                        saveParam[0],
+                        saveParam[1],
+                        saveParam[2],
+                    )
+                    if newData:
+                        data = newData
+                except Exception as es:
+                    Log.Error(es)
+
+            if config.IsUseCache and len(data) > 0:
+                try:
+                    if backData.req.cachePath or backData.req.savePath:
+                        if backData.req.cachePath:
+                            TaskCache().AddCacheDiskPath(ToolUtil.GetPictureName(backData.req.cachePath, mat), data)
+
+                        for path in [backData.req.savePath]:
+                            filePath = path
+                            if not path:
+                                continue
+                            await asyncio.to_thread(ToolUtil.SaveDownloadPicture, data, filePath, mat, isAni)
+                            Log.Debug("add download cache, cachePath:{}".format(filePath))
+                except Exception as es:
+                    Log.Error(es)
+                    # 保存失败了
+                    if backData.bakParam:
+                        TaskBase.taskObj.downloadBack.emit(backData.backParam, -2, fileSize, b"")
+                    return
+
+            if backData.bakParam:
+                TaskBase.taskObj.downloadBack.emit(backData.backParam, 0, fileSize, data)
+
+            Log.Info("response{}-> backId:{}, {}, st:{}, hit:{}".format(
+                index, backData.backParam, backData.req.__class__.__name__,
+                backData.status, cfHit))
+
+        except asyncio.CancelledError:
+            raise
+        except Exception as es:
+            backData.status = Status.DownloadFail
+            Log.Error(es)
+            if backData.bakParam:
+                TaskBase.taskObj.downloadBack.emit(backData.backParam, -backData.status, fileSize, b"")
+        finally:
+            if task.req.isImg and isinstance(ttfb_time, (int, float)):
+                TaskBase.taskObj.statuImgBack.emit(ttfb_time, backData.status, status_code, totalSize)
 
 
 @handler(req.GetProxyIpInfoReq)
@@ -1312,7 +1284,7 @@ class GetJmServerHandler(object):
 
 @handler(req.SpeedTestReq)
 class SpeedTestHandler(object):
-    def __call__(self, backData):
+    async def __call__(self, backData):
         data = {"st": backData.status, "data": ""}
         if backData.status != Status.Ok:
             if backData.bakParam:
@@ -1322,8 +1294,15 @@ class SpeedTestHandler(object):
             index = backData.index
             try:
                 now = time.time()
-                r = requests2.get(request.url, headers=request.headers,timeout=backData.timeout,
-                               proxies=request.proxy, curl_options=request.curl_opt)
+                async with requests2.AsyncSession(
+                    curl_options=copy.deepcopy(request.curl_opt), max_clients=1
+                ) as session:
+                    r = await session.get(
+                        request.url,
+                        headers=request.headers,
+                        timeout=backData.timeout,
+                        proxies=request.proxy,
+                    )
 
                 fileSize = int(r.headers.get('Content-Length', 0))
                 getSize = len(r.content)
@@ -1347,6 +1326,8 @@ class SpeedTestHandler(object):
                     data["data"] = speed
                     TaskBase.taskObj.taskBack.emit(backData.bakParam, pickle.dumps(data))
 
+            except asyncio.CancelledError:
+                raise
             except Exception as es:
                 Log.Error(es)
                 data["st"] = Status.DownloadFail

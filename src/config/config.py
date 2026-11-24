@@ -2,7 +2,8 @@
 
 ProjectName = "JMComic"
 ThreadNum = 5                  # 线程
-DownloadThreadNum = 5          # 下载线程
+SpeedThreadNum = 8                  # 线程
+# DownloadThreadNum = 5          # 下载线程
 ConvertThreadNum = 3           # 转换线程
 ResetDownloadCnt = 3           # 下载图片重试次数
 ResetDownloadCntDefault = 2           # 下载封面重试次数
