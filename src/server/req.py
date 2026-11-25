@@ -1409,7 +1409,7 @@ class SpeedTestPingReq(ServerReq):
         self.headers['pragma'] = 'no-cache'
         self.headers["authorization"] = ""
         self.isReload = False
-        self.timeout = 3
+        self.timeout = 5
 
 
 # 测试Ping
@@ -1424,7 +1424,7 @@ class SpeedTestPing2Req(ServerReq):
         self.headers['pragma'] = 'no-cache'
         self.headers["authorization"] = ""
         self.isReload = False
-        self.timeout = 3
+        self.timeout = 5
 
 
 class SpeedTestReq(ServerReq):

@@ -104,11 +104,16 @@ class LoginProxyNewWidget(object):
         self.owner.radioProxyGroup.setId(self.owner.proxy_2, 2)
         self.owner.radioProxyGroup.setId(self.owner.proxy_3, 3)
 
+        self.maxNum = 7
+        self.cdnIndex = 5
+        self.apiRouteBaseText = {}
+        self.imgRouteBaseText = {}
+
         self.LoadSetting()
+        self.RefreshRouteBaseTexts()
 
         # self.UpdateServer()
         self.owner.cdnLinkButton.clicked.connect(self.OpenUrl)
-        self.maxNum = 7
         # self.loginProxy.hide()
         # self.uaRandom.clicked.connect(self.RandomUa)
         self.lastResult = {}
@@ -155,7 +160,6 @@ class LoginProxyNewWidget(object):
         self.ShowAllItem()
         self.LoadHistory()
         self.Sort()
-        self.cdnIndex = 5
         self.owner.proxyIpEdit.SetWordData(["JP", "US", "HK", "SG", "KR", "GB", "FR", "NL"])
         pass
 
@@ -300,6 +304,8 @@ class LoginProxyNewWidget(object):
         self.owner.http3Box.setChecked(bool(Setting.IsOpenHTTP3.value))
         self.owner.ipListEdit.setText(Setting.PreferCDNList.value)
         self.owner.proxyIpEdit.setText(Setting.ProxyIpCountry.value)
+        if self.apiRouteBaseText or self.imgRouteBaseText:
+            self.UpdateRouteDohText()
 
     def SaveSetting(self):
         Setting.IsHttpProxy.SetValue(int(self.owner.radioProxyGroup.checkedId()))
@@ -344,10 +350,68 @@ class LoginProxyNewWidget(object):
     def SwitchDohBox(self):
         QtOwner().settingView.CheckButtonEvent(Setting.EnableDoh, self.owner.dohBox)
         if Setting.EnableDoh.value:
+            self.UpdateRouteDohText()
             self.InitDohDns(force=False, dohAddress=self.owner.dohLine.text().strip())
         else:
             self.dohQueryGen += 1
             self.pendingDohHosts.clear()
+            self.UpdateRouteDohText()
+
+    def RefreshRouteBaseTexts(self):
+        self.apiRouteBaseText = {}
+        self.imgRouteBaseText = {}
+        for i in range(1, self.maxNum):
+            if i == self.cdnIndex:
+                continue
+            apiBtn = getattr(self.owner, f"radioButton_{i}", None)
+            if apiBtn:
+                self.apiRouteBaseText[i] = apiBtn.text()
+            imgBtn = getattr(self.owner, f"radio_img_{i}", None)
+            if imgBtn:
+                self.imgRouteBaseText[i] = imgBtn.text()
+        self.UpdateRouteDohText()
+
+    @staticmethod
+    def GetRouteHost(isApi, index):
+        if GlobalConfig.IsCdnIndex(index):
+            return ""
+        if GlobalConfig.IsProxyUrlIndex(index):
+            url = GlobalConfig.ProxyApiDomain2.value if isApi else GlobalConfig.ProxyImgDomain2.value
+        else:
+            url = GlobalConfig.GetApiUrl2(index) if isApi else GlobalConfig.GetImgUrl2(index)
+        return ToolUtil.GetUrlHost(url)
+
+    def UpdateRouteDohText(self):
+        enableDoh = bool(Setting.EnableDoh.value)
+        dohIpDict = QtOwner().dohIpDict
+        for i in range(1, self.maxNum):
+            if i == self.cdnIndex:
+                continue
+            apiBtn = getattr(self.owner, f"radioButton_{i}", None)
+            if apiBtn:
+                baseText = self.apiRouteBaseText.get(i, apiBtn.text())
+                host = self.GetRouteHost(True, i)
+                ips = dohIpDict.get(host) if (enableDoh and host) else None
+                if ips:
+                    ipText = ", ".join(ips)
+                    apiBtn.setText(f"{baseText} ({ipText})")
+                    apiBtn.setToolTip(f"{host}: {ipText}")
+                else:
+                    apiBtn.setText(baseText)
+                    apiBtn.setToolTip("")
+
+            imgBtn = getattr(self.owner, f"radio_img_{i}", None)
+            if imgBtn:
+                baseText = self.imgRouteBaseText.get(i, imgBtn.text())
+                host = self.GetRouteHost(False, i)
+                ips = dohIpDict.get(host) if (enableDoh and host) else None
+                if ips:
+                    ipText = ", ".join(ips)
+                    imgBtn.setText(f"{baseText} ({ipText})")
+                    imgBtn.setToolTip(f"{host}: {ipText}")
+                else:
+                    imgBtn.setText(baseText)
+                    imgBtn.setToolTip("")
 
     @staticmethod
     def GetDohDomains():
@@ -396,6 +460,7 @@ class LoginProxyNewWidget(object):
         dohChanged = bool(self.lastDohQueryUrl and curDoh != self.lastDohQueryUrl)
         if dohChanged:
             QtOwner().dohIpDict = {}
+            self.UpdateRouteDohText()
             force = True
         self.lastDohQueryUrl = curDoh
 
@@ -429,6 +494,7 @@ class LoginProxyNewWidget(object):
             ips = req.DnsOverHttpsReq.ParseAnswerIps(raw.get("Answer"))
             if ips:
                 QtOwner().dohIpDict[host] = ips[:self.maxSelectIp]
+                self.UpdateRouteDohText()
                 Log.Info(f"update doh ip, host:{host}, ips:{ips}")
                 return
         Log.Warn(f"doh dns query fail, host:{host}, st:{st}")
@@ -799,6 +865,10 @@ class LoginProxyNewWidget(object):
         self.owner.tableWidget.setCellWidget(rowCont, 0, checkBox)
         self.proxyIpGroup.addButton(checkBox)
         self.proxyIpGroup.setId(checkBox, index)
+        speedLabel = QLabel()
+        speedLabel.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)
+        speedLabel.setStyleSheet("background-color:transparent;padding-left:6px;")
+        self.owner.tableWidget.setCellWidget(rowCont, 4, speedLabel)
 
     def UpdateRow(self, info):
         assert isinstance(info, IpItem)
@@ -810,22 +880,23 @@ class LoginProxyNewWidget(object):
             widget.setChecked(info.isSelect)
         # self.owner.tableWidget.setItem(info.tableRow, 0, QTableWidgetItem(info.name))
         self.owner.tableWidget.setItem(info.tableRow, 1, QTableWidgetItem(info.ip))
-        speed = ""
-        if info.delay:
-            speed = str(int(float(info.delay))) + "ms"
+        parts = []
         if info.isFail:
-            speed = Str.GetStr(info.st)
-        if info.downloadDelay:
-            speed += "/" + str(int(float(info.downloadDelay))) + "ms"
+            parts.append('<font color="#d71345">{}</font>'.format(Str.GetStr(info.st)))
+        elif info.delay:
+            parts.append(str(int(float(info.delay))) + "ms")
         if info.downloadFail:
-            speed += "/" + Str.GetStr(info.downloadSt)
-
-            # speed = ""
-        # if info.delay:
-        #     speed = "<font color=#7fb80e>{}</font>".format(str(int(float(info.delay))) + "ms")
-        # if info.isFail:
-        #     speed = "<font color=#d71345>{}</font>".format(Str.GetStr(info.st))
-        self.owner.tableWidget.setItem(info.tableRow, 4, QTableWidgetItem(speed))
+            parts.append('<font color="#d71345">{}</font>'.format(Str.GetStr(info.downloadSt)))
+        elif info.downloadDelay:
+            parts.append(str(int(float(info.downloadDelay))) + "ms")
+        speedHtml = "/".join(parts)
+        speedLabel = self.owner.tableWidget.cellWidget(info.tableRow, 4)
+        if not isinstance(speedLabel, QLabel):
+            speedLabel = QLabel()
+            speedLabel.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)
+            speedLabel.setStyleSheet("background-color:transparent;padding-left:6px;")
+            self.owner.tableWidget.setCellWidget(info.tableRow, 4, speedLabel)
+        speedLabel.setText(speedHtml)
         self.owner.tableWidget.setItem(info.tableRow, 2, QTableWidgetItem(info.country))
         self.owner.tableWidget.setItem(info.tableRow, 3, QTableWidgetItem(info.asn))
 

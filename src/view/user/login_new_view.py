@@ -47,6 +47,8 @@ class LoginNewView(QtWidgets.QWidget, Ui_LoginNew, QtTaskBase):
     def retranslateUi(self, Nas):
         self.tab_4.setStyleSheet("")
         Ui_LoginNew.retranslateUi(self, self)
+        if hasattr(self, "proxyWidget") and self.proxyWidget:
+            self.proxyWidget.RefreshRouteBaseTexts()
 
     def SwitchCurrent(self, **kwargs):
         if not self.isInit:
