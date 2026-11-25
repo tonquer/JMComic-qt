@@ -16,7 +16,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QSizePolicy,
-    QSpacerItem, QToolButton, QVBoxLayout, QWidget)
+    QToolButton, QVBoxLayout, QWidget)
 
 from component.label.comic_label import ComicLabel
 
@@ -55,55 +55,50 @@ class Ui_ComicItem(object):
 "  border-left: 0px;\n"
 "}")
         self.verticalLayout_2 = QVBoxLayout(ComicItem)
+        self.verticalLayout_2.setSpacing(4)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.verticalLayout_2.setContentsMargins(8, 8, 8, 8)
         self.picLabel = ComicLabel(ComicItem)
         self.picLabel.setObjectName(u"picLabel")
-        self.picLabel.setAlignment(Qt.AlignCenter)
+        self.picLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.verticalLayout_2.addWidget(self.picLabel)
-
-        self.verticalSpacer = QSpacerItem(10, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
-
-        self.verticalLayout_2.addItem(self.verticalSpacer)
+        self.verticalLayout_2.addWidget(self.picLabel, 0, Qt.AlignmentFlag.AlignHCenter)
 
         self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setSpacing(6)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalLayout.setContentsMargins(0, 2, 0, 0)
         self.toolButton = QToolButton(ComicItem)
         self.toolButton.setObjectName(u"toolButton")
-        self.toolButton.setMinimumSize(QSize(60, 40))
+        self.toolButton.setMinimumSize(QSize(0, 20))
 
         self.horizontalLayout.addWidget(self.toolButton)
 
         self.categoryLabel = QLabel(ComicItem)
         self.categoryLabel.setObjectName(u"categoryLabel")
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred)
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.categoryLabel.sizePolicy().hasHeightForWidth())
+        self.categoryLabel.setSizePolicy(sizePolicy)
         self.categoryLabel.setMaximumSize(QSize(16777215, 16777215))
-        self.categoryLabel.setStyleSheet(u"color: rgb(133,133,133);\n"
-"")
 
         self.horizontalLayout.addWidget(self.categoryLabel)
 
-
-        self.verticalLayout_2.addLayout(self.horizontalLayout)
-
-        self.horizontalLayout_2 = QHBoxLayout()
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.starButton = QToolButton(ComicItem)
         self.starButton.setObjectName(u"starButton")
         self.starButton.setMaximumSize(QSize(16777215, 16777215))
-        self.starButton.setStyleSheet(u"color: rgb(133,133,133);\n"
-"background-color:transparent;")
 
-        self.horizontalLayout_2.addWidget(self.starButton, 0, Qt.AlignLeft)
+        self.horizontalLayout.addWidget(self.starButton)
 
         self.timeLabel = QLabel(ComicItem)
         self.timeLabel.setObjectName(u"timeLabel")
-        self.timeLabel.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+        self.timeLabel.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
 
-        self.horizontalLayout_2.addWidget(self.timeLabel, 0, Qt.AlignRight)
+        self.horizontalLayout.addWidget(self.timeLabel, 0, Qt.AlignmentFlag.AlignRight)
 
 
-        self.verticalLayout_2.addLayout(self.horizontalLayout_2)
+        self.verticalLayout_2.addLayout(self.horizontalLayout)
 
         self.nameLable = QLabel(ComicItem)
         self.nameLable.setObjectName(u"nameLable")

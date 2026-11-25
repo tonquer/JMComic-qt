@@ -36,7 +36,7 @@ class Ui_SettingNew(object):
         self.msgLabel = QLabel(SettingNew)
         self.msgLabel.setObjectName(u"msgLabel")
         self.msgLabel.setEnabled(True)
-        self.msgLabel.setStyleSheet(u"color: rgb(255, 0, 0);")
+        self.msgLabel.setProperty(u"role", u"danger")
 
         self.verticalLayout_2.addWidget(self.msgLabel, 0, Qt.AlignmentFlag.AlignLeft)
 
@@ -73,13 +73,6 @@ class Ui_SettingNew(object):
 
         self.scrollArea = SmoothScrollArea(SettingNew)
         self.scrollArea.setObjectName(u"scrollArea")
-        self.scrollArea.setStyleSheet(u".QFrame\n"
-"         {\n"
-"         background-color: rgb(253, 253, 253);\n"
-"\n"
-"         border:2px solid rgb(234,234,234);\n"
-"         border-radius:5px\n"
-"         }        ")
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
@@ -105,7 +98,7 @@ class Ui_SettingNew(object):
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.label_update = QLabel(self.frame_1)
         self.label_update.setObjectName(u"label_update")
-        self.label_update.setMaximumSize(QSize(16777215, 19))
+        self.label_update.setMaximumSize(QSize(16777215, 16777215))
         self.label_update.setFont(font1)
 
         self.verticalLayout_3.addWidget(self.label_update)
@@ -126,7 +119,7 @@ class Ui_SettingNew(object):
         self.verticalLayout_20.setObjectName(u"verticalLayout_20")
         self.label_37 = QLabel(self.frame_16)
         self.label_37.setObjectName(u"label_37")
-        self.label_37.setMaximumSize(QSize(16777215, 19))
+        self.label_37.setMaximumSize(QSize(16777215, 16777215))
         self.label_37.setFont(font1)
 
         self.verticalLayout_20.addWidget(self.label_37)
@@ -621,7 +614,7 @@ class Ui_SettingNew(object):
         self.prefetchCountHelp = QLabel(self.prefetchFrame)
         self.prefetchCountHelp.setObjectName(u"prefetchCountHelp")
         self.prefetchCountHelp.setMaximumSize(QSize(24, 24))
-        self.prefetchCountHelp.setStyleSheet(u"color: rgb(110, 110, 110); font-size: 16px;")
+        self.prefetchCountHelp.setProperty(u"role", u"muted")
         self.prefetchCountHelp.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.prefetchCountLayout.addWidget(self.prefetchCountHelp)
@@ -672,7 +665,7 @@ class Ui_SettingNew(object):
 
         self.showCountHelp = QLabel(self.prefetchFrame)
         self.showCountHelp.setObjectName(u"showCountHelp")
-        self.showCountHelp.setStyleSheet(u"color: rgb(110, 110, 110); font-size: 16px;")
+        self.showCountHelp.setProperty(u"role", u"muted")
 
         self.horizontalLayout_35.addWidget(self.showCountHelp)
 
@@ -698,7 +691,7 @@ class Ui_SettingNew(object):
         self.prefetchWholeChapterHelp = QLabel(self.prefetchFrame)
         self.prefetchWholeChapterHelp.setObjectName(u"prefetchWholeChapterHelp")
         self.prefetchWholeChapterHelp.setMaximumSize(QSize(24, 24))
-        self.prefetchWholeChapterHelp.setStyleSheet(u"color: rgb(110, 110, 110); font-size: 16px;")
+        self.prefetchWholeChapterHelp.setProperty(u"role", u"muted")
         self.prefetchWholeChapterHelp.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.prefetchWholeChapterLayout.addWidget(self.prefetchWholeChapterHelp)
@@ -847,7 +840,7 @@ class Ui_SettingNew(object):
         self.verticalLayout_9.setObjectName(u"verticalLayout_9")
         self.label_9 = QLabel(self.frame_6)
         self.label_9.setObjectName(u"label_9")
-        self.label_9.setMaximumSize(QSize(16777215, 19))
+        self.label_9.setMaximumSize(QSize(16777215, 16777215))
         self.label_9.setFont(font1)
 
         self.verticalLayout_9.addWidget(self.label_9)

@@ -43,6 +43,10 @@ class Ui_LoginNew(object):
         self.verticalLayout_3.setSpacing(12)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.verticalLayout_3.setContentsMargins(-1, 9, 9, 9)
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.verticalLayout_3.addItem(self.verticalSpacer)
+
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
@@ -52,11 +56,9 @@ class Ui_LoginNew(object):
         self.widget = QWidget(self.tab)
         self.widget.setObjectName(u"widget")
         self.verticalLayout = QVBoxLayout(self.widget)
+        self.verticalLayout.setSpacing(12)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
-
-        self.verticalLayout.addItem(self.verticalSpacer)
-
+        self.verticalLayout.setContentsMargins(28, 28, 28, 28)
         self.label_5 = QLabel(self.widget)
         self.label_5.setObjectName(u"label_5")
 
@@ -103,10 +105,6 @@ class Ui_LoginNew(object):
 
         self.verticalLayout.addWidget(self.loginButton)
 
-        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
-
-        self.verticalLayout.addItem(self.verticalSpacer_2)
-
 
         self.horizontalLayout.addWidget(self.widget)
 
@@ -116,6 +114,10 @@ class Ui_LoginNew(object):
 
 
         self.verticalLayout_3.addLayout(self.horizontalLayout)
+
+        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.verticalLayout_3.addItem(self.verticalSpacer_2)
 
         self.tabWidget.addTab(self.tab, "")
         self.tab_2 = QWidget()
@@ -544,7 +546,7 @@ class Ui_LoginNew(object):
         font = QFont()
         font.setBold(False)
         self.checkLabel.setFont(font)
-        self.checkLabel.setStyleSheet(u"color:rgb(255, 0, 0)")
+        self.checkLabel.setProperty(u"role", u"danger")
 
         self.horizontalLayout_18.addWidget(self.checkLabel)
 
@@ -887,7 +889,7 @@ class Ui_LoginNew(object):
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.label_25 = QLabel(self.scrollAreaWidgetContents_3)
         self.label_25.setObjectName(u"label_25")
-        self.label_25.setStyleSheet(u"color:rgb(255, 0, 0)")
+        self.label_25.setProperty(u"role", u"danger")
 
         self.verticalLayout_2.addWidget(self.label_25)
 
@@ -1064,7 +1066,9 @@ class Ui_LoginNew(object):
     def retranslateUi(self, LoginNew):
         LoginNew.setWindowTitle(QCoreApplication.translate("LoginNew", u"\u767b\u5f55", None))
         self.label_5.setText(QCoreApplication.translate("LoginNew", u"\u7528\u6237\u540d", None))
+        self.userEdit_2.setPlaceholderText(QCoreApplication.translate("LoginNew", u"\u8bf7\u8f93\u5165\u7528\u6237\u540d", None))
         self.label_6.setText(QCoreApplication.translate("LoginNew", u"\u5bc6\u7801", None))
+        self.passwdEdit_2.setPlaceholderText(QCoreApplication.translate("LoginNew", u"\u8bf7\u8f93\u5165\u5bc6\u7801", None))
         self.saveBox.setText(QCoreApplication.translate("LoginNew", u"\u4fdd\u5b58\u5bc6\u7801", None))
         self.autoBox.setText(QCoreApplication.translate("LoginNew", u"\u81ea\u52a8\u767b\u5f55", None))
         self.autoSign.setText(QCoreApplication.translate("LoginNew", u"\u81ea\u52a8\u6253\u5361", None))

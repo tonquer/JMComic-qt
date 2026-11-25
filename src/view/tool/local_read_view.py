@@ -88,26 +88,31 @@ class LocalReadView(QWidget, Ui_Local, QtTaskBase):
         self.RefreshTheme()
 
     def RefreshTheme(self):
-        self.tagsList.setStyleSheet(u"QListWidget {background-color:transparent;}\n"
-                                    "QListWidget::item {\n"
-                                    f"    background-color:{QtOwner().GetThemeColorList(1)};\n"
-                                    f"    color: {QtOwner().GetThemeColorList(2)};\n"
-                                    "	border:2px solid red;\n"
-                                    "    border-radius: 10px;\n"
-                                    f"	border-color:{QtOwner().GetThemeColorList(2)};\n"
-                                    "}\n"
-                                    " QListWidget::item:hover \n"
-                                    "{\n"
-                                    "    background-color:rgb(21, 85, 154);\n"
-                                    "    border-radius: 10px;\n"
-                                    "    color: rgb(0, 0, 0);\n"
-                                    "}\n"
-                                    " QListWidget::item:selected \n"
-                                    "{\n"
-                                    "    background-color:rgb(21, 85, 154);\n"
-                                    "    border-radius: 10px;\n"
-                                    "    color: rgb(0, 0, 0);\n"
-                                    "}")
+        primary = QtOwner().GetThemeColorList(0)
+        softBg = QtOwner().GetThemeColorList(1)
+        accentText = QtOwner().GetThemeColorList(2)
+        self.tagsList.setStyleSheet(
+            f"""
+            QListWidget {{
+                background-color: transparent;
+                border: none;
+            }}
+            QListWidget::item {{
+                background-color: {softBg};
+                color: {accentText};
+                border: 1px solid {accentText};
+                border-radius: 8px;
+                padding: 4px 10px;
+            }}
+            QListWidget::item:hover,
+            QListWidget::item:selected {{
+                background-color: {primary};
+                border: 1px solid {primary};
+                border-radius: 8px;
+                color: #FFFFFF;
+            }}
+            """
+        )
 
     def SearchTextChange(self, text):
         self.searchText = text

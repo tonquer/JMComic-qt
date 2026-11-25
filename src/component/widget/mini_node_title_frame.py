@@ -14,42 +14,42 @@ HISTORY_SIZE = 100
 # 两套主题的调色板定义
 THEMES = {
     "dark": {
-        "container_bg": "#111317",
-        "container_border": "#282c37",
-        "title_color": "#64748b",
-        "btn_hover": "#334155",
-        "tile_bg": "#1a1d24",
-        "tile_border": "#282c37",
-        "tile_hover_bg": "#222631",
-        "tile_hover_border": "#3b82f6",
-        "name_color": "#F3F3F3",
-        "loss_normal": "#64748b",
-        "ping_default": "#94a3b8",
+        "container_bg": "#181A1F",
+        "container_border": "#2E333E",
+        "title_color": "#94A3B8",
+        "btn_hover": "#2F3440",
+        "tile_bg": "#22252D",
+        "tile_border": "#2E333E",
+        "tile_hover_bg": "#282C36",
+        "tile_hover_border": "#FF8A1F",
+        "name_color": "#E8ECF2",
+        "loss_normal": "#64748B",
+        "ping_default": "#94A3B8",
         # 状态颜色
-        "status_good": "#22c55e",
-        "status_fair": "#eab308",
-        "status_poor": "#f97316",
-        "status_down": "#ef4444",
-        "status_init": "#4b5563"
+        "status_good": "#10B981",
+        "status_fair": "#F59E0B",
+        "status_poor": "#F97316",
+        "status_down": "#EF4444",
+        "status_init": "#4B5563"
     },
     "light": {
-        "container_bg": "#f8fafc",
-        "container_border": "#cbd5e1",
-        "title_color": "#64748b",
-        "btn_hover": "#e2e8f0",
-        "tile_bg": "#ffffff",
-        "tile_border": "#e2e8f0",
-        "tile_hover_bg": "#f1f5f9",
-        "tile_hover_border": "#3b82f6",
-        "name_color": "#31363B",
-        "loss_normal": "#94a3b8",
-        "ping_default": "#64748b",
+        "container_bg": "#F8F9FB",
+        "container_border": "#CBD5E1",
+        "title_color": "#64748B",
+        "btn_hover": "#E2E8F0",
+        "tile_bg": "#FFFFFF",
+        "tile_border": "#E2E8F0",
+        "tile_hover_bg": "#F1F5F9",
+        "tile_hover_border": "#F97316",
+        "name_color": "#1E293B",
+        "loss_normal": "#94A3B8",
+        "ping_default": "#64748B",
         # 状态颜色
-        "status_good": "#16a34a",
-        "status_fair": "#ca8a04",
-        "status_poor": "#ea580c",
-        "status_down": "#dc2626",
-        "status_init": "#94a3b8"
+        "status_good": "#059669",
+        "status_fair": "#D97706",
+        "status_poor": "#EA580C",
+        "status_down": "#DC2626",
+        "status_init": "#94A3B8"
     }
 }
 
@@ -96,6 +96,7 @@ class MiniNodeTileFrame(QFrame):
         # 累计总流量（字节），由外部通过 set_traffic() 注入；None 表示暂无数据
         self.traffic_total = None
         self.current_theme = "light"
+        self.setCursor(Qt.PointingHandCursor)
 
         # self.setFixedSize(82, 42)
         # self.setToolTip(f"{name}\n{host}")
@@ -151,18 +152,20 @@ class MiniNodeTileFrame(QFrame):
         return
 
     def apply_theme(self, theme_name):
+        from qt_owner import QtOwner
         self.current_theme = theme_name
         palette = THEMES[theme_name]
+        hoverBorder = QtOwner().GetThemeColorList(0)
 
         self.setStyleSheet(f"""
             MiniNodeTileFrame {{
                 background-color: {palette["tile_bg"]};
                 border: 1px solid {palette["tile_border"]};
-                border-radius: 5px;
+                border-radius: 6px;
             }}
             MiniNodeTileFrame:hover {{
                 background-color: {palette["tile_hover_bg"]};
-                border-color: {palette["tile_hover_border"]};
+                border-color: {hoverBorder};
             }}
         """)
         self.lbl_name.setStyleSheet(f"color: {palette['name_color']}; font-size: 11px; font-weight: bold;")

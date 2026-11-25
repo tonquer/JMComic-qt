@@ -28,7 +28,6 @@ class UserListWidget(BaseListWidget):
         self.setFocusPolicy(Qt.NoFocus)
 
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setStyleSheet("QListWidget::item { border-bottom: 1px solid black; }")
 
     def AddUserItem(self, info, floor, isSub=False):
         from tools.book import CommentInfo

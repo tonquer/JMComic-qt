@@ -22,8 +22,8 @@
      <property name="enabled">
       <bool>true</bool>
      </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(255, 0, 0);</string>
+     <property name="role" stdset="0">
+      <string notr="true">danger</string>
      </property>
      <property name="text">
       <string>你修改的部分设置，需要重启生效</string>
@@ -79,15 +79,6 @@
      </item>
      <item>
       <widget class="SmoothScrollArea" name="scrollArea">
-       <property name="styleSheet">
-        <string notr="true">.QFrame
-         {
-         background-color: rgb(253, 253, 253);
-
-         border:2px solid rgb(234,234,234);
-         border-radius:5px
-         }        </string>
-       </property>
        <property name="widgetResizable">
         <bool>true</bool>
        </property>
@@ -132,7 +123,7 @@
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
-                <height>19</height>
+                <height>16777215</height>
                </size>
               </property>
               <property name="font">
@@ -169,7 +160,7 @@
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
-                <height>19</height>
+                <height>16777215</height>
                </size>
               </property>
               <property name="font">
@@ -1113,8 +1104,8 @@
                 <property name="toolTip">
                  <string>设置当前页之后预取的图片数量，下载并发数固定为5</string>
                 </property>
-                <property name="styleSheet">
-                 <string notr="true">color: rgb(110, 110, 110); font-size: 16px;</string>
+                <property name="role" stdset="0">
+                 <string notr="true">muted</string>
                 </property>
                 <property name="text">
                  <string>ⓘ</string>
@@ -1197,8 +1188,8 @@
                 <property name="toolTip">
                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;滚动模式下，显示的范围，需小于预下载数量，调大滚动时可减少加载图的闪烁&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
-                <property name="styleSheet">
-                 <string notr="true">color: rgb(110, 110, 110); font-size: 16px;</string>
+                <property name="role" stdset="0">
+                 <string notr="true">muted</string>
                 </property>
                 <property name="text">
                  <string>ⓘ</string>
@@ -1243,8 +1234,8 @@
                 <property name="toolTip">
                  <string>忽略预取数量限制，预取当前页之后直到本章末尾的全部图片</string>
                 </property>
-                <property name="styleSheet">
-                 <string notr="true">color: rgb(110, 110, 110); font-size: 16px;</string>
+                <property name="role" stdset="0">
+                 <string notr="true">muted</string>
                 </property>
                 <property name="text">
                  <string>ⓘ</string>
@@ -1499,7 +1490,7 @@
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
-                <height>19</height>
+                <height>16777215</height>
                </size>
               </property>
               <property name="font">

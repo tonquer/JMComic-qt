@@ -21,14 +21,14 @@
        <widget class="HeadLabel" name="picLabel">
         <property name="minimumSize">
          <size>
-          <width>100</width>
-          <height>100</height>
+          <width>72</width>
+          <height>72</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>100</width>
-          <height>100</height>
+          <width>72</width>
+          <height>72</height>
          </size>
         </property>
         <property name="text">
@@ -241,7 +241,7 @@
    <item>
     <widget class="SmoothScrollArea" name="scrollArea">
      <property name="verticalScrollBarPolicy">
-      <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOn</enum>
+      <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
      </property>
      <property name="horizontalScrollBarPolicy">
       <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
@@ -301,14 +301,10 @@
          <property name="text">
           <string>我的收藏</string>
          </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>:/images/menu/Contact.png</normaloff>:/images/menu/Contact.png</iconset>
-         </property>
          <property name="iconSize">
           <size>
-           <width>32</width>
-           <height>32</height>
+           <width>18</width>
+           <height>18</height>
           </size>
          </property>
          <property name="checkable">
@@ -342,14 +338,10 @@
          <property name="text">
           <string>我的评论</string>
          </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>:/images/menu/Contact.png</normaloff>:/images/menu/Contact.png</iconset>
-         </property>
          <property name="iconSize">
           <size>
-           <width>32</width>
-           <height>32</height>
+           <width>18</width>
+           <height>18</height>
           </size>
          </property>
          <property name="checkable">
@@ -383,14 +375,10 @@
          <property name="text">
           <string>观看记录</string>
          </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>:/images/menu/Contact.png</normaloff>:/images/menu/Contact.png</iconset>
-         </property>
          <property name="iconSize">
           <size>
-           <width>32</width>
-           <height>32</height>
+           <width>18</width>
+           <height>18</height>
           </size>
          </property>
          <property name="checkable">
@@ -424,14 +412,10 @@
          <property name="text">
           <string>本地收藏</string>
          </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>:/images/menu/Contact.png</normaloff>:/images/menu/Contact.png</iconset>
-         </property>
          <property name="iconSize">
           <size>
-           <width>32</width>
-           <height>32</height>
+           <width>18</width>
+           <height>18</height>
           </size>
          </property>
          <property name="checkable">
@@ -465,14 +449,10 @@
          <property name="text">
           <string>本地记录</string>
          </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>:/images/menu/Contact.png</normaloff>:/images/menu/Contact.png</iconset>
-         </property>
          <property name="iconSize">
           <size>
-           <width>32</width>
-           <height>32</height>
+           <width>18</width>
+           <height>18</height>
           </size>
          </property>
          <property name="checkable">
@@ -520,14 +500,10 @@
          <property name="text">
           <string>首页</string>
          </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>:/images/menu/Contact.png</normaloff>:/images/menu/Contact.png</iconset>
-         </property>
          <property name="iconSize">
           <size>
-           <width>32</width>
-           <height>32</height>
+           <width>18</width>
+           <height>18</height>
           </size>
          </property>
          <property name="checkable">
@@ -570,14 +546,10 @@
          <property name="text">
           <string>搜索</string>
          </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>:/images/menu/Contact.png</normaloff>:/images/menu/Contact.png</iconset>
-         </property>
          <property name="iconSize">
           <size>
-           <width>32</width>
-           <height>32</height>
+           <width>18</width>
+           <height>18</height>
           </size>
          </property>
          <property name="checkable">
@@ -617,14 +589,10 @@
          <property name="text">
           <string>分类与排行</string>
          </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>:/images/menu/Contact.png</normaloff>:/images/menu/Contact.png</iconset>
-         </property>
          <property name="iconSize">
           <size>
-           <width>32</width>
-           <height>32</height>
+           <width>18</width>
+           <height>18</height>
           </size>
          </property>
          <property name="checkable">
@@ -664,14 +632,10 @@
          <property name="text">
           <string>每周必看</string>
          </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>:/images/menu/Contact.png</normaloff>:/images/menu/Contact.png</iconset>
-         </property>
          <property name="iconSize">
           <size>
-           <width>32</width>
-           <height>32</height>
+           <width>18</width>
+           <height>18</height>
           </size>
          </property>
          <property name="checkable">
@@ -711,14 +675,10 @@
          <property name="text">
           <string>评论</string>
          </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>:/images/menu/Contact.png</normaloff>:/images/menu/Contact.png</iconset>
-         </property>
          <property name="iconSize">
           <size>
-           <width>32</width>
-           <height>32</height>
+           <width>18</width>
+           <height>18</height>
           </size>
          </property>
          <property name="checkable">
@@ -772,14 +732,10 @@
          <property name="text">
           <string>下载</string>
          </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>:/images/menu/Contact.png</normaloff>:/images/menu/Contact.png</iconset>
-         </property>
          <property name="iconSize">
           <size>
-           <width>32</width>
-           <height>32</height>
+           <width>18</width>
+           <height>18</height>
           </size>
          </property>
          <property name="checkable">
@@ -813,14 +769,10 @@
          <property name="text">
           <string>网络存储</string>
          </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>:/images/menu/Contact.png</normaloff>:/images/menu/Contact.png</iconset>
-         </property>
          <property name="iconSize">
           <size>
-           <width>32</width>
-           <height>32</height>
+           <width>18</width>
+           <height>18</height>
           </size>
          </property>
          <property name="checkable">
@@ -854,14 +806,10 @@
          <property name="text">
           <string>本地漫画</string>
          </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>:/images/menu/Contact.png</normaloff>:/images/menu/Contact.png</iconset>
-         </property>
          <property name="iconSize">
           <size>
-           <width>32</width>
-           <height>32</height>
+           <width>18</width>
+           <height>18</height>
           </size>
          </property>
          <property name="checkable">
@@ -895,14 +843,10 @@
          <property name="text">
           <string>图片超分</string>
          </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>:/images/menu/Contact.png</normaloff>:/images/menu/Contact.png</iconset>
-         </property>
          <property name="iconSize">
           <size>
-           <width>32</width>
-           <height>32</height>
+           <width>18</width>
+           <height>18</height>
           </size>
          </property>
          <property name="checkable">
@@ -936,14 +880,10 @@
          <property name="text">
           <string>批量超分</string>
          </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>:/images/menu/Contact.png</normaloff>:/images/menu/Contact.png</iconset>
-         </property>
          <property name="iconSize">
           <size>
-           <width>32</width>
-           <height>32</height>
+           <width>18</width>
+           <height>18</height>
           </size>
          </property>
          <property name="checkable">
@@ -997,14 +937,10 @@
         <property name="text">
          <string>帮助</string>
         </property>
-        <property name="icon">
-         <iconset>
-          <normaloff>:/images/menu/Contact.png</normaloff>:/images/menu/Contact.png</iconset>
-        </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>18</width>
+          <height>18</height>
          </size>
         </property>
         <property name="checkable">
@@ -1041,14 +977,10 @@
         <property name="text">
          <string>设置</string>
         </property>
-        <property name="icon">
-         <iconset>
-          <normaloff>:/images/menu/Contact.png</normaloff>:/images/menu/Contact.png</iconset>
-        </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>18</width>
+          <height>18</height>
          </size>
         </property>
         <property name="checkable">

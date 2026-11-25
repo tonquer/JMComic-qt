@@ -64,27 +64,38 @@ class Ui_Main(object):
         self.subMainWindow = QWidget()
         self.subMainWindow.setObjectName(u"subMainWindow")
         self.horizontalLayout_2 = QHBoxLayout(self.subMainWindow)
+        self.horizontalLayout_2.setSpacing(0)
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.horizontalLayout_2.setContentsMargins(0, 0, 8, 6)
         self.navigationWidget = NavigationWidget(self.subMainWindow)
         self.navigationWidget.setObjectName(u"navigationWidget")
-        self.navigationWidget.setMinimumSize(QSize(240, 0))
+        self.navigationWidget.setMinimumSize(QSize(56, 0))
         self.navigationWidget.setMaximumSize(QSize(280, 16777215))
 
         self.horizontalLayout_2.addWidget(self.navigationWidget)
 
         self.verticalLayout = QVBoxLayout()
+        self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.horizontalLayout_3 = QHBoxLayout()
+        self.headerBar = QWidget(self.subMainWindow)
+        self.headerBar.setObjectName(u"headerBar")
+        self.headerBar.setMinimumSize(QSize(0, 42))
+        self.horizontalLayout_3 = QHBoxLayout(self.headerBar)
+        self.horizontalLayout_3.setSpacing(4)
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.horizontalLayout_3.setContentsMargins(10, 4, 10, 4)
         self.menuLayout = QHBoxLayout()
+        self.menuLayout.setSpacing(4)
         self.menuLayout.setObjectName(u"menuLayout")
-        self.menuButton = QPushButton(self.subMainWindow)
+        self.menuButton = QPushButton(self.headerBar)
         self.menuButton.setObjectName(u"menuButton")
+        self.menuButton.setFlat(True)
 
         self.menuLayout.addWidget(self.menuButton)
 
-        self.label = QLabel(self.subMainWindow)
+        self.label = QLabel(self.headerBar)
         self.label.setObjectName(u"label")
+        self.label.setProperty(u"role", u"breadcrumbSep")
 
         self.menuLayout.addWidget(self.label)
 
@@ -96,7 +107,7 @@ class Ui_Main(object):
         self.horizontalLayout_3.addItem(self.horizontalSpacer)
 
 
-        self.verticalLayout.addLayout(self.horizontalLayout_3)
+        self.verticalLayout.addWidget(self.headerBar)
 
         self.subStackWidget = AnimationStackWidget(self.subMainWindow)
         self.subStackWidget.setObjectName(u"subStackWidget")

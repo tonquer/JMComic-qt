@@ -2,7 +2,7 @@ import re
 import time
 from datetime import datetime
 
-from PySide6.QtCore import QPropertyAnimation, QRect, QEasingCurve, QFile, QEvent, QSize, QTimer
+from PySide6.QtCore import Property, QPropertyAnimation, QRect, QEasingCurve, QFile, QEvent, QSize, QTimer
 from PySide6.QtGui import QPixmap, Qt, QIcon, QGuiApplication
 from PySide6.QtWidgets import QWidget, QScroller, QScrollerProperties, QCalendarWidget
 
@@ -18,17 +18,28 @@ from tools.langconv import Converter
 from tools.log import Log
 from tools.status import Status
 from tools.str import Str
+from tools.svg_icon import RenderStatefulSvgIcon
 from tools.tool import ToolUtil
 from view.user.sign_view import SignView
 
 
 class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
+    EXPANDED_WIDTH = 252
+    COLLAPSED_WIDTH = 58
+
     def __init__(self, parent=None):
         super().__init__(parent)
         QtTaskBase.__init__(self)
         self.allFilterStr = set()
+        self._isCollapsed = False
+        self._isUserLoggedIn = False
+        self._avatarBytes = None
+        self._navIconSpecs = ()
+        self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
         self.setupUi(self)
-        self.resize(260, 800)
+        self.setMinimumWidth(self.EXPANDED_WIDTH)
+        self.setMaximumWidth(self.EXPANDED_WIDTH)
+        self.resize(self.EXPANDED_WIDTH, 800)
         self.timer = QTimer(self)
         # 取余数
         second = 3600 - int(time.time()) % 3600
@@ -36,32 +47,19 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
         self.timer.timeout.connect(self.HourTimeOut)
         self.timer.start()
 
-        # if Setting.IsUseTitleBar.value:
-        #     screens = QGuiApplication.screens()
-        #     # print(screens[0].geometry(), screens[1].geometry())
-        #     if Setting.ScreenIndex.value >= len(screens):
-        #         desktop = QGuiApplication.primaryScreen().geometry()
-        #     else:
-        #         desktop = screens[Setting.ScreenIndex.value].geometry()
-        #     height = desktop.height()
-        #     if height <= 720:
-        #         self.scrollArea.setFixedHeight(100)
-        #         self.tailWidget.setMaximumHeight(100)
-        #         self.topWidget.setMaximumHeight(400)
-        #     elif height < 900:
-        #         self.topWidget.setMaximumHeight(100)
-        #         self.scrollArea.setFixedHeight(150)
-        #     elif height <= 1080:
-        #         self.scrollArea.setFixedHeight(250)
-        #     elif height < 1440:
-        #         self.scrollArea.setFixedHeight(350)
-        self.__ani = QPropertyAnimation(self, b"geometry")
+        self.__ani = QPropertyAnimation(self, b"navWidth", self)
+        self.__ani.setEasingCurve(QEasingCurve.OutCubic)
+        self.__ani.setDuration(160)
+        self.__ani.finished.connect(self._OnWidthAniFinished)
         self.__connect = None
         self.pictureData = ""
         f = QFile(u":/png/icon/placeholder_avatar.png")
         f.open(QFile.ReadOnly)
-        self.picLabel.SetPicture(f.readAll())
+        self._avatarBytes = f.readAll()
+        self.picLabel.SetPicture(self._avatarBytes)
         f.close()
+        self.picLabel.setCursor(Qt.PointingHandCursor)
+        self.titleLabel.setMinimumWidth(0)
         self.pushButton.clicked.connect(self.OpenLoginView)
         self.picLabel.installEventFilter(self)
         self.picData = None
@@ -93,6 +91,157 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
         self.refresh_timer = QTimer(self)
         self.refresh_timer.timeout.connect(self.RefreshDisplay)
         self.refresh_timer.start(2000)
+
+        self._hasNewUpdate = False
+        self._navIconSpecs = (
+            (self.collectButton, "star"),
+            (self.myCommentButton, "message_square"),
+            (self.remoteHistoryButton, "clock"),
+            (self.localCollectButton, "bookmark"),
+            (self.historyButton, "history"),
+            (self.indexButton, "home"),
+            (self.searchButton, "search"),
+            (self.categoryButton, "grid"),
+            (self.weekButton, "calendar"),
+            (self.commentButton, "comment"),
+            (self.downloadButton, "download"),
+            (self.nasButton, "cloud"),
+            (self.localReadButton, "folder"),
+            (self.waifu2xButton, "sparkles"),
+            (self.batchSrButton, "layers"),
+            (self.helpButton, "help"),
+            (self.settingButton, "settings"),
+        )
+        for btn, _ in self._navIconSpecs:
+            btn.setMinimumWidth(0)
+            btn.setIconSize(QSize(18, 18))
+            btn.setCursor(Qt.PointingHandCursor)
+        self._sectionLabels = (self.label, self.label_2, self.label_3)
+        self._topActionWidgets = (
+            self.pushButton,
+            self.signButton,
+            self.label_4,
+            self.label_5,
+            self.label_7,
+            self.label_9,
+            self.proxyName,
+            self.proxyImgName,
+            self.offlineButton,
+            self.hideButton,
+        )
+        self._userInfoWidgets = (
+            self.nameLabel,
+            self.titleLabel,
+            self.label_6,
+            self.coins,
+            self.expLabel,
+            self.levelLabel,
+            self.label_8,
+            self.favorite,
+        )
+        self.setProperty("collapsed", False)
+        self._RefreshNavIcons()
+        self._SetUserInfoVisible(False)
+
+    def _getNavWidth(self):
+        return self.width()
+
+    def _setNavWidth(self, w):
+        w = int(w)
+        self.setMinimumWidth(w)
+        self.setMaximumWidth(w)
+
+    navWidth = Property(int, _getNavWidth, _setNavWidth)
+
+    @property
+    def isCollapsed(self) -> bool:
+        return self._isCollapsed
+
+    def _SetUserInfoVisible(self, visible: bool):
+        self._isUserLoggedIn = bool(visible)
+        show = self._isUserLoggedIn and not self._isCollapsed
+        for w in self._userInfoWidgets:
+            w.setVisible(show)
+
+    def _RenderAvatarForSize(self, size: int):
+        self.picLabel.setFixedSize(size, size)
+        if self._avatarBytes:
+            self.picLabel.SetPicture(self._avatarBytes)
+
+    def _ApplyCollapsedLayout(self, collapsed: bool):
+        self.setProperty("collapsed", collapsed)
+        self.style().unpolish(self)
+        self.style().polish(self)
+
+        for lbl in self._sectionLabels:
+            lbl.setVisible(not collapsed)
+        for w in self._topActionWidgets:
+            w.setVisible(not collapsed)
+        for w in self._userInfoWidgets:
+            w.setVisible((not collapsed) and self._isUserLoggedIn)
+
+        if collapsed:
+            self.verticalLayout.setContentsMargins(0, 6, 0, 6)
+            self.verticalLayout_4.setContentsMargins(0, 4, 0, 4)
+            self.verticalLayout_5.setContentsMargins(0, 4, 0, 6)
+            self._RenderAvatarForSize(36)
+            tip = self.nameLabel.text() if self._isUserLoggedIn and self.nameLabel.text() else Str.GetStr(Str.Login)
+            self.picLabel.setToolTip(tip)
+        else:
+            self.verticalLayout.setContentsMargins(6, 6, 6, 6)
+            self.verticalLayout_4.setContentsMargins(9, 9, 9, 9)
+            self.verticalLayout_5.setContentsMargins(4, 4, 4, 6)
+            self._RenderAvatarForSize(72)
+            self.picLabel.setToolTip("")
+
+        iconPx = 20 if collapsed else 18
+        btnStyle = Qt.ToolButtonStyle.ToolButtonIconOnly if collapsed else Qt.ToolButtonStyle.ToolButtonTextBesideIcon
+        for btn, _ in self._navIconSpecs:
+            btn.setToolButtonStyle(btnStyle)
+            btn.setIconSize(QSize(iconPx, iconPx))
+            btn.setToolTip(btn.text() if collapsed else "")
+            btn.style().unpolish(btn)
+            btn.style().polish(btn)
+        self._RefreshNavIcons()
+
+    def _OnWidthAniFinished(self):
+        if not self._isCollapsed:
+            self._ApplyCollapsedLayout(False)
+
+    def ToggleCollapsed(self):
+        self.SetCollapsed(not self._isCollapsed, animate=True)
+
+    def SetCollapsed(self, collapsed: bool, animate: bool = True):
+        collapsed = bool(collapsed)
+        targetWidth = self.COLLAPSED_WIDTH if collapsed else self.EXPANDED_WIDTH
+        if self._isCollapsed == collapsed and not self.isHidden() and self.minimumWidth() == targetWidth and self.maximumWidth() == targetWidth:
+            return
+        super().show()
+        self._isCollapsed = collapsed
+
+        if collapsed:
+            self._ApplyCollapsedLayout(True)
+
+        self.__ani.stop()
+        if animate:
+            self.__ani.setStartValue(self.width())
+            self.__ani.setEndValue(targetWidth)
+            self.__ani.start()
+        else:
+            self._setNavWidth(targetWidth)
+            if not collapsed:
+                self._ApplyCollapsedLayout(False)
+
+    def _RefreshNavIcons(self):
+        isDark = Setting.ThemeIndex.autoValue == 1
+        normalColor = "#94A3B8" if isDark else "#64748B"
+        activeColor = QtOwner().GetThemeColorList(0)
+        iconPx = 20 if self._isCollapsed else 18
+        for btn, iconName in self._navIconSpecs:
+            if btn is self.helpButton and self._hasNewUpdate:
+                btn.setIcon(QtOwner().globalNewIcon)
+            else:
+                btn.setIcon(RenderStatefulSvgIcon(iconName, normalColor, activeColor, iconPx))
 
     def RefreshDisplay(self):
         self.proxyName.refresh_display()
@@ -137,10 +286,15 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
     def retranslateUi(self, View):
         Ui_Navigation.retranslateUi(self, self)
         self.UpdateFilterStr()
+        if self._isCollapsed:
+            for btn, _ in self._navIconSpecs:
+                btn.setToolTip(btn.text())
 
     def RefrshTheme(self):
         self.proxyName.update_theme()
         self.proxyImgName.update_theme()
+        self.offlineButton.update()
+        self._RefreshNavIcons()
 
     def UpdateFilterStr(self):
         self.allFilterStr.clear()
@@ -223,11 +377,13 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
         for label in (self.nameLabel, self.titleLabel, self.levelLabel,
                       self.favorite, self.coins):
             label.setText("")
+        self._SetUserInfoVisible(False)
         self.picData = None
         self.pictureData = ""
         f = QFile(u":/png/icon/placeholder_avatar.png")
         if f.open(QFile.ReadOnly):
-            self.picLabel.SetPicture(f.readAll())
+            self._avatarBytes = f.readAll()
+            self.picLabel.SetPicture(self._avatarBytes)
             f.close()
         self.signId = 0
         self.signMap.clear()
@@ -262,6 +418,7 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
         self.coins.setText(str(user.coin))
         self.titleLabel.setText(str("("+user.title+")"))
         self.nameLabel.setText(str(user.name))
+        self._SetUserInfoVisible(True)
         config.LoginUserName = user.name.replace("@", "")
         if user.imgUrl and config.IsLoadingPicture:
             path = ToolUtil.GetRealPath(user.uid, "user")
@@ -362,6 +519,7 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
 
     def SetPicture(self, data):
         self.pictureData = data
+        self._avatarBytes = data
         self.picLabel.SetPicture(data)
         return
 
@@ -381,37 +539,23 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
     #         QtOwner().ShowError(Str.GetStr(st))
 
     def aniShow(self):
-        """ 动画显示 """
-        super().show()
-        self.activateWindow()
-        self.__ani.setStartValue(QRect(self.x(), self.y(), 30, self.height()))
-        self.__ani.setEndValue(QRect(self.x(), self.y(), 260, self.height()))
-        self.__ani.setEasingCurve(QEasingCurve.InOutQuad)
-        self.__ani.setDuration(85)
-        self.__ani.start()
+        """ 展开侧边栏 """
+        self.SetCollapsed(False, animate=True)
 
     def aniHide(self):
-        """ 动画隐藏 """
-        self.__ani.setStartValue(QRect(self.x(), self.y(), 260, self.height()))
-        self.__ani.setEndValue(QRect(self.x(), self.y(), 30, self.height()))
-        self.__connect = self.__ani.finished.connect(self.__hideAniFinishedSlot)
-        self.__ani.setDuration(85)
-        self.__ani.start()
-
-    def __hideAniFinishedSlot(self):
-        """ 隐藏窗体的动画结束 """
-        super().hide()
-        self.resize(60, self.height())
-        if self.__connect:
-            self.__ani.finished.disconnect()
-            self.__connect = None
+        """ 折叠为紧凑图标栏 """
+        self.SetCollapsed(True, animate=True)
 
     def eventFilter(self, obj, event):
         if event.type() == QEvent.MouseButtonPress:
             if event.button() == Qt.LeftButton:
-                if self.picData and (obj == self.picLabel):
-                    QtOwner().OpenWaifu2xTool(self.picData)
-                    return True
+                if obj == self.picLabel:
+                    if self._isCollapsed:
+                        self.SetCollapsed(False, animate=True)
+                        return True
+                    if self.picData:
+                        QtOwner().OpenWaifu2xTool(self.picData)
+                        return True
                 return False
             else:
                 return False
@@ -419,6 +563,7 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
             return super(self.__class__, self).eventFilter(obj, event)
 
     def SetNewUpdate(self):
+        self._hasNewUpdate = True
         self.helpButton.setIcon(QtOwner().globalNewIcon)
         return
 

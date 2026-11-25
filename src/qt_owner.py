@@ -582,9 +582,14 @@ class QtOwner(Singleton):
 
     def GetThemeColorList(self, index):
         from config.setting import Setting
+        isDark = Setting.ThemeIndex.autoValue == 1
         if Setting.ThemeColorIndex.value == 0:
-            return ["#FF7B00", "#fff1e6", "#cc6600"][index]
-        return ["#ff4081", "#fbeff3", "#c45f7d"][index]
+            if isDark:
+                return ["#FF8A1F", "rgba(255, 138, 31, 0.14)", "#FF9E44"][index]
+            return ["#F97316", "#FFF7ED", "#EA580C"][index]
+        if isDark:
+            return ["#F45B93", "rgba(244, 91, 147, 0.14)", "#F777A6"][index]
+        return ["#EC4899", "#FDF2F8", "#DB2777"][index]
 
     @staticmethod
     def SetFont():

@@ -31,6 +31,9 @@ class NasView(QtWidgets.QWidget, Ui_Nas, NasStatus):
         self.tableWidget.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.tableWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.tableWidget.setAlternatingRowColors(True)
+        self.tableWidget.verticalHeader().setVisible(False)
+        self.tableWidget.setShowGrid(False)
         self.tableWidget.customContextMenuRequested.connect(self.SelectMenu)
         # self.tableWidget.setColumnCount(11)
         # self.tableWidget.setHorizontalHeaderLabels(HorizontalHeaderLabels)
@@ -70,28 +73,7 @@ class NasView(QtWidgets.QWidget, Ui_Nas, NasStatus):
         self.isInt = False
 
     def retranslateUi(self, Nas):
-        themId = Setting.ThemeIndex.autoValue
-        if themId != 1:
-            qss = """
-                .QListWidgetItem
-                {
-                    background-color: rgb(253, 253, 253);
-
-                    border:2px solid rgb(234,234,234);
-                    border-radius:5px
-                }        
-                """
-        else:
-            qss = """
-                .QListWidgetItem
-                {
-                    background-color: rgb(50, 50, 50);
-
-                    border:2px solid rgb(35,35,35);
-                    border-radius:5px
-                }        
-                """
-        self.listWidget.setStyleSheet(qss)
+        self.listWidget.setStyleSheet("")
         Ui_Nas.retranslateUi(self, self)
 
     def SwitchCurrent(self, **kwargs):

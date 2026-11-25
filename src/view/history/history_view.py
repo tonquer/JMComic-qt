@@ -5,7 +5,7 @@ from PySide6 import QtWidgets
 from PySide6.QtSql import QSqlDatabase, QSqlQuery
 
 from config.setting import Setting
-from interface.ui_history import Ui_History
+from interface.ui_local_history import Ui_LocalHistory
 from tools.log import Log
 from tools.str import Str
 
@@ -21,10 +21,10 @@ class QtHistoryData(object):
         self.tick = 0
 
 
-class HistoryView(QtWidgets.QWidget, Ui_History):
+class HistoryView(QtWidgets.QWidget, Ui_LocalHistory):
     def __init__(self):
         super(self.__class__, self).__init__()
-        Ui_History.__init__(self)
+        Ui_LocalHistory.__init__(self)
         self.setupUi(self)
 
         # self.bookList.InitBook(self.LoadNextPage)

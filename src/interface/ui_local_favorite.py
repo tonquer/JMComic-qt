@@ -175,7 +175,7 @@ class Ui_LocalFavorite(object):
     # setupUi
 
     def retranslateUi(self, LocalFavorite):
-        LocalFavorite.setWindowTitle(QCoreApplication.translate("LocalFavorite", u"\u6536\u85cf", None))
+        LocalFavorite.setWindowTitle(QCoreApplication.translate("LocalFavorite", u"\u672c\u5730\u6536\u85cf", None))
         self.label.setText(QCoreApplication.translate("LocalFavorite", u"\u641c\u7d22\uff1a", None))
         self.msgLabel.setText("")
         self.sortKeyCombox.setItemText(0, QCoreApplication.translate("LocalFavorite", u"\u66f4\u65b0\u65f6\u95f4", None))

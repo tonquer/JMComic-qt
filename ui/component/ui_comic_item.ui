@@ -55,40 +55,54 @@ background-color:transparent;
 }</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
-   <item>
+   <property name="spacing">
+    <number>4</number>
+   </property>
+   <property name="leftMargin">
+    <number>8</number>
+   </property>
+   <property name="topMargin">
+    <number>8</number>
+   </property>
+   <property name="rightMargin">
+    <number>8</number>
+   </property>
+   <property name="bottomMargin">
+    <number>8</number>
+   </property>
+   <item alignment="Qt::AlignmentFlag::AlignHCenter">
     <widget class="ComicLabel" name="picLabel">
      <property name="text">
       <string>TextLabel</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
    </item>
    <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Minimum</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>10</width>
-       <height>10</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>6</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>2</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
      <item>
       <widget class="QToolButton" name="toolButton">
        <property name="minimumSize">
         <size>
-         <width>60</width>
-         <height>40</height>
+         <width>0</width>
+         <height>20</height>
         </size>
        </property>
        <property name="text">
@@ -98,38 +112,24 @@ background-color:transparent;
      </item>
      <item>
       <widget class="QLabel" name="categoryLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="maximumSize">
         <size>
          <width>16777215</width>
          <height>16777215</height>
         </size>
        </property>
-       <property name="styleSheet">
-        <string notr="true">color: rgb(133,133,133);
-</string>
-       </property>
        <property name="text">
         <string>TextLabel</string>
        </property>
       </widget>
      </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
-      <number>0</number>
-     </property>
-     <item alignment="Qt::AlignLeft">
+     <item>
       <widget class="QToolButton" name="starButton">
        <property name="maximumSize">
         <size>
@@ -137,22 +137,18 @@ background-color:transparent;
          <height>16777215</height>
         </size>
        </property>
-       <property name="styleSheet">
-        <string notr="true">color: rgb(133,133,133);
-background-color:transparent;</string>
-       </property>
        <property name="text">
         <string/>
        </property>
       </widget>
      </item>
-     <item alignment="Qt::AlignRight">
+     <item alignment="Qt::AlignmentFlag::AlignRight">
       <widget class="QLabel" name="timeLabel">
        <property name="text">
         <string>TextLabel</string>
        </property>
        <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
        </property>
       </widget>
      </item>

@@ -106,7 +106,8 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         frame = QtWidgets.QFrame(self.scrollAreaWidgetContents)
         frame.setObjectName("backupFrame")
         hLayout = QtWidgets.QHBoxLayout(frame)
-        hLayout.setContentsMargins(0, 0, 0, 0)
+        hLayout.setContentsMargins(14, 12, 14, 12)
+        hLayout.setSpacing(10)
 
         self.backupLabel = QtWidgets.QLabel("配置备份", frame)
         self.exportConfigButton = QtWidgets.QPushButton("导出配置", frame)
@@ -673,29 +674,11 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
         QtOwner().localReadView.RefreshTheme()
         QtOwner().bookInfoView.RefreshTheme()
         QtOwner().bookInfoView2.RefreshTheme()
+        if hasattr(QtOwner().owner, "RefreshTheme"):
+            QtOwner().owner.RefreshTheme()
 
     def SetSettingTheme(self, themId):
-        if themId != 1:
-            qss = """
-                .QFrame
-                {
-                    background-color: rgb(253, 253, 253);
-
-                    border:2px solid rgb(234,234,234);
-                    border-radius:5px
-                }        
-                """
-        else:
-            qss = """
-                .QFrame
-                {
-                    background-color: rgb(50, 50, 50);
-
-                    border:2px solid rgb(35,35,35);
-                    border-radius:5px
-                }        
-                """
-        self.scrollArea.setStyleSheet(qss)
+        self.scrollArea.setStyleSheet("")
 
     def GetSysColor(self):
         # TODO KDE如何获取系统颜色

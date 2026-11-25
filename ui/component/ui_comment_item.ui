@@ -71,9 +71,6 @@ background-color:transparent;
            <property name="layoutDirection">
             <enum>Qt::RightToLeft</enum>
            </property>
-           <property name="styleSheet">
-            <string notr="true">color: #999999;</string>
-           </property>
            <property name="text">
             <string>TextLabel</string>
            </property>
@@ -124,9 +121,6 @@ background-color:transparent;
           <font>
            <pointsize>10</pointsize>
           </font>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">color: #999999;</string>
          </property>
          <property name="text">
           <string>TextLabel</string>
@@ -191,9 +185,6 @@ background-color:transparent;
                <height>20</height>
               </size>
              </property>
-             <property name="styleSheet">
-              <string notr="true">color: rgb(196, 95, 125);</string>
-             </property>
              <property name="text">
               <string>LV</string>
              </property>
@@ -212,9 +203,6 @@ background-color:transparent;
                <width>16777215</width>
                <height>20</height>
               </size>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">color: rgb(196, 95, 125);</string>
              </property>
              <property name="text">
               <string>TextLabel</string>

@@ -15,6 +15,8 @@ class ComicItemWidget(QWidget, Ui_ComicItem):
     def __init__(self, isCategory=False, isShiled=False):
         QWidget.__init__(self)
         Ui_ComicItem.__init__(self)
+        self.setAttribute(Qt.WA_StyledBackground, True)
+        self.setCursor(Qt.PointingHandCursor)
         self.setupUi(self)
         self.isShiled = isShiled
         self.picData = None
@@ -42,10 +44,10 @@ class ComicItemWidget(QWidget, Ui_ComicItem):
         width = baseW * rate / 100
         height = baseH * rate / 100
 
-        self.toolButton.setMinimumSize(QSize(0, 40))
+        self.toolButton.setMinimumSize(QSize(0, 20))
         self.toolButton.setFocusPolicy(Qt.NoFocus)
         self.toolButton.setIcon(QtOwner().globalNewIcon)
-        self.toolButton.setIconSize(QSize(32, 32))
+        self.toolButton.setIconSize(QSize(20, 20))
 
         self.picLabel.setFixedSize(width, height)
         if self.isShiled:
@@ -57,30 +59,22 @@ class ComicItemWidget(QWidget, Ui_ComicItem):
             newPic2 = QPixmap(newPic)
             self.picLabel.setPixmap(newPic2)
 
-        # self.picLabel.setMinimumSize(300, 400)
-        # self.picLabel.setMaximumSize(220, 308)
-
-        # self.categoryLabel.setMinimumSize(210, 25)
-        # self.categoryLabel.setMaximumSize(210, 150)
-
         self.starButton.setIcon(QtOwner().globalStarIcon)
-        self.starButton.setIconSize(QSize(20, 20))
+        self.starButton.setIconSize(QSize(16, 16))
         self.starButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.starButton.setMinimumHeight(24)
-        self.timeLabel.setMinimumHeight(24)
+        self.starButton.setMinimumHeight(20)
+        self.timeLabel.setMinimumHeight(20)
+        self.categoryLabel.setMinimumHeight(20)
 
-        self.categoryLabel.setMaximumWidth(width-20)
-        self.starButton.setMaximumWidth(width-20)
-        self.timeLabel.setMaximumWidth(width-20)
+        self.starButton.setMaximumWidth(int(width * 0.45))
+        self.timeLabel.setMaximumWidth(int(width * 0.55))
 
-        # self.nameLable.setMinimumSize(210, 25)
-        # self.nameLable.setMaximumSize(210, 150)
-        self.nameLable.setMaximumWidth(width-20)
+        self.nameLable.setMaximumWidth(int(width))
         self.nameLable.adjustSize()
         self.nameLable.setWordWrap(True)
         font = QFont()
-        font.setPointSize(12)
-        font.setBold(True)
+        font.setPointSize(11)
+        font.setWeight(QFont.Weight.DemiBold)
         self.nameLable.setFont(font)
         self.adjustSize()
         self.isWaifu2x = False
@@ -90,10 +84,11 @@ class ComicItemWidget(QWidget, Ui_ComicItem):
     def SetTitle(self, title, fontColor):
         self.title = title
         if Setting.NotCategoryShow.value:
-           self.categoryLabel.setVisible(False)
+            self.categoryLabel.setVisible(False)
 
         if Setting.TitleLine.value == 0:
             self.nameLable.setVisible(False)
+            self.timeLabel.setVisible(False)
         elif Setting.TitleLine.value == 1:
             self.nameLable.setWordWrap(False)
             self.nameLable.setText(title + fontColor)

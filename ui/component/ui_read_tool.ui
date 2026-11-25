@@ -76,8 +76,8 @@
          </item>
          <item>
           <widget class="QLabel" name="label_4">
-           <property name="styleSheet">
-            <string notr="true">color: #ee2a24</string>
+           <property name="role" stdset="0">
+            <string notr="true">sectionTitle</string>
            </property>
            <property name="text">
             <string>图片信息</string>
@@ -189,8 +189,8 @@
          </item>
          <item>
           <widget class="QLabel" name="label">
-           <property name="styleSheet">
-            <string notr="true">color: #ee2a24</string>
+           <property name="role" stdset="0">
+            <string notr="true">sectionTitle</string>
            </property>
            <property name="text">
             <string>Waifu2x参数</string>
@@ -407,8 +407,8 @@
          </item>
          <item>
           <widget class="QLabel" name="label_6">
-           <property name="styleSheet">
-            <string notr="true">color: #ee2a24</string>
+           <property name="role" stdset="0">
+            <string notr="true">sectionTitle</string>
            </property>
            <property name="text">
             <string>翻页设置</string>
@@ -543,8 +543,8 @@
          </item>
          <item>
           <widget class="QLabel" name="label_7">
-           <property name="styleSheet">
-            <string notr="true">color: #ee2a24</string>
+           <property name="role" stdset="0">
+            <string notr="true">sectionTitle</string>
            </property>
            <property name="text">
             <string>自动滚动/翻页</string>

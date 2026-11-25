@@ -119,7 +119,7 @@ class Ui_History(object):
     # setupUi
 
     def retranslateUi(self, History):
-        History.setWindowTitle(QCoreApplication.translate("History", u"\u6536\u85cf", None))
+        History.setWindowTitle(QCoreApplication.translate("History", u"\u89c2\u770b\u8bb0\u5f55", None))
         self.msgLabel.setText("")
         self.nums.setText(QCoreApplication.translate("History", u"\u8bb0\u5f55\u6570\uff1a", None))
         self.pages.setText(QCoreApplication.translate("History", u"\u9875", None))

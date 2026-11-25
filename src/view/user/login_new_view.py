@@ -2,7 +2,7 @@ import base64
 import time
 
 from PySide6 import QtWidgets
-from PySide6.QtCore import QTimer
+from PySide6.QtCore import Qt, QTimer
 
 from component.dialog.base_mask_dialog import BaseMaskDialog
 from component.label.gif_label import GifLabel
@@ -27,6 +27,9 @@ class LoginNewView(QtWidgets.QWidget, Ui_LoginNew, QtTaskBase):
         Ui_LoginNew.__init__(self)
         QtTaskBase.__init__(self)
         self.setupUi(self)
+        self.widget.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
+        self.widget.setMinimumWidth(340)
+        self.widget.setMaximumWidth(400)
         self.tabWidget.setCurrentIndex(0)
         self.tabWidget.currentChanged.connect(self.CheckInit)
         self.loginWidget = LoginNewWidget(self)
@@ -42,28 +45,7 @@ class LoginNewView(QtWidgets.QWidget, Ui_LoginNew, QtTaskBase):
         self.timer.timeout.connect(self.HourTimeOut)
 
     def retranslateUi(self, Nas):
-        themId = Setting.ThemeIndex.autoValue
-        if themId != 1:
-            qss = """
-                .QFrame
-                {
-                    background-color: rgb(253, 253, 253);
-
-                    border:2px solid rgb(234,234,234);
-                    border-radius:5px
-                }        
-                """
-        else:
-            qss = """
-                .QFrame
-                {
-                    background-color: rgb(50, 50, 50);
-
-                    border:2px solid rgb(35,35,35);
-                    border-radius:5px
-                }        
-                """
-        self.tab_4.setStyleSheet(qss)
+        self.tab_4.setStyleSheet("")
         Ui_LoginNew.retranslateUi(self, self)
 
     def SwitchCurrent(self, **kwargs):

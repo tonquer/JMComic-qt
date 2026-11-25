@@ -10,50 +10,53 @@ class HeadLabel(QLabel):
         self.target = None
 
     def SetPicture(self, data, titleData=None):
-        self.target = QPixmap(self.size())  # 大小和控件一样
-        self.target.fill(Qt.transparent)  # 填充背景为透明
+        radio = self.devicePixelRatio()
+        w, h = self.width(), self.height()
+        self.target = QPixmap(int(w * radio), int(h * radio))
+        self.target.setDevicePixelRatio(radio)
+        self.target.fill(Qt.transparent)
         q = QPixmap()
         q.loadFromData(data)
-        radio = self.devicePixelRatio()
-        q.setDevicePixelRatio(radio)
 
         offset = 0
         if titleData:
             offset = 20
 
-        p = q.scaled(  # 加载图片并缩放和控件一样大
-            (self.width()-offset)*radio, (self.height()-offset)*radio, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
+        targetW = max(1, w - offset)
+        targetH = max(1, h - offset)
+        p = q.scaled(
+            int(targetW * radio), int(targetH * radio), Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+        p.setDevicePixelRatio(radio)
 
         painter = QPainter(self.target)
         if self.antialiasing:
             painter.setRenderHint(QPainter.Antialiasing, True)
-            # painter.setRenderHint(QPainter.HighQualityAntialiasing, True)
             painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
 
         path = QPainterPath()
         path.addRoundedRect(
-            offset//2, offset//2, self.width()-offset, self.height()-offset, self.radius, self.radius)
+            offset / 2.0, offset / 2.0, targetW, targetH, targetW / 2.0, targetH / 2.0)
         painter.setClipPath(path)
 
-        painter.drawPixmap(offset//2, offset//2, p)
+        srcX = max(0.0, (p.width() / radio - targetW) / 2.0)
+        srcY = max(0.0, (p.height() / radio - targetH) / 2.0)
+        painter.drawPixmap(int(offset / 2.0 - srcX), int(offset / 2.0 - srcY), p)
         painter.end()
         self.setPixmap(self.target)
 
         if titleData:
             p = QPixmap()
             p.loadFromData(titleData)
-            p.setDevicePixelRatio(self.devicePixelRatio())
-            titleP = p.scaled(  # 加载图片并缩放和控件一样大
-                self.width(), self.height(), Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
+            titleP = p.scaled(
+                int(w * radio), int(h * radio), Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
+            titleP.setDevicePixelRatio(radio)
             painter = QPainter()
             painter.begin(titleP)
+            painter.setRenderHint(QPainter.Antialiasing, True)
+            painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
             painter.setCompositionMode(QPainter.CompositionMode_DestinationOver)
             painter.drawPixmap(0, 0, self.target)
             painter.end()
 
-            self.target = QPixmap(self.size())  # 大小和控件一样
-            self.target.fill(Qt.transparent)  # 填充背景为透明
-            painter.begin(self.target)
-            painter.drawPixmap(0, 0, titleP)
-            painter.end()
+            self.target = titleP
             self.setPixmap(self.target)

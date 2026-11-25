@@ -40,6 +40,19 @@
         <number>9</number>
        </property>
        <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <spacer name="horizontalSpacer_2">
@@ -57,19 +70,21 @@
          <item>
           <widget class="QWidget" name="widget" native="true">
            <layout class="QVBoxLayout" name="verticalLayout">
-            <item>
-             <spacer name="verticalSpacer">
-              <property name="orientation">
-               <enum>Qt::Orientation::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
+            <property name="spacing">
+             <number>12</number>
+            </property>
+            <property name="leftMargin">
+             <number>28</number>
+            </property>
+            <property name="topMargin">
+             <number>28</number>
+            </property>
+            <property name="rightMargin">
+             <number>28</number>
+            </property>
+            <property name="bottomMargin">
+             <number>28</number>
+            </property>
             <item>
              <widget class="QLabel" name="label_5">
               <property name="text">
@@ -78,7 +93,11 @@
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="userEdit_2"/>
+             <widget class="QLineEdit" name="userEdit_2">
+              <property name="placeholderText">
+               <string>请输入用户名</string>
+              </property>
+             </widget>
             </item>
             <item>
              <widget class="QLabel" name="label_6">
@@ -91,6 +110,9 @@
              <widget class="QLineEdit" name="passwdEdit_2">
               <property name="echoMode">
                <enum>QLineEdit::EchoMode::Password</enum>
+              </property>
+              <property name="placeholderText">
+               <string>请输入密码</string>
               </property>
              </widget>
             </item>
@@ -126,19 +148,6 @@
               </property>
              </widget>
             </item>
-            <item>
-             <spacer name="verticalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Orientation::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
            </layout>
           </widget>
          </item>
@@ -156,6 +165,19 @@
           </spacer>
          </item>
         </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -800,8 +822,8 @@
                    <bold>false</bold>
                   </font>
                  </property>
-                 <property name="styleSheet">
-                  <string notr="true">color:rgb(255, 0, 0)</string>
+                 <property name="role" stdset="0">
+                  <string notr="true">danger</string>
                  </property>
                  <property name="text">
                   <string>未检测到系统代理</string>
@@ -1315,8 +1337,8 @@
               <layout class="QVBoxLayout" name="verticalLayout_2">
                <item>
                 <widget class="QLabel" name="label_25">
-                 <property name="styleSheet">
-                  <string notr="true">color:rgb(255, 0, 0)</string>
+                 <property name="role" stdset="0">
+                  <string notr="true">danger</string>
                  </property>
                  <property name="text">
                   <string>*使用代理时IP分流不生效，推荐开启ECH功能</string>

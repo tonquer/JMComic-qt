@@ -296,13 +296,13 @@ class ReadNewTool(QtWidgets.QWidget, Ui_ReadImg):
 
         if waifuState or isInit:
             if waifuState == QtFileData.WaifuStateStart:
-                self.waifu2xStatus.setStyleSheet("color:red;")
+                self.waifu2xStatus.setStyleSheet("color: #F59E0B;")
             elif waifuState == QtFileData.WaifuStateEnd:
-                self.waifu2xStatus.setStyleSheet("color:green;")
+                self.waifu2xStatus.setStyleSheet("color: #10B981;")
             elif waifuState == QtFileData.WaifuStateFail:
-                self.waifu2xStatus.setStyleSheet("color:red;")
+                self.waifu2xStatus.setStyleSheet("color: #EF4444;")
             else:
-                self.waifu2xStatus.setStyleSheet("color:dark;")
+                self.waifu2xStatus.setStyleSheet("")
             if config.CanWaifu2x:
                 self.waifu2xStatus.setText(Str.GetStr(waifuState))
         if waifuTick or isInit:

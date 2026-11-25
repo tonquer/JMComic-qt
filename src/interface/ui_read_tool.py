@@ -58,7 +58,7 @@ class Ui_ReadImg(object):
 
         self.label_4 = QLabel(self.scrollAreaWidgetContents)
         self.label_4.setObjectName(u"label_4")
-        self.label_4.setStyleSheet(u"color: #ee2a24")
+        self.label_4.setProperty(u"role", u"sectionTitle")
         self.label_4.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.verticalLayout.addWidget(self.label_4)
@@ -125,7 +125,7 @@ class Ui_ReadImg(object):
 
         self.label = QLabel(self.scrollAreaWidgetContents)
         self.label.setObjectName(u"label")
-        self.label.setStyleSheet(u"color: #ee2a24")
+        self.label.setProperty(u"role", u"sectionTitle")
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.verticalLayout.addWidget(self.label)
@@ -272,7 +272,7 @@ class Ui_ReadImg(object):
 
         self.label_6 = QLabel(self.scrollAreaWidgetContents)
         self.label_6.setObjectName(u"label_6")
-        self.label_6.setStyleSheet(u"color: #ee2a24")
+        self.label_6.setProperty(u"role", u"sectionTitle")
         self.label_6.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.verticalLayout.addWidget(self.label_6)
@@ -348,7 +348,7 @@ class Ui_ReadImg(object):
 
         self.label_7 = QLabel(self.scrollAreaWidgetContents)
         self.label_7.setObjectName(u"label_7")
-        self.label_7.setStyleSheet(u"color: #ee2a24")
+        self.label_7.setProperty(u"role", u"sectionTitle")
         self.label_7.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.verticalLayout.addWidget(self.label_7)

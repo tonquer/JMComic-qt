@@ -69,7 +69,6 @@ class Ui_CommentItem(object):
         font.setPointSize(10)
         self.indexLabel.setFont(font)
         self.indexLabel.setLayoutDirection(Qt.RightToLeft)
-        self.indexLabel.setStyleSheet(u"color: #999999;")
         self.indexLabel.setAlignment(Qt.AlignCenter)
 
         self.horizontalLayout_2.addWidget(self.indexLabel)
@@ -90,7 +89,6 @@ class Ui_CommentItem(object):
         self.dateLabel.setMinimumSize(QSize(100, 0))
         self.dateLabel.setMaximumSize(QSize(100, 30))
         self.dateLabel.setFont(font)
-        self.dateLabel.setStyleSheet(u"color: #999999;")
         self.dateLabel.setAlignment(Qt.AlignCenter)
 
         self.verticalLayout.addWidget(self.dateLabel)
@@ -119,7 +117,6 @@ class Ui_CommentItem(object):
         self.levelLabel.setObjectName(u"levelLabel")
         self.levelLabel.setMinimumSize(QSize(0, 20))
         self.levelLabel.setMaximumSize(QSize(16777215, 20))
-        self.levelLabel.setStyleSheet(u"color: rgb(196, 95, 125);")
 
         self.horizontalLayout_4.addWidget(self.levelLabel)
 
@@ -127,7 +124,6 @@ class Ui_CommentItem(object):
         self.titleLabel.setObjectName(u"titleLabel")
         self.titleLabel.setMinimumSize(QSize(0, 20))
         self.titleLabel.setMaximumSize(QSize(16777215, 20))
-        self.titleLabel.setStyleSheet(u"color: rgb(196, 95, 125);")
 
         self.horizontalLayout_4.addWidget(self.titleLabel)
 

@@ -13,37 +13,6 @@
   <property name="windowTitle">
    <string>漫画详情</string>
   </property>
-  <property name="styleSheet">
-   <string notr="true">QToolButton
-{
-background-color:transparent;
-  border: 0px;
-  height: 0px;
-  margin: 0px;
-  padding: 0px;
-  border-right: 0px;
-  border-left: 0px;
-}
-QToolButton:hover  {
-background-color:transparent;
-  border-right: 0px;
-  border-left: 0px;
-}
-
-QToolButton:pressed  {
-background-color:transparent;
-  border-right: 0px;
-  border-left: 0px;
-}
-
-QToolButton:checked  {
-background-color:transparent;
-  border-right: 0px;
-  border-left: 0px;
-}
-QListWidget {background-color:transparent;}
-QScrollArea {background-color:transparent;}</string>
-  </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
     <widget class="SmoothScrollArea" name="scrollArea">
@@ -64,16 +33,28 @@ QScrollArea {background-color:transparent;}</string>
         <layout class="QGridLayout" name="gridLayout_3">
          <item row="0" column="0">
           <layout class="QHBoxLayout" name="horizontalLayout">
+           <property name="spacing">
+            <number>20</number>
+           </property>
            <item>
             <widget class="QLabel" name="picture">
              <property name="minimumSize">
+              <size>
+               <width>270</width>
+               <height>360</height>
+              </size>
+             </property>
+             <property name="maximumSize">
               <size>
                <width>300</width>
                <height>400</height>
               </size>
              </property>
              <property name="text">
-              <string>TextLabel</string>
+              <string/>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
              </property>
             </widget>
            </item>
@@ -85,13 +66,13 @@ QScrollArea {background-color:transparent;}</string>
                 <widget class="QLabel" name="label">
                  <property name="minimumSize">
                   <size>
-                   <width>80</width>
+                   <width>72</width>
                    <height>0</height>
                   </size>
                  </property>
                  <property name="maximumSize">
                   <size>
-                   <width>40</width>
+                   <width>80</width>
                    <height>16777215</height>
                   </size>
                  </property>
@@ -121,18 +102,18 @@ QScrollArea {background-color:transparent;}</string>
                 <widget class="QLabel" name="label_6">
                  <property name="minimumSize">
                   <size>
-                   <width>80</width>
+                   <width>72</width>
                    <height>0</height>
                   </size>
                  </property>
                  <property name="maximumSize">
                   <size>
-                   <width>40</width>
+                   <width>80</width>
                    <height>16777215</height>
                   </size>
                  </property>
                  <property name="text">
-                  <string>id:</string>
+                  <string>ID：</string>
                  </property>
                 </widget>
                </item>
@@ -171,13 +152,13 @@ QScrollArea {background-color:transparent;}</string>
                 <widget class="QLabel" name="label_4">
                  <property name="minimumSize">
                   <size>
-                   <width>80</width>
+                   <width>72</width>
                    <height>0</height>
                   </size>
                  </property>
                  <property name="maximumSize">
                   <size>
-                   <width>40</width>
+                   <width>80</width>
                    <height>16777215</height>
                   </size>
                  </property>
@@ -201,18 +182,18 @@ QScrollArea {background-color:transparent;}</string>
                 <widget class="QLabel" name="label_8">
                  <property name="minimumSize">
                   <size>
-                   <width>80</width>
+                   <width>72</width>
                    <height>0</height>
                   </size>
                  </property>
                  <property name="maximumSize">
                   <size>
-                   <width>40</width>
+                   <width>80</width>
                    <height>16777215</height>
                   </size>
                  </property>
                  <property name="text">
-                  <string>观看数:</string>
+                  <string>观看数：</string>
                  </property>
                 </widget>
                </item>
@@ -310,13 +291,13 @@ QScrollArea {background-color:transparent;}</string>
                 <widget class="QLabel" name="label_3">
                  <property name="minimumSize">
                   <size>
-                   <width>80</width>
+                   <width>72</width>
                    <height>0</height>
                   </size>
                  </property>
                  <property name="maximumSize">
                   <size>
-                   <width>40</width>
+                   <width>80</width>
                    <height>16777215</height>
                   </size>
                  </property>
@@ -330,8 +311,11 @@ QScrollArea {background-color:transparent;}</string>
                </item>
                <item>
                 <widget class="QPlainTextEdit" name="description">
-                 <property name="styleSheet">
-                  <string notr="true">QPlainTextEdit {background-color:transparent;}</string>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>110</height>
+                  </size>
                  </property>
                  <property name="readOnly">
                   <bool>true</bool>
@@ -346,41 +330,23 @@ QScrollArea {background-color:transparent;}</string>
                 <widget class="QLabel" name="label_5">
                  <property name="minimumSize">
                   <size>
-                   <width>80</width>
+                   <width>72</width>
                    <height>0</height>
                   </size>
                  </property>
                  <property name="maximumSize">
                   <size>
-                   <width>40</width>
+                   <width>80</width>
                    <height>40</height>
                   </size>
                  </property>
                  <property name="text">
-                  <string>Tags：</string>
+                  <string>标签：</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QWidget" name="tagList" native="true">
-                 <property name="styleSheet">
-                  <string notr="true">QPushButton {
-                   background-color:rgb(251, 239, 243);
-                   color: rgb(196, 95, 125);
-                   border:2px solid red;
-                   border-radius: 10px;
-                   border-color:rgb(196, 95, 125);
-                   }
-                   /* 鼠标在按钮上时，按钮颜色 */
-                   QPushButton:hover
-                   {
-                   background-color:rgb(21, 85, 154);
-                   border-radius: 10px;
-                   color: rgb(0, 0, 0);
-                   }
-</string>
-                 </property>
-                </widget>
+                <widget class="QWidget" name="tagList" native="true"/>
                </item>
               </layout>
              </item>
@@ -682,24 +648,6 @@ QScrollArea {background-color:transparent;}</string>
            </item>
            <item>
             <widget class="EpsListWidget" name="epsListWidget">
-             <property name="styleSheet">
-              <string notr="true">QListWidget {background-color:transparent;}
-QListWidget::item {
-    background-color:rgb(251, 239, 243);
-    color: rgb(196, 95, 125);
-	border:2px solid red;
-    border-radius: 10px;
-	border-color:rgb(196, 95, 125);
-}
-/* 鼠标在按钮上时，按钮颜色 */
- QListWidget::item:hover 
-{
-    background-color:rgb(21, 85, 154);
-    border-radius: 10px;
-    color: rgb(0, 0, 0);
-}
-</string>
-             </property>
              <property name="textElideMode">
               <enum>Qt::ElideRight</enum>
              </property>
@@ -782,24 +730,6 @@ QListWidget::item {
            </item>
            <item>
             <widget class="EpsListWidget" name="listWidget">
-             <property name="styleSheet">
-              <string notr="true">QListWidget {background-color:transparent;}
-QListWidget::item {
-    background-color:rgb(251, 239, 243);
-    color: rgb(196, 95, 125);
-	border:2px solid red;
-    border-radius: 10px;
-	border-color:rgb(196, 95, 125);
-}
-/* 鼠标在按钮上时，按钮颜色 */
- QListWidget::item:hover 
-{
-    background-color:rgb(21, 85, 154);
-    border-radius: 10px;
-    color: rgb(0, 0, 0);
-}
-</string>
-             </property>
              <property name="spacing">
               <number>6</number>
              </property>

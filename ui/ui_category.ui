@@ -96,13 +96,6 @@
       </spacer>
      </item>
      <item>
-      <widget class="Line" name="line_4">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QLabel" name="label">
        <property name="minimumSize">
         <size>
@@ -113,7 +106,7 @@
        <property name="maximumSize">
         <size>
          <width>16777215</width>
-         <height>30</height>
+         <height>32</height>
         </size>
        </property>
        <property name="text">
@@ -122,22 +115,12 @@
       </widget>
      </item>
      <item>
-      <widget class="Line" name="line_5">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QSpinBox" name="spinBox">
        <property name="minimumSize">
         <size>
-         <width>50</width>
+         <width>68</width>
          <height>0</height>
         </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color:transparent;</string>
        </property>
        <property name="minimum">
         <number>1</number>
@@ -148,24 +131,11 @@
       </widget>
      </item>
      <item>
-      <widget class="Line" name="line_6">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="jumpPage">
        <property name="minimumSize">
         <size>
-         <width>60</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>30</height>
+         <width>64</width>
+         <height>0</height>
         </size>
        </property>
        <property name="text">

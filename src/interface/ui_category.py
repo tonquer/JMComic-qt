@@ -15,9 +15,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QHBoxLayout,
-    QLabel, QPushButton, QSizePolicy, QSpacerItem,
-    QSpinBox, QTabWidget, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QComboBox, QHBoxLayout, QLabel,
+    QPushButton, QSizePolicy, QSpacerItem, QSpinBox,
+    QTabWidget, QVBoxLayout, QWidget)
 
 class Ui_Category(object):
     def setupUi(self, Category):
@@ -58,47 +58,24 @@ class Ui_Category(object):
 
         self.horizontalLayout.addItem(self.horizontalSpacer_2)
 
-        self.line_4 = QFrame(Category)
-        self.line_4.setObjectName(u"line_4")
-        self.line_4.setFrameShape(QFrame.Shape.VLine)
-        self.line_4.setFrameShadow(QFrame.Shadow.Sunken)
-
-        self.horizontalLayout.addWidget(self.line_4)
-
         self.label = QLabel(Category)
         self.label.setObjectName(u"label")
         self.label.setMinimumSize(QSize(60, 30))
-        self.label.setMaximumSize(QSize(16777215, 30))
+        self.label.setMaximumSize(QSize(16777215, 32))
 
         self.horizontalLayout.addWidget(self.label)
 
-        self.line_5 = QFrame(Category)
-        self.line_5.setObjectName(u"line_5")
-        self.line_5.setFrameShape(QFrame.Shape.VLine)
-        self.line_5.setFrameShadow(QFrame.Shadow.Sunken)
-
-        self.horizontalLayout.addWidget(self.line_5)
-
         self.spinBox = QSpinBox(Category)
         self.spinBox.setObjectName(u"spinBox")
-        self.spinBox.setMinimumSize(QSize(50, 0))
-        self.spinBox.setStyleSheet(u"background-color:transparent;")
+        self.spinBox.setMinimumSize(QSize(68, 0))
         self.spinBox.setMinimum(1)
         self.spinBox.setMaximum(1)
 
         self.horizontalLayout.addWidget(self.spinBox)
 
-        self.line_6 = QFrame(Category)
-        self.line_6.setObjectName(u"line_6")
-        self.line_6.setFrameShape(QFrame.Shape.VLine)
-        self.line_6.setFrameShadow(QFrame.Shadow.Sunken)
-
-        self.horizontalLayout.addWidget(self.line_6)
-
         self.jumpPage = QPushButton(Category)
         self.jumpPage.setObjectName(u"jumpPage")
-        self.jumpPage.setMinimumSize(QSize(60, 30))
-        self.jumpPage.setMaximumSize(QSize(16777215, 30))
+        self.jumpPage.setMinimumSize(QSize(64, 0))
 
         self.horizontalLayout.addWidget(self.jumpPage)
 

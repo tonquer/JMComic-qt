@@ -18,6 +18,7 @@ from task.qt_task import QtTaskBase
 from task.task_cache import TaskCache
 from tools.book import BookMgr, BookInfo
 from tools.str import Str
+from tools.svg_icon import RenderSvgIcon
 
 
 class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
@@ -27,6 +28,8 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         super(self.__class__, self).__init__()
         Ui_BookInfo.__init__(self)
         QtTaskBase.__init__(self)
+        self._rawCoverPixmap = None
+        self._coverShadow = None
         self.setupUi(self)
         self.bookId = ""
         self.url = ""
@@ -35,10 +38,19 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.lastEpsId = -1
         self.lastIndex = 0
         self.pictureData = None
+        self._rawCoverPixmap = None
         self.isFavorite = False
         self.isLike = False
 
         self.picture.installEventFilter(self)
+        self.picture.setCursor(Qt.PointingHandCursor)
+        self.picture.setAlignment(Qt.AlignCenter)
+        self._coverShadow = QtWidgets.QGraphicsDropShadowEffect(self.picture)
+        self._coverShadow.setBlurRadius(20)
+        self._coverShadow.setOffset(0, 4)
+        self.picture.setGraphicsEffect(self._coverShadow)
+        self._SetCoverEmptyState(True)
+        self.label.setVisible(False)
         self.title.setWordWrap(True)
         self.title.setTextInteractionFlags(Qt.TextBrowserInteraction)
         self.autorList.clicked.connect(self.ClickAutorItem)
@@ -48,12 +60,17 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.idLabel.setTextInteractionFlags(Qt.TextBrowserInteraction)
         self.description.setTextInteractionFlags(Qt.TextBrowserInteraction)
 
-        self.downloadButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.downloadButton.setIconSize(QSize(50, 50))
-        self.favoriteButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.favoriteButton.setIconSize(QSize(50, 50))
-        self.commentButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.commentButton.setIconSize(QSize(50, 50))
+        for actionBtn in (
+            self.favoriteButton,
+            self.localButton,
+            self.commentButton,
+            self.downloadButton,
+            self.uploadButton,
+            self.clearButton,
+        ):
+            actionBtn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+            actionBtn.setIconSize(QSize(20, 20))
+            actionBtn.setCursor(Qt.PointingHandCursor)
         self.commentButton.clicked.connect(self.OpenComment)
         self.description.adjustSize()
         self.title.adjustSize()
@@ -104,69 +121,146 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.RefreshTheme()
 
     def RefreshTheme(self):
-        self.tagList.setStyleSheet(u"QPushButton {\n"
-                                   f"                   background-color:{QtOwner().GetThemeColorList(1)};\n"
-                                   f"                   color: {QtOwner().GetThemeColorList(2)};\n"
-                                   "                   border:2px solid red;\n"
-                                   "                   border-radius: 10px;\n"
-                                   f"                   border-color:{QtOwner().GetThemeColorList(2)};\n"
-                                   "                   }\n"
-                                   "                   QPushButton:hover\n"
-                                   "                   {\n"
-                                   "                   background-color:rgb(21, 85, 154);\n"
-                                   "                   border-radius: 10px;\n"
-                                   "                   color: rgb(0, 0, 0);\n"
-                                   "                   }\n"
-                                   "")
-        self.epsListWidget.setStyleSheet(u"QListWidget {background-color:transparent;}\n"
-                                         "QListWidget::item {\n"
-                                         f"    background-color:{QtOwner().GetThemeColorList(1)};\n"
-                                         f"    color: {QtOwner().GetThemeColorList(2)};\n"
-                                         "	border:2px solid red;\n"
-                                         "    border-radius: 10px;\n"
-                                         f"	border-color:{QtOwner().GetThemeColorList(2)};\n"
-                                         "}\n"
-                                         " QListWidget::item:hover \n"
-                                         "{\n"
-                                         "    background-color:rgb(21, 85, 154);\n"
-                                         "    border-radius: 10px;\n"
-                                         "    color: rgb(0, 0, 0);\n"
-                                         "}\n"
-                                         "")
-        self.listWidget.setStyleSheet(u"QListWidget {background-color:transparent;}\n"
-                                      "QListWidget::item {\n"
-                                      f"    background-color:{QtOwner().GetThemeColorList(1)};\n"
-                                      f"    color: {QtOwner().GetThemeColorList(2)};\n"
-                                      "	border:2px solid red;\n"
-                                      "    border-radius: 10px;\n"
-                                      f"	border-color:{QtOwner().GetThemeColorList(2)};\n"
-                                      "}\n"
-                                      "/* \u9f20\u6807\u5728\u6309\u94ae\u4e0a\u65f6\uff0c\u6309\u94ae\u989c\u8272 */\n"
-                                      " QListWidget::item:hover \n"
-                                      "{\n"
-                                      "    background-color:rgb(21, 85, 154);\n"
-                                      "    border-radius: 10px;\n"
-                                      "    color: rgb(0, 0, 0);\n"
-                                      "}\n"
-                                      "")
+        isDark = Setting.ThemeIndex.autoValue == 1
+        primary = QtOwner().GetThemeColorList(0)
+        softBg = QtOwner().GetThemeColorList(1)
+        accentText = QtOwner().GetThemeColorList(2)
+        cardBg = "#22252D" if isDark else "#FFFFFF"
+        cardBorder = "#2E333E" if isDark else "#E2E8F0"
+        textColor = "#E8ECF2" if isDark else "#1E293B"
+
+        self.tagList.setStyleSheet(
+            f"""
+            QPushButton {{
+                background-color: {softBg};
+                color: {accentText};
+                border: 1px solid transparent;
+                border-radius: 12px;
+                padding: 0px 12px;
+                height: 24px;
+                min-height: 24px;
+                max-height: 24px;
+                font-weight: 500;
+            }}
+            QPushButton:hover {{
+                background-color: {primary};
+                border: 1px solid {primary};
+                border-radius: 12px;
+                color: #FFFFFF;
+            }}
+            """
+        )
+        itemQss = f"""
+            QListWidget {{
+                background-color: transparent;
+                border: none;
+            }}
+            QListWidget::item {{
+                background-color: {cardBg};
+                color: {textColor};
+                border: 1px solid {cardBorder};
+                border-radius: 8px;
+                padding: 4px 10px;
+            }}
+            QListWidget::item:hover,
+            QListWidget::item:selected {{
+                background-color: {primary};
+                border: 1px solid {primary};
+                border-radius: 8px;
+                color: #FFFFFF;
+            }}
+        """
+        self.epsListWidget.setStyleSheet(itemQss)
+        self.listWidget.setStyleSheet(itemQss)
+        self._RefreshActionButtons()
+        self._UpdateCoverShadow()
+        if self._rawCoverPixmap is not None and not self._rawCoverPixmap.isNull():
+            self._SetRoundedCoverPixmap(self._rawCoverPixmap)
+
+    def _UpdateCoverShadow(self):
+        if self._coverShadow is None:
+            return
+        isDark = Setting.ThemeIndex.autoValue == 1
+        if self.picture.property("empty"):
+            self._coverShadow.setColor(QColor(0, 0, 0, 0))
+        else:
+            self._coverShadow.setColor(QColor(0, 0, 0, 115) if isDark else QColor(15, 23, 42, 42))
+
+    def _SetCoverEmptyState(self, isEmpty: bool):
+        if self.picture.property("empty") != isEmpty:
+            self.picture.setProperty("empty", isEmpty)
+            self.picture.style().unpolish(self.picture)
+            self.picture.style().polish(self.picture)
+        self._UpdateCoverShadow()
+
+    def _RefreshActionButtons(self):
+        isDark = Setting.ThemeIndex.autoValue == 1
+        iconColor = "#CBD5E1" if isDark else "#475569"
+        hoverBg = "#2F3440" if isDark else "#EEF1F5"
+        pressedBg = "#232731" if isDark else "#E2E8F0"
+        textColor = "#E8ECF2" if isDark else "#1E293B"
+
+        actionBtnQss = f"""
+            QToolButton {{
+                background-color: transparent;
+                color: {textColor};
+                border: none;
+                border-radius: 8px;
+                padding: 6px 12px;
+                height: 36px;
+                min-height: 36px;
+            }}
+            QToolButton:hover {{
+                background-color: {hoverBg};
+            }}
+            QToolButton:pressed {{
+                background-color: {pressedBg};
+            }}
+        """
+        for btn in (
+            self.favoriteButton,
+            self.localButton,
+            self.commentButton,
+            self.downloadButton,
+            self.uploadButton,
+            self.clearButton,
+        ):
+            btn.setStyleSheet(actionBtnQss)
+
+        self.commentButton.setIcon(RenderSvgIcon("comment", iconColor, 20))
+        self.downloadButton.setIcon(RenderSvgIcon("download", iconColor, 20))
+        self.uploadButton.setIcon(RenderSvgIcon("cloud_upload", iconColor, 20))
+        self.UpdateFavoriteIcon()
 
     def UpdateFavoriteIcon(self):
-        p = QPixmap()
-        if self.isFavorite:
-            self.favoriteButton.setIcon(QIcon(":/png/icon/icon_like.png"))
-        else:
-            self.favoriteButton.setIcon(QIcon(":/png/icon/icon_like_off.png"))
+        isDark = Setting.ThemeIndex.autoValue == 1
+        primary = QtOwner().GetThemeColorList(0)
+        iconColor = "#CBD5E1" if isDark else "#475569"
+        mutedColor = "#64748B" if isDark else "#94A3B8"
+        dangerColor = "#EF4444" if isDark else "#DC2626"
 
-        if QtOwner().localFavoriteView.IsHave(self.bookId):
-            self.localButton.setIcon(QIcon(":/png/icon/icon_like.png"))
+        if getattr(self, "isFavorite", False):
+            self.favoriteButton.setIcon(RenderSvgIcon("star_filled", primary, 20))
         else:
-            self.localButton.setIcon(QIcon(":/png/icon/icon_like_off.png"))
-        path = os.path.join(Setting.GetCachePath(), "book_new/{}".format(self.bookId))
-        waifuPath = os.path.join(Setting.GetCachePath(), "waifu2x/book/{}".format(self.bookId))
-        if os.path.isdir(path) or os.path.isdir(waifuPath):
-            self.clearButton.setIcon(QIcon(":/png/icon/clear_on.png"))
+            self.favoriteButton.setIcon(RenderSvgIcon("star", iconColor, 20))
+
+        bookId = getattr(self, "bookId", "")
+        owner = QtOwner().owner if getattr(QtOwner(), "_owner", None) else None
+        localFavView = getattr(owner, "localFavoriteView", None) if owner is not None else None
+        if bookId and localFavView is not None and localFavView.IsHave(bookId):
+            self.localButton.setIcon(RenderSvgIcon("bookmark_filled", primary, 20))
         else:
-            self.clearButton.setIcon(QIcon(":/png/icon/clear_off.png"))
+            self.localButton.setIcon(RenderSvgIcon("bookmark", iconColor, 20))
+
+        hasCache = False
+        if bookId:
+            path = os.path.join(Setting.GetCachePath(), "book_new/{}".format(bookId))
+            waifuPath = os.path.join(Setting.GetCachePath(), "waifu2x/book/{}".format(bookId))
+            hasCache = os.path.isdir(path) or os.path.isdir(waifuPath)
+        if hasCache:
+            self.clearButton.setIcon(RenderSvgIcon("trash", dangerColor, 20))
+        else:
+            self.clearButton.setIcon(RenderSvgIcon("trash", mutedColor, 20))
 
     def Clear(self):
         self.ClearTask()
@@ -268,6 +362,9 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             # self.isFavorite = info.isFavourite
             # self.isLike = info.isLiked
             self.UpdateFavoriteIcon()
+            self._rawCoverPixmap = None
+            self.picture.setPixmap(QPixmap())
+            self._SetCoverEmptyState(True)
             self.picture.setText(Str.GetStr(Str.LoadingPicture))
             self.url = info.baseInfo.coverUrl
             self.path = ToolUtil.GetRealPath(self.bookId, "cover")
@@ -338,10 +435,9 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
                     item.setToolTip(epsInfo.epsTitle)
 
                 label.setAlignment(Qt.AlignCenter)
-                label.setStyleSheet(f"color: {QtOwner().GetThemeColor()};")
                 font = QFont()
-                font.setPointSize(12)
-                font.setBold(True)
+                font.setPointSize(11)
+                font.setWeight(QFont.Weight.DemiBold)
                 label.setFont(font)
                 # label.setWordWrap(True)
                 # label.setContentsMargins(20, 10, 20, 10)
@@ -370,6 +466,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
 
     def AddTags(self, name):
         box = QPushButton(name)
+        box.setCursor(Qt.PointingHandCursor)
         # box.setMinimumWidth(160)
         # self.allBox[text] = box
         box.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
@@ -378,23 +475,64 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.flowLayout.addWidget(box)
         return
 
+    def _SetRoundedCoverPixmap(self, rawPixmap: QtGui.QPixmap):
+        self._rawCoverPixmap = rawPixmap
+        if rawPixmap.isNull():
+            self.picture.setPixmap(QPixmap())
+            self._SetCoverEmptyState(True)
+            return
+        isDark = Setting.ThemeIndex.autoValue == 1
+        radio = self.devicePixelRatio()
+        maxW = max(120, min(self.picture.width(), self.picture.maximumWidth()) - 12)
+        maxH = max(120, min(self.picture.height(), self.picture.maximumHeight()) - 12)
+        scaled = rawPixmap.scaled(
+            int(maxW * radio),
+            int(maxH * radio),
+            QtCore.Qt.KeepAspectRatio,
+            Qt.SmoothTransformation,
+        )
+        scaled.setDevicePixelRatio(radio)
+        w = max(1, int(round(scaled.width() / radio)))
+        h = max(1, int(round(scaled.height() / radio)))
+        rounded = QtGui.QPixmap(int(w * radio), int(h * radio))
+        rounded.setDevicePixelRatio(radio)
+        rounded.fill(Qt.transparent)
+        painter = QtGui.QPainter(rounded)
+        painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
+        painter.setRenderHint(QtGui.QPainter.SmoothPixmapTransform, True)
+
+        clipPath = QtGui.QPainterPath()
+        clipPath.addRoundedRect(QtCore.QRectF(0, 0, w, h), 10.0, 10.0)
+        painter.save()
+        painter.setClipPath(clipPath)
+        painter.drawPixmap(0, 0, scaled)
+        painter.restore()
+
+        # 紧贴封面真实边缘的 1px 细腻描边，避免留白黑边/白边
+        borderColor = QColor(255, 255, 255, 32) if isDark else QColor(15, 23, 42, 26)
+        painter.setPen(QtGui.QPen(borderColor, 1.0))
+        painter.setBrush(Qt.NoBrush)
+        painter.drawRoundedRect(QtCore.QRectF(0.5, 0.5, w - 1.0, h - 1.0), 9.5, 9.5)
+        painter.end()
+
+        self._SetCoverEmptyState(False)
+        self.picture.setPixmap(rounded)
+
     def UpdatePicture(self, data, status):
         if status == Status.Ok:
             self.pictureData = data
             pic = QtGui.QPixmap()
             pic.loadFromData(data)
-            radio = self.devicePixelRatio()
-            pic.setDevicePixelRatio(radio)
-            newPic = pic.scaled(self.picture.size()*radio, QtCore.Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            self.picture.setPixmap(newPic)
-            # self.picture.setScaledContents(True)
+            self._SetRoundedCoverPixmap(pic)
             if Setting.CoverIsOpenWaifu.value:
                 w, h, mat, _ = ToolUtil.GetPictureSize(self.pictureData)
                 if max(w, h) <= Setting.CoverMaxNum.value:
                     model = ToolUtil.GetModelByIndex(Setting.CoverLookModelName.value, Setting.CoverLookScale.value, mat)
                     self.AddConvertTask(self.path, self.pictureData, model, self.Waifu2xPictureBack)
         else:
+            self._rawCoverPixmap = None
             self.picture.setPixmap(QPixmap())
+            self._SetCoverEmptyState(True)
             self.picture.setText(Str.GetStr(Str.LoadingFail))
         return
 
@@ -402,10 +540,7 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         if data:
             pic = QtGui.QPixmap()
             pic.loadFromData(data)
-            radio = self.devicePixelRatio()
-            pic.setDevicePixelRatio(radio)
-            newPic = pic.scaled(self.picture.size()*radio, QtCore.Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            self.picture.setPixmap(newPic)
+            self._SetRoundedCoverPixmap(pic)
         return
 
     def GetEpsBack(self, raw):
@@ -432,10 +567,9 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
             epsInfo = info.pageInfo.epsInfo.get(index)
             label = QLabel(epsInfo.title)
             label.setAlignment(Qt.AlignCenter)
-            label.setStyleSheet(f"color: {QtOwner().GetThemeColor()};")
             font = QFont()
-            font.setPointSize(12)
-            font.setBold(True)
+            font.setPointSize(11)
+            font.setWeight(QFont.Weight.DemiBold)
             label.setFont(font)
             # label.setWordWrap(True)
             # label.setContentsMargins(20, 10, 20, 10)

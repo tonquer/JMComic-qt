@@ -118,18 +118,11 @@
        </widget>
       </item>
       <item>
-       <widget class="Line" name="line_3">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QSpinBox" name="spinBox">
         <property name="minimumSize">
          <size>
-          <width>50</width>
-          <height>30</height>
+          <width>68</width>
+          <height>0</height>
          </size>
         </property>
         <property name="minimum">
@@ -141,18 +134,11 @@
        </widget>
       </item>
       <item>
-       <widget class="Line" name="line">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QPushButton" name="jumpButton">
         <property name="minimumSize">
          <size>
-          <width>0</width>
-          <height>30</height>
+          <width>64</width>
+          <height>0</height>
          </size>
         </property>
         <property name="text">

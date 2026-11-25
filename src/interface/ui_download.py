@@ -17,8 +17,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QGridLayout,
     QHBoxLayout, QHeaderView, QLineEdit, QPushButton,
-    QRadioButton, QSizePolicy, QSpacerItem, QTableWidget,
-    QTableWidgetItem, QWidget)
+    QSizePolicy, QSpacerItem, QTableWidget, QTableWidgetItem,
+    QWidget)
 
 class Ui_Download(object):
     def setupUi(self, Download):
@@ -77,7 +77,7 @@ class Ui_Download(object):
 
         self.horizontalLayout_3.addWidget(self.skipPic)
 
-        self.radioButton = QRadioButton(Download)
+        self.radioButton = QCheckBox(Download)
         self.radioButton.setObjectName(u"radioButton")
         self.radioButton.setEnabled(True)
         self.radioButton.setChecked(True)
@@ -99,6 +99,7 @@ class Ui_Download(object):
 
         self.lineEdit = QLineEdit(Download)
         self.lineEdit.setObjectName(u"lineEdit")
+        self.lineEdit.setClearButtonEnabled(True)
 
         self.horizontalLayout_5.addWidget(self.lineEdit)
 
@@ -186,6 +187,7 @@ class Ui_Download(object):
         self.comboBox.setItemText(1, QCoreApplication.translate("Download", u"\u672a\u5b8c\u6210", None))
         self.comboBox.setItemText(2, QCoreApplication.translate("Download", u"\u5df2\u5b8c\u6210", None))
 
+        self.lineEdit.setPlaceholderText(QCoreApplication.translate("Download", u"\u641c\u7d22\u6807\u9898\u6216 ID\u2026", None))
         self.formatButton.setText(QCoreApplication.translate("Download", u"\u683c\u5f0f\u8f6c\u6362", None))
         self.someDownButton.setText(QCoreApplication.translate("Download", u"\u6279\u91cf\u4e0b\u8f7d", None))
         self.pushButton.setText(QCoreApplication.translate("Download", u"\u5168\u90e8\u5f00\u59cb", None))

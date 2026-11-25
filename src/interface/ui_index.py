@@ -15,10 +15,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QHBoxLayout,
-    QLabel, QListWidgetItem, QPushButton, QSizePolicy,
-    QSpacerItem, QSpinBox, QTabWidget, QVBoxLayout,
-    QWidget)
+from PySide6.QtWidgets import (QApplication, QComboBox, QHBoxLayout, QLabel,
+    QListWidgetItem, QPushButton, QSizePolicy, QSpacerItem,
+    QSpinBox, QTabWidget, QVBoxLayout, QWidget)
 
 from component.list.comic_list_widget import ComicListWidget
 
@@ -79,31 +78,17 @@ class Ui_Index(object):
 
         self.horizontalLayout.addWidget(self.pages)
 
-        self.line_3 = QFrame(self.widget)
-        self.line_3.setObjectName(u"line_3")
-        self.line_3.setFrameShape(QFrame.Shape.VLine)
-        self.line_3.setFrameShadow(QFrame.Shadow.Sunken)
-
-        self.horizontalLayout.addWidget(self.line_3)
-
         self.spinBox = QSpinBox(self.widget)
         self.spinBox.setObjectName(u"spinBox")
-        self.spinBox.setMinimumSize(QSize(50, 30))
+        self.spinBox.setMinimumSize(QSize(68, 0))
         self.spinBox.setMinimum(1)
         self.spinBox.setMaximum(1)
 
         self.horizontalLayout.addWidget(self.spinBox)
 
-        self.line = QFrame(self.widget)
-        self.line.setObjectName(u"line")
-        self.line.setFrameShape(QFrame.Shape.VLine)
-        self.line.setFrameShadow(QFrame.Shadow.Sunken)
-
-        self.horizontalLayout.addWidget(self.line)
-
         self.jumpButton = QPushButton(self.widget)
         self.jumpButton.setObjectName(u"jumpButton")
-        self.jumpButton.setMinimumSize(QSize(0, 30))
+        self.jumpButton.setMinimumSize(QSize(64, 0))
 
         self.horizontalLayout.addWidget(self.jumpButton)
 

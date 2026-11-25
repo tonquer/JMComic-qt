@@ -15,9 +15,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QHBoxLayout,
-    QLabel, QListWidgetItem, QPushButton, QSizePolicy,
-    QSpacerItem, QSpinBox, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QComboBox, QHBoxLayout, QLabel,
+    QListWidgetItem, QPushButton, QSizePolicy, QSpacerItem,
+    QSpinBox, QVBoxLayout, QWidget)
 
 from component.line_edit.search_line_edit import SearchLineEdit
 from component.list.comic_list_widget import ComicListWidget
@@ -62,7 +62,7 @@ class Ui_Search(object):
 
         self.lineEdit = SearchLineEdit(self.searchWidget)
         self.lineEdit.setObjectName(u"lineEdit")
-        self.lineEdit.setMinimumSize(QSize(40, 40))
+        self.lineEdit.setMinimumSize(QSize(40, 36))
         self.lineEdit.setClearButtonEnabled(True)
 
         self.horizontalLayout_2.addWidget(self.lineEdit)
@@ -149,47 +149,24 @@ class Ui_Search(object):
 
         self.horizontalLayout.addItem(self.horizontalSpacer_2)
 
-        self.line_4 = QFrame(Search)
-        self.line_4.setObjectName(u"line_4")
-        self.line_4.setFrameShape(QFrame.Shape.VLine)
-        self.line_4.setFrameShadow(QFrame.Shadow.Sunken)
-
-        self.horizontalLayout.addWidget(self.line_4)
-
         self.label = QLabel(Search)
         self.label.setObjectName(u"label")
         self.label.setMinimumSize(QSize(60, 30))
-        self.label.setMaximumSize(QSize(16777215, 30))
+        self.label.setMaximumSize(QSize(16777215, 32))
 
         self.horizontalLayout.addWidget(self.label)
 
-        self.line_5 = QFrame(Search)
-        self.line_5.setObjectName(u"line_5")
-        self.line_5.setFrameShape(QFrame.Shape.VLine)
-        self.line_5.setFrameShadow(QFrame.Shadow.Sunken)
-
-        self.horizontalLayout.addWidget(self.line_5)
-
         self.spinBox = QSpinBox(Search)
         self.spinBox.setObjectName(u"spinBox")
-        self.spinBox.setMinimumSize(QSize(50, 0))
-        self.spinBox.setStyleSheet(u"background-color:transparent;")
+        self.spinBox.setMinimumSize(QSize(68, 0))
         self.spinBox.setMinimum(1)
         self.spinBox.setMaximum(1)
 
         self.horizontalLayout.addWidget(self.spinBox)
 
-        self.line_6 = QFrame(Search)
-        self.line_6.setObjectName(u"line_6")
-        self.line_6.setFrameShape(QFrame.Shape.VLine)
-        self.line_6.setFrameShadow(QFrame.Shadow.Sunken)
-
-        self.horizontalLayout.addWidget(self.line_6)
-
         self.jumpPage = QPushButton(Search)
         self.jumpPage.setObjectName(u"jumpPage")
-        self.jumpPage.setMinimumSize(QSize(60, 30))
-        self.jumpPage.setMaximumSize(QSize(16777215, 30))
+        self.jumpPage.setMinimumSize(QSize(64, 0))
 
         self.horizontalLayout.addWidget(self.jumpPage)
 
@@ -213,6 +190,7 @@ class Ui_Search(object):
         self.label_3.setToolTip(QCoreApplication.translate("Search", u"<html><head/><body><p>\u641c\u5bfb\u7684\u6700\u4f73\u59ff\u52bf?</p><p>\u3010\u7cbe\u786e\u641c\u7d22\u3011</p><p>jm+\u53f7\u7801</p><p><br/></p><p>\u3010\u5305\u542b\u641c\u5bfb\u3011</p><p>\u641c\u5bfb\u5168\u5f69[\u7a7a\u683c][+]\u4eba\u59bb,\u4ec5\u663e\u793a\u5168\u5f69\u4e14\u662f\u4eba\u59bb\u7684\u672c\u672c</p><p>\u8303\u4f8b:\u5168\u5f69 +\u4eba\u59bb<br/></p><p>\u3010\u6392\u9664\u641c\u5bfb\u3011</p><p>\u641c\u5bfb\u5168\u5f69[\u7a7a\u683c][]\u4eba\u59bb,\u663e\u793a\u5168\u5f69\u5e76\u6392\u9664\u4eba\u59bb\u7684\u672c\u672c</p><p>\u8303\u4f8b:\u5168\u5f69 -\u4eba\u59bb<br/></p><p>\u3010\u6211\u90fd\u8981\u641c\u5bfb\u3011</p><p>\u641c\u5bfb\u5168\u5f69[\u7a7a\u683c]\u4eba\u59bb,\u4f1a\u663e\u793a\u6240\u6709\u5305\u542b\u5168\u5f69\u53ca\u4eba\u59bb\u7684\u672c\u672c</p><p>\u8303\u4f8b:\u5168\u5f69 \u4eba\u59bb</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.label_3.setText(QCoreApplication.translate("Search", u"?", None))
+        self.lineEdit.setPlaceholderText(QCoreApplication.translate("Search", u"\u8f93\u5165\u5173\u952e\u8bcd\u6216 JM \u7f16\u53f7\u641c\u7d22\u2026", None))
         self.searchButton.setText(QCoreApplication.translate("Search", u"\u641c\u7d22", None))
         self.cateLabel.setText(QCoreApplication.translate("Search", u"\u9ad8\u7ea7\u641c\u7d22\uff1a", None))
         self.typeBox.setItemText(0, QCoreApplication.translate("Search", u"\u7ad9\u5185\u641c\u7d22", None))

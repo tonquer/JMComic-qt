@@ -1,7 +1,7 @@
 import sys
 from functools import partial
 
-from PySide6.QtCore import Qt, QEvent, QPoint, Signal
+from PySide6.QtCore import Qt, QEvent, QPoint, QSize, Signal
 from PySide6.QtGui import QIcon, QMouseEvent, QGuiApplication, QFont, QImageReader
 from PySide6.QtWidgets import QButtonGroup, QToolButton, QLabel
 
@@ -21,6 +21,7 @@ from task.task_multi import TaskMulti
 from task.task_qimage import TaskQImage
 from task.task_waifu2x import TaskWaifu2x
 from tools.log import Log
+from tools.svg_icon import RenderSvgIcon
 from view.download.download_dir_view import DownloadDirView
 
 
@@ -52,6 +53,7 @@ class MainView(Main, QtTaskBase):
         self.setAttribute(Qt.WA_StyledBackground, True)
 
         self.loadingDialog = LoadingDialog(self)
+        self.navigationWidget.SetCollapsed(False, animate=False)
         self.navigationWidget.helpButton.click()
         self.subStackWidget.setCurrentIndex(self.subStackWidget.indexOf(self.helpView))
         self.__initWidget()
@@ -62,7 +64,11 @@ class MainView(Main, QtTaskBase):
         self.toolButtonGroup = QButtonGroup()
         self.toolButtonGroup.idClicked.connect(self.SwitchWidgetByIndex)
         self.menuButton.clicked.connect(self.CheckShowMenu)
+        self.menuButton.setCursor(Qt.PointingHandCursor)
+        self.menuButton.setIconSize(QSize(18, 18))
+        self.headerBar.setAttribute(Qt.WA_StyledBackground, True)
         self.UpdateTabBar()
+        self.RefreshTheme()
 
         # self.subStackWidget.setCurrentIndex(0)
 
@@ -324,14 +330,21 @@ class MainView(Main, QtTaskBase):
                     button.setChecked(True)
                 else:
                     label = QLabel(">")
+                    label.setProperty("role", "breadcrumbSep")
                     self.menuLayout.addWidget(label)
                     self.toolLabels.append(label)
 
+                button.setCursor(Qt.PointingHandCursor)
                 self.toolButtonGroup.addButton(button)
                 self.toolButtonGroup.setId(button, i)
                 self.menuLayout.addWidget(button)
                 self.toolButtons.append(button)
         return
+
+    def RefreshTheme(self):
+        isDark = Setting.ThemeIndex.autoValue == 1
+        iconColor = "#CBD5E1" if isDark else "#475569"
+        self.menuButton.setIcon(RenderSvgIcon("sidebar", iconColor, 18))
 
     def OpenLoginView(self):
         self.navigationWidget.OpenLoginView()
@@ -467,10 +480,7 @@ class MainView(Main, QtTaskBase):
             Log.Info("Exit screen index:{}".format(str(index)))
 
     def CheckShowMenu(self):
-        if self.navigationWidget.isHidden():
-            self.navigationWidget.aniShow()
-        else:
-            self.navigationWidget.aniHide()
+        self.navigationWidget.ToggleCollapsed()
         return
 
     def keyReleaseEvent(self, event) -> None:
