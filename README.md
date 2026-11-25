@@ -1,7 +1,7 @@
 # 禁漫天堂
 
 [![GitHub](https://img.shields.io/github/license/tonquer/JMComic-qt)](https://raw.githubusercontent.com/tonquer/picacg-windows/master/LICENSE.txt)
-![Relese](https://img.shields.io/badge/Python-3.9.13%2B-brightgreen)
+![Relese](https://img.shields.io/badge/Python-3.11%2B-brightgreen)
 [![Relese](https://img.shields.io/github/v/release/tonquer/JMComic-qt)](https://github.com/tonquer/JMComic-qt/releases)
 [![Relese](https://img.shields.io/github/downloads/tonquer/JMComic-qt/total.svg)](https://github.com/tonquer/JMComic-qt/releases)
 
@@ -43,6 +43,7 @@
 
 ## 如何编译
   ### 使用Git Actions编译
+  运行script/build_qrc.py生成qrc文件
   1. 查看编译结果[Git Actions编译](https://github.com/tonquer/JMComic-qt/actions) 
  
 ## 界面

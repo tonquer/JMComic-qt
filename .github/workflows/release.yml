@@ -49,10 +49,10 @@ jobs:
       PACKAGENAME_NOSR: ${{ needs.setup.outputs.PACKAGE_PREFIX }}_macos_nosr_universal2.dmg
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python 3.10
+    - name: Set up Python 3.11
       uses: actions/setup-python@v5
       with:
-        python-version: '3.10'
+        python-version: '3.11'
 
     - name: Install dependencies
       run: |
@@ -159,10 +159,10 @@ jobs:
       EXE_NAME: start.exe
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python 3.10
+    - name: Set up Python 3.11
       uses: actions/setup-python@v5
       with:
-        python-version: '3.10'
+        python-version: '3.11'
 
     - name: Install dependencies
       run: |

@@ -11,6 +11,7 @@ test
 src/test
 src/data
 src/ssl-data
+src/images_rc.py
 .idea
 .Python
 build/
