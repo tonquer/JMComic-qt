@@ -512,7 +512,7 @@ class LoginProxyNewWidget(object):
     def CheckDohBack(self, raw, url):
         data = raw["data"]
         st = raw["st"]
-        Log.Warn(f"check_doh, {url}, st:{st}, data:{data}")
+        Log.Info(f"check_doh, {url}, st:{st}, data:{data}")
         if url != self.checkDohUrl:
             return
         if st == Str.Ok and raw.get("Answer"):
