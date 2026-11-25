@@ -88,7 +88,7 @@ class ServerReq(object):
         self.SetCurlOpt(Setting.IsOpenHTTP3.value, Setting.EnableEch.value, QtOwner().echConfig, self.ipList)
 
     def GetLang(self):
-        if Setting.Language.value == 2:
+        if QtOwner().language == 2:
             lang = "TW"
         else:
             lang = "CN"

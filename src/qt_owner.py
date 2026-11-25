@@ -75,6 +75,7 @@ from tools.tool import ToolUtil
 class QtOwner(Singleton):
     def __init__(self):
         Singleton.__init__(self)
+        self.language = 0
         self._owner = None
         self._app = None
         self._localServer = None

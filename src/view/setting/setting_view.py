@@ -624,7 +624,7 @@ class SettingView(QtWidgets.QWidget, Ui_SettingNew):
                 # TODO
                 language = 3
                 # language = 2
-
+        QtOwner().language = language
         if language == Setting.Language.autoValue:
             return
 
