@@ -458,7 +458,7 @@ class Ui_LoginNew(object):
         self.scrollArea_3.setWidgetResizable(True)
         self.scrollAreaWidgetContents_3 = QWidget()
         self.scrollAreaWidgetContents_3.setObjectName(u"scrollAreaWidgetContents_3")
-        self.scrollAreaWidgetContents_3.setGeometry(QRect(0, 0, 570, 3283))
+        self.scrollAreaWidgetContents_3.setGeometry(QRect(0, -76, 570, 3303))
         self.verticalLayout_10 = QVBoxLayout(self.scrollAreaWidgetContents_3)
         self.verticalLayout_10.setObjectName(u"verticalLayout_10")
         self.horizontalLayout_15 = QHBoxLayout()
@@ -647,6 +647,12 @@ class Ui_LoginNew(object):
 
         self.horizontalLayout_23 = QHBoxLayout()
         self.horizontalLayout_23.setObjectName(u"horizontalLayout_23")
+        self.dohBox = QCheckBox(self.scrollAreaWidgetContents_3)
+        self.dohBox.setObjectName(u"dohBox")
+        self.dohBox.setChecked(True)
+
+        self.horizontalLayout_23.addWidget(self.dohBox)
+
 
         self.verticalLayout_10.addLayout(self.horizontalLayout_23)
 
@@ -1016,7 +1022,8 @@ class Ui_LoginNew(object):
         QWidget.setTabOrder(self.radio_img_2, self.proxyIpEdit)
         QWidget.setTabOrder(self.proxyIpEdit, self.sockEdit)
         QWidget.setTabOrder(self.sockEdit, self.echBox)
-        QWidget.setTabOrder(self.echBox, self.resetEdit)
+        QWidget.setTabOrder(self.echBox, self.dohBox)
+        QWidget.setTabOrder(self.dohBox, self.resetEdit)
         QWidget.setTabOrder(self.resetEdit, self.resetButton)
         QWidget.setTabOrder(self.resetButton, self.testSpeedButton)
         QWidget.setTabOrder(self.testSpeedButton, self.sendEdit)
@@ -1131,6 +1138,7 @@ class Ui_LoginNew(object):
         self.http3Box.setText(QCoreApplication.translate("LoginNew", u"\u542f\u7528HTTP3\uff08UDP\uff09", None))
         self.echBox.setText(QCoreApplication.translate("LoginNew", u"\u542f\u7528ECH\uff08Encrypted Client Hello\uff09", None))
         self.echTick.setText("")
+        self.dohBox.setText(QCoreApplication.translate("LoginNew", u"\u5206\u6d41\u4f7f\u7528DOH\u67e5\u8be2DNS", None))
         self.label_17.setText(QCoreApplication.translate("LoginNew", u"DOH\u5730\u5740\uff1a", None))
         self.dohTool.setText("")
         self.testSpeedButton.setText(QCoreApplication.translate("LoginNew", u"\u6d4b\u901f", None))
@@ -1169,7 +1177,7 @@ class Ui_LoginNew(object):
         self.radioButton_5.setText(QCoreApplication.translate("LoginNew", u"IP\u5206\u6d41", None))
         self.radio_img_5.setText(QCoreApplication.translate("LoginNew", u"IP\u5206\u6d41", None))
         self.testIpButton.setText(QCoreApplication.translate("LoginNew", u"\u6d4b\u8bd5IP\u5206\u6d41", None))
-        self.label_25.setText(QCoreApplication.translate("LoginNew", u"*\u4f7f\u7528\u4ee3\u7406\u65f6IP\u5206\u6d41\u4e0d\u751f\u6548\uff0c\u63a8\u8350\u5f00\u542fECH\u529f\u80fd", None))
+        self.label_25.setText(QCoreApplication.translate("LoginNew", u"*\u4f7f\u7528\u4ee3\u7406\u65f6IP\u5206\u6d41\u4e0d\u751f\u6548\uff0c\u63a8\u8350\u5f00\u542fECH\u529f\u80fd\uff0c\u6700\u591a\u53ef\u9009\u62e92\u4e2aIP", None))
         self.label_26.setText(QCoreApplication.translate("LoginNew", u"\u81ea\u5b9a\u4e49\u83b7\u53d6ProxyIP\u5730\u533a\uff1a", None))
         self.proxyIpLabel.setText("")
         self.label_22.setText(QCoreApplication.translate("LoginNew", u"\u81ea\u5b9a\u4e49IP\u5217\u8868\uff08\u9017\u53f7\u5206\u5272\uff09\uff1a", None))

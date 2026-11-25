@@ -22,11 +22,11 @@
      <property name="enabled">
       <bool>true</bool>
      </property>
-     <property name="role" stdset="0">
-      <string notr="true">danger</string>
-     </property>
      <property name="text">
       <string>你修改的部分设置，需要重启生效</string>
+     </property>
+     <property name="role" stdset="0">
+      <string notr="true">danger</string>
      </property>
     </widget>
    </item>
@@ -86,9 +86,9 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>-2038</y>
-          <width>666</width>
-          <height>3333</height>
+          <y>-572</y>
+          <width>667</width>
+          <height>3547</height>
          </rect>
         </property>
         <property name="styleSheet">
@@ -645,6 +645,19 @@
                 </property>
                </widget>
               </item>
+              <item>
+               <spacer name="horizontalSpacer_35">
+                <property name="orientation">
+                 <enum>Qt::Orientation::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
              </layout>
             </item>
            </layout>
@@ -1104,14 +1117,14 @@
                 <property name="toolTip">
                  <string>设置当前页之后预取的图片数量，下载并发数固定为5</string>
                 </property>
-                <property name="role" stdset="0">
-                 <string notr="true">muted</string>
-                </property>
                 <property name="text">
                  <string>ⓘ</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignmentFlag::AlignCenter</set>
+                </property>
+                <property name="role" stdset="0">
+                 <string notr="true">muted</string>
                 </property>
                </widget>
               </item>
@@ -1188,11 +1201,11 @@
                 <property name="toolTip">
                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;滚动模式下，显示的范围，需小于预下载数量，调大滚动时可减少加载图的闪烁&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
-                <property name="role" stdset="0">
-                 <string notr="true">muted</string>
-                </property>
                 <property name="text">
                  <string>ⓘ</string>
+                </property>
+                <property name="role" stdset="0">
+                 <string notr="true">muted</string>
                 </property>
                </widget>
               </item>
@@ -1234,14 +1247,14 @@
                 <property name="toolTip">
                  <string>忽略预取数量限制，预取当前页之后直到本章末尾的全部图片</string>
                 </property>
-                <property name="role" stdset="0">
-                 <string notr="true">muted</string>
-                </property>
                 <property name="text">
                  <string>ⓘ</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignmentFlag::AlignCenter</set>
+                </property>
+                <property name="role" stdset="0">
+                 <string notr="true">muted</string>
                 </property>
                </widget>
               </item>
@@ -2998,11 +3011,11 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="showCloseButtonGroup"/>
   <buttongroup name="proxyGroup"/>
-  <buttongroup name="saveNameGroup"/>
-  <buttongroup name="languageGroup"/>
   <buttongroup name="logGroup"/>
   <buttongroup name="themeGroup"/>
+  <buttongroup name="languageGroup"/>
+  <buttongroup name="showCloseButtonGroup"/>
+  <buttongroup name="saveNameGroup"/>
  </buttongroups>
 </ui>

@@ -1,5 +1,6 @@
 import base64
 import hashlib
+import ipaddress
 import json
 import re
 import struct
@@ -45,12 +46,15 @@ class ServerReq(object):
         self.isImg = False
         self.isRegister = False
         self.isH3 = False
+        self.isCdnIp = False
+        self.isDohIp = False
+        self.isReset = False
         host = ToolUtil.GetUrlHost(self.url)
         if "https://" + host in GlobalConfig.Url2List.value :
             self.isApi = True
             self.timeout = Setting.ApiTimeOut.GetIndexV()
 
-        if "https://" +host in GlobalConfig.PicUrlList.value:
+        if "https://" + host in GlobalConfig.PicUrlList.value or host in GlobalConfig.ImgAutoUrl.value:
             self.isImg = True
             self.timeout = Setting.ImgTimeOut.GetIndexV()
 
@@ -77,15 +81,13 @@ class ServerReq(object):
             self.headers["authorization"] = "Bearer " + QtOwner().user.token
 
         # self.cookies = dict(QtOwner().cookie)
-        if self.isApi and not self.proxyUrl and GlobalConfig.IsCdnIndex(Setting.ProxySelectIndex.value):
-            self.ipList = [Setting.ProxyIpValue.value]
-        elif self.isImg and not self.proxyUrl and GlobalConfig.IsCdnIndex(Setting.ProxyImgSelectIndex.value):
-            self.ipList = [Setting.ProxyIpValue.value]
-        elif self.isRegister and not self.proxyUrl and GlobalConfig.IsCdnIndex(Setting.ProxySelectIndex.value):
-            self.ipList = [Setting.ProxyIpValue.value]
+        isDohIp = False
+        if self.isCdnIp:
+            self.ipList = self.GetProxyIpList()
         else:
-            self.ipList = []
-        self.SetCurlOpt(Setting.IsOpenHTTP3.value, Setting.EnableEch.value, QtOwner().echConfig, self.ipList)
+            self.ipList = self.GetDohIpList()
+            isDohIp = bool(self.ipList)
+        self.SetCurlOpt(Setting.IsOpenHTTP3.value, Setting.EnableEch.value, QtOwner().echConfig, self.ipList, isDohIp=isDohIp)
 
     def GetLang(self):
         if QtOwner().language == 2:
@@ -111,6 +113,63 @@ class ServerReq(object):
                 self.url = self.url.replace(host, ToolUtil.GetUrlHost(imgHost))
         if self.isApi and self.proxyUrl and "?" not in self.url and not self.url.endswith("/"):
             self.url += "/"
+
+        self.isCdnIp = False
+        if self.isApi and not self.proxyUrl and GlobalConfig.IsCdnIndex(apiIndex):
+            self.isCdnIp = True
+        elif self.isImg and not self.proxyUrl and GlobalConfig.IsCdnIndex(imgIndex):
+            self.isCdnIp = True
+        elif self.isRegister and not self.proxyUrl and GlobalConfig.IsCdnIndex(apiIndex):
+            self.isCdnIp = True
+
+    @staticmethod
+    def GetProxyIpList():
+        raw = Setting.ProxyIpValue.value
+        if not raw:
+            return []
+        ips = []
+        for ip in str(raw).split(","):
+            ip = ip.strip()
+            if ip and ip not in ips:
+                ips.append(ip)
+        return ips
+
+    @staticmethod
+    def FormatResolveIps(dnsIpList):
+        if not dnsIpList:
+            return ""
+        if isinstance(dnsIpList, list):
+            rawIps = dnsIpList
+        else:
+            rawIps = [ip.strip() for ip in str(dnsIpList).split(",")]
+        formatted = []
+        for ip in rawIps:
+            ip = str(ip).strip()
+            if not ip:
+                continue
+            if ":" in ip and not ip.startswith("["):
+                ip = f"[{ip}]"
+            if ip not in formatted:
+                formatted.append(ip)
+        return ",".join(formatted)
+
+    def GetTargetHost(self):
+        if self.proxyUrl:
+            return ToolUtil.GetUrlHost(self.proxyUrl)
+        return ToolUtil.GetUrlHost(self.url)
+
+    def GetDohIpList(self):
+        if not Setting.EnableDoh.value:
+            return []
+        if self.isCdnIp:
+            return []
+        if not (self.isApi or self.isImg or self.isRegister or self.proxyUrl):
+            return []
+        host = self.GetTargetHost()
+        if not host:
+            return []
+        ipList = QtOwner().dohIpDict.get(host)
+        return list(ipList) if ipList else []
 
     def SetProxy(self, proxyIndex, httpProxy, sock5Proxy):
         self.proxy = {"http": None, "https": None}
@@ -146,15 +205,17 @@ class ServerReq(object):
                     socksProxyStr = "socks5://" + socksProxyStr
                 self.proxy = {"http": socksProxyStr, "https": socksProxyStr}
 
-    def SetCurlOpt(self, isHttp3=False, isEch=False, echConfig="", dnsIpList=None):
+    def SetCurlOpt(self, isHttp3=False, isEch=False, echConfig="", dnsIpList=None, isDohIp=False):
         self.ipList = dnsIpList
+        self.isDohIp = bool(isDohIp and dnsIpList)
+        self.isH3 = False
         self.curl_opt = dict()
         self.curl_opt[CurlOpt.HTTP_VERSION] = CurlHttpVersion.V2_0
         if self.isImg or isinstance(self, DownloadBookReq):
             self.curl_opt[CurlOpt.CONNECTTIMEOUT] = self.timeout # 建立连接超时：5 秒
             self.curl_opt[CurlOpt.LOW_SPEED_LIMIT] = 1 # 最低速度阈值：1 byte/s
             self.curl_opt[CurlOpt.LOW_SPEED_TIME] = 5 # 持续时间阈值：5 秒
-        host = ToolUtil.GetUrlHost(self.url)
+        host = self.GetTargetHost()
         isEch = isEch and (self.isImg or self.isApi or self.isRegister or self.isOtherCloudFlare) and not self.proxyUrl
         # allUrls = GlobalConfig.DohUrlList.value[:]
         # allUrls.extend(GlobalConfig.NoHttp3Url.value[:])
@@ -166,30 +227,49 @@ class ServerReq(object):
         if isEch and echConfig:
             self.curl_opt[CurlOpt.ECH] = f"ecl:{echConfig}"
         if dnsIpList:
-            if isinstance(dnsIpList, list):
-                ipStr = ",".join(dnsIpList)
-            else:
-                ipStr = dnsIpList
+            ipStr = self.FormatResolveIps(dnsIpList)
 
             if ipStr:
-                self.curl_opt[CurlOpt.RESOLVE] = [f"{host}:443:{ipStr}"]
-                if self.isRegister:
-                    for v in GlobalConfig.UrlList.value:
-                        host2 =  ToolUtil.GetUrlHost(v)
-                        self.curl_opt[CurlOpt.RESOLVE].append(f"{host2}:443:{ipStr}")
-                    if GlobalConfig.Url.value not in GlobalConfig.UrlList.value:
-                        v = GlobalConfig.Url.value
-                        host2 =  ToolUtil.GetUrlHost(v)
-                        self.curl_opt[CurlOpt.RESOLVE].append(f"{host2}:443:{ipStr}")
+                if self.isDohIp:
+                    resolveMap = {host: ipStr}
+                    if not self.proxyUrl:
+                        extraHosts = []
+                        if self.isRegister:
+                            extraHosts.extend(GlobalConfig.UrlList.value)
+                            if GlobalConfig.Url.value not in GlobalConfig.UrlList.value:
+                                extraHosts.append(GlobalConfig.Url.value)
+                        elif self.isApi:
+                            extraHosts.extend(GlobalConfig.Url2List.value)
+                        elif self.isImg:
+                            extraHosts.extend(GlobalConfig.PicUrlList.value)
+                            extraHosts.extend(GlobalConfig.ImgAutoUrl.value)
+                        dohIpDict = QtOwner().dohIpDict
+                        for v in extraHosts:
+                            host2 = ToolUtil.GetUrlHost(v)
+                            if host2 and host2 not in resolveMap:
+                                ips2 = dohIpDict.get(host2)
+                                if ips2:
+                                    resolveMap[host2] = ",".join(ips2)
+                    self.curl_opt[CurlOpt.RESOLVE] = [f"{h}:443:{ips}" for h, ips in resolveMap.items()]
+                else:
+                    self.curl_opt[CurlOpt.RESOLVE] = [f"{host}:443:{ipStr}"]
+                    if self.isRegister:
+                        for v in GlobalConfig.UrlList.value:
+                            host2 =  ToolUtil.GetUrlHost(v)
+                            self.curl_opt[CurlOpt.RESOLVE].append(f"{host2}:443:{ipStr}")
+                        if GlobalConfig.Url.value not in GlobalConfig.UrlList.value:
+                            v = GlobalConfig.Url.value
+                            host2 =  ToolUtil.GetUrlHost(v)
+                            self.curl_opt[CurlOpt.RESOLVE].append(f"{host2}:443:{ipStr}")
 
-                elif self.isApi:
-                    for v in GlobalConfig.Url2List.value:
-                        host2 =  ToolUtil.GetUrlHost(v)
-                        self.curl_opt[CurlOpt.RESOLVE].append(f"{host2}:443:{ipStr}")
-                elif self.isImg:
-                    for v in GlobalConfig.PicUrlList.value:
-                        host2 =  ToolUtil.GetUrlHost(v)
-                        self.curl_opt[CurlOpt.RESOLVE].append(f"{host2}:443:{ipStr}")
+                    elif self.isApi:
+                        for v in GlobalConfig.Url2List.value:
+                            host2 =  ToolUtil.GetUrlHost(v)
+                            self.curl_opt[CurlOpt.RESOLVE].append(f"{host2}:443:{ipStr}")
+                    elif self.isImg:
+                        for v in GlobalConfig.PicUrlList.value:
+                            host2 =  ToolUtil.GetUrlHost(v)
+                            self.curl_opt[CurlOpt.RESOLVE].append(f"{host2}:443:{ipStr}")
 
         if isHttp3:
             self.curl_opt[CurlOpt.HTTP_VERSION] = CurlHttpVersion.V3
@@ -210,11 +290,14 @@ class ServerReq(object):
         self.isOtherCloudFlare = host in GlobalConfig.OtherCloudflareDomain.value
         if oldCloudFlare != self.isOtherCloudFlare:
             if self.isOtherCloudFlare:
-                self.ipList = [Setting.ProxyIpValue.value]
+                self.ipList = self.GetProxyIpList()
                 self.SetCurlOpt(self.isH3, Setting.EnableEch.value, QtOwner().echConfig, self.ipList)
             else:
                 self.ipList = []
                 self.SetCurlOpt(self.isH3, Setting.EnableEch.value, QtOwner().echConfig, self.ipList)
+        elif not self.isCdnIp and Setting.EnableDoh.value and (self.isApi or self.isImg or self.isRegister or self.proxyUrl):
+            dohIps = self.GetDohIpList()
+            self.SetCurlOpt(self.isH3, Setting.EnableEch.value, QtOwner().echConfig, dohIps, isDohIp=bool(dohIps))
 
         return True
         # host = ToolUtil.GetUrlHost(self.url)
@@ -1160,8 +1243,51 @@ class RandomRecommendReq2(ServerReq):
 
 # Doh域名解析
 class DnsOverHttpsReq(ServerReq):
+    @staticmethod
+    def ParseAnswerIps(answer):
+        ips = []
+        if not isinstance(answer, list):
+            return ips
+        for item in answer:
+            if not isinstance(item, dict):
+                continue
+            if item.get("type") not in (1, "A", None):
+                continue
+            rawIp = str(item.get("data", "")).strip()
+            if not rawIp or rawIp in ips:
+                continue
+            try:
+                ipObj = ipaddress.ip_address(rawIp)
+            except ValueError:
+                continue
+            if ipObj.version != 4:
+                continue
+            if (ipObj.is_loopback or ipObj.is_link_local or ipObj.is_unspecified
+                    or ipObj.is_multicast or ipObj.is_reserved):
+                continue
+            ips.append(rawIp)
+        return ips
+
     def __init__(self, domain="", dohAddress=""):
-        url = dohAddress + "?name={}&type=A".format(ToolUtil.GetUrlHost(domain))
+        host = ToolUtil.GetUrlHost(domain)
+        self.domain = host
+        dohList = []
+        if isinstance(dohAddress, (list, tuple)):
+            for addr in dohAddress:
+                addr = str(addr).strip()
+                if addr and addr not in dohList:
+                    dohList.append(addr)
+        elif isinstance(dohAddress, str) and dohAddress.strip():
+            dohList.append(dohAddress.strip())
+        if not dohList:
+            if Setting.DohAddress.value:
+                dohList.append(Setting.DohAddress.value.strip())
+            for addr in GlobalConfig.DohUrlList.value:
+                addr = str(addr).strip()
+                if addr and addr not in dohList:
+                    dohList.append(addr)
+        query = "?name={}&type=A".format(host)
+        url = (dohList[0] if dohList else "") + query
         method = "GET"
         header = dict()
         header["accept"] = "application/dns-json"
@@ -1170,6 +1296,9 @@ class DnsOverHttpsReq(ServerReq):
         self.timeout = 5
         self.headers = header
         self.isParseRes = True
+        if len(dohList) > 1:
+            self.resetUrl = [addr + query for addr in dohList[1:]]
+            self.resetCnt = len(self.resetUrl)
 
 
 # Doh域名解析

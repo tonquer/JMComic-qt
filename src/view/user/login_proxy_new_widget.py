@@ -1,3 +1,4 @@
+import ipaddress
 import json
 import re
 import urllib
@@ -116,6 +117,9 @@ class LoginProxyNewWidget(object):
         self.allApiUrl = []
         self.checkDohUrl = ""
         self.checkResult = None
+        self.dohQueryGen = 0
+        self.lastDohQueryUrl = ""
+        self.pendingDohHosts = set()
         self.owner.dohLine.editingFinished.connect(self.CheckDohReq)
 
         # self.flowLayout = FlowLayout(self.owner.ipWidget)
@@ -137,7 +141,9 @@ class LoginProxyNewWidget(object):
         self.owner.tableWidget.resizeRowsToContents()
 
         self.proxyIpGroup = QButtonGroup(self.owner)
-        self.proxyIpGroup.setExclusive(True)
+        self.proxyIpGroup.setExclusive(False)
+        self.maxSelectIp = 2
+        self.selectedIps = self.GetSelectedProxyIps()
         self.otherProxyIps = [ip.strip() for ip in Setting.ProxyIpLastList.value.split(",") if ip.strip()]
         if not self.otherProxyIps:
             self.otherProxyIps = GlobalConfig.ProxyIpList.value[:]
@@ -182,8 +188,8 @@ class LoginProxyNewWidget(object):
         self.owner.radio_img_6.setEnabled(enabled)
         # self.owner.radio_img_7.setEnabled(enabled)
         self.owner.echBox.setEnabled(enabled)
+        self.owner.dohBox.setEnabled(enabled)
         self.owner.http3Box.setEnabled(enabled)
-        # self.owner.dohBox.setEnabled(enabled)
         self.owner.dohLine.setEnabled(enabled)
         # self.radioButton_5.setEnabled(enabled)
 
@@ -200,6 +206,7 @@ class LoginProxyNewWidget(object):
             partial(QtOwner().settingView.LineEditEvent, Setting.Sock5Proxy, self.owner.sockEdit))
         self.owner.echBox.clicked.connect(
             partial(QtOwner().settingView.CheckButtonEvent, Setting.EnableEch, self.owner.echBox))
+        self.owner.dohBox.clicked.connect(self.SwitchDohBox)
         self.owner.http3Box.clicked.connect(
             partial(QtOwner().settingView.CheckButtonEvent, Setting.IsOpenHTTP3, self.owner.http3Box))
         self.owner.ipListEdit.editingFinished.connect(
@@ -288,7 +295,7 @@ class LoginProxyNewWidget(object):
         # self.owner.host_api_domain.setText(Setting.HostApiDomain.value)
         # self.owner.host_img_domain.setText(Setting.HostImgDomain.value)
         self.owner.echBox.setChecked(bool(Setting.EnableEch.value))
-        # self.owner.dohBox.setChecked(bool(Setting.IsOpenDoh.value))
+        self.owner.dohBox.setChecked(bool(Setting.EnableDoh.value))
         self.owner.dohLine.setText(Setting.DohAddress.value)
         self.owner.http3Box.setChecked(bool(Setting.IsOpenHTTP3.value))
         self.owner.ipListEdit.setText(Setting.PreferCDNList.value)
@@ -308,8 +315,8 @@ class LoginProxyNewWidget(object):
         # Setting.UerAgent.SetValue(self.uaEdit.text())
         Setting.ApiTimeOut.SetValue(self.owner.apiTimeout.currentIndex())
         Setting.ImgTimeOut.SetValue(self.owner.imgTimeout.currentIndex())
-        # Setting.IsOpenDoh.SetValue(bool(self.owner.dohBox.isChecked()))
         Setting.EnableEch.SetValue(bool(self.owner.echBox.isChecked()))
+        Setting.EnableDoh.SetValue(int(self.owner.dohBox.isChecked()))
         Setting.DohAddress.SetValue((self.owner.dohLine.text()))
         Setting.IsOpenHTTP3.SetValue(bool(self.owner.http3Box.isChecked()))
         # Setting.DohAddress.SetValue(self.dohEdit.text())
@@ -334,13 +341,107 @@ class LoginProxyNewWidget(object):
     #     # QtOwner().settingView.SetSock5Proxy()
     #     Log.Warn("update proxy, ver:{}, setId:{}:{}, address:{}, img:{}".format(config.UpdateVersion, Setting.ProxySelectIndex.value, Setting.ProxyImgSelectIndex.value, address, imageServer))
 
+    def SwitchDohBox(self):
+        QtOwner().settingView.CheckButtonEvent(Setting.EnableDoh, self.owner.dohBox)
+        if Setting.EnableDoh.value:
+            self.InitDohDns(force=False, dohAddress=self.owner.dohLine.text().strip())
+        else:
+            self.dohQueryGen += 1
+            self.pendingDohHosts.clear()
+
+    @staticmethod
+    def GetDohDomains():
+        rawUrls = []
+        rawUrls.extend(GlobalConfig.Url2List.value)
+        rawUrls.extend(GlobalConfig.PicUrlList.value)
+        rawUrls.append(GlobalConfig.ProxyApiDomain2.value)
+        rawUrls.append(GlobalConfig.ProxyImgDomain2.value)
+        rawUrls.extend(GlobalConfig.ImgAutoUrl.value)
+        rawUrls.append(GlobalConfig.Url.value)
+        domains = []
+        for rawUrl in rawUrls:
+            if not rawUrl:
+                continue
+            host = ToolUtil.GetUrlHost(str(rawUrl).strip())
+            if not host or host in domains:
+                continue
+            try:
+                ipaddress.ip_address(host)
+                continue
+            except ValueError:
+                pass
+            domains.append(host)
+        return domains
+
+    @staticmethod
+    def GetDohUrlList(dohAddress=None):
+        dohList = []
+        firstDoh = dohAddress if dohAddress is not None else Setting.DohAddress.value
+        firstDoh = str(firstDoh).strip() if firstDoh else ""
+        if firstDoh:
+            dohList.append(firstDoh)
+        for addr in GlobalConfig.DohUrlList.value:
+            addr = str(addr).strip()
+            if addr and addr not in dohList:
+                dohList.append(addr)
+        return dohList
+
+    def InitDohDns(self, force=False, dohAddress=None):
+        if not Setting.EnableDoh.value:
+            return
+        dohList = self.GetDohUrlList(dohAddress)
+        if not dohList:
+            return
+        curDoh = dohList[0]
+        dohChanged = bool(self.lastDohQueryUrl and curDoh != self.lastDohQueryUrl)
+        if dohChanged:
+            QtOwner().dohIpDict = {}
+            force = True
+        self.lastDohQueryUrl = curDoh
+
+        domains = self.GetDohDomains()
+        if force:
+            self.dohQueryGen += 1
+            self.pendingDohHosts.clear()
+            targetDomains = domains
+        else:
+            targetDomains = [
+                h for h in domains
+                if not QtOwner().dohIpDict.get(h) and h not in self.pendingDohHosts
+            ]
+        if not targetDomains:
+            return
+
+        gen = self.dohQueryGen
+        Log.Info(f"start doh dns query, gen:{gen}, doh:{curDoh}, count:{len(targetDomains)}")
+        for host in targetDomains:
+            self.pendingDohHosts.add(host)
+            request = req.DnsOverHttpsReq(host, dohList)
+            self.owner.AddHttpTask(request, self.InitDohDnsBack, backParam=(gen, host))
+
+    def InitDohDnsBack(self, raw, backParam):
+        gen, host = backParam
+        if gen != self.dohQueryGen or not Setting.EnableDoh.value:
+            return
+        self.pendingDohHosts.discard(host)
+        st = raw.get("st")
+        if st == Str.Ok:
+            ips = req.DnsOverHttpsReq.ParseAnswerIps(raw.get("Answer"))
+            if ips:
+                QtOwner().dohIpDict[host] = ips[:self.maxSelectIp]
+                Log.Info(f"update doh ip, host:{host}, ips:{ips}")
+                return
+        Log.Warn(f"doh dns query fail, host:{host}, st:{st}")
+
     def CheckDohReq(self):
         self.checkResult = None
-        self.checkDohUrl = self.owner.dohLine.text()
+        self.checkDohUrl = self.owner.dohLine.text().strip()
         self.SetDohIcon()
         url = GlobalConfig().Url2List.value[0]
         request = req.DnsOverHttpsReq(url, self.checkDohUrl)
         self.owner.AddHttpTask(request, self.CheckDohBack, self.checkDohUrl)
+        if Setting.EnableDoh.value:
+            self.InitDohDns(force=(self.checkDohUrl != self.lastDohQueryUrl), dohAddress=self.checkDohUrl)
 
     def CheckDohBack(self, raw, url):
         data = raw["data"]
@@ -449,24 +550,36 @@ class LoginProxyNewWidget(object):
             self.CheckSelectBox()
         return
 
+    def GetSelectedProxyIps(self):
+        ips = []
+        raw = Setting.ProxyIpValue.value
+        if raw:
+            for ip in str(raw).split(","):
+                ip = ip.strip()
+                if ip and ip not in ips:
+                    ips.append(ip)
+        return ips[:self.maxSelectIp]
+
     def CheckSelectBox(self):
         if not self.allItems:
             return
-        isHave = False
-        selectIp = Setting.ProxyIpValue.value
+        selectedIps = self.GetSelectedProxyIps()
+        ipToItem = {item.ip: item for item in self.allItems.values()}
+        validIps = []
+        for ip in selectedIps:
+            if ip in ipToItem and len(validIps) < self.maxSelectIp:
+                validIps.append(ip)
         for item in self.allItems.values():
             assert isinstance(item, IpItem)
-            if item.ip == selectIp:
-                isHave = True
-                item.isSelect = True
-            else:
-                item.isSelect = False
+            item.isSelect = item.ip in validIps
             self.UpdateRow(item)
-        if not isHave:
+        if not validIps:
             firstItem = sorted(self.allItems.values())[0]
             firstItem.isSelect = True
-            Setting.ProxyIpValue.SetValue(firstItem.ip)
+            validIps = [firstItem.ip]
             self.UpdateRow(firstItem)
+        self.selectedIps = validIps
+        Setting.ProxyIpValue.SetValue(",".join(validIps))
 
     def StartTestImgIp(self):
         url = GlobalConfig.CdnImgUrl.value
@@ -585,14 +698,35 @@ class LoginProxyNewWidget(object):
                 history[item.ip]['downloadSt'] = item.downloadSt
             Setting.LastIpResult.SetValue(history)
 
-    def SaveProxyIp(self):
-        tabRow = self.proxyIpGroup.checkedId()
+    def SaveProxyIp(self, button=None):
+        if button is None:
+            return
+        tabRow = self.proxyIpGroup.id(button)
+        clickedItem = None
+        visibleIps = set()
         for item in self.allItems.values():
+            visibleIps.add(item.ip)
             if item.tableRow == tabRow:
-                item.isSelect = True
-                Setting.ProxyIpValue.SetValue(item.ip)
-            else:
-                item.isSelect = False
+                clickedItem = item
+        if clickedItem is None:
+            return
+
+        self.selectedIps = [ip for ip in self.selectedIps if ip in visibleIps]
+        if button.isChecked():
+            if clickedItem.ip not in self.selectedIps:
+                if len(self.selectedIps) >= self.maxSelectIp:
+                    button.setChecked(False)
+                    clickedItem.isSelect = False
+                    QtOwner().ShowMsg(f"最多可选择{self.maxSelectIp}个IP")
+                    return
+                self.selectedIps.append(clickedItem.ip)
+            clickedItem.isSelect = True
+        else:
+            clickedItem.isSelect = False
+            if clickedItem.ip in self.selectedIps:
+                self.selectedIps.remove(clickedItem.ip)
+
+        Setting.ProxyIpValue.SetValue(",".join(self.selectedIps))
 
     def ShowAllItem(self):
         self.ClearAllItem()
@@ -602,6 +736,8 @@ class LoginProxyNewWidget(object):
         self.allItems = {}
         index = 0
         allips = set()
+        selectedIps = self.GetSelectedProxyIps()
+        selectedSet = set(selectedIps)
 
         for j, ip in enumerate(self.otherProxyIps):
             if not ip:
@@ -612,7 +748,7 @@ class LoginProxyNewWidget(object):
             allips.add(ip)
 
             item = IpItem(index, j + 1, ip, True, False)
-            item.isSelect = ip == Setting.ProxyIpValue.value
+            item.isSelect = ip in selectedSet
             self.allItems[index] = item
             if ip in oldItems:
                 item.Copy(oldItems[ip])
@@ -627,7 +763,7 @@ class LoginProxyNewWidget(object):
                 continue
             allips.add(ip)
             item = IpItem(index, j + 1, ip, False, True)
-            item.isSelect = ip == Setting.ProxyIpValue.value
+            item.isSelect = ip in selectedSet
             self.allItems[index] = item
             if ip in oldItems:
                 item.Copy(oldItems[ip])
@@ -643,13 +779,15 @@ class LoginProxyNewWidget(object):
             allips.add(ip)
 
             item = IpItem(index, j + 1, ip, False, False)
-            item.isSelect = ip == Setting.ProxyIpValue.value
+            item.isSelect = ip in selectedSet
             self.allItems[index] = item
             if ip in oldItems:
                 item.Copy(oldItems[ip])
             self.AddRow(index)
             self.UpdateRow(item)
             index += 1
+
+        self.selectedIps = [ip for ip in selectedIps if ip in allips][:self.maxSelectIp]
 
         # self.owner.tableWidget.resizeColumnsToContents()
         # self.owner.tableWidget.resizeRowsToContents()
@@ -692,9 +830,12 @@ class LoginProxyNewWidget(object):
         self.owner.tableWidget.setItem(info.tableRow, 3, QTableWidgetItem(info.asn))
 
     def GetProxyName(self):
-        for item in self.allItems.values():
-            if item.isSelect:
-                return item.name
+        ipToName = {item.ip: item.name for item in self.allItems.values() if item.isSelect}
+        names = [ipToName[ip] for ip in self.selectedIps if ip in ipToName]
+        if not names:
+            names = [item.name for item in self.allItems.values() if item.isSelect]
+        if names:
+            return ",".join(names)
         return Setting.ProxyIpValue.value
 
     def ClearAllItem(self):
@@ -744,7 +885,8 @@ class LoginProxyNewWidget(object):
             api = GlobalConfig.GetApiUrl2(i)
             request = req.SpeedTestPingReq(api)
             request.SetIndex(i, i, api, img)
-            request.SetCurlOpt(Setting.IsOpenHTTP3.value, Setting.EnableEch.value, QtOwner().echConfig)
+            dohIps = request.GetDohIpList()
+            request.SetCurlOpt(Setting.IsOpenHTTP3.value, Setting.EnableEch.value, QtOwner().echConfig, dohIps, isDohIp=bool(dohIps))
             self.speedPingNum += 1
             self.owner.AddHttpTask(request, self.SpeedTestPingBack, backParam=i)
 
@@ -783,7 +925,8 @@ class LoginProxyNewWidget(object):
         api = GlobalConfig.GetApiUrl2(i)
         request = req.SpeedTestReq()
         request.SetIndex(i, i, api, img)
-        request.SetCurlOpt(Setting.IsOpenHTTP3.value, Setting.EnableEch.value, QtOwner().echConfig)
+        dohIps = request.GetDohIpList()
+        request.SetCurlOpt(Setting.IsOpenHTTP3.value, Setting.EnableEch.value, QtOwner().echConfig, dohIps, isDohIp=bool(dohIps))
         self.owner.AddHttpTask(lambda x: Server().TestSpeed(request, x), self.SpeedTestBack, i)
         return
 

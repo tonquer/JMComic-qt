@@ -82,28 +82,28 @@ def _ApplyProxyUrl(request: req.ServerReq):
 
 
 def _AttachFallbackUrls(request: req.ServerReq):
-    if request.ipList or isinstance(request, _SPEED_REQ_TYPES):
+    if (request.ipList and not request.isDohIp) or isinstance(request, _SPEED_REQ_TYPES):
         return
 
-    host = ToolUtil.GetUrlHost(request.url)
-    if request.isApi and not request.resetUrl:
-        # 为 API 请求准备备用域名，单条线路不可用时自动切换重试
-        for url in GlobalConfig.Url2List.value:
-            altHost = ToolUtil.GetUrlHost(url)
-            if altHost != host:
-                request.resetUrl.append(request.url.replace(host, altHost))
-        if request.resetUrl:
-            request.resetCnt = min(len(request.resetUrl), 3)
-    elif request.isImg and len(request.resetUrl) <= 1:
-        # 为图片请求准备备用 CDN 域名，下载失败时自动切换重试
-        for domain in GlobalConfig.ImgAutoUrl.value:
-            if domain == host:
-                continue
-            altUrl = request.url.replace(host, domain)
-            if altUrl not in request.resetUrl:
-                request.resetUrl.append(altUrl)
-        if request.resetUrl:
-            request.resetCnt = max(request.resetCnt, min(len(request.resetUrl), 3))
+    # host = ToolUtil.GetUrlHost(request.url)
+    # if request.isApi and not request.resetUrl:
+    #     # 为 API 请求准备备用域名，单条线路不可用时自动切换重试
+    #     for url in GlobalConfig.Url2List.value:
+    #         altHost = ToolUtil.GetUrlHost(url)
+    #         if altHost != host:
+    #             request.resetUrl.append(request.url.replace(host, altHost))
+    #     if request.resetUrl:
+    #         request.resetCnt = min(len(request.resetUrl), 3)
+    # elif request.isImg and len(request.resetUrl) <= 1:
+    #     # 为图片请求准备备用 CDN 域名，下载失败时自动切换重试
+    #     for domain in GlobalConfig.ImgAutoUrl.value:
+    #         if domain == host:
+    #             continue
+    #         altUrl = request.url.replace(host, domain)
+    #         if altUrl not in request.resetUrl:
+    #             request.resetUrl.append(altUrl)
+    #     if request.resetUrl:
+    #         request.resetCnt = max(request.resetCnt, min(len(request.resetUrl), 3))
 
 
 class Server(Singleton):

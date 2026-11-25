@@ -87,6 +87,7 @@ class QtOwner(Singleton):
         self.closeType = 1   # 1普通， 2关闭弹窗触发， 3任务栏触发
         self.isMaxSize = 0
         self.echConfig = ""
+        self.dohIpDict = {}
         self.downFmtRule = {}
         self.convertFmtRule = {}
 

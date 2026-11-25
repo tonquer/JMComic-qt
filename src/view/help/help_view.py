@@ -101,8 +101,10 @@ class HelpView(QWidget, Ui_Help, QtTaskBase):
             self.UpdateText(self.configButton, Str.AlreadyUpdate, QtOwner().GetThemeColor(), True)
             if not data:
                 return
-            GlobalConfig.UpdateSetting(data)
+            updated = GlobalConfig.UpdateSetting(data)
             self.configVer.setText("{}({})".format(GlobalConfig.Ver.value, GlobalConfig.VerTime.value))
+            if updated and Setting.EnableDoh.value:
+                QtOwner().loginNewView.proxyWidget.InitDohDns(force=False)
         except Exception as es:
             Log.Error(es)
 

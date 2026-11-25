@@ -72,9 +72,11 @@ class LoginNewView(QtWidgets.QWidget, Ui_LoginNew, QtTaskBase):
     def Init(self):
         self.timer.start()
         self.InitEchConfig()
+        self.proxyWidget.InitDohDns(force=True)
 
     def HourTimeOut(self):
         self.InitEchConfig()
+        self.proxyWidget.InitDohDns(force=True)
 
     def InitEchConfig(self):
         # self.echConfigIndex = 0

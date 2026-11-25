@@ -1747,6 +1747,11 @@
         <translation>啟用ECH（Encrypted Client Hello）</translation>
     </message>
     <message>
+        <location filename="../ui/ui_login_new.ui" line="1008"/>
+        <source>分流使用DOH查询IP</source>
+        <translation>分流使用DoH查詢IP</translation>
+    </message>
+    <message>
         <location filename="../ui/ui_login_new.ui" line="1011"/>
         <source>DOH地址：</source>
         <translation>DoH位址：</translation>
@@ -1819,9 +1824,9 @@
         <translation>測試IP分流</translation>
     </message>
     <message>
-        <location filename="../ui/ui_login_new.ui" line="1344"/>
-        <source>*使用代理时IP分流不生效，推荐开启ECH功能</source>
-        <translation>*使用代理時IP分流不會生效，建議開啟ECH功能</translation>
+        <location filename="../ui/ui_login_new.ui" line="1352"/>
+        <source>*使用代理时IP分流不生效，推荐开启ECH功能，最多可选择2个IP</source>
+        <translation>*使用代理時IP分流不會生效，建議開啟ECH功能，最多可選擇2個IP</translation>
     </message>
     <message>
         <location filename="../ui/ui_login_new.ui" line="1358"/>

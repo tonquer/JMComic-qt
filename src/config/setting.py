@@ -143,6 +143,7 @@ class Setting:
     ProxyIpValue =  SettingValue("ProxySetting", "", False)
 
     EnableEch = SettingValue("ProxySetting", 1, False)
+    EnableDoh = SettingValue("ProxySetting", 1, False)
     IsOpenHTTP3 = SettingValue("ProxySetting", 0, False)
 
     ApiVersion = SettingValue("ProxySetting", 0, False)

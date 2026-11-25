@@ -692,9 +692,9 @@
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>0</y>
+              <y>-76</y>
               <width>570</width>
-              <height>3283</height>
+              <height>3303</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -822,11 +822,11 @@
                    <bold>false</bold>
                   </font>
                  </property>
-                 <property name="role" stdset="0">
-                  <string notr="true">danger</string>
-                 </property>
                  <property name="text">
                   <string>未检测到系统代理</string>
+                 </property>
+                 <property name="role" stdset="0">
+                  <string notr="true">danger</string>
                  </property>
                 </widget>
                </item>
@@ -1001,7 +1001,18 @@
               </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_23"/>
+              <layout class="QHBoxLayout" name="horizontalLayout_23">
+               <item>
+                <widget class="QCheckBox" name="dohBox">
+                 <property name="text">
+                  <string>分流使用DOH查询DNS</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_24">
@@ -1337,11 +1348,11 @@
               <layout class="QVBoxLayout" name="verticalLayout_2">
                <item>
                 <widget class="QLabel" name="label_25">
+                 <property name="text">
+                  <string>*使用代理时IP分流不生效，推荐开启ECH功能，最多可选择2个IP</string>
+                 </property>
                  <property name="role" stdset="0">
                   <string notr="true">danger</string>
-                 </property>
-                 <property name="text">
-                  <string>*使用代理时IP分流不生效，推荐开启ECH功能</string>
                  </property>
                 </widget>
                </item>
@@ -1530,6 +1541,7 @@
   <tabstop>proxyIpEdit</tabstop>
   <tabstop>sockEdit</tabstop>
   <tabstop>echBox</tabstop>
+  <tabstop>dohBox</tabstop>
   <tabstop>resetEdit</tabstop>
   <tabstop>resetButton</tabstop>
   <tabstop>testSpeedButton</tabstop>
@@ -1575,8 +1587,8 @@
  <connections/>
  <buttongroups>
   <buttongroup name="radioProxyGroup"/>
-  <buttongroup name="sexGroup"/>
   <buttongroup name="radioApiGroup"/>
+  <buttongroup name="sexGroup"/>
   <buttongroup name="radioImgGroup"/>
  </buttongroups>
 </ui>

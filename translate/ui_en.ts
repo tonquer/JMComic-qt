@@ -1747,6 +1747,11 @@
         <translation>Enable ECH (Encrypted Client Hello)</translation>
     </message>
     <message>
+        <location filename="../ui/ui_login_new.ui" line="1008"/>
+        <source>分流使用DOH查询IP</source>
+        <translation>Resolve route IPs via DoH</translation>
+    </message>
+    <message>
         <location filename="../ui/ui_login_new.ui" line="1011"/>
         <source>DOH地址：</source>
         <translation>DoH URL:</translation>
@@ -1819,9 +1824,9 @@
         <translation>Test IP Route</translation>
     </message>
     <message>
-        <location filename="../ui/ui_login_new.ui" line="1344"/>
-        <source>*使用代理时IP分流不生效，推荐开启ECH功能</source>
-        <translation>*IP routing is disabled when using a proxy; enabling ECH is recommended</translation>
+        <location filename="../ui/ui_login_new.ui" line="1352"/>
+        <source>*使用代理时IP分流不生效，推荐开启ECH功能，最多可选择2个IP</source>
+        <translation>*IP routing is disabled when using a proxy; enabling ECH is recommended; up to 2 IPs can be selected</translation>
     </message>
     <message>
         <location filename="../ui/ui_login_new.ui" line="1358"/>

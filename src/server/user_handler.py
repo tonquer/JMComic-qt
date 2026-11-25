@@ -1196,15 +1196,27 @@ class GetRawHandler(object):
 class DnsOverHttpsReqHandler(object):
     def __call__(self, task):
         data = {"st": task.status, "data": task.res.GetText()}
+        isReset = False
         try:
             if task.status != Status.Ok:
                 return
+            if task.res.raw.status_code != 200:
+                isReset = True
+                return
             info = json.loads(task.res.raw.content)
-            data['Answer'] = info.get("Answer")
+            answer = info.get("Answer")
+            data['Answer'] = answer
+            if not req.DnsOverHttpsReq.ParseAnswerIps(answer):
+                isReset = True
         except Exception as es:
             data["st"] = Status.ParseError
+            isReset = True
             Log.Error(es)
         finally:
+            if isReset and task.req.resetCnt >= 0 and task.req.ResetToSwitchNextUrl():
+                task.req.isReset = True
+                Server().Send(task.req, backParam=task.backParam)
+                return
             if task.backParam:
                 TaskBase.taskObj.taskBack.emit(task.backParam, pickle.dumps(data))
 

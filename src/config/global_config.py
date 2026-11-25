@@ -259,4 +259,5 @@ class GlobalConfig:
                 if isinstance(item, GlobalItem):
                     item.set_value(value)
             GlobalConfig.SaveSetting()
-        pass
+            return True
+        return False
