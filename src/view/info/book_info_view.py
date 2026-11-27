@@ -649,8 +649,9 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
                 shutil.rmtree(path, True)
             if os.path.isdir(waifuPath):
                 shutil.rmtree(waifuPath, True)
+            TaskCache().RemoveCacheDiskByPrefixes([path, waifuPath])
+            TaskCache().ClearMemData(self.bookId)
         self.UpdateFavoriteIcon()
-        TaskCache().ClearMemData(self.bookId)
 
     def DelFavoriteBack(self, raw):
         if not config.LoginUserName:

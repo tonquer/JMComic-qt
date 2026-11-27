@@ -249,7 +249,9 @@ class ServerReq(object):
                             if host2 and host2 not in resolveMap:
                                 ips2 = dohIpDict.get(host2)
                                 if ips2:
-                                    resolveMap[host2] = ",".join(ips2)
+                                    ipStr2 = self.FormatResolveIps(ips2)
+                                    if ipStr2:
+                                        resolveMap[host2] = ipStr2
                     self.curl_opt[CurlOpt.RESOLVE] = [f"{h}:443:{ips}" for h, ips in resolveMap.items()]
                 else:
                     self.curl_opt[CurlOpt.RESOLVE] = [f"{host}:443:{ipStr}"]

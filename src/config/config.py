@@ -28,7 +28,7 @@ UpdateUrlBack = "https://github.com/tonquer/JMComic-qt/"
 
 UpdateVersion = "v1.3.8"
 RealVersion = "v1.3.8"
-VersionTime = "2026-11-15"
+VersionTime = "2026-11-27"
 
 Waifu2xVersion = "2.0.1"
 LoginUserName = ""

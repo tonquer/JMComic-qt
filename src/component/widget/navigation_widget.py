@@ -467,11 +467,13 @@ class NavigationWidget(QWidget, Ui_Navigation, QtTaskBase):
         st = raw.get("st")
         msg = raw.get("data", {}).get("msg", "")
         if st == Status.Ok:
-            self.isDailySign = True
-            self.signButton.setText(Str.GetStr(Str.AlreadySign))
-            self.signMap[curDate] = True
-            if self.tmpSignView:
-                self.tmpSignView.UpdateSign(curDate)
+            # 目前返回的code是一样的
+            if Converter('zh-hans').convert(msg) != '本月补签次数已用完':
+                self.isDailySign = True
+                self.signButton.setText(Str.GetStr(Str.AlreadySign))
+                self.signMap[curDate] = True
+                if self.tmpSignView:
+                    self.tmpSignView.UpdateSign(curDate)
         else:
             self.AddHttpTask(req.GetDailyReq2(QtOwner().user.uid), self.GetSignDailyBack)
         QtOwner().ShowError(msg if msg else Str.GetStr(st))

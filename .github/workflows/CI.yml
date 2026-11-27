@@ -39,7 +39,20 @@ jobs:
         cd src
         cp ..\res\icon\icon.ico .\
 
-        pyinstaller --hidden-import=_cffi_backend --collect-all curl_cffi -F -w -i icon.ico start.py --upx-dir "D:\upx-5.0.1-win64"
+        $pysideDir = python -c "import os, PySide6; print(os.path.dirname(PySide6.__file__))"
+        $shibokenDir = python -c "import os, shiboken6; print(os.path.dirname(shiboken6.__file__))"
+        $vsBinArgs = @()
+        foreach ($dllName in @("msvcp140.dll", "vcomp140.dll")) {
+          $found = $null
+          foreach ($dir in @($pysideDir, $shibokenDir, "$env:SystemRoot\System32")) {
+            $candidate = Join-Path $dir $dllName
+            if (Test-Path $candidate) { $found = $candidate; break }
+          }
+          if (-not $found) { throw "Required VS runtime DLL not found: $dllName" }
+          $vsBinArgs += @("--add-binary", "$found;.")
+        }
+
+        pyinstaller --hidden-import=_cffi_backend --collect-all curl_cffi $vsBinArgs -F -w -i icon.ico start.py --upx-dir "D:\upx-5.0.1-win64"
         mv dist jmcomic
         cp ..\LICENSE jmcomic\
         cp ..\CHANGELOG jmcomic\
