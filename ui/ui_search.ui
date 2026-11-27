@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>740</width>
-    <height>369</height>
+    <width>900</width>
+    <height>560</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -19,50 +19,74 @@
   <property name="windowTitle">
    <string>搜索</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,1,0">
+   <property name="spacing">
+    <number>10</number>
+   </property>
+   <property name="leftMargin">
+    <number>12</number>
+   </property>
+   <property name="topMargin">
+    <number>10</number>
+   </property>
+   <property name="rightMargin">
+    <number>12</number>
+   </property>
+   <property name="bottomMargin">
+    <number>10</number>
+   </property>
    <item>
     <widget class="QLabel" name="searchTab">
      <property name="enabled">
       <bool>true</bool>
      </property>
+     <property name="role" stdset="0">
+      <string notr="true">sectionTitle</string>
+     </property>
      <property name="text">
       <string/>
      </property>
      <property name="textInteractionFlags">
-      <set>Qt::TextBrowserInteraction</set>
+      <set>Qt::TextInteractionFlag::TextBrowserInteraction</set>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QWidget" name="searchWidget" native="true">
+    <widget class="QFrame" name="searchWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="role" stdset="0">
+      <string notr="true">card</string>
+     </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="spacing">
+       <number>8</number>
+      </property>
       <property name="leftMargin">
-       <number>0</number>
+       <number>12</number>
       </property>
       <property name="topMargin">
-       <number>0</number>
+       <number>10</number>
       </property>
       <property name="rightMargin">
-       <number>0</number>
+       <number>12</number>
       </property>
       <property name="bottomMargin">
-       <number>0</number>
+       <number>10</number>
       </property>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="spacing">
+         <number>8</number>
+        </property>
         <item>
          <widget class="QLabel" name="label_2">
-          <property name="minimumSize">
-           <size>
-            <width>60</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>60</width>
-            <height>40</height>
-           </size>
+          <property name="role" stdset="0">
+           <string notr="true">muted</string>
           </property>
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;搜寻的最佳姿势?&lt;/p&gt;&lt;p&gt;【包含搜寻】&lt;/p&gt;&lt;p&gt;搜寻全彩[空格][+]人妻,仅显示全彩且是人妻的本本&lt;/p&gt;&lt;p&gt;范例:全彩 +人妻&lt;br/&gt;&lt;/p&gt;&lt;p&gt;【排除搜寻】&lt;/p&gt;&lt;p&gt;搜寻全彩[空格][]人妻,显示全彩并排除人妻的本本&lt;/p&gt;&lt;p&gt;范例:全彩 -人妻&lt;br/&gt;&lt;/p&gt;&lt;p&gt;【我都要搜寻】&lt;/p&gt;&lt;p&gt;搜寻全彩[空格]人妻,会显示所有包含全彩及人妻的本本&lt;/p&gt;&lt;p&gt;范例:全彩 人妻&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -77,14 +101,20 @@
           <property name="minimumSize">
            <size>
             <width>20</width>
-            <height>0</height>
+            <height>20</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
             <width>20</width>
-            <height>16777215</height>
+            <height>20</height>
            </size>
+          </property>
+          <property name="role" stdset="0">
+           <string notr="true">muted</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel#label_3 { border: 1px solid #94A3B8; border-radius: 10px; font-weight: 600; }</string>
           </property>
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;搜寻的最佳姿势?&lt;/p&gt;&lt;p&gt;【精确搜索】&lt;/p&gt;&lt;p&gt;jm+号码&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;【包含搜寻】&lt;/p&gt;&lt;p&gt;搜寻全彩[空格][+]人妻,仅显示全彩且是人妻的本本&lt;/p&gt;&lt;p&gt;范例:全彩 +人妻&lt;br/&gt;&lt;/p&gt;&lt;p&gt;【排除搜寻】&lt;/p&gt;&lt;p&gt;搜寻全彩[空格][]人妻,显示全彩并排除人妻的本本&lt;/p&gt;&lt;p&gt;范例:全彩 -人妻&lt;br/&gt;&lt;/p&gt;&lt;p&gt;【我都要搜寻】&lt;/p&gt;&lt;p&gt;搜寻全彩[空格]人妻,会显示所有包含全彩及人妻的本本&lt;/p&gt;&lt;p&gt;范例:全彩 人妻&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -96,7 +126,7 @@
            <string>?</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           <set>Qt::AlignmentFlag::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -105,7 +135,7 @@
           <property name="minimumSize">
            <size>
             <width>40</width>
-            <height>36</height>
+            <height>0</height>
            </size>
           </property>
           <property name="placeholderText">
@@ -118,6 +148,12 @@
         </item>
         <item>
          <widget class="QPushButton" name="searchButton">
+          <property name="minimumSize">
+           <size>
+            <width>80</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="text">
            <string>搜索</string>
           </property>
@@ -125,151 +161,178 @@
         </item>
        </layout>
       </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_6">
+        <property name="spacing">
+         <number>8</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="cateLabel">
+          <property name="role" stdset="0">
+           <string notr="true">muted</string>
+          </property>
+          <property name="text">
+           <string>高级搜索：</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="typeBox">
+          <property name="minimumSize">
+           <size>
+            <width>104</width>
+            <height>0</height>
+           </size>
+          </property>
+          <item>
+           <property name="text">
+            <string>站内搜索</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>作品</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>作者</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>标签</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>登场人物</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="yearBox">
+          <property name="minimumSize">
+           <size>
+            <width>104</width>
+            <height>0</height>
+           </size>
+          </property>
+          <item>
+           <property name="text">
+            <string>全部年份</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="monthBox">
+          <property name="minimumSize">
+           <size>
+            <width>104</width>
+            <height>0</height>
+           </size>
+          </property>
+          <item>
+           <property name="text">
+            <string>全部月份</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>1</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>2</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>3</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>4</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>5</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>6</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>7</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>8</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>9</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>10</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>11</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>12</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
      </layout>
     </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_6">
-     <item>
-      <widget class="QLabel" name="cateLabel">
-       <property name="minimumSize">
-        <size>
-         <width>80</width>
-         <height>40</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>高级搜索：</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="typeBox">
-       <item>
-        <property name="text">
-         <string>站内搜索</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>作品</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>作者</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>标签</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>登场人物</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="yearBox">
-       <item>
-        <property name="text">
-         <string>全部年份</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="monthBox">
-       <item>
-        <property name="text">
-         <string>全部月份</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>1</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>2</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>3</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>4</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>5</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>6</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>7</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>8</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>9</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>10</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>11</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>12</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
    </item>
    <item>
     <widget class="ComicListWidget" name="bookList"/>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>8</number>
+     </property>
+     <property name="leftMargin">
+      <number>2</number>
+     </property>
+     <property name="rightMargin">
+      <number>2</number>
+     </property>
      <item>
       <widget class="QComboBox" name="sortCombox">
        <property name="enabled">
@@ -277,7 +340,7 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>100</width>
+         <width>110</width>
          <height>0</height>
         </size>
        </property>
@@ -306,7 +369,7 @@
      <item>
       <spacer name="horizontalSpacer_2">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
@@ -318,17 +381,8 @@
      </item>
      <item>
       <widget class="QLabel" name="label">
-       <property name="minimumSize">
-        <size>
-         <width>60</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>32</height>
-        </size>
+       <property name="role" stdset="0">
+        <string notr="true">muted</string>
        </property>
        <property name="text">
         <string>页：0/0</string>
@@ -355,7 +409,7 @@
       <widget class="QPushButton" name="jumpPage">
        <property name="minimumSize">
         <size>
-         <width>64</width>
+         <width>68</width>
          <height>0</height>
         </size>
        </property>

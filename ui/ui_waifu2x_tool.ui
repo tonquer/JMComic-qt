@@ -6,26 +6,53 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>705</width>
-    <height>498</height>
+    <width>820</width>
+    <height>580</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>图片查看</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout" name="gridLayout" columnstretch="1,0">
+   <property name="leftMargin">
+    <number>8</number>
+   </property>
+   <property name="topMargin">
+    <number>8</number>
+   </property>
+   <property name="rightMargin">
+    <number>8</number>
+   </property>
+   <property name="bottomMargin">
+    <number>8</number>
+   </property>
+   <property name="horizontalSpacing">
+    <number>10</number>
+   </property>
    <item row="0" column="0">
     <widget class="QGraphicsView" name="graphicsView"/>
    </item>
    <item row="0" column="1">
     <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="spacing">
+      <number>0</number>
+     </property>
      <item>
       <widget class="SmoothScrollArea" name="scrollArea">
-       <property name="maximumSize">
+       <property name="minimumSize">
         <size>
          <width>300</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>320</width>
          <height>16777215</height>
         </size>
+       </property>
+       <property name="horizontalScrollBarPolicy">
+        <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
        </property>
        <property name="widgetResizable">
         <bool>true</bool>
@@ -35,479 +62,554 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>281</width>
-          <height>480</height>
+          <width>300</width>
+          <height>564</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_4">
+         <property name="spacing">
+          <number>10</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
-           <item>
-            <widget class="Line" name="line_5">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="checkBox">
-             <property name="maximumSize">
-              <size>
-               <width>100</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>waifu2x</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item alignment="Qt::AlignLeft">
-            <widget class="QCheckBox" name="ttaModel">
-             <property name="maximumSize">
-              <size>
-               <width>100</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="toolTip">
-              <string>画质提升，耗时增加</string>
-             </property>
-             <property name="text">
-              <string>tta模式</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_3">
-             <item alignment="Qt::AlignLeft">
-              <widget class="QRadioButton" name="scaleRadio">
-               <property name="maximumSize">
-                <size>
-                 <width>100</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>倍数放大</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">buttonGroup_2</string>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="scaleEdit">
-               <property name="maximumSize">
-                <size>
-                 <width>160</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>2</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_4">
-             <item>
-              <widget class="QRadioButton" name="heighRadio">
-               <property name="maximumSize">
-                <size>
-                 <width>100</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>固定长宽</string>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">buttonGroup_2</string>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="widthEdit">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>60</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="label_2">
-               <property name="maximumSize">
-                <size>
-                 <width>20</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>X</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="heighEdit">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>60</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_6">
-             <item>
-              <widget class="QLabel" name="label_5">
-               <property name="maximumSize">
-                <size>
-                 <width>60</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>模型：</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="modelName">
-               <property name="font">
-                <font>
-                 <pointsize>8</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_7">
-             <item>
-              <widget class="QLabel" name="label_3">
-               <property name="maximumSize">
-                <size>
-                 <width>60</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>格式：</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QComboBox" name="fmtComboBox">
-               <item>
+          <widget class="QFrame" name="convertCard">
+           <property name="role" stdset="0">
+            <string notr="true">card</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <property name="spacing">
+             <number>8</number>
+            </property>
+            <property name="leftMargin">
+             <number>12</number>
+            </property>
+            <property name="topMargin">
+             <number>10</number>
+            </property>
+            <property name="rightMargin">
+             <number>12</number>
+            </property>
+            <property name="bottomMargin">
+             <number>12</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="convertTitleLabel">
+              <property name="role" stdset="0">
+               <string notr="true">sectionTitle</string>
+              </property>
+              <property name="text">
+               <string>Waifu2x 转换</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="switchLayout">
+              <property name="spacing">
+               <number>16</number>
+              </property>
+              <item>
+               <widget class="QCheckBox" name="checkBox">
                 <property name="text">
-                 <string>自动</string>
+                 <string>waifu2x</string>
                 </property>
-               </item>
-               <item>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="ttaModel">
+                <property name="toolTip">
+                 <string>画质提升，耗时增加</string>
+                </property>
                 <property name="text">
-                 <string>JPG</string>
+                 <string>tta模式</string>
                 </property>
-               </item>
-               <item>
+               </widget>
+              </item>
+              <item>
+               <spacer name="switchSpacer">
+                <property name="orientation">
+                 <enum>Qt::Orientation::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>10</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QGridLayout" name="convertFormLayout" columnstretch="0,1">
+              <property name="horizontalSpacing">
+               <number>8</number>
+              </property>
+              <property name="verticalSpacing">
+               <number>8</number>
+              </property>
+              <item row="0" column="0">
+               <widget class="QRadioButton" name="scaleRadio">
                 <property name="text">
-                 <string>PNG</string>
+                 <string>倍数放大</string>
                 </property>
-               </item>
-               <item>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+                <attribute name="buttonGroup">
+                 <string notr="true">buttonGroup_2</string>
+                </attribute>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLineEdit" name="scaleEdit">
                 <property name="text">
-                 <string>BMP</string>
+                 <string>2</string>
                 </property>
-               </item>
-               <item>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QRadioButton" name="heighRadio">
                 <property name="text">
-                 <string>WEBP</string>
+                 <string>固定长宽</string>
                 </property>
-               </item>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item alignment="Qt::AlignHCenter">
-            <widget class="QPushButton" name="changeButton">
-             <property name="maximumSize">
-              <size>
-               <width>100</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>转换</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
+                <attribute name="buttonGroup">
+                 <string notr="true">buttonGroup_2</string>
+                </attribute>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <layout class="QHBoxLayout" name="horizontalLayout_4">
+                <property name="spacing">
+                 <number>6</number>
+                </property>
+                <item>
+                 <widget class="QLineEdit" name="widthEdit">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignmentFlag::AlignCenter</set>
+                  </property>
+                  <property name="placeholderText">
+                   <string>宽</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_2">
+                  <property name="role" stdset="0">
+                   <string notr="true">muted</string>
+                  </property>
+                  <property name="text">
+                   <string>×</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignmentFlag::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="heighEdit">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignmentFlag::AlignCenter</set>
+                  </property>
+                  <property name="placeholderText">
+                   <string>高</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="label_5">
+                <property name="role" stdset="0">
+                 <string notr="true">muted</string>
+                </property>
+                <property name="text">
+                 <string>模型：</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QPushButton" name="modelName">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="label_3">
+                <property name="role" stdset="0">
+                 <string notr="true">muted</string>
+                </property>
+                <property name="text">
+                 <string>格式：</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="QComboBox" name="fmtComboBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>自动</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>JPG</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>PNG</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>BMP</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>WEBP</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>APNG</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>JXL</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QPushButton" name="changeButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="variant" stdset="0">
+               <string notr="true">primary</string>
+              </property>
+              <property name="text">
+               <string>转换</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_8">
-             <item>
-              <widget class="QLabel" name="label_8">
-               <property name="maximumSize">
-                <size>
-                 <width>60</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>分辨率：</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="resolutionLabel">
-               <property name="maximumSize">
-                <size>
-                 <width>160</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>无信息</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_9">
-             <item>
-              <widget class="QLabel" name="label_10">
-               <property name="maximumSize">
-                <size>
-                 <width>60</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>大 小：</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="sizeLabel">
-               <property name="maximumSize">
-                <size>
-                 <width>160</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>无信息</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_11">
-             <item alignment="Qt::AlignLeft">
-              <widget class="QLabel" name="label_9">
-               <property name="maximumSize">
-                <size>
-                 <width>60</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>转换模式：</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="gpuLabel">
-               <property name="maximumSize">
-                <size>
-                 <width>150</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>GPU</string>
-               </property>
-               <property name="wordWrap">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout">
-             <item>
-              <widget class="QLabel" name="label">
-               <property name="maximumSize">
-                <size>
-                 <width>60</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>格式</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="format">
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_10">
-             <item alignment="Qt::AlignLeft">
-              <widget class="QLabel" name="label_6">
-               <property name="maximumSize">
-                <size>
-                 <width>60</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>耗时：</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="tickLabel">
-               <property name="maximumSize">
-                <size>
-                 <width>160</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
-             <item>
-              <widget class="QPushButton" name="oepnButton">
-               <property name="maximumSize">
-                <size>
-                 <width>100</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>打开图片</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="saveButton">
-               <property name="maximumSize">
-                <size>
-                 <width>100</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>保存图片</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_5">
-             <item>
-              <widget class="QPushButton" name="pushButton">
-               <property name="maximumSize">
-                <size>
-                 <width>100</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>放大</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="pushButton_3">
-               <property name="maximumSize">
-                <size>
-                 <width>100</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>缩小</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item alignment="Qt::AlignHCenter">
-            <widget class="QPushButton" name="headButton">
-             <property name="maximumSize">
-              <size>
-               <width>100</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>设置为头像</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          <widget class="QFrame" name="infoCard">
+           <property name="role" stdset="0">
+            <string notr="true">card</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <property name="spacing">
+             <number>8</number>
+            </property>
+            <property name="leftMargin">
+             <number>12</number>
+            </property>
+            <property name="topMargin">
+             <number>10</number>
+            </property>
+            <property name="rightMargin">
+             <number>12</number>
+            </property>
+            <property name="bottomMargin">
+             <number>12</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="infoTitleLabel">
+              <property name="role" stdset="0">
+               <string notr="true">sectionTitle</string>
+              </property>
+              <property name="text">
+               <string>图片信息</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QGridLayout" name="infoGridLayout" columnstretch="0,1">
+              <property name="horizontalSpacing">
+               <number>8</number>
+              </property>
+              <property name="verticalSpacing">
+               <number>6</number>
+              </property>
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_8">
+                <property name="role" stdset="0">
+                 <string notr="true">muted</string>
+                </property>
+                <property name="text">
+                 <string>分辨率：</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLabel" name="resolutionLabel">
+                <property name="text">
+                 <string>无信息</string>
+                </property>
+                <property name="wordWrap">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_10">
+                <property name="role" stdset="0">
+                 <string notr="true">muted</string>
+                </property>
+                <property name="text">
+                 <string>大小：</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QLabel" name="sizeLabel">
+                <property name="text">
+                 <string>无信息</string>
+                </property>
+                <property name="wordWrap">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="label">
+                <property name="role" stdset="0">
+                 <string notr="true">muted</string>
+                </property>
+                <property name="text">
+                 <string>格式：</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QLabel" name="format">
+                <property name="text">
+                 <string>-</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="label_6">
+                <property name="role" stdset="0">
+                 <string notr="true">muted</string>
+                </property>
+                <property name="text">
+                 <string>耗时：</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="QLabel" name="tickLabel">
+                <property name="text">
+                 <string>-</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="0">
+               <widget class="QLabel" name="label_9">
+                <property name="role" stdset="0">
+                 <string notr="true">muted</string>
+                </property>
+                <property name="text">
+                 <string>转换模式：</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="1">
+               <widget class="QLabel" name="gpuLabel">
+                <property name="text">
+                 <string>GPU</string>
+                </property>
+                <property name="wordWrap">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QFrame" name="actionCard">
+           <property name="role" stdset="0">
+            <string notr="true">card</string>
+           </property>
+           <layout class="QVBoxLayout" name="actionLayout">
+            <property name="spacing">
+             <number>8</number>
+            </property>
+            <property name="leftMargin">
+             <number>12</number>
+            </property>
+            <property name="topMargin">
+             <number>10</number>
+            </property>
+            <property name="rightMargin">
+             <number>12</number>
+            </property>
+            <property name="bottomMargin">
+             <number>12</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="actionTitleLabel">
+              <property name="role" stdset="0">
+               <string notr="true">sectionTitle</string>
+              </property>
+              <property name="text">
+               <string>图片操作</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QGridLayout" name="actionGridLayout" columnstretch="1,1">
+              <property name="horizontalSpacing">
+               <number>8</number>
+              </property>
+              <property name="verticalSpacing">
+               <number>8</number>
+              </property>
+              <item row="0" column="0">
+               <widget class="QPushButton" name="oepnButton">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>打开图片</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QPushButton" name="saveButton">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>保存图片</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QPushButton" name="pushButton">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>放大</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QPushButton" name="pushButton_3">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>缩小</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QPushButton" name="headButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>设置为头像</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </item>
          <item>
           <spacer name="verticalSpacer">
            <property name="orientation">
-            <enum>Qt::Vertical</enum>
+            <enum>Qt::Orientation::Vertical</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
-             <height>40</height>
+             <height>0</height>
             </size>
            </property>
           </spacer>
@@ -535,208 +637,78 @@
    <signal>clicked()</signal>
    <receiver>Waifu2xTool</receiver>
    <slot>SwithPicture()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>371</x>
-     <y>42</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>386</x>
-     <y>545</y>
-    </hint>
-   </hints>
   </connection>
   <connection>
    <sender>saveButton</sender>
    <signal>clicked()</signal>
    <receiver>Waifu2xTool</receiver>
    <slot>SavePicture()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>346</x>
-     <y>461</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>0</x>
-     <y>378</y>
-    </hint>
-   </hints>
   </connection>
   <connection>
    <sender>heighEdit</sender>
    <signal>textChanged(QString)</signal>
    <receiver>Waifu2xTool</receiver>
    <slot>CheckScaleRadio()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>488</x>
-     <y>123</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>386</x>
-     <y>545</y>
-    </hint>
-   </hints>
   </connection>
   <connection>
    <sender>pushButton_3</sender>
    <signal>clicked()</signal>
    <receiver>Waifu2xTool</receiver>
    <slot>ReduceScalePic()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>346</x>
-     <y>401</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>0</x>
-     <y>300</y>
-    </hint>
-   </hints>
   </connection>
   <connection>
    <sender>heighRadio</sender>
    <signal>clicked()</signal>
    <receiver>Waifu2xTool</receiver>
    <slot>CheckScaleRadio()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>343</x>
-     <y>123</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>221</x>
-     <y>545</y>
-    </hint>
-   </hints>
   </connection>
   <connection>
    <sender>ttaModel</sender>
    <signal>clicked()</signal>
    <receiver>Waifu2xTool</receiver>
    <slot>CheckScaleRadio()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>371</x>
-     <y>68</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>386</x>
-     <y>545</y>
-    </hint>
-   </hints>
   </connection>
   <connection>
    <sender>oepnButton</sender>
    <signal>clicked()</signal>
    <receiver>Waifu2xTool</receiver>
    <slot>OpenPicture()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>346</x>
-     <y>363</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>0</x>
-     <y>204</y>
-    </hint>
-   </hints>
   </connection>
   <connection>
    <sender>widthEdit</sender>
    <signal>textChanged(QString)</signal>
    <receiver>Waifu2xTool</receiver>
    <slot>CheckScaleRadio()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>408</x>
-     <y>123</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>250</x>
-     <y>545</y>
-    </hint>
-   </hints>
   </connection>
   <connection>
    <sender>pushButton</sender>
    <signal>clicked()</signal>
    <receiver>Waifu2xTool</receiver>
    <slot>AddScalePic()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>346</x>
-     <y>431</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>232</x>
-     <y>406</y>
-    </hint>
-   </hints>
   </connection>
   <connection>
    <sender>scaleEdit</sender>
    <signal>textChanged(QString)</signal>
    <receiver>Waifu2xTool</receiver>
    <slot>CheckScaleRadio()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>488</x>
-     <y>95</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>386</x>
-     <y>545</y>
-    </hint>
-   </hints>
   </connection>
   <connection>
    <sender>scaleRadio</sender>
    <signal>clicked()</signal>
    <receiver>Waifu2xTool</receiver>
    <slot>CheckScaleRadio()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>343</x>
-     <y>95</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>179</x>
-     <y>545</y>
-    </hint>
-   </hints>
   </connection>
   <connection>
    <sender>changeButton</sender>
    <signal>clicked()</signal>
    <receiver>Waifu2xTool</receiver>
    <slot>StartWaifu2x()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>346</x>
-     <y>220</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>386</x>
-     <y>312</y>
-    </hint>
-   </hints>
   </connection>
   <connection>
    <sender>headButton</sender>
    <signal>clicked()</signal>
    <receiver>Waifu2xTool</receiver>
    <slot>SetHead()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>346</x>
-     <y>491</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>380</x>
-     <y>491</y>
-    </hint>
-   </hints>
   </connection>
  </connections>
  <slots>

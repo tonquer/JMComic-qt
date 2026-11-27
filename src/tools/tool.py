@@ -165,7 +165,142 @@ class ToolUtil(object):
         return ToolUtil.GetModelByIndex(Setting.DownloadModelName.value, Setting.DownloadScale.value, mat)
 
     @staticmethod
+    def _ExtractJxlCodestream(data):
+        if not data or len(data) < 2:
+            return b""
+        if data[:2] == b"\xff\x0a":
+            return data[:256]
+        if len(data) >= 12 and data[:12] == b"\x00\x00\x00\x0cJXL \x0d\x0a\x87\x0a":
+            import struct
+            out = bytearray()
+            pos = 12
+            n = len(data)
+            while pos + 8 <= n and len(out) < 256:
+                size, btype = struct.unpack(">I4s", data[pos:pos + 8])
+                hdr = 8
+                if size == 1:
+                    if pos + 16 > n:
+                        break
+                    size = struct.unpack(">Q", data[pos + 8:pos + 16])[0]
+                    hdr = 16
+                elif size == 0:
+                    size = n - pos
+                if size < hdr or pos + size > n:
+                    break
+                payload = data[pos + hdr:pos + size]
+                if btype == b"jxlc":
+                    return payload[:256]
+                elif btype == b"jxlp":
+                    if len(payload) > 4:
+                        out.extend(payload[4:4 + (256 - len(out))])
+                        if payload[0] & 0x80:
+                            break
+                pos += size
+            return bytes(out)
+        return b""
+
+    @staticmethod
+    def ParseJxlHeader(data):
+        """纯 Python 解析 JPEG XL codestream 头部，返回 (width, height, is_animated) 或 None。
+        不调用 Qt 接口，可在后台线程安全使用（避免与主线程 QMovie 死锁）。"""
+        cs = ToolUtil._ExtractJxlCodestream(data)
+        if len(cs) < 3 or cs[:2] != b"\xff\x0a":
+            return None
+        try:
+            bit_pos = 16
+            total_bits = len(cs) * 8
+
+            def read_bits(n):
+                nonlocal bit_pos
+                if bit_pos + n > total_bits:
+                    raise ValueError("EOF")
+                val = 0
+                for i in range(n):
+                    byte_idx = (bit_pos + i) >> 3
+                    bit_idx = (bit_pos + i) & 7
+                    val |= ((cs[byte_idx] >> bit_idx) & 1) << i
+                bit_pos += n
+                return val
+
+            def read_u32(bit_counts):
+                sel = read_bits(2)
+                bits = bit_counts[sel]
+                return read_bits(bits) if bits else 0
+
+            def read_size_header():
+                div8 = read_bits(1)
+                if div8:
+                    ysize = (1 + read_bits(5)) * 8
+                else:
+                    ysize = 1 + read_u32((9, 13, 18, 30))
+                ratio = read_bits(3)
+                if ratio == 0:
+                    if div8:
+                        xsize = (1 + read_bits(5)) * 8
+                    else:
+                        xsize = 1 + read_u32((9, 13, 18, 30))
+                elif ratio == 1:
+                    xsize = ysize
+                elif ratio == 2:
+                    xsize = (ysize * 12) // 10
+                elif ratio == 3:
+                    xsize = (ysize * 4) // 3
+                elif ratio == 4:
+                    xsize = (ysize * 3) // 2
+                elif ratio == 5:
+                    xsize = (ysize * 16) // 9
+                elif ratio == 6:
+                    xsize = (ysize * 5) // 4
+                else:
+                    xsize = ysize * 2
+                return xsize, ysize
+
+            def skip_preview_header():
+                div8 = read_bits(1)
+                if div8:
+                    read_bits(5)
+                else:
+                    read_u32((6, 8, 10, 12))
+                ratio = read_bits(3)
+                if ratio == 0:
+                    if div8:
+                        read_bits(5)
+                    else:
+                        read_u32((6, 8, 10, 12))
+
+            width, height = read_size_header()
+            all_default = read_bits(1)
+            if all_default:
+                return width, height, False
+            extra_fields = read_bits(1)
+            if not extra_fields:
+                return width, height, False
+            orientation_minus_1 = read_bits(3)
+            if orientation_minus_1 in (4, 5, 6, 7):
+                width, height = height, width
+            if read_bits(1):  # have_intrinsic_size
+                read_size_header()
+            if read_bits(1):  # have_preview
+                skip_preview_header()
+            have_animation = bool(read_bits(1))
+            return width, height, have_animation
+        except Exception:
+            return None
+
+    @staticmethod
+    def IsJxlAnimated(data):
+        info = ToolUtil.ParseJxlHeader(data)
+        return bool(info and info[2])
+
+    @staticmethod
     def GetAnimationFormat(data):
+        if ToolUtil.IsJxlAnimated(data):
+            return "JXL"
+        try:
+            import pillow_jxl
+            import pillow_avif
+        except Exception as es:
+            Log.Error(es)
         try:
             from PIL import Image
             from io import BytesIO
@@ -174,8 +309,8 @@ class ToolUtil(object):
                 Image.open(buffer) as img,
             ):
                 format = ""
-                if getattr(img, "is_animated", ""):
-                    format = img.format
+                if getattr(img, "is_animated", False):
+                    format = img.format or ""
                 return format
         except Exception as es:
             Log.Error(es)
@@ -208,6 +343,8 @@ class ToolUtil(object):
                     mat = "webp"
                 elif img.format.upper() == "JXL":
                     mat = "jxl"
+                    if not isAnima:
+                        isAnima = ToolUtil.IsJxlAnimated(data)
                 elif img.format.upper() == "AVIF":
                     mat = "avif"
                 elif img.format.upper() == "JPEG":
@@ -221,6 +358,9 @@ class ToolUtil(object):
                     width, height = height, width  # 互换宽高
                 return width, height, mat, isAnima
         except Exception as es:
+            jxlInfo = ToolUtil.ParseJxlHeader(data)
+            if jxlInfo:
+                return jxlInfo[0], jxlInfo[1], "jxl", jxlInfo[2]
             Log.Error(es)
         return 0, 0, "jpg", False
 
@@ -241,6 +381,10 @@ class ToolUtil(object):
                 Image.open(buffer) as img,
             ):
                 if img.format.lower() in ToolUtil.QtNeedConvertFormat and img.format.lower() not in QtOwner().allSupportFmt:
+                    if getattr(img, "is_animated", False):
+                        isSuc, newData = ToolUtil.ConvertPicture(data, "webp", isAni=True)
+                        if isSuc:
+                            return newData
                     toMat = "PNG"
                     newBuffer = BytesIO()
                     img.save(newBuffer, format=toMat)
@@ -1022,6 +1166,13 @@ class ToolUtil(object):
         raw = json.loads(result)
         bookList = ToolUtil.ParseBookList(raw)
         return bookList, len(bookList)
+
+    @staticmethod
+    def ParseHotTagsReq2(result):
+        raw = json.loads(result)
+        if isinstance(raw, list):
+            return raw
+        return []
 
     # 解析用户信息
     # @staticmethod

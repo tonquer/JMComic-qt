@@ -1,26 +1,19 @@
 import os
 import time
-from distutils.dir_util import create_tree
 from functools import partial
 
-from PySide6 import QtWidgets, QtCore
-from PySide6.QtCore import Qt, QRectF, QPointF, QSizeF, QEvent, QPoint, QTimer
-from PySide6.QtGui import QPainter, QPixmap, QDoubleValidator, \
-    QIntValidator, QMouseEvent, QImage
-from PySide6.QtWidgets import QFrame, QGraphicsPixmapItem, QGraphicsScene, QApplication, QFileDialog, QLabel, \
-    QGraphicsView, QTableWidgetItem, QAbstractItemView, QHeaderView
+from PySide6 import QtWidgets
+from PySide6.QtCore import Qt, QTimer
+from PySide6.QtGui import QColor
+from PySide6.QtWidgets import QFileDialog, QTableWidgetItem, QAbstractItemView, QHeaderView
 
-from config import config
 from config.setting import Setting, SettingValue
 from interface.ui_batch_sr import Ui_BatchSrTool
-from interface.ui_waifu2x_tool import Ui_Waifu2xTool
 from qt_owner import QtOwner
 from task.qt_task import QtTaskBase
 from task.task_local import LocalData
-from tools.log import Log
 from tools.str import Str
 from tools.tool import ToolUtil
-from view.read.read_qgraphics_proxy_widget import ReadQGraphicsProxyWidget
 from view.tool.batch_sr_tool_db import BatchSrToolDb
 
 
@@ -73,31 +66,45 @@ class BatchSrToolView(QtWidgets.QWidget, Ui_BatchSrTool, QtTaskBase):
         self.startConvertButton.clicked.connect(self.StartItemConvert)
         self.startImportButton.clicked.connect(self.StartItemImportDir)
         self.cancleButton.clicked.connect(self.CancleItemConvert)
-        self.fmtBox.addItem("")
-        for fmt in ["png", "jpg", "webp", "apng", "bmp"]:
-            self.fmtBox.addItem(fmt)
+        self.fmtBox.addItem("自动", "")
+        for fmt in ["png", "jpg", "webp", "apng", "bmp", "jxl"]:
+            self.fmtBox.addItem(fmt.upper(), fmt)
 
         self.order = {}
         self.coverModelName.clicked.connect(self.CheckOpenSrSelect)
         self.tableWidget.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.tableWidget.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.tableWidget.horizontalHeader().sectionClicked.connect(self.Sort)
-        # self.tableWidget.setColumnHidden(0, True)
-        self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Interactive)
+        self.tableWidget.setAlternatingRowColors(True)
+        self.tableWidget.setShowGrid(False)
+        self.tableWidget.verticalHeader().setVisible(False)
+        self.tableWidget.verticalHeader().setDefaultSectionSize(34)
+        header = self.tableWidget.horizontalHeader()
+        header.sectionClicked.connect(self.Sort)
+        header.setSectionResizeMode(QHeaderView.Interactive)
+        header.setStretchLastSection(True)
+        self.tableWidget.setColumnWidth(0, 64)
+        self.tableWidget.setColumnWidth(1, 84)
+        self.tableWidget.setColumnWidth(2, 108)
+        self.tableWidget.setColumnWidth(3, 160)
+        self.tableWidget.setColumnWidth(4, 220)
         self.inputDir.editingFinished.connect(partial(self.LineEditEvent, Setting.BatchSrImportDir, self.inputDir))
         self.exportDir.editingFinished.connect(
             partial(self.LineEditEvent, Setting.BatchSrExportDir, self.exportDir))
 
         self.coverScale.valueChanged.connect(partial(self.SpinBoxEvent, Setting.BatchSrScale))
 
-        self.fmtBox.currentTextChanged.connect(partial(self.CheckRadioEvent, Setting.BatchSrFmt))
+        self.fmtBox.currentIndexChanged.connect(self.CheckFmtEvent)
         self.maxConvertNum = 2
         self.threadNum.currentIndexChanged.connect(self.UpdateThreadNum)
 
     def UpdateThreadNum(self, index):
         self.maxConvertNum = self.threadNum.currentIndex() + 1
+
+    def CheckFmtEvent(self, index):
+        fmt = self.fmtBox.currentData() or ""
+        Setting.BatchSrFmt.SetValue(fmt)
+        return
 
     def CheckRadioEvent(self, setItem, value):
         assert isinstance(setItem, SettingValue)
@@ -116,10 +123,12 @@ class BatchSrToolView(QtWidgets.QWidget, Ui_BatchSrTool, QtTaskBase):
         return
 
     def CheckOpenSrSelect(self):
-        QtOwner().OpenSrSelectModel(self.coverModelName.text(), self.CheckOpenSrSelectCoverBack)
+        modelName = self.coverModelName.toolTip() or Setting.BatchSrModelName.value
+        QtOwner().OpenSrSelectModel(modelName, self.CheckOpenSrSelectCoverBack)
 
     def CheckOpenSrSelectCoverBack(self, modelName):
-        self.coverModelName.setText(modelName)
+        self.coverModelName.setText(ToolUtil.GetShowModelName(modelName))
+        self.coverModelName.setToolTip(modelName)
         Setting.BatchSrModelName.SetValue(modelName)
         return modelName
 
@@ -133,7 +142,11 @@ class BatchSrToolView(QtWidgets.QWidget, Ui_BatchSrTool, QtTaskBase):
             self.LineEditEvent(Setting.BatchSrExportDir, self.exportDir)
 
     def retranslateUi(self, SettingNew):
+        oldModel = self.coverModelName.toolTip()
         Ui_BatchSrTool.retranslateUi(self, SettingNew)
+        if oldModel:
+            self.coverModelName.setText(ToolUtil.GetShowModelName(oldModel))
+            self.coverModelName.setToolTip(oldModel)
 
     def SwitchCurrent(self, **kwargs):
         refresh = kwargs.get("refresh")
@@ -151,8 +164,10 @@ class BatchSrToolView(QtWidgets.QWidget, Ui_BatchSrTool, QtTaskBase):
 
         self.exportDir.setText(self.exportDirPath)
         self.inputDir.setText(self.inputDirPath)
-        self.fmtBox.setCurrentText(Setting.BatchSrFmt.value)
-        self.coverModelName.setText(Setting.BatchSrModelName.value)
+        fmtIdx = self.fmtBox.findData(Setting.BatchSrFmt.value)
+        self.fmtBox.setCurrentIndex(fmtIdx if fmtIdx >= 0 else 0)
+        self.coverModelName.setText(ToolUtil.GetShowModelName(Setting.BatchSrModelName.value))
+        self.coverModelName.setToolTip(Setting.BatchSrModelName.value)
         self.coverScale.setValue(Setting.BatchSrScale.value)
 
         if self.curState == self.StartImport:
@@ -177,7 +192,7 @@ class BatchSrToolView(QtWidgets.QWidget, Ui_BatchSrTool, QtTaskBase):
         Setting.BatchSrState.SetValue(self.curState)
         Setting.BatchSrExportDir.SetValue(self.exportDirPath)
         Setting.BatchSrImportDir.SetValue(self.inputDirPath)
-        Setting.BatchSrFmt.SetValue(self.fmtBox.currentText())
+        Setting.BatchSrFmt.SetValue(self.fmtBox.currentData() or "")
         return
 
     def UpdateEnable(self):
@@ -249,7 +264,7 @@ class BatchSrToolView(QtWidgets.QWidget, Ui_BatchSrTool, QtTaskBase):
             elif item.status == item.Error:
                 fail += 1
             num += 1
-        self.numLabel.setText(f"{complete}/{fail}/{num}")
+        self.numLabel.setText(f"{complete} / {fail} / {num}")
 
     def UpdateConvertLabel(self):
         if self.curState == self.StartConvert:
@@ -369,14 +384,26 @@ class BatchSrToolView(QtWidgets.QWidget, Ui_BatchSrTool, QtTaskBase):
         row = self.indexToRow.get(info.index, -1)
         if row < 0:
             return
-        self.tableWidget.setItem(row, 0, QTableWidgetItem(str(info.index)))
-        if info.tick:
-            self.tableWidget.setItem(row, 1, QTableWidgetItem(str(info.tick) + "s"))
-        else:
-            self.tableWidget.setItem(row, 1, QTableWidgetItem(str(info.tick)))
-        self.tableWidget.setItem(row, 2, QTableWidgetItem(Str.GetStr(info.status)))
+        idItem = QTableWidgetItem(str(info.index))
+        idItem.setTextAlignment(Qt.AlignCenter)
+        self.tableWidget.setItem(row, 0, idItem)
+
+        tickText = (str(info.tick) + "s") if info.tick else "-"
+        tickItem = QTableWidgetItem(tickText)
+        tickItem.setTextAlignment(Qt.AlignCenter)
+        self.tableWidget.setItem(row, 1, tickItem)
+
+        statusItem = QTableWidgetItem(Str.GetStr(info.status) if info.status else "-")
+        statusItem.setTextAlignment(Qt.AlignCenter)
+        if info.status == BatchSrItem.ConvertSuccess:
+            statusItem.setForeground(QColor("#10B981"))
+        elif info.status == BatchSrItem.Converting:
+            statusItem.setForeground(QColor("#F59E0B"))
+        elif info.status == BatchSrItem.Error:
+            statusItem.setForeground(QColor("#EF4444"))
+        self.tableWidget.setItem(row, 2, statusItem)
+
         self.tableWidget.setItem(row, 3, QTableWidgetItem(info.msg))
-        # self.tableWidget.setItem(row, 4, QTableWidgetItem(info.fmt))
         self.tableWidget.setItem(row, 4, QTableWidgetItem(info.fileName))
         self.tableWidget.setItem(row, 5, QTableWidgetItem(info.path))
         return

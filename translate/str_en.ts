@@ -154,8 +154,7 @@
         <translation>Registration is restricted to adults</translation>
     </message>
     <message>
-        <location filename="../src/tools/str.py" line="357"/>
-        <location filename="../src/tools/str.py" line="402"/>
+        <location filename="../src/tools/str.py" line="356"/>
         <source>空白章节</source>
         <translation>Empty chapter</translation>
     </message>
@@ -354,9 +353,14 @@
         <translation>No image files found</translation>
     </message>
     <message>
-        <location filename="../src/tools/str.py" line="400"/>
+        <location filename="../src/tools/str.py" line="399"/>
         <source>文件已加密</source>
         <translation>File is encrypted</translation>
+    </message>
+    <message>
+        <location filename="../src/tools/str.py" line="400"/>
+        <source>空白图片</source>
+        <translation>Empty image</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="403"/>
@@ -1453,9 +1457,14 @@
         <translation>Local library not enabled in Help</translation>
     </message>
     <message>
-        <location filename="../src/tools/str.py" line="627"/>
+        <location filename="../src/tools/str.py" line="624"/>
         <source>记录数</source>
         <translation>Records</translation>
+    </message>
+    <message>
+        <location filename="../src/tools/str.py" line="625"/>
+        <source>热词</source>
+        <translation>Hot Tags</translation>
     </message>
 </context>
 </TS>

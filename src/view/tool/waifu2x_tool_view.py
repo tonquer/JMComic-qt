@@ -1,21 +1,281 @@
+import io
 import os
+import sys
 import time
 
 from PySide6 import QtWidgets, QtCore
-from PySide6.QtCore import Qt, QRectF, QPointF, QSizeF, QEvent, QPoint
+from PySide6.QtCore import Qt, QRectF, QPointF, QSizeF, QSize, QEvent, QPoint, QByteArray, QBuffer, QIODevice, QTimer
 from PySide6.QtGui import QPainter, QPixmap, QDoubleValidator, \
-    QIntValidator, QMouseEvent, QImage
-from PySide6.QtWidgets import QFrame, QGraphicsPixmapItem, QGraphicsScene, QApplication, QFileDialog, QLabel, QGraphicsView
+    QIntValidator, QMouseEvent, QImage, QMovie, QImageReader
+from PySide6.QtWidgets import QFrame, QGraphicsItem, QGraphicsScene, QApplication, QFileDialog, QGraphicsView
 
 from config import config
 from config.setting import Setting
 from interface.ui_waifu2x_tool import Ui_Waifu2xTool
 from qt_owner import QtOwner
 from task.qt_task import QtTaskBase
+from task.task_qimage import _decode_bytes_to_qimage
 from tools.log import Log
 from tools.str import Str
 from tools.tool import ToolUtil
-from view.read.read_qgraphics_proxy_widget import ReadQGraphicsProxyWidget
+
+
+class Waifu2xGraphicsItem(QGraphicsItem):
+    """支持静态图与动图（GIF/WebP/AVIF/JXL 走 QMovie，APNG 等走 Pillow 逐帧）的绘制项。"""
+
+    def __init__(self, host_widget):
+        super().__init__()
+        self._host = host_widget
+        self._w = 0.0
+        self._h = 0.0
+        self._src_w = 0
+        self._src_h = 0
+        self._dpr = 1.0
+        self._pixmap = QPixmap()
+
+        # QMovie 播放状态
+        self._movie = None
+        self._movie_buf = None
+
+        # Pillow 逐帧播放状态（用于 Qt QMovie 不支持的动图，例如 APNG）
+        self._pil_bio = None
+        self._pil_img = None
+        self._pil_frame = 0
+        self._pil_n_frames = 0
+        self._pil_timer = QTimer(host_widget)
+        self._pil_timer.setSingleShot(True)
+        self._pil_timer.timeout.connect(self._next_pil_frame)
+
+        self._paused = False
+
+    def boundingRect(self) -> QRectF:
+        return QRectF(0.0, 0.0, self._w, self._h)
+
+    def pixmap(self) -> QPixmap:
+        if self._movie is not None:
+            pm = self._movie.currentPixmap()
+            if not pm.isNull():
+                return pm
+        return self._pixmap
+
+    def _calc_movie_scaled_size(self) -> QSize:
+        """物理像素目标尺寸：只缩不放，避免放大时 QMovie 解码爆内存。"""
+        if self._src_w <= 0 or self._src_h <= 0:
+            return QSize()
+        phys_w = max(1, int(round(self._w * self._dpr)))
+        phys_h = max(1, int(round(self._h * self._dpr)))
+        if phys_w < self._src_w or phys_h < self._src_h:
+            scale = min(phys_w / self._src_w, phys_h / self._src_h)
+            return QSize(max(1, int(round(self._src_w * scale))),
+                         max(1, int(round(self._src_h * scale))))
+        return QSize(self._src_w, self._src_h)
+
+    def ClearAnimation(self):
+        if self._pil_timer.isActive():
+            self._pil_timer.stop()
+        if self._pil_img is not None:
+            try:
+                self._pil_img.close()
+            except Exception:
+                pass
+            self._pil_img = None
+        if self._pil_bio is not None:
+            try:
+                self._pil_bio.close()
+            except Exception:
+                pass
+            self._pil_bio = None
+        self._pil_frame = 0
+        self._pil_n_frames = 0
+
+        mv = self._movie
+        buf = self._movie_buf
+        self._movie = None
+        self._movie_buf = None
+        if mv is not None:
+            mv.stop()
+            mv.setDevice(None)
+        if buf is not None:
+            buf.close()
+            buf.setData(QByteArray())
+            if mv is None:
+                buf.deleteLater()
+        if mv is not None:
+            mv.deleteLater()
+
+    def IsAnimatedActive(self) -> bool:
+        return self._movie is not None or self._pil_img is not None
+
+    def SetStaticPixmap(self, pixmap: QPixmap, disp_w: float, disp_h: float):
+        self.ClearAnimation()
+        self.prepareGeometryChange()
+        self._w = float(disp_w)
+        self._h = float(disp_h)
+        self._src_w = pixmap.width()
+        self._src_h = pixmap.height()
+        self._pixmap = pixmap
+        self.update()
+
+    def SetDisplaySize(self, disp_w: float, disp_h: float, dpr: float):
+        self.prepareGeometryChange()
+        self._w = float(disp_w)
+        self._h = float(disp_h)
+        self._dpr = max(1.0, float(dpr))
+        if self._movie is not None:
+            sz = self._calc_movie_scaled_size()
+            if sz.isValid() and self._movie.scaledSize() != sz:
+                self._movie.setScaledSize(sz)
+        self.update()
+
+    def SetAnimationData(self, data: bytes, src_w: int, src_h: int, disp_w: float, disp_h: float, dpr: float, fallback_pixmap: QPixmap = None):
+        self.ClearAnimation()
+        self.prepareGeometryChange()
+        self._w = float(disp_w)
+        self._h = float(disp_h)
+        self._src_w = int(src_w)
+        self._src_h = int(src_h)
+        self._dpr = max(1.0, float(dpr))
+        self._pixmap = fallback_pixmap if (fallback_pixmap is not None and not fallback_pixmap.isNull()) else QPixmap()
+
+        if self._init_qmovie(data):
+            self.update()
+            return
+
+        if self._init_pil_anim(data):
+            self.update()
+            return
+
+        self.update()
+
+    def _init_qmovie(self, data: bytes) -> bool:
+        mv = QMovie(self._host)
+        buf = QBuffer(mv)
+        buf.setData(QByteArray(data))
+        if not buf.open(QIODevice.ReadOnly):
+            buf.deleteLater()
+            mv.deleteLater()
+            return False
+
+        reader = QImageReader(buf)
+        supports_anim = reader.supportsAnimation()
+        buf.seek(0)
+        if not supports_anim:
+            buf.close()
+            buf.setData(QByteArray())
+            mv.deleteLater()
+            return False
+
+        mv.setCacheMode(QMovie.CacheNone)
+        mv.setDevice(buf)
+        if not mv.isValid():
+            mv.setDevice(None)
+            buf.close()
+            buf.setData(QByteArray())
+            mv.deleteLater()
+            return False
+
+        sz = self._calc_movie_scaled_size()
+        if sz.isValid():
+            mv.setScaledSize(sz)
+        mv.frameChanged.connect(lambda _n=0, _mv=mv: self._movie is _mv and self.update())
+        self._movie = mv
+        self._movie_buf = buf
+        if self._paused:
+            mv.jumpToFrame(0)
+        else:
+            mv.start()
+        return True
+
+    def _init_pil_anim(self, data: bytes) -> bool:
+        try:
+            try:
+                import pillow_jxl  # noqa: F401
+                import pillow_avif  # noqa: F401
+            except Exception:
+                pass
+            from PIL import Image
+            bio = io.BytesIO(data)
+            im = Image.open(bio)
+            n_frames = getattr(im, "n_frames", 1)
+            if not getattr(im, "is_animated", False) or n_frames <= 1:
+                im.close()
+                bio.close()
+                return False
+            self._pil_bio = bio
+            self._pil_img = im
+            self._pil_n_frames = n_frames
+            self._pil_frame = 0
+            self._render_pil_frame(0, schedule_next=not self._paused)
+            return True
+        except Exception as ex:
+            Log.Error(ex)
+            return False
+
+    def _pil_frame_to_pixmap(self, im) -> QPixmap:
+        im_rgba = im.convert("RGBA") if im.mode != "RGBA" else im
+        w, h = im_rgba.width, im_rgba.height
+        if sys.byteorder == "little":
+            raw = im_rgba.tobytes("raw", "BGRA")
+            qimg = QImage(raw, w, h, w * 4, QImage.Format_ARGB32).copy()
+        else:
+            raw = im_rgba.tobytes("raw", "RGBA")
+            qimg = QImage(raw, w, h, w * 4, QImage.Format_RGBA8888).copy()
+        return QPixmap.fromImage(qimg)
+
+    def _render_pil_frame(self, idx: int, schedule_next: bool = True):
+        if self._pil_img is None:
+            return
+        try:
+            self._pil_img.seek(idx)
+            self._pil_frame = idx
+            pm = self._pil_frame_to_pixmap(self._pil_img)
+            if not pm.isNull():
+                self._pixmap = pm
+            raw_dur = self._pil_img.info.get("duration", 100)
+            try:
+                dur = int(round(float(raw_dur)))
+            except Exception:
+                dur = 100
+            if dur <= 0:
+                dur = 100
+            dur = max(16, dur)
+            self.update()
+            if schedule_next and not self._paused:
+                self._pil_timer.start(dur)
+        except Exception as ex:
+            Log.Error(ex)
+
+    def _next_pil_frame(self):
+        if self._pil_img is None or self._pil_n_frames <= 1 or self._paused:
+            return
+        next_idx = (self._pil_frame + 1) % self._pil_n_frames
+        self._render_pil_frame(next_idx, schedule_next=True)
+
+    def SetPaused(self, paused: bool):
+        self._paused = bool(paused)
+        if self._movie is not None:
+            if self._paused:
+                if self._movie.state() == QMovie.Running:
+                    self._movie.setPaused(True)
+            else:
+                if self._movie.state() == QMovie.NotRunning:
+                    self._movie.start()
+                elif self._movie.state() == QMovie.Paused:
+                    self._movie.setPaused(False)
+        elif self._pil_img is not None:
+            if self._paused:
+                if self._pil_timer.isActive():
+                    self._pil_timer.stop()
+            else:
+                if not self._pil_timer.isActive():
+                    self._pil_timer.start(16)
+
+    def paint(self, painter: QPainter, option, widget=None):
+        pm = self._movie.currentPixmap() if self._movie is not None else None
+        if pm is None or pm.isNull():
+            pm = self._pixmap
+        if pm is not None and not pm.isNull() and self._w > 0 and self._h > 0:
+            painter.drawPixmap(QRectF(0.0, 0.0, self._w, self._h), pm, QRectF(pm.rect()))
 
 
 class Waifu2xToolView(QtWidgets.QWidget, Ui_Waifu2xTool, QtTaskBase):
@@ -42,9 +302,11 @@ class Waifu2xToolView(QtWidgets.QWidget, Ui_Waifu2xTool, QtTaskBase):
         self.scaleEdit.setValidator(exp)
         # self.setWindowFlags(Qt.FramelessWindowHint)
 
+        self.setAcceptDrops(True)
         self.graphicsView.setFrameStyle(QFrame.NoFrame)
         self.graphicsView.setObjectName("graphicsView")
-        self.graphicsView.setAcceptDrops(True)
+        self.graphicsView.setAcceptDrops(False)
+        self.graphicsView.viewport().setAcceptDrops(False)
         # self.graphicsView.setBackgroundBrush(QColor(Qt.white))
         self.graphicsView.setCursor(Qt.OpenHandCursor)
         self.graphicsView.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -54,17 +316,14 @@ class Waifu2xToolView(QtWidgets.QWidget, Ui_Waifu2xTool, QtTaskBase):
         self.graphicsView.setCacheMode(QGraphicsView.CacheNone)
         self.graphicsView.setViewportUpdateMode(QGraphicsView.FullViewportUpdate)
 
-        self.graphicsItem = ReadQGraphicsProxyWidget()
-        self.graphicsItem.setFlags(QGraphicsPixmapItem.ItemIsFocusable |
-                                   QGraphicsPixmapItem.ItemIsMovable)
+        self.graphicsItem = Waifu2xGraphicsItem(self)
+        self.graphicsItem.setFlags(QGraphicsItem.ItemIsFocusable |
+                                   QGraphicsItem.ItemIsMovable)
         self.graphicsView.setDragMode(QGraphicsView.DragMode.ScrollHandDrag)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.CopyPicture)
         self.graphicsScene = QGraphicsScene(self)  # 场景
         self.graphicsView.setScene(self.graphicsScene)
-        self.graphicsItem.setWidget(QLabel())
-        # self.graphicsItem.setPixmap(QPixmap())
-        # self.graphicsItem.setTransformationMode(Qt.SmoothTransformation)
         self.graphicsScene.addItem(self.graphicsItem)
         self.graphicsItem.setPos(QPointF(0, 0))
         self.graphicsView.setMinimumSize(10, 10)
@@ -86,6 +345,11 @@ class Waifu2xToolView(QtWidgets.QWidget, Ui_Waifu2xTool, QtTaskBase):
 
         self.data = b""
         self.waifu2xData = b""
+        self._curDisplayData = None
+        self._curW = 0
+        self._curH = 0
+        self._curMat = ""
+        self._curIsAnima = False
         self.backStatus = ""
         self.modelName.clicked.connect(self.OpenSrSelect)
         self.fmtComboBox.currentIndexChanged.connect(self.CheckStatus)
@@ -116,6 +380,8 @@ class Waifu2xToolView(QtWidgets.QWidget, Ui_Waifu2xTool, QtTaskBase):
         if data:
             self.data = data
             self.waifu2xData = None
+            self.scaleCnt = 0
+            self.tickLabel.setText("-")
             self.ClearConvert()
             if config.CanWaifu2x:
                 self.modelName.setEnabled(True)
@@ -127,58 +393,85 @@ class Waifu2xToolView(QtWidgets.QWidget, Ui_Waifu2xTool, QtTaskBase):
         else:
             return
 
-        # elif self.data:
-        #     if config.CanWaifu2x:
-        #         self.comboBox.setEnabled(True)
-        #         self.changeButton.setEnabled(True)
-        #     self.changeButton.setText(Str.GetStr(Str.Convert))
-        # else:
-        #     if config.CanWaifu2x:
-        #         self.comboBox.setEnabled(True)
-        #         self.changeButton.setEnabled(True)
-        #     self.changeButton.setText(Str.GetStr(Str.Convert))
-        #     return
         self.ShowImg(self.data)
 
     def ShowImg(self, data):
+        if not data:
+            return
 
         self.gpuLabel.setText(config.EncodeGpu)
-        # self.scaleCnt = 0
-        # radio = self.devicePixelRatio()
-        # p.setDevicePixelRatio(radio)
-        # self.pixMapData = data
-        # self.show()
+        dpr = max(1.0, self.graphicsView.devicePixelRatioF())
+        same_data = (data is self._curDisplayData)
 
-        self.pixMap = QImage()
-        self.pixMap.loadFromData(data)
-        self.pixMap.setDevicePixelRatio(self.graphicsView.devicePixelRatio())
+        if not same_data:
+            self._curDisplayData = data
+            width, height, mat, isAnima = ToolUtil.GetPictureSize(data)
+            if not isAnima:
+                # 主线程兜底：对 Pillow 无法识别动图标志的格式（如 JXL 等），直接以 Qt 插件结果为准
+                probe_buf = QBuffer()
+                probe_buf.setData(QByteArray(data))
+                if probe_buf.open(QIODevice.ReadOnly):
+                    probe_reader = QImageReader(probe_buf)
+                    if probe_reader.supportsAnimation() and probe_reader.imageCount() != 1:
+                        isAnima = True
+                    if (not width or not height) and probe_reader.size().isValid():
+                        width = probe_reader.size().width()
+                        height = probe_reader.size().height()
+                    probe_buf.close()
+            self._curW = width
+            self._curH = height
+            self._curMat = mat
+            self._curIsAnima = isAnima
 
-        # self.graphicsView.setSceneRect(QRectF(QPointF(0, 0), QPointF(self.pixMap.width()*radio, self.pixMap.height()*radio)))
+            self.pixMap = QImage()
+            self.pixMap.loadFromData(data)
+            if self.pixMap.isNull():
+                self.pixMap = _decode_bytes_to_qimage(data)
+            self.pixMap.setDevicePixelRatio(dpr)
 
-        size = ToolUtil.GetDownloadSize(len(data))
-        self.sizeLabel.setText(size)
-        weight, height, mat, _ = ToolUtil.GetPictureSize(data)
-        self.format.setText(mat)
-        self.resolutionLabel.setText(str(weight) + "x" + str(height))
-
-        if mat == "gif":
-            self.graphicsItem.SetGifData(data, self.pixMap.width(), self.pixMap.height())
-            # self.graphicsView.setSceneRect(QRectF(QPointF(0, 0), QPointF(self.pixMap.width(), self.pixMap.height())))
+            size = ToolUtil.GetDownloadSize(len(data))
+            self.sizeLabel.setText(size)
+            self.format.setText(mat)
+            self.resolutionLabel.setText(str(width) + "x" + str(height))
         else:
-            radio = self.pixMap.devicePixelRatio()
-            scale = (1 + self.scaleCnt * 0.1)
-            toW = int(self.graphicsView.width() * scale)
-            toH = self.graphicsView.height() * scale
+            width = self._curW
+            height = self._curH
+            isAnima = self._curIsAnima
+            self.pixMap.setDevicePixelRatio(dpr)
 
-            data2 = QPixmap(self.pixMap)
-            data2.setDevicePixelRatio(self.graphicsView.devicePixelRatio())
-            newData = data2.scaled(toW * radio, toH * radio, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            pos = QPoint(max(0, self.graphicsView.width() // 2 - newData.width() / newData.devicePixelRatio() // 2), max(0, self.graphicsView.height() // 2 - newData.height() / newData.devicePixelRatio() // 2))
-            self.graphicsItem.setPos(pos)
-            # print("set index, {}".format(index))
-            self.graphicsItem.setPixmap(newData)
-            self.graphicsScene.setSceneRect(0, 0, self.graphicsView.width(), max(self.graphicsView.height(),
-                                                                    self.graphicsItem.pixmap().height() // self.graphicsItem.pixmap().devicePixelRatio()))
+        srcW = width if width > 0 else self.pixMap.width()
+        srcH = height if height > 0 else self.pixMap.height()
+
+        viewW = max(1, self.graphicsView.viewport().width())
+        viewH = max(1, self.graphicsView.viewport().height())
+        scale = max(0.1, 1.0 + self.scaleCnt * 0.1)
+        toW = max(1, int(viewW * scale))
+        toH = max(1, int(viewH * scale))
+
+        if srcW > 0 and srcH > 0:
+            ratio = min(toW / srcW, toH / srcH)
+            dispW = max(1, int(round(srcW * ratio)))
+            dispH = max(1, int(round(srcH * ratio)))
+        else:
+            dispW, dispH = toW, toH
+
+        pos = QPointF(max(0.0, (viewW - dispW) / 2.0), max(0.0, (viewH - dispH) / 2.0))
+        self.graphicsItem.setPos(pos)
+        self.graphicsScene.setSceneRect(0, 0, max(viewW, dispW), max(viewH, dispH))
+
+        if isAnima:
+            if same_data and self.graphicsItem.IsAnimatedActive():
+                self.graphicsItem.SetDisplaySize(dispW, dispH, dpr)
+            else:
+                fallback_pm = QPixmap.fromImage(self.pixMap) if not self.pixMap.isNull() else QPixmap()
+                self.graphicsItem.SetPaused(not self.isVisible())
+                self.graphicsItem.SetAnimationData(data, srcW, srcH, dispW, dispH, dpr, fallback_pixmap=fallback_pm)
+        else:
+            data2 = QPixmap.fromImage(self.pixMap)
+            data2.setDevicePixelRatio(dpr)
+            newData = data2.scaled(int(round(dispW * dpr)), int(round(dispH * dpr)), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            newData.setDevicePixelRatio(dpr)
+            self.graphicsItem.SetStaticPixmap(newData, dispW, dispH)
 
         self.CheckScaleRadio()
         self.graphicsView.update()
@@ -240,6 +533,18 @@ class Waifu2xToolView(QtWidgets.QWidget, Ui_Waifu2xTool, QtTaskBase):
     def resizeEvent(self, event) -> None:
         super(self.__class__, self).resizeEvent(event)
         self.CheckShowImg()
+
+    def showEvent(self, event) -> None:
+        super(self.__class__, self).showEvent(event)
+        self.graphicsItem.SetPaused(False)
+
+    def hideEvent(self, event) -> None:
+        super(self.__class__, self).hideEvent(event)
+        self.graphicsItem.SetPaused(True)
+
+    def closeEvent(self, event) -> None:
+        self.graphicsItem.ClearAnimation()
+        super(self.__class__, self).closeEvent(event)
 
     def eventFilter(self, obj, ev):
         if ev.type() == QEvent.KeyPress:
@@ -307,7 +612,7 @@ class Waifu2xToolView(QtWidgets.QWidget, Ui_Waifu2xTool, QtTaskBase):
         if factor >= 1:
             self.scaleCnt += 1
         else:
-            self.scaleCnt -= 1
+            self.scaleCnt = max(-9, self.scaleCnt - 1)
         self.CheckShowImg()
         # self.graphicsView.scale(factor, factor)
 
@@ -326,25 +631,97 @@ class Waifu2xToolView(QtWidgets.QWidget, Ui_Waifu2xTool, QtTaskBase):
         return
 
 
+    def _hasSupportedDropData(self, mimeData) -> bool:
+        if mimeData is None:
+            return False
+        if mimeData.hasUrls():
+            for url in mimeData.urls():
+                if url.isLocalFile() and os.path.isfile(url.toLocalFile()):
+                    return True
+        if mimeData.hasImage():
+            return True
+        return False
+
+    def dragEnterEvent(self, event):
+        if self._hasSupportedDropData(event.mimeData()):
+            event.acceptProposedAction()
+        else:
+            event.ignore()
+
+    def dragMoveEvent(self, event):
+        if self._hasSupportedDropData(event.mimeData()):
+            event.acceptProposedAction()
+        else:
+            event.ignore()
+
+    def dropEvent(self, event):
+        mimeData = event.mimeData()
+        try:
+            if mimeData.hasUrls():
+                for url in mimeData.urls():
+                    if url.isLocalFile():
+                        path = url.toLocalFile()
+                        if os.path.isfile(path):
+                            self.LoadPictureFile(path)
+                            event.acceptProposedAction()
+                            return
+            if mimeData.hasImage():
+                imgData = mimeData.imageData()
+                if isinstance(imgData, QPixmap):
+                    qimg = imgData.toImage()
+                elif isinstance(imgData, QImage):
+                    qimg = imgData
+                else:
+                    qimg = QImage()
+                if not qimg.isNull():
+                    ba = QByteArray()
+                    buf = QBuffer(ba)
+                    buf.open(QIODevice.WriteOnly)
+                    qimg.save(buf, "PNG")
+                    buf.close()
+                    self.LoadPictureData(bytes(ba.data()))
+                    event.acceptProposedAction()
+                    return
+        except Exception as ex:
+            Log.Error(ex)
+        event.ignore()
+
+    def LoadPictureData(self, data: bytes) -> bool:
+        try:
+            if not data:
+                return False
+            data2 = ToolUtil.GetCanUseData(data)
+            width, height, mat, isAnima = ToolUtil.GetPictureSize(data2)
+            if not width or not height:
+                QtOwner().ShowError(Str.GetStr(Str.NotSupportFmt))
+                return False
+            self.data = data2
+            self.waifu2xData = None
+            self.scaleCnt = 0
+            self.tickLabel.setText("-")
+            self.ClearConvert()
+            self.backStatus = ""
+            self.ShowImg(data2)
+            return True
+        except Exception as ex:
+            Log.Error(ex)
+        return False
+
+    def LoadPictureFile(self, filePath: str) -> bool:
+        try:
+            if filePath and os.path.isfile(filePath):
+                with open(filePath, "rb") as f:
+                    data = f.read()
+                return self.LoadPictureData(data)
+        except Exception as ex:
+            Log.Error(ex)
+        return False
+
     def OpenPicture(self):
         try:
             filename = QFileDialog.getOpenFileName(self, "Open Image", ".", "Image Files(*)")
             if filename and len(filename) >= 1:
-                name = filename[0]
-                if os.path.isfile(name):
-                    f = open(name, "rb")
-                    data = f.read()
-                    f.close()
-                    data2 = ToolUtil.GetCanUseData(data)
-                    width, height, mat, isAnima = ToolUtil.GetPictureSize(data2)
-                    if not width or not height:
-                        QtOwner().ShowError(Str.GetStr(Str.NotSupportFmt))
-                        return
-                    self.data = data2
-                    self.waifu2xData = None
-                    self.ClearConvert()
-                    self.backStatus = ""
-                    self.ShowImg(data2)
+                self.LoadPictureFile(filename[0])
         except Exception as ex:
             Log.Error(ex)
         return
@@ -459,6 +836,7 @@ class Waifu2xToolView(QtWidgets.QWidget, Ui_Waifu2xTool, QtTaskBase):
         self.scaleEdit.setEnabled(status)
         self.widthEdit.setEnabled(status)
         self.heighEdit.setEnabled(status)
+        self.fmtComboBox.setEnabled(status)
         # self.noiseCombox.setEnabled(status)
         # self.radioButton_4.setEnabled(status)
         # self.radioButton_5.setEnabled(status)

@@ -32,8 +32,7 @@ class QtCustomSlider(QtWidgets.QSlider):
         QtWidgets.QSlider.__init__(self)
         self.label = QLabel(self)
         self._qtTool = weakref.ref(parent)
-        self.label.setFixedSize(QSize(20, 20))
-        self.label.setAutoFillBackground(True)
+        self.label.setFixedSize(QSize(28, 20))
         self.label.setAutoFillBackground(True)
         # palette = QPalette()
         # palette.setColor(QPalette.Background, Qt.white)
@@ -95,6 +94,7 @@ class ReadNewTool(QtWidgets.QWidget, Ui_ReadImg):
         QtWidgets.QWidget.__init__(self, imgFrame)
         Ui_ReadImg.__init__(self)
         self.setupUi(self)
+        self.setAttribute(Qt.WA_StyledBackground, True)
         self.resize(100, 400)
         self._imgFrame = weakref.ref(imgFrame)
         self.downloadMaxSize = 0
@@ -107,7 +107,6 @@ class ReadNewTool(QtWidgets.QWidget, Ui_ReadImg):
         self.zoomSlider.setMaximum(int(100*ReadNewGraphics.MAX_ZOOM))
 
         self.isMaxFull = False
-        self.gpuLabel.setMaximumWidth(250)
         self.curWaifu2x.clicked.connect(self.OpenCurWaifu)
         self.preDownWaifu2x.clicked.connect(self.OpenPreDownloadWaifu2x)
         self.modelNameButton.setText(ToolUtil.GetShowModelName(Setting.LookModelName.value))

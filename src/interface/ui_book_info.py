@@ -172,7 +172,7 @@ class Ui_BookInfo(object):
         self.autorList.setFrameShape(QFrame.NoFrame)
         self.autorList.setProperty(u"showDropIndicator", True)
         self.autorList.setFlow(QListView.LeftToRight)
-        self.autorList.setSpacing(10)
+        self.autorList.setSpacing(0)
 
         self.horizontalLayout_11.addWidget(self.autorList)
 

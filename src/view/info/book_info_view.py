@@ -53,6 +53,8 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         self.label.setVisible(False)
         self.title.setWordWrap(True)
         self.title.setTextInteractionFlags(Qt.TextBrowserInteraction)
+        self.autorList.setSpacing(0)
+        self.autorList.setCursor(Qt.PointingHandCursor)
         self.autorList.clicked.connect(self.ClickAutorItem)
         self.autorList.setContextMenuPolicy(Qt.CustomContextMenu)
         self.autorList.customContextMenuRequested.connect(self.CopyClickAutorItem)
@@ -128,6 +130,39 @@ class BookInfoView(QtWidgets.QWidget, Ui_BookInfo, QtTaskBase):
         cardBg = "#22252D" if isDark else "#FFFFFF"
         cardBorder = "#2E333E" if isDark else "#E2E8F0"
         textColor = "#E8ECF2" if isDark else "#1E293B"
+        if Setting.ThemeColorIndex.value == 0:
+            hoverBg = "rgba(255, 138, 31, 0.26)" if isDark else "rgba(249, 115, 22, 0.16)"
+            tagBorder = "rgba(255, 138, 31, 0.40)" if isDark else "rgba(249, 115, 22, 0.35)"
+        else:
+            hoverBg = "rgba(244, 91, 147, 0.26)" if isDark else "rgba(236, 72, 153, 0.16)"
+            tagBorder = "rgba(244, 91, 147, 0.40)" if isDark else "rgba(236, 72, 153, 0.35)"
+
+        self.autorList.setStyleSheet(
+            f"""
+            QListWidget {{
+                background-color: transparent;
+                border: none;
+                padding: 0px;
+                margin: 0px;
+            }}
+            QListWidget::item {{
+                background-color: {softBg};
+                color: {accentText};
+                border: 1px solid {tagBorder};
+                border-radius: 8px;
+                min-height: 0px;
+                padding: 0px;
+                margin: 0px 4px;
+            }}
+            QListWidget::item:hover {{
+                background-color: {hoverBg};
+                border: 1px solid {primary};
+                border-radius: 8px;
+                color: {accentText};
+            }}
+            """
+        )
+        self.autorList.UpdateItemStyles()
 
         self.tagList.setStyleSheet(
             f"""

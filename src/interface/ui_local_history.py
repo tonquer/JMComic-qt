@@ -16,8 +16,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QFrame, QGridLayout, QHBoxLayout,
-    QLabel, QListWidgetItem, QPushButton, QSizePolicy,
-    QSpacerItem, QSpinBox, QWidget)
+    QLabel, QLineEdit, QListWidgetItem, QPushButton,
+    QSizePolicy, QSpacerItem, QSpinBox, QVBoxLayout,
+    QWidget)
 
 from component.list.comic_list_widget import ComicListWidget
 
@@ -25,11 +26,41 @@ class Ui_LocalHistory(object):
     def setupUi(self, LocalHistory):
         if not LocalHistory.objectName():
             LocalHistory.setObjectName(u"LocalHistory")
-        LocalHistory.resize(628, 334)
-        self.gridLayout_2 = QGridLayout(LocalHistory)
+        LocalHistory.resize(900, 560)
+        self.gridLayout_2 = QVBoxLayout(LocalHistory)
+        self.gridLayout_2.setSpacing(10)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
+        self.gridLayout_2.setContentsMargins(12, 10, 12, 10)
+        self.widget = QFrame(LocalHistory)
+        self.widget.setObjectName(u"widget")
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.widget.sizePolicy().hasHeightForWidth())
+        self.widget.setSizePolicy(sizePolicy)
+        self.widget.setProperty(u"role", u"card")
+        self.horizontalLayout_2 = QHBoxLayout(self.widget)
+        self.horizontalLayout_2.setSpacing(8)
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.horizontalLayout_2.setContentsMargins(12, 10, 12, 10)
+        self.label = QLabel(self.widget)
+        self.label.setObjectName(u"label")
+        self.label.setProperty(u"role", u"muted")
+
+        self.horizontalLayout_2.addWidget(self.label)
+
+        self.lineEdit = QLineEdit(self.widget)
+        self.lineEdit.setObjectName(u"lineEdit")
+        self.lineEdit.setClearButtonEnabled(True)
+
+        self.horizontalLayout_2.addWidget(self.lineEdit)
+
+
+        self.gridLayout_2.addWidget(self.widget)
+
         self.gridLayout_3 = QGridLayout()
         self.gridLayout_3.setObjectName(u"gridLayout_3")
+        self.gridLayout_3.setContentsMargins(0, 0, 0, 0)
         self.bookList = ComicListWidget(LocalHistory)
         self.bookList.setObjectName(u"bookList")
         self.bookList.setStyleSheet(u"")
@@ -37,14 +68,15 @@ class Ui_LocalHistory(object):
         self.gridLayout_3.addWidget(self.bookList, 0, 0, 1, 1)
 
 
-        self.gridLayout_2.addLayout(self.gridLayout_3, 0, 0, 1, 1)
+        self.gridLayout_2.addLayout(self.gridLayout_3)
 
-        self.gridLayout_4 = QGridLayout()
-        self.gridLayout_4.setObjectName(u"gridLayout_4")
         self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setSpacing(8)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalLayout.setContentsMargins(2, -1, 2, -1)
         self.msgLabel = QLabel(LocalHistory)
         self.msgLabel.setObjectName(u"msgLabel")
+        self.msgLabel.setProperty(u"role", u"muted")
 
         self.horizontalLayout.addWidget(self.msgLabel)
 
@@ -52,65 +84,36 @@ class Ui_LocalHistory(object):
 
         self.horizontalLayout.addItem(self.horizontalSpacer)
 
-        self.line_2 = QFrame(LocalHistory)
-        self.line_2.setObjectName(u"line_2")
-        self.line_2.setFrameShape(QFrame.Shape.VLine)
-        self.line_2.setFrameShadow(QFrame.Shadow.Sunken)
-
-        self.horizontalLayout.addWidget(self.line_2)
-
         self.nums = QLabel(LocalHistory)
         self.nums.setObjectName(u"nums")
-        self.nums.setMinimumSize(QSize(0, 30))
+        self.nums.setProperty(u"role", u"muted")
 
         self.horizontalLayout.addWidget(self.nums)
 
         self.pages = QLabel(LocalHistory)
         self.pages.setObjectName(u"pages")
+        self.pages.setProperty(u"role", u"muted")
 
         self.horizontalLayout.addWidget(self.pages)
 
-        self.line = QFrame(LocalHistory)
-        self.line.setObjectName(u"line")
-        self.line.setFrameShape(QFrame.Shape.VLine)
-        self.line.setFrameShadow(QFrame.Shadow.Sunken)
-
-        self.horizontalLayout.addWidget(self.line)
-
-        self.line_4 = QFrame(LocalHistory)
-        self.line_4.setObjectName(u"line_4")
-        self.line_4.setFrameShape(QFrame.Shape.VLine)
-        self.line_4.setFrameShadow(QFrame.Shadow.Sunken)
-
-        self.horizontalLayout.addWidget(self.line_4)
-
         self.spinBox = QSpinBox(LocalHistory)
         self.spinBox.setObjectName(u"spinBox")
-        self.spinBox.setMinimumSize(QSize(50, 30))
+        self.spinBox.setMinimumSize(QSize(68, 0))
         self.spinBox.setMinimum(1)
         self.spinBox.setMaximum(1)
 
         self.horizontalLayout.addWidget(self.spinBox)
 
-        self.line_3 = QFrame(LocalHistory)
-        self.line_3.setObjectName(u"line_3")
-        self.line_3.setFrameShape(QFrame.Shape.VLine)
-        self.line_3.setFrameShadow(QFrame.Shadow.Sunken)
-
-        self.horizontalLayout.addWidget(self.line_3)
-
         self.jumpButton = QPushButton(LocalHistory)
         self.jumpButton.setObjectName(u"jumpButton")
-        self.jumpButton.setMinimumSize(QSize(0, 30))
+        self.jumpButton.setMinimumSize(QSize(68, 0))
 
         self.horizontalLayout.addWidget(self.jumpButton)
 
 
-        self.gridLayout_4.addLayout(self.horizontalLayout, 0, 0, 1, 1)
+        self.gridLayout_2.addLayout(self.horizontalLayout)
 
-
-        self.gridLayout_2.addLayout(self.gridLayout_4, 1, 0, 1, 1)
-
+        self.gridLayout_2.setStretch(1, 1)
 
         self.retranslateUi(LocalHistory)
         self.jumpButton.clicked.connect(LocalHistory.JumpPage)
@@ -120,6 +123,8 @@ class Ui_LocalHistory(object):
 
     def retranslateUi(self, LocalHistory):
         LocalHistory.setWindowTitle(QCoreApplication.translate("LocalHistory", u"\u672c\u5730\u8bb0\u5f55", None))
+        self.label.setText(QCoreApplication.translate("LocalHistory", u"\u641c\u7d22\uff1a", None))
+        self.lineEdit.setPlaceholderText(QCoreApplication.translate("LocalHistory", u"\u8f93\u5165\u89c2\u770b\u8bb0\u5f55\u6807\u9898\u6216 ID \u641c\u7d22\u2026", None))
         self.msgLabel.setText("")
         self.nums.setText(QCoreApplication.translate("LocalHistory", u"\u8bb0\u5f55\u6570\uff1a", None))
         self.pages.setText(QCoreApplication.translate("LocalHistory", u"\u9875", None))

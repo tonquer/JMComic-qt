@@ -6,41 +6,141 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>673</width>
-    <height>345</height>
+    <width>760</width>
+    <height>560</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>500</width>
-    <height>0</height>
+    <width>680</width>
+    <height>480</height>
    </size>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>选择超分模型</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>10</number>
+   </property>
+   <property name="leftMargin">
+    <number>20</number>
+   </property>
+   <property name="topMargin">
+    <number>18</number>
+   </property>
+   <property name="rightMargin">
+    <number>20</number>
+   </property>
+   <property name="bottomMargin">
+    <number>18</number>
+   </property>
    <item>
-    <widget class="QLabel" name="label_4">
+    <widget class="QLabel" name="titleLabel">
+     <property name="role" stdset="0">
+      <string notr="true">pageTitle</string>
+     </property>
      <property name="text">
-      <string>支持Waifu2x、Real-CUGAN、Real-ESRGAN（不支持CPU）</string>
+      <string>选择超分模型</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>UP2X：采样倍率(建议选2X)，DENOISE：降噪等级(建议选最高),</string>
+    <layout class="QVBoxLayout" name="descLayout">
+     <property name="spacing">
+      <number>2</number>
      </property>
-    </widget>
+     <item>
+      <widget class="QLabel" name="label_4">
+       <property name="role" stdset="0">
+        <string notr="true">muted</string>
+       </property>
+       <property name="text">
+        <string>支持 Waifu2x、Real-CUGAN、Real-ESRGAN（不支持 CPU）</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="role" stdset="0">
+        <string notr="true">muted</string>
+       </property>
+       <property name="text">
+        <string>UP2X：采样倍率（建议选 2X），DENOISE：降噪等级（建议选最高）</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="filterLayout">
+     <property name="spacing">
+      <number>8</number>
+     </property>
+     <item>
+      <widget class="QLineEdit" name="searchEdit">
+       <property name="placeholderText">
+        <string>搜索模型名、算法或描述...</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="algoFilter">
+       <property name="minimumSize">
+        <size>
+         <width>130</width>
+         <height>0</height>
+        </size>
+       </property>
+       <item>
+        <property name="text">
+         <string>全部算法</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Waifu2x</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Real-CUGAN</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Real-ESRGAN</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QTableWidget" name="tableWidget">
      <property name="editTriggers">
-      <set>QAbstractItemView::NoEditTriggers</set>
+      <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+     </property>
+     <property name="alternatingRowColors">
+      <bool>true</bool>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
      </property>
      <property name="selectionBehavior">
-      <enum>QAbstractItemView::SelectRows</enum>
+      <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+     </property>
+     <property name="showGrid">
+      <bool>false</bool>
      </property>
      <property name="sortingEnabled">
       <bool>true</bool>
@@ -51,9 +151,6 @@
      <attribute name="horizontalHeaderCascadingSectionResizes">
       <bool>false</bool>
      </attribute>
-     <attribute name="horizontalHeaderDefaultSectionSize">
-      <number>25</number>
-     </attribute>
      <attribute name="horizontalHeaderHighlightSections">
       <bool>false</bool>
      </attribute>
@@ -61,25 +158,13 @@
       <bool>true</bool>
      </attribute>
      <attribute name="horizontalHeaderStretchLastSection">
-      <bool>false</bool>
+      <bool>true</bool>
      </attribute>
      <attribute name="verticalHeaderVisible">
-      <bool>true</bool>
-     </attribute>
-     <attribute name="verticalHeaderMinimumSectionSize">
-      <number>23</number>
+      <bool>false</bool>
      </attribute>
      <attribute name="verticalHeaderDefaultSectionSize">
-      <number>23</number>
-     </attribute>
-     <attribute name="verticalHeaderHighlightSections">
-      <bool>true</bool>
-     </attribute>
-     <attribute name="verticalHeaderShowSortIndicator" stdset="0">
-      <bool>false</bool>
-     </attribute>
-     <attribute name="verticalHeaderStretchLastSection">
-      <bool>false</bool>
+      <number>34</number>
      </attribute>
      <column>
       <property name="text">
@@ -105,35 +190,58 @@
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <property name="spacing">
+      <number>10</number>
+     </property>
      <item>
-      <widget class="QPushButton" name="saveButton">
-       <property name="maximumSize">
+      <widget class="QLabel" name="tipLabel">
+       <property name="role" stdset="0">
+        <string notr="true">muted</string>
+       </property>
+       <property name="text">
+        <string>提示：双击行可直接确认选择</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="footerSpacer">
+       <property name="orientation">
+        <enum>Qt::Orientation::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
         <size>
-         <width>150</width>
-         <height>30</height>
+         <width>40</width>
+         <height>20</height>
         </size>
        </property>
-       <property name="styleSheet">
-        <string notr="true"/>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="closeButton">
+       <property name="minimumSize">
+        <size>
+         <width>88</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>关闭</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="saveButton">
+       <property name="minimumSize">
+        <size>
+         <width>96</width>
+         <height>0</height>
+        </size>
        </property>
        <property name="text">
         <string>确定</string>
        </property>
        <property name="shortcut">
         <string>Return</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="closeButton">
-       <property name="maximumSize">
-        <size>
-         <width>150</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>关闭</string>
        </property>
       </widget>
      </item>

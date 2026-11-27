@@ -154,8 +154,7 @@
         <translation>未成年人禁止註冊</translation>
     </message>
     <message>
-        <location filename="../src/tools/str.py" line="357"/>
-        <location filename="../src/tools/str.py" line="402"/>
+        <location filename="../src/tools/str.py" line="356"/>
         <source>空白章节</source>
         <translation>空白章節</translation>
     </message>
@@ -354,9 +353,14 @@
         <translation>找不到圖片檔案</translation>
     </message>
     <message>
-        <location filename="../src/tools/str.py" line="400"/>
+        <location filename="../src/tools/str.py" line="399"/>
         <source>文件已加密</source>
         <translation>檔案已加密</translation>
+    </message>
+    <message>
+        <location filename="../src/tools/str.py" line="400"/>
+        <source>空白图片</source>
+        <translation>空白圖片</translation>
     </message>
     <message>
         <location filename="../src/tools/str.py" line="403"/>
@@ -1453,9 +1457,14 @@
         <translation>幫助介面未啟用本地庫</translation>
     </message>
     <message>
-        <location filename="../src/tools/str.py" line="627"/>
+        <location filename="../src/tools/str.py" line="624"/>
         <source>记录数</source>
         <translation>紀錄數</translation>
+    </message>
+    <message>
+        <location filename="../src/tools/str.py" line="625"/>
+        <source>热词</source>
+        <translation>熱詞</translation>
     </message>
 </context>
 </TS>

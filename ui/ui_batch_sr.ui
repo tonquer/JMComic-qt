@@ -6,280 +6,366 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>508</height>
+    <width>920</width>
+    <height>560</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>批量超分</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>10</number>
+   </property>
+   <property name="leftMargin">
+    <number>12</number>
+   </property>
+   <property name="topMargin">
+    <number>12</number>
+   </property>
+   <property name="rightMargin">
+    <number>12</number>
+   </property>
+   <property name="bottomMargin">
+    <number>12</number>
+   </property>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_6">
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>导入目录：</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="inputDir"/>
-     </item>
-     <item>
-      <widget class="QToolButton" name="inputDirTool">
-       <property name="text">
-        <string>选择</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>导出目录：</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="exportDir"/>
-     </item>
-     <item>
-      <widget class="QToolButton" name="exportDirTool">
-       <property name="text">
-        <string>选择</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
-     <item>
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>参数设置：</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="Line" name="line_2">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_25">
-       <property name="minimumSize">
-        <size>
-         <width>60</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>156</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>模型：</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="coverModelName">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="Line" name="line">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_26">
-       <property name="minimumSize">
-        <size>
-         <width>60</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>156</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>放大倍数:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="WheelDoubleSpinBox" name="coverScale">
-       <property name="minimumSize">
-        <size>
-         <width>150</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="decimals">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <double>32.000000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.100000000000000</double>
-       </property>
-       <property name="value">
-        <double>2.000000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="Line" name="line_3">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_5">
-       <property name="text">
-        <string>转换格式：</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="WheelComboBox" name="fmtBox"/>
-     </item>
-     <item>
-      <widget class="Line" name="line_4">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_3">
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
+    <widget class="QFrame" name="configCard">
+     <property name="role" stdset="0">
+      <string notr="true">card</string>
+     </property>
+     <layout class="QVBoxLayout" name="configCardLayout">
+      <property name="spacing">
+       <number>10</number>
+      </property>
+      <property name="leftMargin">
+       <number>14</number>
+      </property>
+      <property name="topMargin">
+       <number>12</number>
+      </property>
+      <property name="rightMargin">
+       <number>14</number>
+      </property>
+      <property name="bottomMargin">
+       <number>12</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="role" stdset="0">
+         <string notr="true">sectionTitle</string>
+        </property>
+        <property name="text">
+         <string>参数设置</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QGridLayout" name="dirGridLayout" columnstretch="0,1,0">
+        <property name="horizontalSpacing">
+         <number>10</number>
+        </property>
+        <property name="verticalSpacing">
+         <number>8</number>
+        </property>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label">
+          <property name="role" stdset="0">
+           <string notr="true">muted</string>
+          </property>
+          <property name="text">
+           <string>导入目录：</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="inputDir">
+          <property name="placeholderText">
+           <string>请选择需要批量超分的图片目录</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QPushButton" name="inputDirTool">
+          <property name="minimumSize">
+           <size>
+            <width>72</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>选择</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_3">
+          <property name="role" stdset="0">
+           <string notr="true">muted</string>
+          </property>
+          <property name="text">
+           <string>导出目录：</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="exportDir">
+          <property name="placeholderText">
+           <string>请选择超分结果的导出目录</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QPushButton" name="exportDirTool">
+          <property name="minimumSize">
+           <size>
+            <width>72</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>选择</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="Line" name="configDivider">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <property name="spacing">
+         <number>12</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_25">
+          <property name="role" stdset="0">
+           <string notr="true">muted</string>
+          </property>
+          <property name="text">
+           <string>模型：</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="coverModelName">
+          <property name="minimumSize">
+           <size>
+            <width>140</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_26">
+          <property name="role" stdset="0">
+           <string notr="true">muted</string>
+          </property>
+          <property name="text">
+           <string>放大倍数：</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="WheelDoubleSpinBox" name="coverScale">
+          <property name="minimumSize">
+           <size>
+            <width>96</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>110</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="decimals">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <double>32.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="value">
+           <double>2.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_5">
+          <property name="role" stdset="0">
+           <string notr="true">muted</string>
+          </property>
+          <property name="text">
+           <string>转换格式：</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="WheelComboBox" name="fmtBox">
+          <property name="minimumSize">
+           <size>
+            <width>92</width>
+            <height>0</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_6">
+          <property name="role" stdset="0">
+           <string notr="true">muted</string>
+          </property>
+          <property name="text">
+           <string>线程数：</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="threadNum">
+          <property name="minimumSize">
+           <size>
+            <width>68</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="currentIndex">
+           <number>1</number>
+          </property>
+          <item>
+           <property name="text">
+            <string>1</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>2</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>3</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>4</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>5</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_4">
-     <item>
-      <spacer name="horizontalSpacer_4">
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
+     <property name="spacing">
+      <number>10</number>
+     </property>
+     <property name="leftMargin">
+      <number>2</number>
+     </property>
+     <property name="rightMargin">
+      <number>2</number>
+     </property>
      <item>
       <widget class="QLabel" name="label_4">
+       <property name="role" stdset="0">
+        <string notr="true">muted</string>
+       </property>
        <property name="text">
-        <string>成功/失败/总</string>
+        <string>进度（成功 / 失败 / 总计）：</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QLabel" name="numLabel">
+       <property name="role" stdset="0">
+        <string notr="true">cardTitle</string>
+       </property>
+       <property name="text">
+        <string>0 / 0 / 0</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="msgLabel">
+       <property name="role" stdset="0">
+        <string notr="true">muted</string>
+       </property>
        <property name="text">
         <string/>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="Line" name="line_5">
+      <spacer name="horizontalSpacer_4">
        <property name="orientation">
-        <enum>Qt::Vertical</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_6">
-       <property name="text">
-        <string>线程数：</string>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="threadNum">
-       <property name="currentIndex">
-        <number>1</number>
-       </property>
-       <item>
-        <property name="text">
-         <string>1</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>2</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>3</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>4</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>5</string>
-        </property>
-       </item>
-      </widget>
+      </spacer>
      </item>
      <item>
       <widget class="QPushButton" name="startImportButton">
-       <property name="maximumSize">
+       <property name="minimumSize">
         <size>
-         <width>150</width>
-         <height>30</height>
+         <width>88</width>
+         <height>0</height>
         </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true"/>
        </property>
        <property name="text">
         <string>开始导入</string>
-       </property>
-       <property name="shortcut">
-        <string>Return</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="startConvertButton">
-       <property name="maximumSize">
+       <property name="minimumSize">
         <size>
-         <width>150</width>
-         <height>30</height>
+         <width>88</width>
+         <height>0</height>
         </size>
+       </property>
+       <property name="variant" stdset="0">
+        <string notr="true">primary</string>
        </property>
        <property name="text">
         <string>开始转换</string>
@@ -288,20 +374,14 @@
      </item>
      <item>
       <widget class="QPushButton" name="cancleButton">
-       <property name="maximumSize">
+       <property name="minimumSize">
         <size>
-         <width>150</width>
-         <height>30</height>
+         <width>76</width>
+         <height>0</height>
         </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true"/>
        </property>
        <property name="text">
         <string>取消</string>
-       </property>
-       <property name="shortcut">
-        <string>Return</string>
        </property>
       </widget>
      </item>
@@ -309,14 +389,20 @@
    </item>
    <item>
     <widget class="BaseTableWidget" name="tableWidget">
+     <property name="alternatingRowColors">
+      <bool>true</bool>
+     </property>
+     <property name="showGrid">
+      <bool>false</bool>
+     </property>
      <column>
       <property name="text">
-       <string>id</string>
+       <string>ID</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>时间</string>
+       <string>耗时</string>
       </property>
      </column>
      <column>
@@ -340,16 +426,6 @@
       </property>
      </column>
     </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="msgLabel">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3"/>
    </item>
   </layout>
  </widget>

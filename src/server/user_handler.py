@@ -866,6 +866,32 @@ class RandomRecommendReq2Handler(object):
                 TaskBase.taskObj.taskBack.emit(task.backParam, pickle.dumps(data))
 
 
+@handler(req.GetHotTagsReq2)
+class GetHotTagsReq2Handler(object):
+    def __call__(self, task):
+        data = {"st": task.status}
+        try:
+            if task.status != Status.Ok:
+                return
+            v = json.loads(task.res.raw.content)
+            code = v.get("code")
+            data["errorMsg"] = v.get("errorMsg", "")
+            data["message"] = v.get("message", "")
+            if code != 200:
+                data["st"] = Status.Error
+                return
+            hotList = ToolUtil.ParseHotTagsReq2(task.req.ParseData(v.get("data")))
+            data["st"] = Status.Ok
+            data["tags"] = hotList
+        except Exception as es:
+            data["st"] = Status.ParseError
+            data["errorMsg"] = task.res.GetText()
+            Log.Warn("url:{}, data:{}".format(task.req.url, task.res.GetText()))
+            Log.Error(es)
+        finally:
+            if task.backParam:
+                TaskBase.taskObj.taskBack.emit(task.backParam, pickle.dumps(data))
+
 @handler(req.GetWeekCategoriesReq2)
 @handler(req.GetWeekFilterReq2)
 @handler(req.GetBlogsReq2)
@@ -1071,9 +1097,14 @@ class DownloadBookHandler(object):
             if len(data) < 20 or isFail:
                 Log.Warn(f"download_error_picture, url:{backData.req.url}, data:{len(data)}, is_fail:{isFail}")
                 if not data and not isFail and status_code == 200:
+                    backData.req.MarkSpacePic()
+                    if backData.req.TryRetrySpacePic():
+                        backData.req.isReset = True
+                        if backData.bakParam:
+                            TaskBase.taskObj.downloadBack.emit(backData.backParam, -Status.Resetting, fileSize, b"")
+                        Server().ReDownload(backData)
+                        return
                     if backData.bakParam:
-                        from server.req import ServerReq
-                        ServerReq.SPACE_PIC.add(backData.req.url)
                         TaskBase.taskObj.downloadBack.emit(backData.bakParam, -Str.SpacePic, fileSize, b"")
                     return
                 ## 尝试切换图片地址

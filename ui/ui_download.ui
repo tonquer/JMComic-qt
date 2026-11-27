@@ -6,212 +6,304 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1002</width>
-    <height>510</height>
+    <width>1020</width>
+    <height>560</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>下载</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
-   <item row="5" column="0">
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="5" column="0">
-      <widget class="QTableWidget" name="tableWidget">
-       <column>
-        <property name="text">
-         <string>id</string>
+  <layout class="QVBoxLayout" name="gridLayout_2" stretch="0,1">
+   <property name="spacing">
+    <number>10</number>
+   </property>
+   <property name="leftMargin">
+    <number>12</number>
+   </property>
+   <property name="topMargin">
+    <number>10</number>
+   </property>
+   <property name="rightMargin">
+    <number>12</number>
+   </property>
+   <property name="bottomMargin">
+    <number>10</number>
+   </property>
+   <item>
+    <widget class="QFrame" name="topCard">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="role" stdset="0">
+      <string notr="true">card</string>
+     </property>
+     <layout class="QVBoxLayout" name="topCardLayout">
+      <property name="spacing">
+       <number>10</number>
+      </property>
+      <property name="leftMargin">
+       <number>12</number>
+      </property>
+      <property name="topMargin">
+       <number>10</number>
+      </property>
+      <property name="rightMargin">
+       <number>12</number>
+      </property>
+      <property name="bottomMargin">
+       <number>10</number>
+      </property>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <property name="spacing">
+         <number>8</number>
         </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>时间</string>
+        <item>
+         <widget class="QComboBox" name="comboBox">
+          <property name="minimumSize">
+           <size>
+            <width>96</width>
+            <height>0</height>
+           </size>
+          </property>
+          <item>
+           <property name="text">
+            <string>全部</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>未完成</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>已完成</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="lineEdit">
+          <property name="placeholderText">
+           <string>搜索标题或 ID…</string>
+          </property>
+          <property name="clearButtonEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="formatButton">
+          <property name="minimumSize">
+           <size>
+            <width>84</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>格式转换</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="someDownButton">
+          <property name="minimumSize">
+           <size>
+            <width>84</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>批量下载</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="Line" name="toolbarDivider">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
         </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>标题</string>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="spacing">
+         <number>8</number>
         </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>下载进度</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>下载章节</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>下载速度</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>下载状态</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>转换进度</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>转换章节</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>转换耗时</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>转换状态</string>
-        </property>
-       </column>
-      </widget>
-     </item>
-    </layout>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <property name="spacing">
+           <number>14</number>
+          </property>
+          <item>
+           <widget class="QCheckBox" name="redownloadRadio">
+            <property name="text">
+             <string>失败后自动重试</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="skipPic">
+            <property name="text">
+             <string>超分跳过损坏</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="radioButton">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="text">
+             <string>下载自动进行超分</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton">
+          <property name="minimumSize">
+           <size>
+            <width>82</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>全部开始</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_3">
+          <property name="minimumSize">
+           <size>
+            <width>82</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>全部暂停</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_2">
+          <property name="minimumSize">
+           <size>
+            <width>82</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>开始转换</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_4">
+          <property name="minimumSize">
+           <size>
+            <width>82</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>暂停转换</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
    </item>
-   <item row="2" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Orientation::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="redownloadRadio">
-       <property name="text">
-        <string>失败后自动重试</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="skipPic">
-       <property name="text">
-        <string>超分跳过损坏</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="radioButton">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="text">
-        <string>下载自动进行超分</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="0" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
-     <item>
-      <widget class="QComboBox" name="comboBox">
-       <item>
-        <property name="text">
-         <string>全部</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>未完成</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>已完成</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="lineEdit">
-       <property name="placeholderText">
-        <string>搜索标题或 ID…</string>
-       </property>
-       <property name="clearButtonEnabled">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="1" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Orientation::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="formatButton">
-       <property name="text">
-        <string>格式转换</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="someDownButton">
-       <property name="text">
-        <string>批量下载</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton">
-       <property name="text">
-        <string>全部开始</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_3">
-       <property name="text">
-        <string>全部暂停</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_2">
-       <property name="text">
-        <string>开始转换</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_4">
-       <property name="text">
-        <string>暂停转换</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+   <item>
+    <widget class="QTableWidget" name="tableWidget">
+     <property name="alternatingRowColors">
+      <bool>true</bool>
+     </property>
+     <property name="showGrid">
+      <bool>false</bool>
+     </property>
+     <column>
+      <property name="text">
+       <string>ID</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>时间</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>标题</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>下载进度</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>下载章节</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>下载速度</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>下载状态</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>转换进度</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>转换章节</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>转换耗时</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>转换状态</string>
+      </property>
+     </column>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -222,80 +314,30 @@
    <signal>clicked()</signal>
    <receiver>Download</receiver>
    <slot>StartAll()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>94</x>
-     <y>29</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>52</x>
-     <y>-19</y>
-    </hint>
-   </hints>
   </connection>
   <connection>
    <sender>pushButton_3</sender>
    <signal>clicked()</signal>
    <receiver>Download</receiver>
    <slot>StopAll()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>189</x>
-     <y>27</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>142</x>
-     <y>-42</y>
-    </hint>
-   </hints>
   </connection>
   <connection>
    <sender>pushButton_2</sender>
    <signal>clicked()</signal>
    <receiver>Download</receiver>
    <slot>StartConvertAll()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>307</x>
-     <y>27</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>274</x>
-     <y>-41</y>
-    </hint>
-   </hints>
   </connection>
   <connection>
    <sender>pushButton_4</sender>
    <signal>clicked()</signal>
    <receiver>Download</receiver>
    <slot>StopConvertAll()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>397</x>
-     <y>22</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>374</x>
-     <y>-51</y>
-    </hint>
-   </hints>
   </connection>
   <connection>
    <sender>radioButton</sender>
    <signal>clicked()</signal>
    <receiver>Download</receiver>
    <slot>SetAutoConvert()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>495</x>
-     <y>24</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>492</x>
-     <y>-33</y>
-    </hint>
-   </hints>
   </connection>
  </connections>
  <slots>

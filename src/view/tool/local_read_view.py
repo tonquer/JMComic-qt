@@ -5,7 +5,6 @@ from PySide6.QtGui import QAction, QDesktopServices
 from PySide6.QtWidgets import QWidget, QMenu, QFileDialog
 from natsort import natsorted
 
-from interface.ui_index import Ui_Index
 from interface.ui_local import Ui_Local
 from qt_owner import QtOwner
 from server import Status, time
@@ -21,7 +20,7 @@ class LocalReadView(QWidget, Ui_Local, QtTaskBase):
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
-        Ui_Index.__init__(self)
+        Ui_Local.__init__(self)
         QtTaskBase.__init__(self)
         self.setupUi(self)
         self.isInit = False
@@ -82,6 +81,7 @@ class LocalReadView(QWidget, Ui_Local, QtTaskBase):
         self.searchText = ""
 
         self.sortAllBookIds = []
+        self.RefreshTheme()
 
     def retranslateUi(self, SettingNew):
         Ui_Local.retranslateUi(self, SettingNew)
@@ -91,26 +91,61 @@ class LocalReadView(QWidget, Ui_Local, QtTaskBase):
         primary = QtOwner().GetThemeColorList(0)
         softBg = QtOwner().GetThemeColorList(1)
         accentText = QtOwner().GetThemeColorList(2)
+        from config.setting import Setting
+        isDark = Setting.ThemeIndex.autoValue == 1
+        if Setting.ThemeColorIndex.value == 0:
+            hoverBg = "rgba(255, 138, 31, 0.26)" if isDark else "rgba(249, 115, 22, 0.16)"
+            borderColor = "rgba(255, 138, 31, 0.40)" if isDark else "rgba(249, 115, 22, 0.35)"
+        else:
+            hoverBg = "rgba(244, 91, 147, 0.26)" if isDark else "rgba(236, 72, 153, 0.16)"
+            borderColor = "rgba(244, 91, 147, 0.40)" if isDark else "rgba(236, 72, 153, 0.35)"
+
         self.tagsList.setStyleSheet(
             f"""
             QListWidget {{
                 background-color: transparent;
                 border: none;
+                padding: 0px;
+                margin: 0px;
             }}
             QListWidget::item {{
                 background-color: {softBg};
                 color: {accentText};
-                border: 1px solid {accentText};
+                border: 1px solid {borderColor};
                 border-radius: 8px;
-                padding: 4px 10px;
+                min-height: 0px;
+                padding: 0px;
+                margin: 0px 4px;
             }}
-            QListWidget::item:hover,
-            QListWidget::item:selected {{
+            QListWidget::item:hover {{
+                background-color: {hoverBg};
+                border: 1px solid {primary};
+                border-radius: 8px;
+                color: {accentText};
+            }}
+            QListWidget::item:selected,
+            QListWidget::item:selected:hover,
+            QListWidget::item:selected:focus {{
                 background-color: {primary};
                 border: 1px solid {primary};
                 border-radius: 8px;
                 color: #FFFFFF;
             }}
+            """
+        )
+        self.tagsList.UpdateItemStyles()
+        self.toolButton.setStyleSheet(
+            """
+            QPushButton#toolButton {
+                padding: 0px 26px 0px 14px;
+            }
+            QPushButton#toolButton::menu-indicator {
+                subcontrol-origin: padding;
+                subcontrol-position: right center;
+                right: 8px;
+                width: 10px;
+                height: 10px;
+            }
             """
         )
 
@@ -121,7 +156,9 @@ class LocalReadView(QWidget, Ui_Local, QtTaskBase):
     def Init(self):
         self.categoryBook, self.bookCategory = self.db.LoadCategory()
         self.tagsList.clear()
-        self.tagsList.AddItem(Str.GetStr(Str.All), True)
+        allItem = self.tagsList.AddItem(Str.GetStr(Str.All), True)
+        if not self.curSelectCategory and not self.isCurRead:
+            allItem.setSelected(True)
         item = self.tagsList.AddItem(Str.GetStr(Str.CurRead), True)
         if self.isCurRead:
             item.setSelected(True)
@@ -132,6 +169,7 @@ class LocalReadView(QWidget, Ui_Local, QtTaskBase):
             if category == self.curSelectCategory:
                 item.setSelected(True)
         self.tagsList.AddItem("+")
+        self.tagsList.UpdateItemStyles()
         self.InitBook()
 
     def InitBook(self):

@@ -277,7 +277,7 @@
                     <enum>QListView::LeftToRight</enum>
                    </property>
                    <property name="spacing">
-                    <number>10</number>
+                    <number>0</number>
                    </property>
                   </widget>
                  </item>

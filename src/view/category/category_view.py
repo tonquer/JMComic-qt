@@ -1,5 +1,6 @@
 from functools import partial
 
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton
 
 from component.layout.flow_layout import FlowLayout
@@ -31,6 +32,9 @@ class CategoryView(QWidget, Ui_Category, QtTaskBase):
         self.allIndexWidget = {}
         self.subCategoryIndex = 0
         self.subBox.currentIndexChanged.connect(self.SwitchSubTab)
+        self.hotTags = []
+        self.hotTagWidget = None
+        self.hotTagLayout = None
 
     def SwitchCurrent(self, **kwargs):
         refresh = kwargs.get("refresh")
@@ -45,7 +49,39 @@ class CategoryView(QWidget, Ui_Category, QtTaskBase):
 
     def Init(self):
         QtOwner().ShowLoading()
+        self.AddHttpTask(req.GetHotTagsReq2(), self.InitHotTagsBack)
         self.AddHttpTask(req.GetCategoryReq2(), self.InitBack)
+
+    def InitHotTagsBack(self, raw):
+        try:
+            QtOwner().CloseLoading()
+            st = raw["st"]
+            if st == Status.Ok:
+                tags = raw.get("tags") or []
+                self.hotTags = [str(tag).strip() for tag in tags if tag and str(tag).strip()]
+                self.UpdateHotTags()
+            else:
+                QtOwner().CheckShowMsg(raw)
+        except Exception as es:
+            Log.Error(es)
+
+    def UpdateHotTags(self):
+        if self.hotTagWidget is None or self.hotTagLayout is None:
+            return
+        while self.hotTagLayout.count():
+            child = self.hotTagLayout.takeAt(0)
+            if child and child.widget():
+                child.widget().deleteLater()
+        if not self.hotTags:
+            self.hotTagWidget.setVisible(False)
+            return
+        for tag in self.hotTags:
+            box = QPushButton(tag)
+            box.setCursor(Qt.PointingHandCursor)
+            box.clicked.connect(partial(self.SearchTitle, tag))
+            box.setMinimumWidth(160)
+            self.hotTagLayout.addWidget(box)
+        self.hotTagWidget.setVisible(True)
 
     def InitBack(self, raw):
         try:
@@ -74,15 +110,27 @@ class CategoryView(QWidget, Ui_Category, QtTaskBase):
         scroll.setWidgetResizable(True)
         tab = QWidget()
         verticalLayout = QVBoxLayout(tab)
+
+        self.hotTagWidget = QWidget(tab)
+        hotVLayout = QVBoxLayout(self.hotTagWidget)
+        hotVLayout.setContentsMargins(0, 0, 0, 0)
+        hotVLayout.addWidget(QLabel(Str.GetStr(Str.HotTags)))
+        self.hotTagLayout = FlowLayout()
+        hotVLayout.addLayout(self.hotTagLayout)
+        self.hotTagWidget.setVisible(False)
+        verticalLayout.addWidget(self.hotTagWidget)
+
         for title, contentList in categoryTitle.items():
             verticalLayout.addWidget(QLabel(title))
             layout = FlowLayout()
             for text in contentList:
                 box = QPushButton(text)
+                box.setCursor(Qt.PointingHandCursor)
                 box.clicked.connect(partial(self.SearchTitle, text))
                 box.setMinimumWidth(160)
                 layout.addWidget(box)
             verticalLayout.addLayout(layout)
+        self.UpdateHotTags()
         scroll.setWidget(tab)
         self.tabWidget.addTab(scroll, Str.GetStr(Str.Classify))
         return

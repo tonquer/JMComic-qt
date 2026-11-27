@@ -2,10 +2,12 @@ import os
 import time
 
 from PySide6 import QtWidgets
+from PySide6.QtCore import QCoreApplication
 from PySide6.QtSql import QSqlDatabase, QSqlQuery
 
 from config.setting import Setting
 from interface.ui_local_history import Ui_LocalHistory
+from tools.langconv import Converter
 from tools.log import Log
 from tools.str import Str
 
@@ -60,6 +62,47 @@ class HistoryView(QtWidgets.QWidget, Ui_LocalHistory):
         self.LoadHistory()
         self.bookList.isDelMenu = True
         self.bookList.DelCallBack = self.DelCallBack
+        self.searchText = ""
+        self._zhConverter = Converter("zh-hans")
+        self.lineEdit.textChanged.connect(self.SearchTextChange)
+
+    def SearchTextChange(self, text):
+        self.searchText = text.strip()
+        self.RefreshList()
+
+    def GetFilteredHistory(self):
+        sortedList = list(self.history.values())
+        if self.searchText:
+            rawTokens = [t for t in self.searchText.lower().split() if t]
+            hansTokens = [self._zhConverter.convert(t) for t in rawTokens]
+            filtered = []
+            for info in sortedList:
+                bookId = str(info.bookId or "").lower()
+                name = str(info.name or "").lower()
+                nameHans = self._zhConverter.convert(name)
+                matched = True
+                for rawTok, hansTok in zip(rawTokens, hansTokens):
+                    if (rawTok not in bookId
+                            and rawTok not in name
+                            and hansTok not in nameHans):
+                        matched = False
+                        break
+                if matched:
+                    filtered.append(info)
+            sortedList = filtered
+        sortedList.sort(key=lambda a: a.tick, reverse=True)
+        return sortedList
+
+    def RefreshList(self):
+        filteredList = self.GetFilteredHistory()
+        self.bookList.clear()
+        self.bookList.page = 1
+        self.bookList.pages = max(1, (len(filteredList) - 1) // self.pageNums + 1) if filteredList else 1
+        self.spinBox.setValue(1)
+        self.spinBox.setMaximum(self.bookList.pages)
+        self.bookList.UpdateState()
+        self.UpdatePageLabel(len(filteredList))
+        self.RefreshData(self.bookList.page, filteredList)
 
     def SwitchCurrent(self, **kwargs):
         refresh = kwargs.get("refresh")
@@ -67,14 +110,7 @@ class HistoryView(QtWidgets.QWidget, Ui_LocalHistory):
             return
 
         self.update()
-        self.bookList.clear()
-        self.bookList.page = 1
-        self.bookList.pages = max(1, (len(self.history) - 1) // self.pageNums + 1) if self.history else 1
-        self.spinBox.setValue(1)
-        self.spinBox.setMaximum(self.bookList.pages)
-        self.bookList.UpdateState()
-        self.UpdatePageLabel()
-        self.RefreshData(self.bookList.page)
+        self.RefreshList()
 
     def GetHistory(self, bookId):
         return self.history.get(bookId)
@@ -146,16 +182,19 @@ class HistoryView(QtWidgets.QWidget, Ui_LocalHistory):
         self.RefreshData(self.bookList.page)
         self.UpdatePageLabel()
 
-    def RefreshData(self, page):
-        sortedList = list(self.history.values())
-        sortedList.sort(key=lambda a: a.tick, reverse=True)
+    def RefreshData(self, page, sortedList=None):
+        if sortedList is None:
+            sortedList = self.GetFilteredHistory()
         self.bookList.UpdateState()
         start = (page-1) * self.pageNums
         end = start + self.pageNums
         for info in sortedList[start:end]:
             self.bookList.AddBookItemByHistory(info)
 
-    def UpdatePageLabel(self):
+    def UpdatePageLabel(self, total=None):
+        if total is None:
+            total = len(self.GetFilteredHistory())
+        self.nums.setText(QCoreApplication.translate("LocalHistory", u"\u8bb0\u5f55\u6570\uff1a", None) + str(total))
         self.pages.setText(Str.GetStr(Str.Page)+"：{}/{}".format(str(self.bookList.page), str(self.bookList.pages)))
 
     def BatchDelCallBack(self, bookIds):
@@ -163,6 +202,10 @@ class HistoryView(QtWidgets.QWidget, Ui_LocalHistory):
             self.history.pop(bookId, None)
             self.DelHistory(bookId)
             self.bookList.DelBookID(bookId)
+        total = len(self.GetFilteredHistory())
+        self.bookList.pages = max(1, (total - 1) // self.pageNums + 1) if total else 1
+        self.spinBox.setMaximum(self.bookList.pages)
+        self.UpdatePageLabel(total)
 
     def DelCallBack(self, bookId):
         if bookId not in self.history:
@@ -170,9 +213,8 @@ class HistoryView(QtWidgets.QWidget, Ui_LocalHistory):
         self.history.pop(bookId)
         self.DelHistory(bookId)
         self.bookList.DelBookID(bookId)
-        # page = 1
-        # self.bookList.page = page
-        # self.bookList.clear()
-        # self.RefreshData(page)
-        # self.UpdatePageLabel()
+        total = len(self.GetFilteredHistory())
+        self.bookList.pages = max(1, (total - 1) // self.pageNums + 1) if total else 1
+        self.spinBox.setMaximum(self.bookList.pages)
+        self.UpdatePageLabel(total)
         return

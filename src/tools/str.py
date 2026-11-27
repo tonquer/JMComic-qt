@@ -83,7 +83,7 @@ class Str:
     ErrorPath = 4005        # "错误的路径"
     NotPictureFile = 4006        # "没有发现图片文件"
     FileLock = 4007        # "文件已加密"
-    SpacePic = 4008        # "文件已加密"
+    SpacePic = 4008        # "空白图片"
 
     NetNas = 5000             # 网络存储
     CvSuccess = 5001          # "完成"
@@ -318,6 +318,7 @@ class Str:
     RepeatRule = 204            # 重复规则
     NotOpenLocal = 205            # 重复规则
     HistoryNum = 206            # 记录数
+    HotTags = 207               # 热词
 
     @classmethod
     def Reload(cls):
@@ -397,7 +398,7 @@ class Str:
         cls.strDict[cls.ErrorPath] = QCoreApplication.translate("cls.obj",  "错误的路径", None)
         cls.strDict[cls.NotPictureFile] = QCoreApplication.translate("cls.obj",  "没有发现图片文件", None)
         cls.strDict[cls.FileLock] = QCoreApplication.translate("cls.obj",  "文件已加密", None)
-        cls.strDict[cls.SpacePic] = QCoreApplication.translate("cls.obj",  "空白章节", None)
+        cls.strDict[cls.SpacePic] = QCoreApplication.translate("cls.obj",  "空白图片", None)
 
         cls.strDict[cls.NetNas] = QCoreApplication.translate("cls.obj",  "网络存储", None)
         cls.strDict[cls.CvSuccess] = QCoreApplication.translate("cls.obj",  "完成", None)
@@ -622,6 +623,7 @@ class Str:
         cls.strDict[cls.RepeatRule] = QCoreApplication.translate("cls.obj", "重复规则", None)
         cls.strDict[cls.NotOpenLocal] = QCoreApplication.translate("cls.obj", "帮助界面未启用本地库", None)
         cls.strDict[cls.HistoryNum] = QCoreApplication.translate("cls.obj", "记录数", None)
+        cls.strDict[cls.HotTags] = QCoreApplication.translate("cls.obj", "热词", None)
 
 
     @classmethod

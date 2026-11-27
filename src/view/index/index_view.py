@@ -150,14 +150,21 @@ class IndexView(QWidget, Ui_Index, QtTaskBase):
     def GetSerializationBack(self, raw, page):
         QtOwner().CloseLoading()
         st = raw["st"]
-        self.bookWidgetList[self.weekIndex].UpdateState()
+        bookWidget = self.bookWidgetList[self.weekIndex]
+        bookWidget.UpdateState()
         if st == Status.Ok:
             bookList = raw["bookList"]
+            if not bookList:
+                maxPage = max(1, page - 1)
+                self.spinBox.setMaximum(maxPage)
+                self.spinBox.setValue(maxPage)
+                bookWidget.UpdatePage(maxPage, maxPage)
+                return
             for v in bookList:
-                self.bookWidgetList[self.weekIndex].AddBookItemByBook(v)
-            self.spinBox.setValue(page)
+                bookWidget.AddBookItemByBook(v)
             self.spinBox.setMaximum(999)
-            self.bookWidgetList[self.weekIndex].UpdatePage(page, 999)
+            self.spinBox.setValue(page)
+            bookWidget.UpdatePage(page, 999)
         else:
             QtOwner().CheckShowMsg(raw)
 

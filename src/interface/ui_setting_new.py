@@ -76,7 +76,7 @@ class Ui_SettingNew(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, -2038, 666, 3333))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, -572, 667, 3547))
         self.scrollAreaWidgetContents.setStyleSheet(u"")
         self.verticalLayout_4 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
@@ -361,6 +361,10 @@ class Ui_SettingNew(object):
 
         self.horizontalLayout_4.addWidget(self.scaleBox)
 
+        self.horizontalSpacer_35 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_4.addItem(self.horizontalSpacer_35)
+
 
         self.verticalLayout_16.addLayout(self.horizontalLayout_4)
 
@@ -614,8 +618,8 @@ class Ui_SettingNew(object):
         self.prefetchCountHelp = QLabel(self.prefetchFrame)
         self.prefetchCountHelp.setObjectName(u"prefetchCountHelp")
         self.prefetchCountHelp.setMaximumSize(QSize(24, 24))
-        self.prefetchCountHelp.setProperty(u"role", u"muted")
         self.prefetchCountHelp.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.prefetchCountHelp.setProperty(u"role", u"muted")
 
         self.prefetchCountLayout.addWidget(self.prefetchCountHelp)
 
@@ -691,8 +695,8 @@ class Ui_SettingNew(object):
         self.prefetchWholeChapterHelp = QLabel(self.prefetchFrame)
         self.prefetchWholeChapterHelp.setObjectName(u"prefetchWholeChapterHelp")
         self.prefetchWholeChapterHelp.setMaximumSize(QSize(24, 24))
-        self.prefetchWholeChapterHelp.setProperty(u"role", u"muted")
         self.prefetchWholeChapterHelp.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.prefetchWholeChapterHelp.setProperty(u"role", u"muted")
 
         self.prefetchWholeChapterLayout.addWidget(self.prefetchWholeChapterHelp)
 

@@ -56,15 +56,26 @@ class LocalFavoriteDb(object):
                 a = query.lastError().text()
                 Log.Warn(a)
 
-        query = QSqlQuery(self.db)
-        sql1 = """ALTER TABLE 'favorite' ADD 'max_eps_num' int DEFAULT 0;"""
-        sql2 = """ALTER TABLE 'favorite' ADD 'last_uptick' int DEFAULT 0;"""
-        for sql in [sql1, sql2]:
-            suc = query.exec_(sql)
-            if not suc:
-                a = query.lastError().text()
-                Log.Warn(a)
+        self._EnsureColumns("favorite", [
+            ("max_eps_num", """ALTER TABLE 'favorite' ADD 'max_eps_num' int DEFAULT 0;"""),
+            ("last_uptick", """ALTER TABLE 'favorite' ADD 'last_uptick' int DEFAULT 0;"""),
+        ])
         # self.LoadDownload()
+
+    def _EnsureColumns(self, tableName, columns):
+        query = QSqlQuery(self.db)
+        if not query.exec_(f"PRAGMA table_info('{tableName}')"):
+            Log.Warn(query.lastError().text())
+            return
+        existing = set()
+        while query.next():
+            existing.add(str(query.value(1)).lower())
+        for colName, sql in columns:
+            if colName.lower() in existing:
+                continue
+            alterQuery = QSqlQuery(self.db)
+            if not alterQuery.exec_(sql):
+                Log.Warn(alterQuery.lastError().text())
 
     def DelFavoriteDB(self, bookId):
         query = QSqlQuery(self.db)

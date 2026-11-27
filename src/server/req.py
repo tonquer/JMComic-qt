@@ -509,11 +509,22 @@ class CheckUpdateConfigReq(ServerReq):
 
 # 下载图片
 class DownloadBookReq(ServerReq):
+    @staticmethod
+    def _AppendCacheBust(url):
+        sep = "&" if "?" in url else "?"
+        return "{}{}v={}".format(url, sep, int(time.time()))
+
+    @staticmethod
+    def _HasCacheBust(url):
+        return "?v=" in url or "&v=" in url
+
     def __init__(self, url, loadPath="", cachePath="", savePath="", saveParam=(0, 0, ""), isReload=False, resetCnt=1):
         method = "Download"
+        self.rawUrl = url.split("?", 1)[0]
         self.url = url
-        if self.url in ServerReq.SPACE_PIC:
-            self.url += "?v={}".format(int(time.time()))
+        if self.url in ServerReq.SPACE_PIC or self.rawUrl in ServerReq.SPACE_PIC:
+            if not self._HasCacheBust(self.url):
+                self.url = self._AppendCacheBust(self.url)
         self.loadPath = loadPath
         self.cachePath = cachePath
         self.savePath = savePath
@@ -528,6 +539,26 @@ class DownloadBookReq(ServerReq):
         self.resetCnt = max(resetCnt, len(self.resetUrl))
         self.headers = dict()
         self.headers["Accept-Encoding"] ="None"
+
+    def MarkSpacePic(self):
+        baseUrl = self.url.split("?", 1)[0]
+        if baseUrl:
+            ServerReq.SPACE_PIC.add(baseUrl)
+        if self.rawUrl:
+            ServerReq.SPACE_PIC.add(self.rawUrl)
+
+    def TryRetrySpacePic(self):
+        if self.resetCnt < 0:
+            return False
+        if not self._HasCacheBust(self.url):
+            self.url = self._AppendCacheBust(self.url)
+            Log.Info("request space pic bypass cache:{}".format(self.url))
+            return True
+        if self.ResetToSwitchNextUrl():
+            if not self._HasCacheBust(self.url):
+                self.url = self._AppendCacheBust(self.url)
+            return True
+        return False
         # if Setting.UerAgent.value:
         #     ua = Setting.UerAgent.value
         # else:
@@ -1206,6 +1237,17 @@ class RandomRecommendReq2(ServerReq):
         data["lang"] = self.GetLang()
         url = url + ToolUtil.DictToUrl(data)
         super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
+
+#
+class GetHotTagsReq2(ServerReq):
+    def __init__(self):
+        url = GlobalConfig.GetApiUrl() + "/hot_tags?"
+        method = "GET"
+        data = dict()
+        data["lang"] = self.GetLang()
+        url = url + ToolUtil.DictToUrl(data)
+        super(self.__class__, self).__init__(url, ToolUtil.DictToUrl(data), method)
+
 
 
 # 查看评论

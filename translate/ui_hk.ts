@@ -1482,6 +1482,16 @@
         <translation>本地紀錄</translation>
     </message>
     <message>
+        <location filename="../ui/ui_local_history.ui" line="23"/>
+        <source>搜索：</source>
+        <translation>搜尋：</translation>
+    </message>
+    <message>
+        <location filename="../ui/ui_local_history.ui" line="30"/>
+        <source>输入标题或ID搜索</source>
+        <translation>輸入標題或ID搜尋</translation>
+    </message>
+    <message>
         <location filename="../ui/ui_local_history.ui" line="68"/>
         <source>记录数：</source>
         <translation>紀錄數：</translation>
